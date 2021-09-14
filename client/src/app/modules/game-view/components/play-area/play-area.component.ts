@@ -3,8 +3,8 @@ import { Vec2 } from '@app/classes/vec2';
 import { GridService } from '@app/services/grid.service';
 
 // TODO : Avoir un fichier séparé pour les constantes!
-export const DEFAULT_WIDTH = 500;
-export const DEFAULT_HEIGHT = 500;
+export const DEFAULT_WIDTH = 750;
+export const DEFAULT_HEIGHT = 750;
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
 export enum MouseButton {
