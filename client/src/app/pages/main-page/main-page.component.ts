@@ -12,6 +12,10 @@ import { map } from 'rxjs/operators';
 export class MainPageComponent {
     readonly title: string = 'LOG2990';
     message: BehaviorSubject<string> = new BehaviorSubject<string>('');
+    selectedGameIndex: number = 0;
+    selectedMode: string;
+    readonly games: string[] = ['Scrabble classique', 'Scrabble LOG2990'];
+    readonly modes: string[] = ['Jouer une partie en solo', 'Créer une partie multijoueur', 'Joindre une partie multijoueur'];
 
     constructor(private readonly communicationService: CommunicationService) {}
 
