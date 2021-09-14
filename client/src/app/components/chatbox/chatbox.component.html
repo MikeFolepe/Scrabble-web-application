@@ -1,0 +1,10 @@
+<h1>Boite de communication</h1>
+
+<input type="text" placeholder="Veuillez entrer un message ou une commande" maxlenght = "512" [(ngModel)]="message" (keypress)="keyEvent($event)"/>
+
+<div class="display" #scrollMe>
+    <p id="listDisplay" *ngFor="let message of listMessages" 
+        [ngClass]="{'green': type === 'player', 'orange' : type === 'opponent', 
+        'blue' : type === 'system', 'error' : type === 'error' }">> {{message}}
+    </p>
+</div>
