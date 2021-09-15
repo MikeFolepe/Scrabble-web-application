@@ -10,6 +10,7 @@
 
 .play-area {
     display: grid;
-    width: min-content;
+    width: fit-content;
+    height: fit-content;
     outline: none;
 }

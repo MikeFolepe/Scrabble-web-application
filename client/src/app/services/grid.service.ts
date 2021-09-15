@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { Vec2 } from '@app/classes/vec2';
 
 // TODO : Avoir un fichier séparé pour les constantes et ne pas les répéter!
-export const DEFAULT_WIDTH = 700;
-export const DEFAULT_HEIGHT = 700;
+export const DEFAULT_WIDTH = 800;
+export const DEFAULT_HEIGHT = 800;
 export const BOARD_SIZE = 15;
 
 @Injectable({
@@ -55,8 +55,6 @@ export class GridService {
         }
     }
 
-
-    drawVerticalLine(gridContext: CanvasRenderingContext2D) {}
     get width(): number {
         return this.canvasSize.x;
     }

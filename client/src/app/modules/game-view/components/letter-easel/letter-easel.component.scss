@@ -1,0 +1,13 @@
+mat-grid-tile {
+    background-color: rgb(160, 102, 31);
+    border-style: solid;
+}
+
+mat-grid-list {
+    display: flex;
+    width: 600px;
+    height: auto;
+    position: relative;
+    top: 40px;
+    left: 150px;
+}
