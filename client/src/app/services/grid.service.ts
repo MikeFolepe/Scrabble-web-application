@@ -80,9 +80,6 @@ export class GridService {
         }
     }
 
-    //writeBonus(grid)
-
-    drawVerticalLine(gridContext: CanvasRenderingContext2D) {}
     get width(): number {
         return this.canvasSize.x;
     }
