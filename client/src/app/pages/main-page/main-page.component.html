@@ -17,6 +17,7 @@
     <button class="button" mat-raised-button [disabled]="!selectedMode" color="warn" routerLink="/{{ games[selectedGameIndex] }}-{{ selectedMode }}">
         Jouer!
     </button>
+    <button class="button" mat-raised-button [disabled]="!selectedMode" color="warn" (click)="resetRadios()">Effacer mon choix</button>
     <p>
         {{ games[selectedGameIndex] }}<br />
         {{ selectedMode }}
