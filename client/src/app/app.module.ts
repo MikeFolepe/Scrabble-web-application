@@ -3,8 +3,6 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { PlayAreaComponent } from '@app/modules/game-view/components/play-area/play-area.component';
-import { SidebarComponent } from '@app/modules/game-view/components/sidebar/sidebar.component';
 import { AppRoutingModule } from '@app/modules/app-routing.module';
 import { AppMaterialModule } from '@app/modules/material.module';
 import { AppComponent } from '@app/pages/app/app.component';
@@ -19,8 +17,8 @@ import { GameViewModule } from './modules/game-view/game-view.module';
  * Otherwise Angular Cli will not know in which module to put new component
  */
 @NgModule({
-    declarations: [AppComponent, GamePageComponent, MainPageComponent, MaterialPageComponent, PlayAreaComponent, SidebarComponent],
-    imports: [AppMaterialModule, AppRoutingModule, BrowserAnimationsModule, BrowserModule, FormsModule, HttpClientModule,GameViewModule],
+    declarations: [AppComponent, GamePageComponent, MainPageComponent, MaterialPageComponent],
+    imports: [AppMaterialModule, AppRoutingModule, BrowserAnimationsModule, BrowserModule, FormsModule, HttpClientModule, GameViewModule],
     providers: [],
     bootstrap: [AppComponent],
 })
