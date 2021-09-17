@@ -1,23 +1,24 @@
-#listDisplay{
+#listDisplay {
     margin-left: 10px;
     line-height: 1.6;
 }
 
 .display {
-    overflow-y: scroll;
-    height: 20%;
-    width: 50%;
+    overflow-y: auto;
+    height: 50%;
+    width: 85%;
     border-style: groove;
-    font-size: 20px;
-    padding: 40px 20px;
+    font-size: 16px;
+    padding: 15px 15px;
 }
 
-input[type=text] {
+input[type='text'] {
     border-style: groove;
-    width: 50%;
-    height: 50px;
-    font-size: 20px;
-    padding: 20px 20px;
+    width: 85%;
+    height: 25px;
+    font-size: 16px;
+    padding: 15px 15px;
+    background-color: #b3d9ca;
 }
 
 // Message du joueur : GREEN
@@ -25,15 +26,15 @@ input[type=text] {
 //            System : BLUE
 //            Erreur : RED
 
-.green {
+.player {
     color: green;
 }
 
-.orange {
+.opponentStyle {
     color: orange;
 }
 
-.blue {
+.systemStyle {
     color: blue;
 }
 

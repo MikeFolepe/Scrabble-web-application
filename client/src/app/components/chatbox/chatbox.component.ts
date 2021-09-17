@@ -1,56 +1,65 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 
 @Component({
-  selector: 'app-chatbox',
-  templateUrl: './chatbox.component.html',
-  styleUrls: ['./chatbox.component.scss']
+    selector: 'app-chatbox',
+    templateUrl: './chatbox.component.html',
+    styleUrls: ['./chatbox.component.scss'],
 })
-export class ChatboxComponent implements OnInit {  //https://stackoverflow.com/questions/35232731/angular-2-scroll-to-bottom-chat-style
+export class ChatboxComponent {
+    // https://stackoverflow.com/questions/35232731/angular-2-scroll-to-bottom-chat-style
 
-  @ViewChild('scrollMe') private myScrollContainer: ElementRef;
-  constructor() { }
+    @ViewChild('scrollMe') private myScrollContainer: ElementRef;
 
-  ngOnInit(): void {
-  }
-  
-  message: string = "";
-  type: string ="";
-  listMessages:string[] = [];
+    message: string = '';
+    type: string = '';
+    listMessages: string[] = [];
+    listTypes: string[] = [];
 
-  keyEvent(event: KeyboardEvent)
-  {
-    if(event.key === "Enter")
-    {
-      event.preventDefault();
-      this.sendPlayerCommand();
-      console.log(this.listMessages);
+    constructor() {}
+
+    keyEvent(event: KeyboardEvent) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            this.sendSystemMessage('Message du système');
+            this.sendOpponentMessage('Le joueur virtuel fait...');
+            this.sendPlayerCommand();
+            console.log(this.listMessages);
+            console.log(this.listTypes);
+            this.message = ''; // Clear l'input
+            this.scrollToBottom();
+        }
     }
-  }
 
-  sendPlayerCommand()
-  {
-    if(this.validate())
-    {
-      this.type = "player";
+    sendPlayerCommand() {
+        if (this.validate()) {
+            this.type = 'player';
+            this.listTypes.push(this.type);
+        } else {
+            this.type = 'error';
+            this.listTypes.push(this.type);
+        }
+        this.listMessages.push(this.message); // Add le message et update l'affichage de la chatbox
     }
-    else{
-      this.type = "error";
+
+    sendSystemMessage(systemMessage: string) {
+        this.type = 'system';
+        this.listTypes.push(this.type);
+        this.listMessages.push(systemMessage);
     }
-    this.listMessages.push(this.message); // Add le message et update l'affichage de la chatbox
-    this.message = "";                    // Clear l'input 
-    this.scrollToBottom();          
-  }
 
-  //TODO VALIDATION
-  validate(): boolean
-  {
-    // Check les erreurs ici (syntaxe, invalide, impossible à exécuter)
-    return true;
-  }
+    sendOpponentMessage(opponentMessage: string) {
+        this.type = 'opponent';
+        this.listTypes.push(this.type);
+        this.listMessages.push(opponentMessage);
+    }
 
-  scrollToBottom(): void {
-    
-    this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
-                  
-  }
+    // TODO VALIDATION
+    validate(): boolean {
+        // Check les erreurs ici (syntaxe, invalide, impossible à exécuter)
+        return true;
+    }
+
+    scrollToBottom(): void {
+        this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
+    }
 }

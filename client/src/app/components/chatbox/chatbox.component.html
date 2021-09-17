@@ -1,10 +1,21 @@
-<h1>Boite de communication</h1>
+<!DOCTYPE html>
+<html lang="fr">
 
-<input type="text" placeholder="Veuillez entrer un message ou une commande" maxlenght = "512" [(ngModel)]="message" (keypress)="keyEvent($event)"/>
+    <head>
+        <title>Boite de communication - Scrabble</title>
+        <meta charset="utf-8" />
+    </head>
 
-<div class="display" #scrollMe>
-    <p id="listDisplay" *ngFor="let message of listMessages" 
-        [ngClass]="{'green': type === 'player', 'orange' : type === 'opponent', 
-        'blue' : type === 'system', 'error' : type === 'error' }">> {{message}}
-    </p>
-</div>
+    <body>
+        <h1>Boite de communication</h1>
+
+        <div class="display" #scrollMe>
+            <p id="listDisplay" *ngFor="let message of listMessages, let i=index, let last = last" [ngClass]="{'player': listTypes[i] === 'player', 'opponentStyle' : listTypes[i] === 'opponent', 
+        'systemStyle' : listTypes[i] === 'system', 'error' : listTypes[i] === 'error' }">> {{message}}
+            </p>
+        </div>
+
+        <input type="text" placeholder="Veuillez entrer un message ou une commande" maxlenght="512"
+            [(ngModel)]="message" (keypress)="keyEvent($event)" onblur="this.focus()" autofocus />
+    </body>
+</html>
