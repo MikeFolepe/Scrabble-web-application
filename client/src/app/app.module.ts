@@ -3,14 +3,15 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { AppRoutingModule } from '@app/app-routing.module';
+import { AppComponent } from '@app/app.component';
 import { PlayAreaComponent } from '@app/components/play-area/play-area.component';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
-import { AppRoutingModule } from '@app/modules/app-routing.module';
-import { AppMaterialModule } from '@app/modules/material.module';
-import { AppComponent } from '@app/pages/app/app.component';
+import { AppMaterialModule } from '@app/material.module';
 import { GamePageComponent } from '@app/pages/game-page/game-page.component';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { MaterialPageComponent } from '@app/pages/material-page/material-page.component';
+import { InitializeSoloGameModule } from './modules/initialize-solo-game/initialize-solo-game.module';
 
 /**
  * Main module that is used in main.ts.
@@ -20,7 +21,7 @@ import { MaterialPageComponent } from '@app/pages/material-page/material-page.co
  */
 @NgModule({
     declarations: [AppComponent, GamePageComponent, MainPageComponent, MaterialPageComponent, PlayAreaComponent, SidebarComponent],
-    imports: [AppMaterialModule, AppRoutingModule, BrowserAnimationsModule, BrowserModule, FormsModule, HttpClientModule],
+    imports: [AppMaterialModule, AppRoutingModule, BrowserAnimationsModule, BrowserModule, FormsModule, HttpClientModule, InitializeSoloGameModule],
     providers: [],
     bootstrap: [AppComponent],
 })
