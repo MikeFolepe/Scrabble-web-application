@@ -1,28 +1,64 @@
-<div class="container justified">
-    <h1 class="header-item">Bienvenue au cours {{ title }}</h1>
-    <img src="https://bit.ly/3m206ss" width="400" height="80" alt="Logo Scrabble" />
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <title>Accueil - Scrabble</title>
+        <meta charset="utf-8" />
+    </head>
+    <body>
+        <div class="justified">
+            <h1 class="header-item">Jeu du Scrabble - Équipe 107</h1>
+            <img src="https://bit.ly/3m206ss" class="img-title" width="400" height="80" alt="Logo Scrabble" />
 
-    <mat-tab-group animationDuration="1000ms" [(selectedIndex)]="selectedGameIndex">
-        <mat-tab label="{{ games[0] }}">
-            <mat-radio-group class="radio-group" [(ngModel)]="selectedMode">
-                <mat-radio-button class="radio-button" value="solo" *ngFor="let mode of modes" [value]="mode">{{ mode }}</mat-radio-button>
-            </mat-radio-group>
-        </mat-tab>
-        <mat-tab label="{{ games[1] }}">
-            <mat-radio-group class="radio-group" [(ngModel)]="selectedMode">
-                <mat-radio-button class="radio-button" value="soloLOG" *ngFor="let mode of modes" [value]="mode">{{ mode }}</mat-radio-button>
-            </mat-radio-group>
-        </mat-tab>
-    </mat-tab-group>
-    <button class="button" mat-raised-button [disabled]="!selectedMode" color="warn" routerLink="/{{ games[selectedGameIndex] }}-{{ selectedMode }}">
-        Jouer!
-    </button>
-    <button class="button" mat-raised-button [disabled]="!selectedMode" color="warn" (click)="resetRadios()">Effacer mon choix</button>
-    <p>
-        {{ games[selectedGameIndex] }}<br />
-        {{ selectedMode }}
-    </p>
-    <div class="justified">
-        <button class="button" mat-raised-button color="primary" routerLink="/material">Meilleurs scores</button>
-    </div>
-</div>
+            <mat-tab-group class="tab-group" animationDuration="1000ms" [(selectedIndex)]="selectedGameIndex">
+                <mat-tab label="{{ games[0] }}">
+                    <mat-radio-group class="radio-group" [(ngModel)]="selectedMode">
+                        <mat-radio-button class="radio-button" value="solo" *ngFor="let mode of modes" [value]="mode">{{ mode }}</mat-radio-button>
+                    </mat-radio-group>
+                </mat-tab>
+                <mat-tab label="{{ games[1] }}">
+                    <mat-radio-group class="radio-group" [(ngModel)]="selectedMode">
+                        <mat-radio-button class="radio-button" value="soloLOG" *ngFor="let mode of modes" [value]="mode">{{ mode }}</mat-radio-button>
+                    </mat-radio-group>
+                </mat-tab>
+            </mat-tab-group>
+            <button
+                class="button"
+                mat-raised-button
+                [disabled]="!selectedMode"
+                color="warn"
+                routerLink="/{{ games[selectedGameIndex] }}-{{ selectedMode }}"
+            >
+                Jouer!
+            </button>
+            <p>
+                {{ games[selectedGameIndex] }}<br />
+                {{ selectedMode }}
+            </p>
+            <button class="button" mat-raised-button [disabled]="!selectedMode" color="primary" (click)="resetRadios()">Effacer mon choix</button>
+            <br />
+            <div class="justified">
+                <button class="button" mat-raised-button color="primary" routerLink="/material">Meilleurs scores</button>
+            </div>
+        </div>
+
+        <ul class="background">
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+    </body>
+</html>

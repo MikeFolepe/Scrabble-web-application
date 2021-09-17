@@ -6,7 +6,6 @@ import { Component } from '@angular/core';
     styleUrls: ['./main-page.component.scss'],
 })
 export class MainPageComponent {
-    readonly title: string = 'LOG2990';
     selectedGameIndex: number = 0;
     selectedMode?: string;
     readonly games: string[] = ['Scrabble classique', 'Scrabble LOG2990'];

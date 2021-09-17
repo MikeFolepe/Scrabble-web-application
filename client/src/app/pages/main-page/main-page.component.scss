@@ -1,6 +1,6 @@
-.container {
-    min-height: 100vh;
-    height: auto;
+p {
+    margin-top: 10px;
+    text-align: center;
 }
 
 .justified {
@@ -8,6 +8,10 @@
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
+}
+
+.img-title {
+    margin-top: 20px;
 }
 
 .button {
@@ -18,14 +22,22 @@
 .header-item {
     justify-content: center;
     text-align: center;
+    width: 100%;
+    height: 40px;
+    background-color: #00804d;
+}
+
+.tab-group {
+    padding: 20px 0;
 }
 
 .radio-group {
     display: flex;
     flex-direction: column;
     margin: 15px 0;
+    padding: 0 0 0 10px;
 }
 
 .radio-button {
-    margin: 5px;
+    margin: 8px;
 }
