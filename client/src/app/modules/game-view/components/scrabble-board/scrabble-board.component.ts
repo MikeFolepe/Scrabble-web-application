@@ -1,19 +1,8 @@
 import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { Vec2 } from '@app/classes/vec2';
 import { GridService } from '@app/services/grid.service';
+import { MouseButton } from '@app/classes/constants';
 
-// TODO : Avoir un fichier séparé pour les constantes!
-export const DEFAULT_WIDTH = 600;
-export const DEFAULT_HEIGHT = 600;
-
-// TODO : Déplacer ça dans un fichier séparé accessible par tous
-export enum MouseButton {
-    Left = 0,
-    Middle = 1,
-    Right = 2,
-    Back = 3,
-    Forward = 4,
-}
 @Component({
     selector: 'app-scrabble-board',
     templateUrl: './scrabble-board.component.html',
@@ -24,8 +13,6 @@ export class ScrabbleBoardComponent implements AfterViewInit {
 
     mousePosition: Vec2 = { x: 0, y: 0 };
     buttonPressed = '';
-    private canvasSize = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
-
     constructor(private readonly gridService: GridService) {}
 
     @HostListener('keydown', ['$event'])
@@ -40,11 +27,11 @@ export class ScrabbleBoardComponent implements AfterViewInit {
     }
 
     get width(): number {
-        return this.canvasSize.x;
+        return this.gridService.width;
     }
 
     get height(): number {
-        return this.canvasSize.y;
+        return this.gridService.height;
     }
 
     // TODO : déplacer ceci dans un service de gestion de la souris!
@@ -53,4 +40,5 @@ export class ScrabbleBoardComponent implements AfterViewInit {
             this.mousePosition = { x: event.offsetX, y: event.offsetY };
         }
     }
+
 }

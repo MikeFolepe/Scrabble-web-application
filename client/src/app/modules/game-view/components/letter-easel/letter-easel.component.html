@@ -1,9 +1,6 @@
 <mat-grid-list cols="7" rows="1">
-    <mat-grid-tile>1</mat-grid-tile>
-    <mat-grid-tile>2</mat-grid-tile>
-    <mat-grid-tile>3</mat-grid-tile>
-    <mat-grid-tile>4</mat-grid-tile>
-    <mat-grid-tile>5</mat-grid-tile>
-    <mat-grid-tile>6</mat-grid-tile>
-    <mat-grid-tile>7</mat-grid-tile>
+    <h1>CHEVALET</h1>
+    <mat-grid-tile *ngFor="let item of letterEaselTab" ><h2>{{item.value}}</h2>
+            <p>{{item.points}}</p>
+    </mat-grid-tile>
 </mat-grid-list>

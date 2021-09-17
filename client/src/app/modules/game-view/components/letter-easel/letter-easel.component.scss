@@ -1,13 +1,26 @@
-mat-grid-tile {
-    background-color: rgb(160, 102, 31);
-    border-style: solid;
+mat-grid-list{
+    position:absolute;
+    bottom : 30em;
+    left: 82.5em;
+    width: 25em;
 }
 
-mat-grid-list {
-    display: flex;
-    width: 600px;
-    height: auto;
+mat-grid-tile{
+    border: 1px solid black;
+    background-color: lightgreen;
+}
+
+p{
     position: relative;
-    top: 40px;
-    left: 150px;
+    top: 40%;
+    left: 20%;
+}
+
+h2{
+    font-size: 20px;
+}
+
+h1{
+    text-shadow: 0 0 3px lightyellow;
+    text-align: center;
 }
