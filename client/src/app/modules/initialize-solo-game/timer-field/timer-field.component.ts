@@ -1,4 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { FormGroup, Validators } from '@angular/forms';
+// eslint-disable-next-line no-restricted-imports
+import { TimerFieldService } from '../services/timer-field.service';
 
 @Component({
     selector: 'app-timer-field',
@@ -6,13 +9,23 @@ import { Component, OnInit } from '@angular/core';
     styleUrls: ['./timer-field.component.scss'],
 })
 export class TimerFieldComponent implements OnInit {
+    @Input() parentForm: FormGroup;
+    minuteSelectionList: string[];
+    secondSelectionList: string[];
     // eslint-disable-next-line @typescript-eslint/no-useless-constructor
-    constructor() {
+    constructor(private timerField_: TimerFieldService) {
         // do nothing
     }
 
     // eslint-disable-next-line @angular-eslint/no-empty-lifecycle-method
     ngOnInit(): void {
+        // this.parentForm.addControl('Timer', new FormControl('', [Validators.required]));
+        // eslint-disable-next-line no-underscore-dangle
+        this.minuteSelectionList = this.timerField_.getMinutes();
+        // eslint-disable-next-line no-underscore-dangle
+        this.secondSelectionList = this.timerField_.getSeconds();
         // do nothing
+        this.parentForm.controls.minuteInput.setValidators([Validators.required]);
+        this.parentForm.controls.secondInput.setValidators([Validators.required]);
     }
 }
