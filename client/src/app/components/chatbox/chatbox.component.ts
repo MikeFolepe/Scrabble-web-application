@@ -23,15 +23,17 @@ export class ChatboxComponent {
             this.sendSystemMessage('Message du système');
             this.sendOpponentMessage('Le joueur virtuel fait...');
             this.sendPlayerCommand();
-            console.log(this.listMessages);
-            console.log(this.listTypes);
+
             this.message = ''; // Clear l'input
-            this.scrollToBottom();
+            setTimeout(() => { // Le timeout permet de scroll jusqu'au dernier élément ajouté
+                this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
+            }, 50);
+
         }
     }
 
     sendPlayerCommand() {
-        if (this.validate()) {
+        if (this.isValid()) {
             this.type = 'player';
             this.listTypes.push(this.type);
         } else {
@@ -54,8 +56,45 @@ export class ChatboxComponent {
     }
 
     // TODO VALIDATION
-    validate(): boolean {
+    isValid(): boolean {
         // Check les erreurs ici (syntaxe, invalide, impossible à exécuter)
+
+        if (this.message[0] == '!') { // Si c'est une commande, on valide la syntaxe
+            return (this.isSyntaxValid() && this.isInputValid() && this.isPossible());
+
+        }
+        return true;
+    }
+
+    isSyntaxValid(): boolean {
+        let regexDebug = /^!debug$/g;
+        let regexPasser = /^!passer$/g;
+        let regexEchanger = /^!échanger/g;
+        let regexPlacer = /^!placer/g;
+
+        if (regexDebug.test(this.message) || regexPasser.test(this.message) ||
+            regexEchanger.test(this.message) || regexPlacer.test(this.message)) {
+            return true;
+        }
+        this.message = 'Erreur : La syntaxe est invalide';
+        return false;
+    }
+
+    isInputValid(): boolean {
+        let regexDebug = /^!debug$/g;
+        let regexPasser = /^!passer$/g;
+        let regexEchanger = /^!échanger\s([a-z]|[*]){1,7}$/g;
+        let regexPlacer = /^!placer\s[a-o]([1-9]|1[0-5])\s[hv]\s[a-zA-Z]+/g;
+
+        if (regexDebug.test(this.message) || regexPasser.test(this.message) ||
+            regexPlacer.test(this.message) || regexEchanger.test(this.message)) {
+            return true;
+        }
+        this.message = "Erreur : L'entrée est invalide"
+        return false;
+    }
+
+    isPossible(): boolean {
         return true;
     }
 
