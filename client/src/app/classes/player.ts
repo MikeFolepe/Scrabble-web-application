@@ -1,8 +1,8 @@
 import { LetterEasel } from './letter-easel';
 
-export interface Player{
+export interface Player {
     id: number;
-    nom: string;
+    name: string;
     score: number;
     letterTable: LetterEasel[];
     isTour: boolean;

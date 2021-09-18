@@ -12,6 +12,6 @@ export class InformationPanelComponent {
     constructor() {}
 
     //ngOnInit(): void {
-        
-    }
+
+   // }
 }

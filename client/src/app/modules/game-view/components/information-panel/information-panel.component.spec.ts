@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { InformationPannelComponent } from './information-panel.component';
+import { InformationPanelComponent } from './information-panel.component';
 
 describe('InformationPannelComponent', () => {
-  let component: InformationPannelComponent;
-  let fixture: ComponentFixture<InformationPannelComponent>;
+  let component: InformationPanelComponent;
+  let fixture: ComponentFixture<InformationPanelComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ InformationPannelComponent ]
+      declarations: [ InformationPanelComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(InformationPannelComponent);
+    fixture = TestBed.createComponent(InformationPanelComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

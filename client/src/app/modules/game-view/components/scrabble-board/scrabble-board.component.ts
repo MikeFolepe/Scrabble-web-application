@@ -40,5 +40,4 @@ export class ScrabbleBoardComponent implements AfterViewInit {
             this.mousePosition = { x: event.offsetX, y: event.offsetY };
         }
     }
-
 }

@@ -1,9 +1,7 @@
 // TODO : Avoir un fichier séparé pour les constantes!
-export const DEFAULT_WIDTH = 650;
-export const DEFAULT_HEIGHT = 650;
-export const BOARD_SIZE = 15;
-export const EASEL_WIDTH = 500;
-export const EASEL_HEIGHT = 150;
+export const DEFAULT_WIDTH = 750;
+export const DEFAULT_HEIGHT = 750;
+export const BOARD_SIZE = 16;
 export const EASEL_SIZE = 7;
 
 export enum MouseButton {
