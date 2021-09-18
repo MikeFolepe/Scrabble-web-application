@@ -1,12 +1,17 @@
 <mat-form-field [formGroup]="parentForm" appearance="fill" class="time-input-box">
     <mat-label>Minute</mat-label>
     <mat-select [formControlName]="'minuteInput'">
-        <mat-option *ngFor="let selectionValue of minuteSelectionList" value="{{ selectionValue }}">{{ selectionValue }}</mat-option>
+        <mat-option (click)="setTimeValidity()" *ngFor="let selectionValue of minuteSelectionList" value="{{ selectionValue }}">{{
+            selectionValue
+        }}</mat-option>
     </mat-select>
 </mat-form-field>
+
 <mat-form-field [formGroup]="parentForm" appearance="fill" class="time-input-box">
     <mat-label>Second</mat-label>
     <mat-select [formControlName]="'secondInput'">
-        <mat-option *ngFor="let selectionValue of secondSelectionList" value="{{ selectionValue }}">{{ selectionValue }}</mat-option>
+        <mat-option (click)="setTimeValidity()" *ngFor="let selectionValue of secondSelectionList" value="{{ selectionValue }}">{{
+            selectionValue
+        }}</mat-option>
     </mat-select>
 </mat-form-field>
