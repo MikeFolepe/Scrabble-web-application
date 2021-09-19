@@ -1,5 +1,8 @@
+<div class="header-item">
+    <h1>Jeu du Scrabble - Équipe 107</h1>
+    <mat-slide-toggle [(ngModel)]="isDarkTheme">Thème sombre</mat-slide-toggle>
+</div>
 <div class="justified">
-    <h1 class="header-item">Jeu du Scrabble - Équipe 107</h1>
     <img src="https://bit.ly/3m206ss" class="img-title" width="400" height="80" alt="Logo Scrabble" />
 
     <mat-tab-group class="tab-group" animationDuration="1000ms" [(selectedIndex)]="selectedGameIndex">
@@ -27,23 +30,4 @@
         <button class="button" mat-raised-button color="primary" routerLink="/material">Meilleurs scores</button>
     </div>
 </div>
-
-<ul class="background">
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-    <li></li>
-</ul>
+<app-background [isDark]="isDarkTheme"></app-background>
