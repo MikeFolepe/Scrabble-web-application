@@ -20,15 +20,7 @@ import { GameViewModule } from './modules/game-view/game-view.module';
  * Otherwise Angular Cli will not know in which module to put new component
  */
 @NgModule({
-    declarations: [
-        AppComponent,
-        GamePageComponent,
-        MainPageComponent,
-        MaterialPageComponent,
-        //SidebarComponent,
-        PageNotFoundComponent,
-        BackgroundComponent,
-    ],
+    declarations: [AppComponent, GamePageComponent, MainPageComponent, MaterialPageComponent, PageNotFoundComponent, BackgroundComponent],
     imports: [AppMaterialModule, AppRoutingModule, BrowserAnimationsModule, BrowserModule, FormsModule, HttpClientModule, GameViewModule],
     providers: [],
     bootstrap: [AppComponent],

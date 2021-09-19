@@ -1,3 +1,5 @@
+import { FormsModule } from '@angular/forms';
+import { ChatboxComponent } from '@app/modules/game-view/components/chatbox/chatbox.component';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { AppRoutingModule } from '@app/modules/app-routing.module';
@@ -9,8 +11,16 @@ import { InformationPanelComponent } from './components/information-panel/inform
 import { LetterEaselComponent } from './components/letter-easel/letter-easel.component';
 import { ScrabbleBoardComponent } from './components/scrabble-board/scrabble-board.component';
 @NgModule({
-    declarations: [GameViewComponent, ScrabbleBoardComponent, InformationPanelComponent, LetterEaselComponent, PlayAreaComponent, SidebarComponent],
-    imports: [CommonModule, AppMaterialModule, AppRoutingModule],
+    declarations: [
+        GameViewComponent,
+        ScrabbleBoardComponent,
+        InformationPanelComponent,
+        LetterEaselComponent,
+        PlayAreaComponent,
+        SidebarComponent,
+        ChatboxComponent,
+    ],
+    imports: [CommonModule, AppMaterialModule, AppRoutingModule, FormsModule],
     exports: [GameViewComponent],
     bootstrap: [GameViewComponent],
 })
