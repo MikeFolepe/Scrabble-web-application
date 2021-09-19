@@ -27,7 +27,7 @@ export class ChatboxComponent {
             this.message = ''; // Clear l'input
             setTimeout(() => { // Le timeout permet de scroll jusqu'au dernier élément ajouté
                 this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
-            }, 50);
+            }, 1);
 
         }
     }

@@ -1,4 +1,4 @@
-body {
+.chat-box {
     border-radius: 6px 6px 0 0;
     background-image: linear-gradient(
         0deg,
@@ -11,15 +11,21 @@ body {
         #023600 100%
     );
     background-size: 4px 4px;
-    height: 70%;
     color: white;
     font: 1.3rem Inconsolata, monospace;
     text-shadow: 0 0 5px #c8c8c8;
+
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
 }
 
-h1 {
-    margin-top: 10px;
+.header-item {
     text-align: center;
+    color: white;
+    background-color: transparent;
+    margin-bottom: 0px;
+    padding: 10px 10px;
 }
 
 .fakeButtons {
@@ -48,15 +54,14 @@ h1 {
 }
 
 .fakeMenu {
-    width: 550px;
+    //width: 100%;
     box-sizing: border-box;
     height: 25px;
-    background-color: #bbb;
-    margin: 0 auto;
+    background-color: #bbb; 
     border-top-right-radius: 5px;
     border-top-left-radius: 5px;
 }
-
+/*
 .cursor {
     position: absolute;
     top: 0;
@@ -68,10 +73,10 @@ h1 {
     -webkit-animation: typing 12s infinite;
     animation: typing 12s infinite;
 }
-
+*/
 ::selection {
-    background: white;
-    //text-shadow: none;
+    color: black;
+    background-color: white;
 }
 
 ::placeholder {
@@ -86,29 +91,31 @@ h1 {
 }
 
 .display {
-    overflow-y: auto;
-    word-wrap: break-word;
-    height: 500px;
+    // Spécifie la hauteur et largeur pour que l'overflow fonctionne
     width: 500px;
+    height: 460px;
+    overflow-y: scroll;
+    word-wrap: break-word;
     font-size: 16px;
-    padding: 15px 15px;
+    padding-top: 10px;
+    flex-grow: 1;
 }
 
-input[type="text"],
-input[type="text"]:focus {
-    width: 27%;
-    height: 25px;
+input[type="text"]{
     font-size: 16px;
-    background: transparent;
+    background-color: black;
     caret-color: white;
-    position: absolute;
-    bottom: 115px;
-    color: white;
+    color: transparent;
+    padding: 15px 15px;
+    flex: 0 0 content;
+    border: 2px black;
 }
 
-input {
-    padding: 0 0 0 30px;
+input[type="text"]:focus {
+    outline: none;
 }
+
+
 
 // Message du joueur : GREEN
 //          opponent : ORANGE
