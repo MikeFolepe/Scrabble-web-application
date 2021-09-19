@@ -8,7 +8,7 @@ const routes: Routes = [
     { path: 'home', component: MainPageComponent },
     {
         path: 'solo-game-ia',
-        loadChildren: async () => import('./modules/initialize-solo-game/initialize-solo-game.module').then((m) => m.InitializeSoloGameModule),
+        loadChildren: async () => import('./initialize-solo-game/initialize-solo-game.module').then((m) => m.InitializeSoloGameModule),
     },
     { path: 'material', component: MaterialPageComponent },
     { path: '**', redirectTo: '/home' },
