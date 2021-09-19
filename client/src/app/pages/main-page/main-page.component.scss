@@ -15,7 +15,7 @@ p {
 }
 
 .img-title {
-    margin-top: 100px;
+    margin-top: 90px;
 }
 
 .button {
@@ -24,12 +24,29 @@ p {
 }
 
 .header-item {
+    display: flex;
     justify-content: center;
     text-align: center;
     width: 100%;
-    height: 40px;
+    height: 80px;
     background-color: #00804d;
     position: fixed;
+}
+
+.header-item .mat-slide-toggle {
+    display: flex;
+    position: absolute;
+    right: 1em;
+    margin-top: 1.75em;
+    color: #f5fbf3;
+    text-shadow: 1px 1px 1px #a9da9f;
+}
+
+h1 {
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+    font-size: 30px;
 }
 
 .tab-group {
