@@ -1,0 +1,26 @@
+<img src="https://bit.ly/3m206ss" width="400" height="80" alt="Logo Scrabble" id="logo-scrabble" />
+
+<form id="main-form-box">
+    <fieldset>
+        <legend id="main-form-name">Game Settings</legend>
+        <fieldset class="form-section">
+            <legend>Player Information</legend>
+            <app-player-name-field [formGroup]="form" [parentForm]="form"></app-player-name-field>
+        </fieldset>
+
+        <fieldset class="form-section">
+            <legend>Time</legend>
+            <app-timer-field [formGroup]="form" [parentForm]="form"></app-timer-field>
+        </fieldset>
+
+        <fieldset class="form-section">
+            <legend>Game Difficulty</legend>
+            <app-level-field [formGroup]="form" [parentForm]="form"></app-level-field>
+        </fieldset>
+    </fieldset>
+</form>
+
+<button mat-raised-button color="warn" [disabled]="!form.valid" routerLink="/game" >Continue</button>
+
+{{ form.value | json }}
+{{ form.valid }}

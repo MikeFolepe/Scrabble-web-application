@@ -12,6 +12,7 @@ import { MaterialPageComponent } from '@app/pages/material-page/material-page.co
 import { BackgroundComponent } from './components/background/background.component';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { GameViewModule } from './modules/game-view/game-view.module';
+import { InitializeSoloGameModule } from './modules/initialize-solo-game/initialize-solo-game.module';
 
 /**
  * Main module that is used in main.ts.
@@ -21,7 +22,16 @@ import { GameViewModule } from './modules/game-view/game-view.module';
  */
 @NgModule({
     declarations: [AppComponent, GamePageComponent, MainPageComponent, MaterialPageComponent, PageNotFoundComponent, BackgroundComponent],
-    imports: [AppMaterialModule, AppRoutingModule, BrowserAnimationsModule, BrowserModule, FormsModule, HttpClientModule, GameViewModule],
+    imports: [
+        AppMaterialModule,
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        BrowserModule,
+        FormsModule,
+        HttpClientModule,
+        GameViewModule,
+        InitializeSoloGameModule,
+    ],
     providers: [],
     bootstrap: [AppComponent],
 })

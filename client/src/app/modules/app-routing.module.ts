@@ -1,3 +1,4 @@
+import { FormComponent } from './initialize-solo-game/form/form.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { PageNotFoundComponent } from '@app/components/page-not-found/page-not-found.component';
@@ -8,6 +9,10 @@ import { MaterialPageComponent } from '@app/pages/material-page/material-page.co
 const routes: Routes = [
     { path: '', redirectTo: '/home', pathMatch: 'full' },
     { path: 'home', component: MainPageComponent },
+    {
+        path: 'solo-game-ia',
+        component: FormComponent,
+    },
     { path: 'game', component: GamePageComponent },
     { path: 'material', component: MaterialPageComponent },
     { path: 'page-not-found', component: PageNotFoundComponent },
