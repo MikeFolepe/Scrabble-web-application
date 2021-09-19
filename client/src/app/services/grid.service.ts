@@ -1,10 +1,13 @@
 import { Injectable } from '@angular/core';
+import { MinLengthValidator } from '@angular/forms';
 import { Vec2 } from '@app/classes/vec2';
 
 // TODO : Avoir un fichier séparé pour les constantes et ne pas les répéter!
 export const DEFAULT_WIDTH = 640;
 export const DEFAULT_HEIGHT = 640;
 export const BOARD_SIZE = 16;
+export const MINTILESIZE = 4; //en pixel
+export const MAXTILESIZE = 25; //en pixel
 
 @Injectable({
     providedIn: 'root',
@@ -17,6 +20,8 @@ export class GridService {
     private tripleLetters: Array<Vec2> = [{x:2, y:2}, {x:6, y:2}, {x:2, y:6}];
     private doubleWords: Array<Vec2> = [{x:3, y:3}, {x:4, y:4}, {x:5, y:5}, {x:6, y:6}];
     private tripleWords: Array<Vec2> = [{x:7, y:0}, {x:7, y:7}, {x:0, y:7}];
+    private tilesSize:number = 15;
+    
     // TODO : pas de valeurs magiques!! Faudrait avoir une meilleure manière de le faire
     /* eslint-disable @typescript-eslint/no-magic-numbers */
 
@@ -26,6 +31,18 @@ export class GridService {
 
     get height(): number {
         return this.canvasSize.y;
+    }
+
+    setTilesSize(tilesSize:number):void{
+        if (this.tilesSize < MINTILESIZE){
+            this.tilesSize = MINTILESIZE;
+        } else
+        if (this.tilesSize > MAXTILESIZE){
+            this.tilesSize = MAXTILESIZE;
+        } else
+        {
+            this.tilesSize = tilesSize;
+        }
     }
 
     drawGrid() {      
