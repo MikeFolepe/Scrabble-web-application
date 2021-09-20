@@ -5,7 +5,7 @@ export interface TimeRange {
     maxTimerSecond: number;
 }
 const secondPerMinute = 60;
-const secondStep = 15;
+const secondStep = 5;
 
 @Injectable({
     providedIn: 'root',

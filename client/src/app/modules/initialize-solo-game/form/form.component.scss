@@ -1,36 +1,50 @@
-// #form-section-box {
-//     width: 100px;
-//     height: 100px;
-//     background-color: bisque;
-// }
+.header-item {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+    height: 80px;
+    background-color: #00804d;
+}
+
+.header-item {
+    display: flex;
+    color: #f5fbf3;
+    text-shadow: 1px 1px 1px #a9da9f;
+}
+
+h1 {
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+    font-size: 30px;
+}
+
+#logo-scrabble {
+    margin-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 400px;
+    height: 80px;
+}
+
 #main-form-box {
-    display: inline;
+    margin-top: 10px;
+    width: 32%;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 #main-form-name {
-    font-size: large;
     text-align: center;
+    font-size: large;
 }
 
-// Center
-#main-form-box {
-    width: fit-content;
-    height: fit-content;
-    margin: auto;
-} // Center and sizing of the main form title text
-#main-form-name {
-    font-size: large;
+#submit-button {
     text-align: center;
-} // Center the submit button
-#form-submit-button {
-    margin: 0 auto;
     display: block;
-} // Center the submit button
-#form-submit-button {
-    margin-top: 2%;
-    margin-bottom: 2%;
-}
-#form-section-box {
-    border-top: 50px;
-    border-bottom: 50px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }

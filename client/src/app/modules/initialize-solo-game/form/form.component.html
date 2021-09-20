@@ -1,4 +1,8 @@
-<img src="https://bit.ly/3m206ss" width="400" height="80" alt="Logo Scrabble" id="logo-scrabble" />
+<app-background></app-background>
+<div class="header-item">
+    <h1>Jeu du Scrabble - Équipe 107</h1>
+</div>
+<div id="logo-scrabble"><img src="https://bit.ly/3m206ss" width="400" height="80" class="img-title" alt="Logo Scrabble" /></div>
 
 <form id="main-form-box">
     <fieldset>
@@ -19,8 +23,7 @@
         </fieldset>
     </fieldset>
 </form>
-
-<button mat-raised-button color="warn" [disabled]="!form.valid" routerLink="/game" >Continue</button>
+<button mat-raised-button id="submit-button" color="warn" [disabled]="!form.valid" routerLink="/game">Continue</button>
 
 {{ form.value | json }}
 {{ form.valid }}
