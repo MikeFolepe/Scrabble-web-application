@@ -1,5 +1,11 @@
-<mat-form-field [formGroup]="parentForm" appearance="fill" id="player-name-box">
+<mat-form-field [formGroup]="parentForm" appearance="fill">
     <mat-label>Player Name</mat-label>
     <input matInput [formControlName]="'playerName'" />
-    <mat-hint> {{ charRange.minCharacter }}-{{ charRange.maxCharacter }} character</mat-hint>
+    <mat-hint id="validation-rules">
+        {{ charRange.minCharacter }}-{{ charRange.maxCharacter }} characters
+        <br />
+        First {{ charRange.minCharacter }} characters must be letters
+        <br />
+        !@#$%^&*_ allowed
+    </mat-hint>
 </mat-form-field>
