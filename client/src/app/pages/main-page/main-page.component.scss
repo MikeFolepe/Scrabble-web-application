@@ -1,6 +1,10 @@
-.container {
-    min-height: 100vh;
-    height: auto;
+div {
+    margin: 0 auto 20px auto;
+}
+
+p {
+    margin-top: 10px;
+    text-align: center;
 }
 
 .justified {
@@ -10,35 +14,26 @@
     align-items: center;
 }
 
+.img-title {
+    margin-top: 90px;
+}
+
 .button {
     margin-top: 10px;
     text-align: center;
 }
 
-.team-name {
-    margin-top: 0.25em;
-    margin-bottom: 0.25em;
-    color: green;
+.tab-group {
+    padding: 20px 0;
 }
 
-.header-item {
-    justify-content: center;
-    text-align: center;
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    margin: 15px 0;
+    padding: 0 0 0 10px;
 }
 
-.footer-item {
-    text-align: center;
-}
-
-.footer-item p :nth-child(even) {
-    color: orange;
-}
-.footer-item p :nth-child(odd) {
-    color: blue;
-}
-
-.server-message {
-    justify-content: center;
-    width: 20%;
-    min-width: min-content;
+.radio-button {
+    margin: 8px;
 }

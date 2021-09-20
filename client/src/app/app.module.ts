@@ -9,7 +9,11 @@ import { AppComponent } from '@app/pages/app/app.component';
 import { GamePageComponent } from '@app/pages/game-page/game-page.component';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { MaterialPageComponent } from '@app/pages/material-page/material-page.component';
+import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { GameViewModule } from './modules/game-view/game-view.module';
+import { InitializeSoloGameModule } from './modules/initialize-solo-game/initialize-solo-game.module';
+import { SharedModule } from './modules/shared/shared/shared.module';
+
 /**
  * Main module that is used in main.ts.
  * All automatically generated components will appear in this module.
@@ -17,8 +21,18 @@ import { GameViewModule } from './modules/game-view/game-view.module';
  * Otherwise Angular Cli will not know in which module to put new component
  */
 @NgModule({
-    declarations: [AppComponent, GamePageComponent, MainPageComponent, MaterialPageComponent],
-    imports: [AppMaterialModule, AppRoutingModule, BrowserAnimationsModule, BrowserModule, FormsModule, HttpClientModule, GameViewModule],
+    declarations: [AppComponent, GamePageComponent, MainPageComponent, MaterialPageComponent, PageNotFoundComponent],
+    imports: [
+        AppMaterialModule,
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        BrowserModule,
+        FormsModule,
+        HttpClientModule,
+        GameViewModule,
+        InitializeSoloGameModule,
+        SharedModule,
+    ],
     providers: [],
     bootstrap: [AppComponent],
 })
