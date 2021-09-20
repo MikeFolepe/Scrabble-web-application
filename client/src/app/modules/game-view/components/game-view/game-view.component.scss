@@ -6,6 +6,7 @@
 .play-area-container {
     overflow: auto;
     flex: 1 1 auto;
+    
 }
 
 .play-area {
@@ -13,4 +14,8 @@
     width: fit-content;
     height: fit-content;
     outline: none;
+}
+
+body{
+    background: transparent;
 }

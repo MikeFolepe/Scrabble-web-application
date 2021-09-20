@@ -5,11 +5,11 @@ import { PlayAreaComponent } from '@app/modules/game-view/components/play-area/p
 import { SidebarComponent } from '@app/modules/game-view/components/sidebar/sidebar.component';
 import { AppMaterialModule } from '@app/modules/material.module';
 import { GameViewComponent } from './components/game-view/game-view.component';
-import { InformationPannelComponent } from './components/information-pannel/information-pannel.component';
+import { InformationPanelComponent } from './components/information-panel/information-panel.component';
 import { LetterEaselComponent } from './components/letter-easel/letter-easel.component';
 import { ScrabbleBoardComponent } from './components/scrabble-board/scrabble-board.component';
 @NgModule({
-    declarations: [GameViewComponent, ScrabbleBoardComponent, InformationPannelComponent, LetterEaselComponent, PlayAreaComponent, SidebarComponent],
+    declarations: [GameViewComponent, ScrabbleBoardComponent, InformationPanelComponent, LetterEaselComponent, PlayAreaComponent, SidebarComponent],
     imports: [CommonModule, AppMaterialModule, AppRoutingModule],
     exports: [GameViewComponent],
     bootstrap: [GameViewComponent],
