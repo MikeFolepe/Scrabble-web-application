@@ -36,6 +36,7 @@ export class GameSettingsService {
         this.gameSettings_.startingPlayer = this.initStartingPlayer();
         this.gameSettings_.timeMinute = minute;
         this.gameSettings_.timeSecond = second;
+        this.gameSettings_.level = level;
         this.gameSettings_.randomBonus = randomBonus;
         this.gameSettings_.dictionary = dictionaryLanguage;
     }
