@@ -14,6 +14,6 @@ export interface GameSettings {
     timeMinute: string;
     timeSecond: string;
     level: string;
-    randomBonus: boolean | undefined;
-    dictionary: string | undefined;
+    randomBonus: boolean;
+    dictionary: string;
 }

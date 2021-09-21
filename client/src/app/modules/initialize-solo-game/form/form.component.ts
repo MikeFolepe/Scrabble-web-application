@@ -27,13 +27,14 @@ export class FormComponent implements OnInit {
 
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     initGame() {
+        // eslint-disable-next-line no-underscore-dangle
         this.gameSettingsService_.setGameSettings(
             this.form.controls.playerName.value,
             this.form.controls.minuteInput.value,
             this.form.controls.secondInput.value,
             this.form.controls.levelInput.value,
-            undefined,
-            undefined,
+            false,
+            '',
         );
     }
 }

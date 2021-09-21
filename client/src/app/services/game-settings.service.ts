@@ -23,16 +23,11 @@ export class GameSettingsService {
         return (Math.random() * Math.random()) % enumLength;
     }
 
-    setGameSettings(
-        playerName: string,
-        minute: string,
-        second: string,
-        level: string,
-        randomBonus: boolean | undefined,
-        dictionaryLanguage: string | undefined,
-    ) {
+    setGameSettings(playerName: string, minute: string, second: string, level: string, randomBonus: boolean, dictionaryLanguage: string) {
         this.gameSettings_.playerName = playerName;
-        this.gameSettings_.IA_Name = this.initRandomIAName();
+        do {
+            this.gameSettings_.IA_Name = this.initRandomIAName();
+        } while (this.gameSettings_.playerName === this.gameSettings_.IA_Name);
         this.gameSettings_.startingPlayer = this.initStartingPlayer();
         this.gameSettings_.timeMinute = minute;
         this.gameSettings_.timeSecond = second;
