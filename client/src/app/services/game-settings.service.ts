@@ -7,15 +7,10 @@ import { GameSettings, StartingPlayer } from '@app/classes/gameSettings';
 })
 export class GameSettingsService {
     gameSettings_: GameSettings;
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    IANameDatabase: string[] = ['Mister_Bucky', 'Mister_Samy', 'Miss_Betty'];
-    // eslint-disable-next-line @typescript-eslint/no-useless-constructor
-    constructor() {
-        // do nothing
-    }
+    iaNameDatabase: string[] = ['Mister_Bucky', 'Mister_Samy', 'Miss_Betty'];
 
     initRandomIAName() {
-        return this.IANameDatabase[(Math.random() * Math.random()) % this.IANameDatabase.length];
+        return this.iaNameDatabase[(Math.random() * Math.random()) % this.iaNameDatabase.length];
     }
 
     initStartingPlayer() {
