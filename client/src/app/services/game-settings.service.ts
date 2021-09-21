@@ -10,12 +10,23 @@ export class GameSettingsService {
     iaNameDatabase: string[] = ['Mister_Bucky', 'Mister_Samy', 'Miss_Betty'];
 
     initRandomIAName() {
-        return this.iaNameDatabase[(Math.random() * Math.random()) % this.iaNameDatabase.length];
+        // Number of seconds since 1st january 1970
+        let randomNumber = new Date().getTime();
+        // Multiplication by a random number [0,1[, which we get the floor
+        randomNumber = Math.floor(Math.random() * randomNumber);
+        // Random value [0, iaNameDatabase.length[
+        return this.iaNameDatabase[randomNumber % this.iaNameDatabase.length];
     }
 
     initStartingPlayer() {
+        // Enum length
         const enumLength = Object.keys(StartingPlayer).length;
-        return (Math.random() * Math.random()) % enumLength;
+        // Number of seconds since 1st january 1970
+        let randomNumber = new Date().getTime();
+        // Multiplication by a random number [0,1[, which we get the floor
+        randomNumber = Math.floor(Math.random() * randomNumber);
+        // Random value [0, enum.length[
+        return randomNumber % enumLength;
     }
 
     setGameSettings(playerName: string, minute: string, second: string, level: string, randomBonus: boolean, dictionaryLanguage: string) {
