@@ -23,7 +23,4 @@
         </fieldset>
     </fieldset>
 </form>
-<button mat-raised-button id="submit-button" color="warn" [disabled]="!form.valid" routerLink="/game">Continue</button>
-
-{{ form.value | json }}
-{{ form.valid }}
+<button mat-raised-button (click)="initGame()" id="submit-button" color="warn" [disabled]="!form.valid" routerLink="/game">Continue</button>

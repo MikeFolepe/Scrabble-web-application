@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
+import { BOARD_SIZE, DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/classes/constants';
 import { Vec2 } from '@app/classes/vec2';
-import { DEFAULT_WIDTH, DEFAULT_HEIGHT, BOARD_SIZE } from '@app/classes/constants';
 
 // TODO : Avoir un fichier séparé pour les constantes et ne pas les répéter!
-
 
 @Injectable({
     providedIn: 'root',
