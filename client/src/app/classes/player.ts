@@ -6,5 +6,5 @@ export interface Player {
     score: number;
     letterTable: LetterEasel[];
     isTour: boolean;
-    state: string;
+    isIA: boolean;
 }

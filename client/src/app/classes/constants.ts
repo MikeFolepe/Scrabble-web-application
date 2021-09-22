@@ -11,3 +11,5 @@ export enum MouseButton {
     Back = 3,
     Forward = 4,
 }
+
+export const IA_NAME_DATABASE: string[] = ['Mister_Bucky', 'Mister_Samy', 'Miss_Betty'];

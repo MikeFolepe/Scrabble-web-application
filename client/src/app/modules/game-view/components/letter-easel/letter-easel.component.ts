@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { LetterEasel } from '@app/classes/letter-easel';
-import { LetterService } from '@app/services/letter.service';
 import { EASEL_SIZE } from '@app/classes/constants';
+import { GameSettingsService } from '@app/services/game-settings.service';
+import { StartingPlayer } from '@app/classes/game-settings';
 @Component({
     selector: 'app-letter-easel',
     templateUrl: './letter-easel.component.html',
@@ -9,7 +10,7 @@ import { EASEL_SIZE } from '@app/classes/constants';
 })
 export class LetterEaselComponent implements OnInit {
     letterEaselTab: LetterEasel[] = [];
-    constructor(private letterService: LetterService) {}
+    constructor(private gameSettings: GameSettingsService) {}
 
     ngOnInit(): void {
         this.initializeTab();
@@ -17,7 +18,7 @@ export class LetterEaselComponent implements OnInit {
 
     initializeTab(): void {
         for (let i = 0; i < EASEL_SIZE; i++) {
-            this.letterEaselTab[i] = this.letterService.getRandomLetter();
+            this.letterEaselTab[i] = this.gameSettings.players[StartingPlayer.Player1].letterTable[i];
         }
     }
 }

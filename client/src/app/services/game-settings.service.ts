@@ -1,16 +1,15 @@
 /* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
-import { GameSettings, StartingPlayer } from '@app/classes/gameSettings';
-
+import { GameSettings, StartingPlayer } from '@app/classes/game-settings';
+import { IA_NAME_DATABASE } from '@app/classes/constants';
+import { Player } from '@app/classes/player';
 @Injectable({
     providedIn: 'root',
 })
 export class GameSettingsService {
-    gameSettings_: GameSettings;
-    iaNameDatabase: string[] = ['Mister_Bucky', 'Mister_Samy', 'Miss_Betty'];
-
+    gameSettings: GameSettings;
     initRandomIAName() {
-        return this.iaNameDatabase[(Math.random() * Math.random()) % this.iaNameDatabase.length];
+        return IA_NAME_DATABASE[(Math.random() * Math.random()) % IA_NAME_DATABASE.length];
     }
 
     initStartingPlayer() {
@@ -18,7 +17,7 @@ export class GameSettingsService {
         return (Math.random() * Math.random()) % enumLength;
     }
 
-    setGameSettings(
+    setGameSettingsSolo(
         playerName: string,
         minute: string,
         second: string,
@@ -26,13 +25,20 @@ export class GameSettingsService {
         randomBonus: boolean | undefined,
         dictionaryLanguage: string | undefined,
     ) {
-        this.gameSettings_.playerName = playerName;
-        this.gameSettings_.IA_Name = this.initRandomIAName();
-        this.gameSettings_.startingPlayer = this.initStartingPlayer();
-        this.gameSettings_.timeMinute = minute;
-        this.gameSettings_.timeSecond = second;
-        this.gameSettings_.level = level;
-        this.gameSettings_.randomBonus = randomBonus;
-        this.gameSettings_.dictionary = dictionaryLanguage;
+        this.gameSettings.playersName = [playerName, this.initRandomIAName()];
+        this.gameSettings.startingPlayer = this.initStartingPlayer();
+        this.gameSettings.timeMinute = minute;
+        this.gameSettings.timeSecond = second;
+        this.gameSettings.level = level;
+        this.gameSettings.randomBonus = randomBonus;
+        this.gameSettings.dictionary = dictionaryLanguage;
+    }
+
+    set players(players: Player[]) {
+        this.players = players;
+    }
+
+    startCountDown(){
+        
     }
 }

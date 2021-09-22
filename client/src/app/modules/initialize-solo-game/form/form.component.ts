@@ -15,8 +15,7 @@ export class FormComponent implements OnInit {
         levelInput: new FormControl('Easy'),
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-useless-constructor
-    constructor(private gameSettingsService_: GameSettingsService) {
+    constructor(private gameSettingsService: GameSettingsService) {
         // do nothing
     }
 
@@ -27,7 +26,7 @@ export class FormComponent implements OnInit {
 
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     initGame() {
-        this.gameSettingsService_.setGameSettings(
+        this.gameSettingsService.setGameSettingsSolo(
             this.form.controls.playerName.value,
             this.form.controls.minuteInput.value,
             this.form.controls.secondInput.value,
