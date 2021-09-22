@@ -1,8 +1,11 @@
 .container-bar {
     display: flex;
-    height: 98vmin;
+    height: 98vh;
+    width: 22vw;
+    min-height: 35em;
+    min-width: 18em;
     flex-direction: column;
-    margin: 1vmin;
+    margin: 1vh;
     justify-content: flex-start;
-    gap: 1em;
+    gap: 1vh;
 }
