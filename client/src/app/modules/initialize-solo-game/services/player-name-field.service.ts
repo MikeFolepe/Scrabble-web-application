@@ -16,7 +16,7 @@ export class PlayerNameFieldService {
         maxCharacter: 8,
     };
 
-    pattern: string = '^([A-Za-z][A-Za-z][A-Za-z][A-Za-z])[A-Za-z0-9!@#$%^&*_]+';
+    pattern: string = '^([A-Za-z][A-Za-z][A-Za-z][A-Za-z])[A-Za-z0-9!@#$%^&*_]*';
 
     // eslint-disable-next-line @typescript-eslint/no-useless-constructor
     constructor() {
