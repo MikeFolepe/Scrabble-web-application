@@ -14,9 +14,7 @@
             </mat-radio-group>
         </mat-tab>
     </mat-tab-group>
-    <button class="button" mat-raised-button [disabled]="!selectedMode" color="warn" routerLink="/solo-game-ia">
-        Jouer!
-    </button>
+    <button class="button" mat-raised-button [disabled]="!selectedMode" color="warn" routerLink="/solo-game-ia">Jouer!</button>
     <p>
         {{ games[selectedGameIndex] }}<br />
         {{ selectedMode }}
