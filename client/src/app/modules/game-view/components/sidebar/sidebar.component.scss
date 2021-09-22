@@ -1,12 +1,8 @@
 .container-bar {
     display: flex;
-    height: 100vh;
+    height: 98vmin;
     flex-direction: column;
-    border: 2px solid black;
-    padding: 0 5px 0 5px;
-    margin-right: 5px;
-    width: 27.5em;
-    justify-content: space-between;
+    margin: 1vmin;
+    justify-content: flex-start;
+    gap: 1em;
 }
-
-
