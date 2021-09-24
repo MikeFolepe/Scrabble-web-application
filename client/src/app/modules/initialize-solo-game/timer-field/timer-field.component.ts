@@ -1,8 +1,5 @@
-/* eslint-disable no-underscore-dangle */
 import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
-// eslint-disable-next-line no-restricted-imports
-import { TimerFieldService } from '../services/timer-field.service';
 
 @Component({
     selector: 'app-timer-field',
@@ -11,31 +8,34 @@ import { TimerFieldService } from '../services/timer-field.service';
 })
 export class TimerFieldComponent implements OnInit {
     @Input() parentForm: FormGroup;
-    minuteSelectionList: string[];
-    secondSelectionList: string[];
-    // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
-    // eslint-disable-next-line @typescript-eslint/no-useless-constructor
-    constructor(private timerField_: TimerFieldService) {
-        // do nothing
-    }
+    // Time and Second value selection list for view
+    minuteSelectionList: string[] = ['00', '01', '02', '03', '04', '05'];
+    secondSelectionList: string[] = ['00', '30'];
+    // Min and Max value of timer in HHMM to allow string comparison
+    minTimer: string = '0030';
+    maxTimer: string = '0500';
 
-    // eslint-disable-next-line @angular-eslint/no-empty-lifecycle-method
     ngOnInit(): void {
-        // this.parentForm.addControl('Timer', new FormControl('', [Validators.required]));
-        // eslint-disable-next-line no-underscore-dangle
-        this.minuteSelectionList = this.timerField_.getMinutes();
-        // eslint-disable-next-line no-underscore-dangle
-        this.secondSelectionList = this.timerField_.getSeconds();
-        // do nothing
+        // The Timer field is required for form submit
         this.parentForm.controls.minuteInput.setValidators([Validators.required]);
         this.parentForm.controls.secondInput.setValidators([Validators.required]);
     }
 
-    setTimeValidity() {
-        const isTimeValid: boolean = this.timerField_.isValidHours(
-            this.parentForm.controls.minuteInput.value,
-            this.parentForm.controls.secondInput.value,
-        );
+    isValidHours(minuteInput: string, secondInput: string): boolean {
+        // If one of the timer input is not initialized the timer field input should be in error
+        if (minuteInput === '' || secondInput === '') {
+            return false;
+        }
+        // Checking if the inputs are in range
+        return minuteInput + secondInput < this.maxTimer && minuteInput + secondInput > this.minTimer;
+    }
+
+    setTimeValidity(): void {
+        // Triggered by the click on any selection value in the view
+        // Verifies the validity of the actual timer input
+        const isTimeValid: boolean = this.isValidHours(this.parentForm.controls.minuteInput.value, this.parentForm.controls.secondInput.value);
+
+        // Set the form field validity
         if (!isTimeValid) {
             this.parentForm.controls.minuteInput.setErrors({ incorrect: true });
             this.parentForm.controls.secondInput.setErrors({ incorrect: true });

@@ -153,7 +153,7 @@ export class LetterService {
                 item.quantity--;
             }
         }
-        
+
         return letter;
     }
 }

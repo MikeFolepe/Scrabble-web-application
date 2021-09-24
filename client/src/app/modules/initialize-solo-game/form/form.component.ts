@@ -1,27 +1,32 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-
+import { GameSettingsService } from '@app/services/game-settings.service';
 @Component({
     selector: 'app-form',
     templateUrl: './form.component.html',
     styleUrls: ['./form.component.scss'],
 })
-export class FormComponent implements OnInit {
+export class FormComponent {
     form = new FormGroup({
-        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
         playerName: new FormControl(''),
-        minuteInput: new FormControl(''),
-        secondInput: new FormControl(''),
-        levelInput: new FormControl(''),
+        minuteInput: new FormControl('01'),
+        secondInput: new FormControl('00'),
+        levelInput: new FormControl('Easy'),
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-useless-constructor
-    constructor() {
+    constructor(private gameSettingsService: GameSettingsService) {
         // do nothing
     }
 
-    // eslint-disable-next-line @angular-eslint/no-empty-lifecycle-method
-    ngOnInit(): void {
-        // do nothing
+    initGame() {
+        // Use the service to submit the form inputs to set the game settings in the service
+        this.gameSettingsService.setGameSettings(
+            this.form.controls.playerName.value,
+            this.form.controls.minuteInput.value,
+            this.form.controls.secondInput.value,
+            this.form.controls.levelInput.value,
+            false,
+            '',
+        );
     }
 }

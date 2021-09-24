@@ -1,9 +1,10 @@
-<img src="https://bit.ly/3m206ss" width="400" height="80" alt="Logo Scrabble" id="logo-scrabble" />
+<app-background></app-background>
 
+<div id="logo-scrabble"><img src="https://bit.ly/3m206ss" width="400" height="80" class="img-title" alt="Logo Scrabble" /></div>
 <form id="main-form-box">
     <fieldset>
         <legend id="main-form-name">Game Settings</legend>
-        <fieldset class="form-section">
+        <fieldset class="form-section" id="player-name-box">
             <legend>Player Information</legend>
             <app-player-name-field [formGroup]="form" [parentForm]="form"></app-player-name-field>
         </fieldset>
@@ -19,8 +20,4 @@
         </fieldset>
     </fieldset>
 </form>
-
-<button mat-raised-button color="warn" [disabled]="!form.valid" routerLink="/game" >Continue</button>
-
-{{ form.value | json }}
-{{ form.valid }}
+<button mat-raised-button (click)="initGame()" id="submit-button" color="warn" [disabled]="!form.valid" routerLink="/game">Continue</button>

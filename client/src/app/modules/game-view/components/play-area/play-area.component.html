@@ -1,3 +1,7 @@
-<app-scrabble-board></app-scrabble-board>
-<button mat-raised-button color="primary" routerLink="/home" id="leave-button">Abandonner</button>
-<app-letter-easel></app-letter-easel>
+<div class="container">
+    <app-scrabble-board></app-scrabble-board>
+    <div style="display: flex; width: 15vw; height: 85vh; justify-content: flex-start; flex-direction: column; flex-wrap: wrap; gap: 5vh">
+        <app-letter-easel></app-letter-easel>
+        <button mat-raised-button color="primary" routerLink="/home">Abandonner</button>
+    </div>
+</div>

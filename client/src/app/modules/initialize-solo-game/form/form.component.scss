@@ -1,36 +1,32 @@
-// #form-section-box {
-//     width: 100px;
-//     height: 100px;
-//     background-color: bisque;
-// }
+#logo-scrabble {
+    margin-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 400px;
+    height: 80px;
+}
+
 #main-form-box {
-    display: inline;
+    margin-top: 10px;
+    width: 32%;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 #main-form-name {
-    font-size: large;
     text-align: center;
+    font-size: large;
 }
 
-// Center
-#main-form-box {
-    width: fit-content;
-    height: fit-content;
-    margin: auto;
-} // Center and sizing of the main form title text
-#main-form-name {
-    font-size: large;
+#submit-button {
     text-align: center;
-} // Center the submit button
-#form-submit-button {
-    margin: 0 auto;
     display: block;
-} // Center the submit button
-#form-submit-button {
-    margin-top: 2%;
-    margin-bottom: 2%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
-#form-section-box {
-    border-top: 50px;
-    border-bottom: 50px;
+
+#player-name-box {
+    height: 6.875rem;
 }

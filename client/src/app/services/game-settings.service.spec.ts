@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
-import { TimerFieldService } from './timer-field.service';
+import { GameSettingsService } from './game-settings.service';
 
-describe('TimerFieldService', () => {
-    let service: TimerFieldService;
+describe('GameSettingsService', () => {
+    let service: GameSettingsService;
 
     beforeEach(() => {
         TestBed.configureTestingModule({});
-        service = TestBed.inject(TimerFieldService);
+        service = TestBed.inject(GameSettingsService);
     });
 
     it('should be created', () => {

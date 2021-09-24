@@ -8,5 +8,8 @@ import { Player } from '@app/classes/player';
 })
 export class InformationPanelComponent {
     players: Player[] = [];
-    match: string = '';
+
+    // ngOnInit(): void {
+
+    // }
 }
