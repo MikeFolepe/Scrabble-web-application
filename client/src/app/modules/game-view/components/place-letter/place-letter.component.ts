@@ -107,10 +107,15 @@ export class PlaceLetterComponent {
 
         for (let letter of word) {
 
-            for (let i = 0; i < this.letterEaselComponent.letterEaselTab.length; i++) {   // check le chevalet
+            for (let letterEasel of this.letterEaselComponent.letterEaselTab) {   // check le chevalet
 
-                if (letter.toUpperCase() === this.letterEaselComponent.letterEaselTab[i].value) {
+                if (letter === letterEasel.value.toLowerCase()) {
                     isLetterExistant = true;
+                }
+                else if (letter === letter.toUpperCase()) {   // Si c'est une lettre blanche
+                    if (letterEasel.value === '*') {
+                        isLetterExistant = true;
+                    }
                 }
             }
             if (isLetterExistant === false) { // Si elle n'est pas dans le chevalet, check le plateau

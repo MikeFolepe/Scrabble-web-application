@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { EASEL_SIZE } from '@app/classes/constants';
+import { Letter } from '@app/classes/letter';
 import { LetterEasel } from '@app/classes/letter-easel';
 import { LetterService } from '@app/services/letter.service';
 @Component({
@@ -32,8 +33,13 @@ export class LetterEaselComponent implements OnInit {
     }
 
     refillEasle(): void {
+        let letterToInsert: Letter;
         for (let i = this.letterEaselTab.length; i < EASEL_SIZE; i++) {
-            this.letterEaselTab[i] = this.letterService.getRandomLetter();
+            letterToInsert = this.letterService.getRandomLetter();
+            if (letterToInsert.value === '') {
+                break;
+            }
+            this.letterEaselTab[i] = letterToInsert;
         }
     }
 }
