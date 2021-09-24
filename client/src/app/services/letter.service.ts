@@ -145,15 +145,38 @@ export class LetterService {
     randomElement: number;
     // Méthode pour prendre des lettres dans la réserve
     getRandomLetter(): Letter {
-        this.randomElement = Math.floor(Math.random() * this.reserve.length);
-        const letter: Letter = this.reserve[this.randomElement];
-        // Mise à jour de la réserve
-        for (const item of this.reserve) {
-            if (item.value === letter.value) {
-                item.quantity--;
-            }
+
+        const letterEmpty: Letter =
+        {
+            value: '',
+            quantity: 0,
+            points: 0,
         }
 
+        if (this.isReserveEmpty()) // Si la réserve est vide
+        {
+            return letterEmpty;
+        }
+
+        this.randomElement = Math.floor(Math.random() * this.reserve.length);
+        let letter: Letter = this.reserve[this.randomElement];
+
+        while (this.reserve[this.randomElement].quantity === 0 && !this.isReserveEmpty()) {
+            this.randomElement = Math.floor(Math.random() * this.reserve.length);
+            letter = this.reserve[this.randomElement];
+        }
+
+        // Mise à jour de la réserve
+        this.reserve[this.randomElement].quantity--;
         return letter;
+    }
+
+    isReserveEmpty(): boolean {
+        for (const letter of this.reserve) {
+            if (letter.quantity > 0) {
+                return false;
+            }
+        }
+        return true;
     }
 }

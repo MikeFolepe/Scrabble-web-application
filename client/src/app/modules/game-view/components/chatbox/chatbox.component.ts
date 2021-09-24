@@ -1,4 +1,5 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Vec2 } from '@app/classes/vec2';
 import { PlaceLetterComponent } from '../place-letter/place-letter.component';
 
 @Component({
@@ -35,6 +36,7 @@ export class ChatboxComponent {
 
     sendPlayerCommand() {
         if (this.isValid()) {
+            this.typeMessage = 'player';
             // Si valide, call les fonctions respectives aux commandes
             switch (this.command) {
                 case 'debug': {
@@ -54,17 +56,15 @@ export class ChatboxComponent {
 
                     let positionSplitted = messageSplitted[1].split(/([0-9]+)/);
 
-                    let positionX = Number(positionSplitted[1]) - 1;             // String contenant le nombre de la position en x
-                    let positionY = positionSplitted[0].charCodeAt(0) - 97;      // String contenant la lettre représentant la position en y
+                    // Vecteur contenant la position de départ du mot qu'on veut placer
+                    let position: Vec2 = {
+                        x: Number(positionSplitted[1]) - 1,
+                        y: positionSplitted[0].charCodeAt(0) - 97
+                    };
                     let orientation = positionSplitted[2];
 
-                    if (this.placeComponent.place(positionX, positionY, orientation, messageSplitted[2])) {
-                        this.typeMessage = 'player';
-                        this.listTypes.push(this.typeMessage);
-                    }
-                    else {
+                    if (this.placeComponent.place(position, orientation, messageSplitted[2]) === false) {
                         this.typeMessage = 'error';
-                        this.listTypes.push(this.typeMessage);
                         this.message = "ERREUR : La commande est impossible à réaliser";
                     }
                     break;
@@ -76,9 +76,9 @@ export class ChatboxComponent {
         }
         else {   // Si invalide -> erreur
             this.typeMessage = 'error';
-            this.listTypes.push(this.typeMessage);
         }
         this.command = '';
+        this.listTypes.push(this.typeMessage);
         this.listMessages.push(this.message); // Add le message et update l'affichage de la chatbox
     }
 
