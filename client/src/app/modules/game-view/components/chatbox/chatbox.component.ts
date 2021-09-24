@@ -8,7 +8,7 @@ import { PlaceLetterComponent } from '../place-letter/place-letter.component';
 })
 export class ChatboxComponent {
 
-    @ViewChild(PlaceLetterComponent) placeComponent: PlaceLetterComponent; // Constructeur de PlaceLetterComponent, donc fill la map
+    @ViewChild(PlaceLetterComponent) placeComponent: PlaceLetterComponent;
     @ViewChild('scrollMe') private myScrollContainer: ElementRef;
 
     message: string = '';
@@ -35,44 +35,50 @@ export class ChatboxComponent {
 
     sendPlayerCommand() {
         if (this.isValid()) {
-            this.typeMessage = 'player';
-            this.listTypes.push(this.typeMessage);
-        } else {
+            // Si valide, call les fonctions respectives aux commandes
+            switch (this.command) {
+                case 'debug': {
+
+                    break;
+                }
+                case 'passer': {
+
+                    break;
+                }
+                case 'echanger': {
+
+                    break;
+                }
+                case 'placer': {
+                    let messageSplitted = this.message.split(/\s/);
+
+                    let positionSplitted = messageSplitted[1].split(/([0-9]+)/);
+
+                    let positionX = Number(positionSplitted[1]) - 1;             // String contenant le nombre de la position en x
+                    let positionY = positionSplitted[0].charCodeAt(0) - 97;      // String contenant la lettre représentant la position en y
+                    let orientation = positionSplitted[2];
+
+                    if (this.placeComponent.place(positionX, positionY, orientation, messageSplitted[2])) {
+                        this.typeMessage = 'player';
+                        this.listTypes.push(this.typeMessage);
+                    }
+                    else {
+                        this.typeMessage = 'error';
+                        this.listTypes.push(this.typeMessage);
+                        this.message = "ERREUR : La commande est impossible à réaliser";
+                    }
+                    break;
+                }
+                default: {
+                    break;
+                }
+            }
+        }
+        else {   // Si invalide -> erreur
             this.typeMessage = 'error';
             this.listTypes.push(this.typeMessage);
         }
-        // Call les fonctions respectives aux commandes
-
-        switch (this.command) {
-            case 'debug': {
-
-                break;
-            }
-            case 'passer': {
-
-                break;
-            }
-            case 'echanger': {
-
-                break;
-            }
-            case 'placer': {
-                let messageSplitted = this.message.split(/\s/);
-
-                let positionSplitted = messageSplitted[1].split(/([0-9]+)/);
-
-                let positionX = Number(positionSplitted[1]) - 1;             // String contenant le nombre de la position en x
-                let positionY = positionSplitted[0].charCodeAt(0) - 97;      // String contenant la lettre représentant la position en y
-                let orientation = positionSplitted[2];
-
-                this.placeComponent.place(positionX, positionY, orientation, messageSplitted[2]);
-                break;
-            }
-            default: {
-                break;
-            }
-        }
-
+        this.command = '';
         this.listMessages.push(this.message); // Add le message et update l'affichage de la chatbox
     }
 
@@ -88,20 +94,19 @@ export class ChatboxComponent {
         this.listMessages.push(opponentMessage);
     }
 
-    // TODO VALIDATION
     isValid(): boolean {
-        // Check les erreurs ici (syntaxe, invalide, impossible à exécuter)
+        // Check les erreurs ici (syntaxe, invalide)
 
         if (this.message[0] === '!') {
-            // Si c'est une commande, on valide la syntaxe
-            return this.isSyntaxValid() && this.isInputValid() && this.isPossible();
+            // Si c'est une commande, on la valide
+            return this.isInputValid() && this.isSyntaxValid();
         }
         return true;
     }
 
-    isSyntaxValid(): boolean {
-        const regexDebug = /^!debug$/g;
-        const regexPasser = /^!passer$/g;
+    isInputValid(): boolean {
+        const regexDebug = /^!debug/g;
+        const regexPasser = /^!passer/g;
         const regexEchanger = /^!échanger/g;
         const regexPlacer = /^!placer/g;
 
@@ -109,11 +114,11 @@ export class ChatboxComponent {
             return true;
         }
 
-        this.message = 'Erreur : La syntaxe est invalide';
+        this.message = "ERREUR : L'entrée est invalide";
         return false;
     }
 
-    isInputValid(): boolean {
+    isSyntaxValid(): boolean {
         const regexDebug = /^!debug$/g;
         const regexPasser = /^!passer$/g;
         const regexEchanger = /^!échanger\s([a-z]|[*]){1,7}$/g;
@@ -131,13 +136,9 @@ export class ChatboxComponent {
             this.command = 'placer';
         } else {
             valid = false;
-            this.message = "Erreur : L'entrée est invalide";
+            this.message = "ERREUR : La syntaxe est invalide";
         }
         return valid;
-    }
-
-    isPossible(): boolean {
-        return true;
     }
 
     scrollToBottom(): void {
