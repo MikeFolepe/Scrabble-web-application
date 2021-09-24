@@ -1,7 +1,29 @@
-#leave-button {
-    width: 10em;
-    height: 3.5em;
-    position: absolute;
-    top: 650px;
-    left: 1250px;
+.container {
+    display: flex;
+    width: 75vw;
+    height: 90vh;
+    min-height: 35em;
+    min-width: 55em;
+    margin: 1em 0 0 0;
+    justify-content: flex-start;
+    flex-direction: row;
+    gap: 5em;
+}
+
+/*.side-board-container {
+    display: flex;
+    width: 15vw;
+    height: 90vh;
+    min-height: 35em;
+    min-width: 55em;
+    justify-content: flex-start;
+    flex-direction: column;
+    flex-wrap: wrap;
+    border: 3px solid #bbb;
+    border-radius: 6px;
+}*/
+
+button {
+    height: 3em;
+    width: 8em;
 }

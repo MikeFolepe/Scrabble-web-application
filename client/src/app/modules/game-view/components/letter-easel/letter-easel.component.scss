@@ -1,26 +1,20 @@
-mat-grid-list{
-    position:absolute;
-    bottom : 30em;
-    left: 83.5em;
-    width: 25em;
-}
-
-mat-grid-tile{
+mat-grid-tile {
+    margin-bottom: 2em;
     border: 1px solid black;
     background-color: lightgreen;
 }
 
-p{
+p {
     position: relative;
     top: 40%;
     left: 20%;
 }
 
-h2{
+h2 {
     font-size: 20px;
 }
 
-h1{
+h1 {
     text-shadow: 0 0 3px lightyellow;
     text-align: center;
 }
