@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { GameSettings } from '@app/classes/game-settings';
 import { Subject } from 'rxjs';
+import { GameSettings } from '@app/classes/game-settings';
+
 @Injectable({
     providedIn: 'root',
 })

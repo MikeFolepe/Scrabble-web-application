@@ -10,7 +10,6 @@ import { GameSettings, StartingPlayer } from '@app/classes/game-settings';
 })
 export class FormComponent {
     form = new FormGroup({
-        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
         playerName: new FormControl(''),
         minuteInput: new FormControl('01'),
         secondInput: new FormControl('00'),
