@@ -1,7 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable max-classes-per-file */
 import { LetterEasel } from './letter-easel';
-//import { PlayStrategy } from './play-strategy';
 export class Player {
     name_: string;
     score_: number;
@@ -31,13 +30,13 @@ export class Player {
 }
 
 export class PlayerIA extends Player {
-    //playStrategy_: PlayStrategy;
+    // playStrategy_: PlayStrategy;
     // eslint-disable-next-line @typescript-eslint/no-useless-constructor
     constructor(name: string, isTour: boolean) {
         super(name, isTour);
     }
     play(): void {
-        //this.playStrategy_.execute(this);
+        // this.playStrategy_.execute(this);
     }
 }
 

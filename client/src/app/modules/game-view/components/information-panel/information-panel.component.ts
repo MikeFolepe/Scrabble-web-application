@@ -8,7 +8,6 @@ import { Player } from '@app/classes/player';
 })
 export class InformationPanelComponent {
     players: Player[] = [];
-    constructor() {}
 
     // ngOnInit(): void {
 

@@ -1,6 +1,6 @@
-<mat-grid-list cols="7" rows="1">
-    <h1>CHEVALET</h1>
-    <mat-grid-tile *ngFor="let item of letterEaselTab" ><h2>{{item.value}}</h2>
-            <p>{{item.points}}</p>
-    </mat-grid-tile>
-</mat-grid-list>
+<div class="easel-container">
+    <div class="letter-container" *ngFor="let letter of letterEaselTab">
+        <h2>{{ letter.value }}</h2>
+        <p>{{ letter.points }}</p>
+    </div>
+</div>
