@@ -1,14 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Letter } from '@app/classes/letter';
-import { EASEL_SIZE, RESERVE } from '@app/classes/constants';
-
+import { EASEL_SIZE, RESERVE, FONT_SIZE_MAX, FONT_SIZE_MIN, DEFAULT_FONT_SIZE } from '@app/classes/constants';
 @Injectable({
     providedIn: 'root',
 })
 export class LetterService {
 
-
     randomElement: number;
+    fontSize: number = DEFAULT_FONT_SIZE;
     // Méthode pour prendre des lettres dans la réserve
     getRandomLetter(): Letter {
         this.randomElement = Math.floor(Math.random() * RESERVE.length);
@@ -34,5 +33,19 @@ export class LetterService {
         }
 
         return tab;
+    }
+
+    getFontSize() {
+        return this.fontSize;
+    }
+
+    setFontSize(fontSize: number) {
+        if (fontSize > FONT_SIZE_MAX) {
+            this.fontSize = FONT_SIZE_MAX;
+        } else if (fontSize < FONT_SIZE_MIN) {
+            this.fontSize = FONT_SIZE_MIN;
+        } else {
+            this.fontSize = fontSize;
+        }
     }
 }
