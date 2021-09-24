@@ -11,6 +11,9 @@ import { InformationPanelComponent } from './components/information-panel/inform
 import { LetterEaselComponent } from './components/letter-easel/letter-easel.component';
 import { ScrabbleBoardComponent } from './components/scrabble-board/scrabble-board.component';
 import { PlaceLetterComponent } from './components/place-letter/place-letter.component';
+import { FontSizeComponent } from './components/font-size/font-size.component';
+import { CountdownComponent } from './components/countdown/countdown.component';
+
 @NgModule({
     declarations: [
         GameViewComponent,
@@ -21,6 +24,8 @@ import { PlaceLetterComponent } from './components/place-letter/place-letter.com
         SidebarComponent,
         ChatboxComponent,
         PlaceLetterComponent,
+        FontSizeComponent,
+        CountdownComponent,
     ],
     imports: [CommonModule, AppMaterialModule, AppRoutingModule, FormsModule],
     exports: [GameViewComponent],

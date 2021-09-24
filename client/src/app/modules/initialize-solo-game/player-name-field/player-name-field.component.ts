@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
-import { Range } from '@app/classes/Range';
+import { Range } from '@app/classes/range';
 @Component({
     selector: 'app-player-name-field',
     templateUrl: './player-name-field.component.html',
@@ -16,6 +16,7 @@ export class PlayerNameFieldComponent implements OnInit {
     // Special character that are allowed
     specialChar: string = '@#$%^&*_';
     // Validation pattern which is combination of required pattern and special char
+    // eslint-disable-next-line no-invalid-this
     validationPattern: string = '^([A-Za-z][A-Za-z][A-Za-z][A-Za-z])[A-Za-z0-9' + this.specialChar + ']*';
 
     ngOnInit(): void {

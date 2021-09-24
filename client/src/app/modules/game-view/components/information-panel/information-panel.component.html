@@ -7,6 +7,10 @@
 
     <h1 class="header-item">Panneau d'information</h1>
     <ul id="playersList">
-        <li *ngFor="let player of players"></li>
+        <li *ngFor = "let player of players">
+            <p> Nom : {{player.name}} </p>
+            <p>Score : {{player.score}}</p>
+        </li>
+
     </ul>
 </div>
