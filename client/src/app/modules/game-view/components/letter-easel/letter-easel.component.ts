@@ -9,15 +9,21 @@ import { EASEL_SIZE } from '@app/classes/constants';
 })
 export class LetterEaselComponent implements OnInit {
     letterEaselTab: LetterEasel[] = [];
+    fontSize: number;
     constructor(private letterService: LetterService) {}
 
     ngOnInit(): void {
         this.initializeTab();
+        this.fontSize= this.letterService.getFontSize();
     }
 
     initializeTab(): void {
         for (let i = 0; i < EASEL_SIZE; i++) {
             this.letterEaselTab[i] = this.letterService.getRandomLetter();
         }
+    }
+    
+    setFontSize(fontSize:number){
+        this.letterService.setFontSize(fontSize);
     }
 }

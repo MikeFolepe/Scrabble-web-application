@@ -3,6 +3,3 @@ export interface Tour {
     time: number;
     activePlayer: Player;
 }
-
-
-expor

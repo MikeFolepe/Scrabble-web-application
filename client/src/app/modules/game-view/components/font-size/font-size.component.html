@@ -1,0 +1,7 @@
+<div>
+    <p> font-size </p>
+    <button (click)="decrement()" title="smaller">-</button>
+    <button (click)="increment()" title="bigger">+</button>
+    <!-- <label [style.font-size.px]="fontSize">FontSize: {{fontSize}}px</label> -->
+    <label>FontSize (px): <input [(ngModel)]="fontSize"></label>
+  </div>
