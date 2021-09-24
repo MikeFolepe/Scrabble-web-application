@@ -1,3 +1,4 @@
+/* eslint-disable no-invalid-this */
 import { Injectable } from '@angular/core';
 import { BOARD_SIZE, DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/classes/constants';
 import { Vec2 } from '@app/classes/vec2';
@@ -86,7 +87,7 @@ export class GridService {
             startPosition.x = i * this.caseWidth - this.caseWidth / 2;
             for (let j = 0; j < 8; j++) {
                 startPosition.y = j * this.caseWidth - this.caseWidth / 2;
-                if (this.doubleLetters.some((element) => element.x == i && element.y == j)) {
+                if (this.doubleLetters.some((element) => element.x === i && element.y === j)) {
                     this.drawWord(this.gridContext, 'Lettre x2', startPosition);
                     this.drawWord(this.gridContext, 'Lettre x2', { x: startPosition.x - 2 * i * this.caseWidth, y: startPosition.y });
                     this.drawWord(this.gridContext, 'Lettre x2', { x: startPosition.x, y: startPosition.y - 2 * j * this.caseWidth });
@@ -94,7 +95,7 @@ export class GridService {
                         x: startPosition.x - 2 * i * this.caseWidth,
                         y: startPosition.y - 2 * j * this.caseWidth,
                     });
-                } else if (this.tripleLetters.some((element) => element.x == i && element.y == j)) {
+                } else if (this.tripleLetters.some((element) => element.x === i && element.y === j)) {
                     this.drawWord(this.gridContext, 'Lettre x3', startPosition);
                     this.drawWord(this.gridContext, 'Lettre x3', { x: startPosition.x - 2 * i * this.caseWidth, y: startPosition.y });
                     this.drawWord(this.gridContext, 'Lettre x3', { x: startPosition.x, y: startPosition.y - 2 * j * this.caseWidth });
@@ -102,7 +103,7 @@ export class GridService {
                         x: startPosition.x - 2 * i * this.caseWidth,
                         y: startPosition.y - 2 * j * this.caseWidth,
                     });
-                } else if (this.doubleWords.some((element) => element.x == i && element.y == j)) {
+                } else if (this.doubleWords.some((element) => element.x === i && element.y === j)) {
                     this.drawWord(this.gridContext, 'Word x2', startPosition);
                     this.drawWord(this.gridContext, 'Word x2', { x: startPosition.x - 2 * i * this.caseWidth, y: startPosition.y });
                     this.drawWord(this.gridContext, 'Word x2', { x: startPosition.x, y: startPosition.y - 2 * j * this.caseWidth });
@@ -110,7 +111,7 @@ export class GridService {
                         x: startPosition.x - 2 * i * this.caseWidth,
                         y: startPosition.y - 2 * j * this.caseWidth,
                     });
-                } else if (this.tripleWords.some((element) => element.x == i && element.y == j)) {
+                } else if (this.tripleWords.some((element) => element.x === i && element.y === j)) {
                     this.drawWord(this.gridContext, 'Word x3', startPosition);
                     this.drawWord(this.gridContext, 'Word x3', { x: startPosition.x - 2 * i * this.caseWidth, y: startPosition.y });
                     this.drawWord(this.gridContext, 'Word x3', { x: startPosition.x, y: startPosition.y - 2 * j * this.caseWidth });
@@ -118,7 +119,6 @@ export class GridService {
                         x: startPosition.x - 2 * i * this.caseWidth,
                         y: startPosition.y - 2 * j * this.caseWidth,
                     });
-                } else {
                 }
             }
         }
@@ -130,13 +130,13 @@ export class GridService {
             startPosition.x = i * this.caseWidth - this.caseWidth / 2;
             for (let j = 0; j < 8; j++) {
                 startPosition.y = j * this.caseWidth - this.caseWidth / 2;
-                if (this.doubleLetters.some((element) => element.x == i && element.y == j)) {
+                if (this.doubleLetters.some((element) => element.x === i && element.y === j)) {
                     this.doubleLetter(gridContext, startPosition);
-                } else if (this.tripleLetters.some((element) => element.x == i && element.y == j)) {
+                } else if (this.tripleLetters.some((element) => element.x === i && element.y === j)) {
                     this.tripleLetter(gridContext, startPosition);
-                } else if (this.doubleWords.some((element) => element.x == i && element.y == j)) {
+                } else if (this.doubleWords.some((element) => element.x === i && element.y === j)) {
                     this.doubleWord(gridContext, startPosition);
-                } else if (this.tripleWords.some((element) => element.x == i && element.y == j)) {
+                } else if (this.tripleWords.some((element) => element.x === i && element.y === j)) {
                     this.tripleWord(gridContext, startPosition);
                 } else {
                     gridContext.fillStyle = 'lightGrey';

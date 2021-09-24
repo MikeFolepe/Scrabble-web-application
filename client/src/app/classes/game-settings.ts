@@ -1,4 +1,3 @@
-
 export enum StartingPlayer {
     Player1,
     Player2,
