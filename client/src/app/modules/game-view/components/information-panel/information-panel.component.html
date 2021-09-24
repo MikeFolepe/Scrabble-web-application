@@ -1,9 +1,12 @@
 <div class="container">
-    <h1>Panneau d'information</h1>
+    <div class=fakeMenu>
+        <div class="fakeButtons fakeClose"></div>
+        <div class="fakeButtons fakeMinimize"></div>
+        <div class="fakeButtons fakeZoom"></div>
+    </div>
+
+    <h1 class="header-item">Panneau d'information</h1>
     <ul id="playersList">
-        <li *ngFor = "let player of players">
-            
-        </li>
+        <li *ngFor="let player of players"></li>
     </ul>
 </div>
-

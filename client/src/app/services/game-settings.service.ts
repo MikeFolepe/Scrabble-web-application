@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import { Injectable } from '@angular/core';
-import { GameSettings, StartingPlayer } from '@app/classes/gameSettings';
+import { GameSettings, StartingPlayer } from '@app/classes/game-settings';
 
 @Injectable({
     providedIn: 'root',
