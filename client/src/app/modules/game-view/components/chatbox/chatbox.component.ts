@@ -1,4 +1,5 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
+import { PlaceLetterComponent } from '../place-letter/place-letter.component';
 
 @Component({
     selector: 'app-chatbox',
@@ -6,12 +7,14 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
     styleUrls: ['./chatbox.component.scss'],
 })
 export class ChatboxComponent {
-    // https://stackoverflow.com/questions/35232731/angular-2-scroll-to-bottom-chat-style
 
+    @ViewChild(PlaceLetterComponent) placeComponent: PlaceLetterComponent; // Constructeur de PlaceLetterComponent, donc fill la map
     @ViewChild('scrollMe') private myScrollContainer: ElementRef;
 
     message: string = '';
-    type: string = '';
+    typeMessage: string = '';
+    command: string = '';
+
     listMessages: string[] = [];
     listTypes: string[] = [];
 
@@ -32,24 +35,56 @@ export class ChatboxComponent {
 
     sendPlayerCommand() {
         if (this.isValid()) {
-            this.type = 'player';
-            this.listTypes.push(this.type);
+            this.typeMessage = 'player';
+            this.listTypes.push(this.typeMessage);
         } else {
-            this.type = 'error';
-            this.listTypes.push(this.type);
+            this.typeMessage = 'error';
+            this.listTypes.push(this.typeMessage);
         }
+        // Call les fonctions respectives aux commandes
+
+        switch (this.command) {
+            case 'debug': {
+
+                break;
+            }
+            case 'passer': {
+
+                break;
+            }
+            case 'echanger': {
+
+                break;
+            }
+            case 'placer': {
+                let messageSplitted = this.message.split(/\s/);
+
+                let positionSplitted = messageSplitted[1].split(/([0-9]+)/);
+
+                let positionX = Number(positionSplitted[1]) - 1;             // String contenant le nombre de la position en x
+                let positionY = positionSplitted[0].charCodeAt(0) - 97;      // String contenant la lettre représentant la position en y
+                let orientation = positionSplitted[2];
+
+                this.placeComponent.place(positionX, positionY, orientation, messageSplitted[2]);
+                break;
+            }
+            default: {
+                break;
+            }
+        }
+
         this.listMessages.push(this.message); // Add le message et update l'affichage de la chatbox
     }
 
     sendSystemMessage(systemMessage: string) {
-        this.type = 'system';
-        this.listTypes.push(this.type);
+        this.typeMessage = 'system';
+        this.listTypes.push(this.typeMessage);
         this.listMessages.push(systemMessage);
     }
 
     sendOpponentMessage(opponentMessage: string) {
-        this.type = 'opponent';
-        this.listTypes.push(this.type);
+        this.typeMessage = 'opponent';
+        this.listTypes.push(this.typeMessage);
         this.listMessages.push(opponentMessage);
     }
 
@@ -73,6 +108,7 @@ export class ChatboxComponent {
         if (regexDebug.test(this.message) || regexPasser.test(this.message) || regexEchanger.test(this.message) || regexPlacer.test(this.message)) {
             return true;
         }
+
         this.message = 'Erreur : La syntaxe est invalide';
         return false;
     }
@@ -81,14 +117,25 @@ export class ChatboxComponent {
         const regexDebug = /^!debug$/g;
         const regexPasser = /^!passer$/g;
         const regexEchanger = /^!échanger\s([a-z]|[*]){1,7}$/g;
-        const regexPlacer = /^!placer\s[a-o]([1-9]|1[0-5])\s[hv]\s[a-zA-Z]+/g;
+        const regexPlacer = /^!placer\s([a-o]([1-9]|1[0-5])[hv])\s([a-zA-Z]|[*])+/g;
 
-        if (regexDebug.test(this.message) || regexPasser.test(this.message) || regexPlacer.test(this.message) || regexEchanger.test(this.message)) {
-            return true;
+        let valid = true;
+
+        if (regexDebug.test(this.message)) {
+            this.command = 'debug';
+        } else if (regexPasser.test(this.message)) {
+            this.command = 'passer';
+        } else if (regexEchanger.test(this.message)) {
+            this.command = 'echanger';
+        } else if (regexPlacer.test(this.message)) {
+            this.command = 'placer';
+        } else {
+            valid = false;
+            this.message = "Erreur : L'entrée est invalide";
         }
-        this.message = "Erreur : L'entrée est invalide";
-        return false;
+        return valid;
     }
+
     isPossible(): boolean {
         return true;
     }
