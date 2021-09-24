@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Player } from '@app/classes/Player';
+import { Player } from '@app/classes/player';
 //import { Tour } from '@app/classes/tour';
 
 @Component({
