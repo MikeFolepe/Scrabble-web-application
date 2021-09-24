@@ -1,14 +1,17 @@
+
 export enum StartingPlayer {
     Player1,
     Player2,
 }
 
-export interface GameSettings {
-    playersName: string[];
-    startingPlayer: StartingPlayer;
-    timeMinute: string;
-    timeSecond: string;
-    level: string;
-    randomBonus: boolean | undefined;
-    dictionary: string | undefined;
+export class GameSettings {
+    constructor(
+        public playersName: string[],
+        public startingPlayer: StartingPlayer,
+        public timeMinute: string,
+        public timeSecond: string,
+        public level: string,
+        public randomBonus: boolean,
+        public dictionary: string,
+    ) {}
 }

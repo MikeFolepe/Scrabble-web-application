@@ -1,6 +1,4 @@
-import { LetterEasel } from './letter-easel';
-
-export class Letter implements LetterEasel {
+export interface Letter {
     value: string;
     quantity: number;
     points: number;
