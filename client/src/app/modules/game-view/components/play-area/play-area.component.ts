@@ -5,4 +5,7 @@ import { Component } from '@angular/core';
     templateUrl: './play-area.component.html',
     styleUrls: ['./play-area.component.scss'],
 })
-export class PlayAreaComponent {}
+export class PlayAreaComponent {
+    // isTour: boolean = true;
+    // timechoise: number = 60000;
+}

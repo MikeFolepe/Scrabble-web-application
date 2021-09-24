@@ -2,13 +2,20 @@
     min-height: 20em;
     border: 1px solid black;
     margin: auto;
-    background: rgb(26,36,0);
-    background: linear-gradient(90deg, rgba(26,36,0,0.465721322708771) 0%, rgba(222,179,20,0.6617997540813201) 75%);
+    background: rgb(26, 36, 0);
+    background: linear-gradient(90deg, rgba(26, 36, 0, 0.465721322708771) 0%, rgba(222, 179, 20, 0.6617997540813201) 75%);
     position: relative;
-    top:1em;
-    
+    top: 1em;
 }
 
-h1{
+h1 {
     text-shadow: 0 0 2px red;
+}
+
+#Pass-button {
+    width: 10em;
+    height: 3.5em;
+    position: absolute;
+    top: 550px;
+    left: 1250px;
 }

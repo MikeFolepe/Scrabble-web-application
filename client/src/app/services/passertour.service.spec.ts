@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
-import { PlayerService } from './player.service';
+import { PassertourService } from './passertour.service';
 
-describe('PlayerService', () => {
-    let service: PlayerService;
+describe('PassertourService', () => {
+    let service: PassertourService;
 
     beforeEach(() => {
         TestBed.configureTestingModule({});
-        service = TestBed.inject(PlayerService);
+        service = TestBed.inject(PassertourService);
     });
 
     it('should be created', () => {

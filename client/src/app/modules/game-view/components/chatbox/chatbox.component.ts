@@ -1,4 +1,5 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
+import { PassertourService } from '@app/services/passertour.service';
 
 @Component({
     selector: 'app-chatbox',
@@ -15,13 +16,21 @@ export class ChatboxComponent {
     listMessages: string[] = [];
     listTypes: string[] = [];
 
+    constructor(public passertourService: PassertourService) {}
+
     keyEvent(event: KeyboardEvent) {
         if (event.key === 'Enter') {
             event.preventDefault();
             this.sendSystemMessage('Message du système');
             this.sendOpponentMessage('Le joueur virtuel fait...');
             this.sendPlayerCommand();
-
+            /// ///////////////////////////////////////////////
+            // this.passertourService.setMessage(this.message);
+            // this.messagetext = this.passertourService.getmessage();
+            // if (this.messagetext === '!passer') {
+            //     this.issTour = true;
+            // }
+            /// ///////////////////////////////////////////////
             this.message = ''; // Clear l'input
             setTimeout(() => {
                 // Le timeout permet de scroll jusqu'au dernier élément ajouté

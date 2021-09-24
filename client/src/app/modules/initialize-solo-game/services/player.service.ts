@@ -8,11 +8,6 @@ export interface Player {
 
 export class PlayerService {
     player: Player;
-    // eslint-disable-next-line @typescript-eslint/no-useless-constructor
-    constructor() {
-        // do nothing
-        this.player.id++;
-    }
 
     initializeName(playerName: string) {
         this.player.nom = playerName;
