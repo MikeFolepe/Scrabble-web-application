@@ -1,3 +1,4 @@
+/* eslint-disable no-invalid-this */
 import { Injectable } from '@angular/core';
 import { BOARD_SIZE, DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/classes/constants';
 import { Vec2 } from '@app/classes/vec2';

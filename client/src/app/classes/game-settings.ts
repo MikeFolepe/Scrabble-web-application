@@ -2,6 +2,7 @@
 export enum StartingPlayer {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     humanPlayer,
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     iaPlayer,
 }
 /* eslint-disable prettier/prettier */
