@@ -11,6 +11,7 @@ import { InformationPanelComponent } from './components/information-panel/inform
 import { LetterEaselComponent } from './components/letter-easel/letter-easel.component';
 import { ScrabbleBoardComponent } from './components/scrabble-board/scrabble-board.component';
 import { FontSizeComponent } from './components/font-size/font-size.component';
+import { CountdownComponent } from './components/countdown/countdown.component';
 
 @NgModule({
     declarations: [
@@ -22,6 +23,7 @@ import { FontSizeComponent } from './components/font-size/font-size.component';
         SidebarComponent,
         ChatboxComponent,
         FontSizeComponent,
+        CountdownComponent,
     ],
     imports: [CommonModule, AppMaterialModule, AppRoutingModule, FormsModule],
     exports: [GameViewComponent],

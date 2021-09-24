@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs';
 import { GameSettings } from '@app/classes/game-settings';
 import { PlayerService } from '@app/services/player.service';
 import { PLAYERS_NUMBER } from '@app/classes/constants';
+import { TourService } from '@app/services/tour.service';
 
 @Component({
     selector: 'app-information-panel',
@@ -15,9 +16,16 @@ import { PLAYERS_NUMBER } from '@app/classes/constants';
 export class InformationPanelComponent implements OnInit, OnDestroy {
     players: Player[] = new Array<Player>();
     gameSettings: GameSettings;
+    tour: boolean;
     settingsSubscription: Subscription = new Subscription();
     playerSubscription: Subscription = new Subscription();
-    constructor(private gameSettingsService: GameSettingsService, private letterService: LetterService, private playerService: PlayerService) {}
+    tourSubscription: Subscription = new Subscription();
+    constructor(
+        private gameSettingsService: GameSettingsService,
+        private letterService: LetterService,
+        private playerService: PlayerService,
+        private tourService: TourService,
+    ) {}
     ngOnInit(): void {
         this.initializePlayers();
     }
@@ -36,6 +44,12 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
             this.players = playersFromSubject;
         });
         this.playerService.emitPlayers();
+        this.tourService.initializeTour(Boolean(this.gameSettings.startingPlayer.valueOf()));
+
+        this.tourSubscription = this.tourService.tourSubject.subscribe((tourSubject: boolean) => {
+            this.tour = tourSubject;
+        });
+        this.tourService.emitTour();
     }
 
     ngOnDestroy() {

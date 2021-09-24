@@ -30,7 +30,7 @@ export class FormComponent {
     }
 
     initStartingPlayer() {
-        const enumLength = Object.keys(StartingPlayer).length;
+        const enumLength = Object.keys(StartingPlayer).length / 2;
         // Number of seconds since 1st january 1970
         let randomNumber = new Date().getTime();
         // Multiplication by a random number [0,1[, which we get the floor
