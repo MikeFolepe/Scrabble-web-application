@@ -60,7 +60,7 @@ export class GridService {
     //     }
     // }
 
-    drawGrid() {      
+    drawGrid() {
         this.writeColumnsIndex(this.gridContext, 15);
         this.writeLinesIndex(this.gridContext, 15);
         this.gridContext.translate(DEFAULT_WIDTH / 2 + this.caseWidth / 2, DEFAULT_HEIGHT / 2 + this.caseWidth / 2);

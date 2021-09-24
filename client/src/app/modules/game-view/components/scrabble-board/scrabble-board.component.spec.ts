@@ -33,7 +33,9 @@ describe('ScrabbleBoardComponent', () => {
     it('mouseHitDetect should not change the mouse position if it is not a left click', () => {
         const expectedPosition: Vec2 = { x: 0, y: 0 };
         mouseEvent = {
+            // eslint-disable-next-line @typescript-eslint/no-magic-numbers
             offsetX: expectedPosition.x + 10,
+            // eslint-disable-next-line @typescript-eslint/no-magic-numbers
             offsetY: expectedPosition.y + 10,
             button: 1,
         } as MouseEvent;
