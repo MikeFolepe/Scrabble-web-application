@@ -1,3 +1,5 @@
+/* eslint-disable no-useless-escape */
+/* eslint-disable prettier/prettier */
 import { Injectable } from '@angular/core';
 
 export interface CharRange {
@@ -11,9 +13,10 @@ export interface CharRange {
 export class PlayerNameFieldService {
     charRange: CharRange = {
         minCharacter: 4,
-        maxCharacter: 12,
+        maxCharacter: 8,
     };
-    pattern: string = '[a-zA-Z]*';
+
+    pattern: string = '^([A-Za-z][A-Za-z][A-Za-z][A-Za-z])[A-Za-z0-9!@#$%^&*_]+';
 
     // eslint-disable-next-line @typescript-eslint/no-useless-constructor
     constructor() {
