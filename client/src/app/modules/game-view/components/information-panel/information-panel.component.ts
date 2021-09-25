@@ -44,7 +44,7 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
         /** *********************SOLUTION TEMPORAIRE *******************************/
         let player = new Player(0, this.gameSettings.playersName[0], 0, this.letterService.getRandomLetters());
         this.playerService.addPlayer(player);
-        player = new PlayerIA(1, this.gameSettings.playersName[0], 0, this.letterService.getRandomLetters());
+        player = new PlayerIA(1, this.gameSettings.playersName[1], 0, this.letterService.getRandomLetters());
         this.playerService.addPlayer(player);
         /** ********************************************************************** */
         this.playerSubscription = this.playerService.playerSubject.subscribe((playersFromSubject: Player[]) => {
