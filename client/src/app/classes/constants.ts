@@ -7,7 +7,7 @@ export const BOARD_SIZE = 16;
 export const EASEL_SIZE = 7;
 export const PLAYERS_NUMBER = 2;
 export const FONT_SIZE_MAX = 20;
-export const FONT_SIZE_MIN = 5;
+export const FONT_SIZE_MIN = 10;
 export const DEFAULT_FONT_SIZE = 13;
 export const SIZE_VARIATION = 1;
 export enum MouseButton {

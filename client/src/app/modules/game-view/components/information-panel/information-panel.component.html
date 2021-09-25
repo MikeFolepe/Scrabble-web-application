@@ -1,16 +1,16 @@
 <div class="container">
-    <div class=fakeMenu>
+    <div class="fakeMenu">
         <div class="fakeButtons fakeClose"></div>
         <div class="fakeButtons fakeMinimize"></div>
         <div class="fakeButtons fakeZoom"></div>
     </div>
 
     <h1 class="header-item">Panneau d'information</h1>
-    <ul id="playersList">
-        <li *ngFor = "let player of players">
-            <p> Nom : {{player.name}} </p>
-            <p>Score : {{player.score}}</p>
-        </li>
-
-    </ul>
+    <div class="players-list" #scrollMe>
+        <p *ngFor="let player of players">
+            >
+            Nom : {{ player.name }}<br>
+            Score : {{ player.score }}
+        </p>
+    </div>
 </div>
