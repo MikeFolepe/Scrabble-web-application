@@ -13,7 +13,7 @@ export class FormComponent {
         playerName: new FormControl(''),
         minuteInput: new FormControl('01'),
         secondInput: new FormControl('00'),
-        levelInput: new FormControl('Easy'),
+        levelInput: new FormControl('Facile'),
     });
 
     constructor(private gameSettingsService: GameSettingsService) {
