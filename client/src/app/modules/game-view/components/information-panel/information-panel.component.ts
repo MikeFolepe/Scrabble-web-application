@@ -53,7 +53,9 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
+        this.playerService.clearPlayers();
         this.settingsSubscription.unsubscribe();
         this.playerSubscription.unsubscribe();
+        
     }
 }

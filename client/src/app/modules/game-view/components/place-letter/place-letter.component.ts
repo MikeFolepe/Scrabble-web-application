@@ -1,7 +1,7 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSX, CENTRAL_CASE_POSY } from '@app/classes/constants';
 import { Vec2 } from '@app/classes/vec2';
-import { LetterEaselComponent } from '../letter-easel/letter-easel.component';
+import { LetterEaselService } from '@app/services/letter-easel.service';
 
 
 @Component({
@@ -10,15 +10,13 @@ import { LetterEaselComponent } from '../letter-easel/letter-easel.component';
     styleUrls: ['./place-letter.component.scss'],
 })
 export class PlaceLetterComponent {
-    @ViewChild(LetterEaselComponent) letterEaselComponent: LetterEaselComponent;
 
     scrabbleBoard: string[][];     // Matrice 15x15
 
     letterEmpty: string = '';
     isFirstRound: boolean = true;
 
-
-    constructor() {
+    constructor(private letterEaselService: LetterEaselService) {
         this.scrabbleBoard = [];   // Initialise la matrice avec des lettres vides
         for (let i = 0; i < BOARD_ROWS; i++) {
             this.scrabbleBoard[i] = [];
@@ -35,6 +33,7 @@ export class PlaceLetterComponent {
         }
 
         for (let i = 0; i < word.length; i++) {
+
             // Ajoute la lettre à la position respective de la matrice selon l'orientation
             let x = 0;
             let y = 0;
@@ -44,23 +43,25 @@ export class PlaceLetterComponent {
             else if (orientation === 'v') {
                 y = i;
             }
+
             // Si la case est vide, on utilise une lettre de la réserve
-
-            this.scrabbleBoard[position.x + x][position.y + y] = word.charAt(i);
-            if (word.charAt(i) === word.charAt(i).toUpperCase()) {
-                // Si on place une majuscule (lettre blanche)
-                this.letterEaselComponent.removeLetter('*');
+            if (this.scrabbleBoard[position.x + x][position.y + y] === '') {
+                this.scrabbleBoard[position.x + x][position.y + y] = word.charAt(i);
+                if (word.charAt(i) === word.charAt(i).toUpperCase()) {
+                    // Si on place une majuscule (lettre blanche), on supprime un '*'
+                    this.letterEaselService.removeLetter('*');
+                }
+                else {
+                    // Sinon supprime la lettre du chevalet
+                    this.letterEaselService.removeLetter(word.charAt(i));
+                }
             }
-            else {
-                // Supprime la lettre du chevalet
-                this.letterEaselComponent.removeLetter(word.charAt(i));
-            }
-
         }
+
         console.log(this.scrabbleBoard);
         this.isFirstRound = false;
         // TODO Valider le mot sur le scrabbleboard
-        this.letterEaselComponent.refillEasle();    // Remplie le chevalet avec de nouvelles lettres de la réserve
+        this.letterEaselService.refillEasel();    // Remplie le chevalet avec de nouvelles lettres de la réserve
         return true;
     }
 
@@ -104,7 +105,7 @@ export class PlaceLetterComponent {
         for (let letter of word) {
             let isLetterExisting = false;
             // check le chevalet
-            for (let letterEasel of this.letterEaselComponent.letterEaselTab) {
+            for (let letterEasel of this.letterEaselService.getAll()) {
                 if (letter === letterEasel.value.toLowerCase()) {
                     isLetterExisting = true;
                 }
