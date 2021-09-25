@@ -5,12 +5,10 @@ import { EASEL_SIZE, RESERVE } from '@app/classes/constants';
     providedIn: 'root',
 })
 export class LetterService {
-    randomElement: number;
-
     // Méthode pour prendre des lettres dans la réserve
     getRandomLetter(): Letter {
-        this.randomElement = Math.floor(Math.random() * RESERVE.length);
-        const letter: Letter = RESERVE[this.randomElement];
+        const randomElement = Math.floor(Math.random() * RESERVE.length);
+        const letter: Letter = RESERVE[randomElement];
         // Mise à jour de la réserve
         for (const item of RESERVE) {
             if (item.value === letter.value) {

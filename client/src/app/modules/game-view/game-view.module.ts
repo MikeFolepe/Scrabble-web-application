@@ -12,6 +12,8 @@ import { LetterEaselComponent } from './components/letter-easel/letter-easel.com
 import { ScrabbleBoardComponent } from './components/scrabble-board/scrabble-board.component';
 import { FontSizeComponent } from './components/font-size/font-size.component';
 import { CountdownComponent } from './components/countdown/countdown.component';
+// eslint-disable-next-line no-restricted-imports
+import { SharedModule } from '../shared/shared/shared.module';
 
 @NgModule({
     declarations: [
@@ -25,7 +27,7 @@ import { CountdownComponent } from './components/countdown/countdown.component';
         FontSizeComponent,
         CountdownComponent,
     ],
-    imports: [CommonModule, AppMaterialModule, AppRoutingModule, FormsModule],
+    imports: [CommonModule, AppMaterialModule, AppRoutingModule, FormsModule, SharedModule],
     exports: [GameViewComponent],
     bootstrap: [GameViewComponent],
 })
