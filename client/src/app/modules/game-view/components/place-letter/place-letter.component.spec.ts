@@ -1,19 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { PlaceLetterComponent } from './place-letter.component';
 
-import { CountdownComponent } from './countdown.component';
-
-describe('CountdownComponent', () => {
-    let component: CountdownComponent;
-    let fixture: ComponentFixture<CountdownComponent>;
+describe('PlaceLetterComponent', () => {
+    let component: PlaceLetterComponent;
+    let fixture: ComponentFixture<PlaceLetterComponent>;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [CountdownComponent],
+            declarations: [PlaceLetterComponent],
         }).compileComponents();
     });
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(CountdownComponent);
+        fixture = TestBed.createComponent(PlaceLetterComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });

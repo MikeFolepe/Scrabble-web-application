@@ -1,24 +1,19 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { DEFAULT_FONT_SIZE, FONT_SIZE_MAX, FONT_SIZE_MIN } from '@app/classes/constants';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { DEFAULT_FONT_SIZE, FONT_SIZE_MAX, FONT_SIZE_MIN, SIZE_VARIATION } from '@app/classes/constants';
 
 @Component({
     selector: 'app-font-size',
     templateUrl: './font-size.component.html',
     styleUrls: ['./font-size.component.scss'],
 })
-export class FontSizeComponent implements OnInit {
-    constructor() {}
-
-    ngOnInit(): void {}
-
+export class FontSizeComponent {
     @Input() fontSize: number = DEFAULT_FONT_SIZE;
     @Output() sizeChange = new EventEmitter<number>();
-
     decrement() {
-        this.resize(-1);
+        this.resize(-SIZE_VARIATION);
     }
     increment() {
-        this.resize(+1);
+        this.resize(+SIZE_VARIATION);
     }
 
     resize(delta: number) {

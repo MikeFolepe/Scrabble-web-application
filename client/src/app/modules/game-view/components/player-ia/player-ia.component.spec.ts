@@ -1,19 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { PlayerIAComponent } from './player-ia.component';
 
-import { CountdownComponent } from './countdown.component';
-
-describe('CountdownComponent', () => {
-    let component: CountdownComponent;
-    let fixture: ComponentFixture<CountdownComponent>;
+describe('PlayerIAComponent', () => {
+    let component: PlayerIAComponent;
+    let fixture: ComponentFixture<PlayerIAComponent>;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [CountdownComponent],
+            declarations: [PlayerIAComponent],
         }).compileComponents();
     });
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(CountdownComponent);
+        fixture = TestBed.createComponent(PlayerIAComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });

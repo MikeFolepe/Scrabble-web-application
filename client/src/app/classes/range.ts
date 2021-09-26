@@ -1,4 +1,4 @@
-// eslint-disable-next-line unicorn/filename-case
+/* eslint-disable prettier/prettier */
 export interface Range {
     min: number;
     max: number;

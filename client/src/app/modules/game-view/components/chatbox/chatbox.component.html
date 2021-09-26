@@ -9,11 +9,13 @@
 
     <div class="display" #scrollMe>
         <p id="listDisplay" *ngFor="let message of listMessages, let i=index, let last = last" [ngClass]="{'playerStyle': listTypes[i] === 'player', 'opponentStyle' : listTypes[i] === 'opponent', 
-        'systemStyle' : listTypes[i] === 'system', 'error' : listTypes[i] === 'errorStyle' }">> {{message}}
+        'systemStyle' : listTypes[i] === 'system', 'errorStyle' : listTypes[i] === 'error' }">> {{message}}
         </p>
     </div>
 
     <input type="text" placeholder="Veuillez entrer un message ou une commande" maxlength="512" [(ngModel)]="message"
         (keypress)="keyEvent($event)" onblur="this.focus()" autofocus />
-        
+
 </div>
+
+<app-place-letter></app-place-letter>
