@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DEFAULT_FONT_SIZE } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
-import { LetterEaselService } from '@app/services/letter-easel.service';
+import { PlayerService } from '@app/services/player.service';
 
 @Component({
     selector: 'app-letter-easel',
@@ -11,12 +11,12 @@ import { LetterEaselService } from '@app/services/letter-easel.service';
 export class LetterEaselComponent implements OnInit {
 
     letterEaselTab: Array<Letter> = new Array<Letter>();
-    service: LetterEaselService;
+    service: PlayerService;
 
     fontSize: number = DEFAULT_FONT_SIZE;
 
-    constructor(private letterEaselService: LetterEaselService) {
-        this.service = letterEaselService;
+    constructor(private playerService: PlayerService) {
+        this.service = playerService;
     }
 
     ngOnInit(): void {
@@ -25,6 +25,6 @@ export class LetterEaselComponent implements OnInit {
     }
 
     update(): void {
-        this.letterEaselTab = this.letterEaselService.getAll();
+        this.letterEaselTab = this.playerService.getLettersEasel();
     }
 }

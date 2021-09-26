@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSX, CENTRAL_CASE_POSY } from '@app/classes/constants';
 import { Vec2 } from '@app/classes/vec2';
-import { LetterEaselService } from '@app/services/letter-easel.service';
+import { PlayerService } from '@app/services/player.service';
 
 
 @Component({
@@ -16,7 +16,7 @@ export class PlaceLetterComponent {
     letterEmpty: string = '';
     isFirstRound: boolean = true;
 
-    constructor(private letterEaselService: LetterEaselService) {
+    constructor(private playerService: PlayerService) {
         this.scrabbleBoard = [];   // Initialise la matrice avec des lettres vides
         for (let i = 0; i < BOARD_ROWS; i++) {
             this.scrabbleBoard[i] = [];
@@ -49,11 +49,11 @@ export class PlaceLetterComponent {
                 this.scrabbleBoard[position.x + x][position.y + y] = word.charAt(i);
                 if (word.charAt(i) === word.charAt(i).toUpperCase()) {
                     // Si on place une majuscule (lettre blanche), on supprime un '*'
-                    this.letterEaselService.removeLetter('*');
+                    this.playerService.removeLetter('*');
                 }
                 else {
                     // Sinon supprime la lettre du chevalet
-                    this.letterEaselService.removeLetter(word.charAt(i));
+                    this.playerService.removeLetter(word.charAt(i));
                 }
             }
         }
@@ -61,7 +61,7 @@ export class PlaceLetterComponent {
         console.log(this.scrabbleBoard);
         this.isFirstRound = false;
         // TODO Valider le mot sur le scrabbleboard
-        this.letterEaselService.refillEasel();    // Remplie le chevalet avec de nouvelles lettres de la réserve
+        this.playerService.refillEasel();    // Remplie le chevalet avec de nouvelles lettres de la réserve
         return true;
     }
 
@@ -81,7 +81,8 @@ export class PlaceLetterComponent {
         // Les tours suivants
         else {
             isPossible = (this.isWordValid(position, orientation, word) && // Si les lettres du mots sont dans le chevalet ou le plateau du jeu
-                this.isWordFitting(position, orientation, word)); // Si le mot n'est pas à l'extérieur de la grille
+                this.isWordFitting(position, orientation, word) &&         // Si le mot n'est pas à l'extérieur de la grille
+                this.isWordTouchingOthers(position, orientation, word));   // Si le mot est en contact avec d'autres lettres du plateau
         }
 
         return isPossible;
@@ -105,7 +106,7 @@ export class PlaceLetterComponent {
         for (let letter of word) {
             let isLetterExisting = false;
             // check le chevalet
-            for (let letterEasel of this.letterEaselService.getAll()) {
+            for (let letterEasel of this.playerService.getLettersEasel()) {
                 if (letter === letterEasel.value.toLowerCase()) {
                     isLetterExisting = true;
                 }
@@ -153,6 +154,47 @@ export class PlaceLetterComponent {
                     return true;
                 }
             }
+        }
+        return false;
+    }
+
+    isWordTouchingOthers(position: Vec2, orientation: string, word: string): boolean {
+        let isWordTouching: boolean = false;
+        
+        for (let i = 0; i < word.length; i++) {
+
+            let x = 0;
+            let y = 0;
+            if (orientation === 'h') {
+                x = i;
+            }
+            else if (orientation === 'v') {
+                y = i;
+            }
+
+            if (this.isPosInBounds(position.x + x + 1)) {
+                if (this.scrabbleBoard[position.x + x + 1][position.y + y] != '')
+                    isWordTouching = true;
+            }
+            if (this.isPosInBounds(position.x + x - 1)) {
+                if (this.scrabbleBoard[position.x + x - 1][position.y + y] != '')
+                    isWordTouching = true;
+            }
+            if (this.isPosInBounds(position.y + y + 1)) {
+                if (this.scrabbleBoard[position.x + x][position.y + y + 1])
+                    isWordTouching = true;
+            }
+            if (this.isPosInBounds(position.y + y - 1)) {
+                if (this.scrabbleBoard[position.x + x][position.y +  y - 1])
+                    isWordTouching = true;
+            }
+        }
+        return isWordTouching;
+    }
+
+    isPosInBounds(position: number): boolean {
+        if (position >= 0 && position <= BOARD_ROWS) {
+            return true;
         }
         return false;
     }
