@@ -1,5 +1,5 @@
 <div class="container">
-    <div class=fakeMenu>
+    <div class="fakeMenu">
         <div class="fakeButtons fakeClose"></div>
         <div class="fakeButtons fakeMinimize"></div>
         <div class="fakeButtons fakeZoom"></div>
@@ -7,10 +7,16 @@
 
     <h1 class="header-item">Panneau d'information</h1>
     <ul id="playersList">
-        <li *ngFor = "let player of players">
-            <p> Nom : {{player.name}} </p>
-            <p>Score : {{player.score}}</p>
+        <li *ngFor="let player of players">
+            <p>Nom : {{ player.name }}</p>
+            <p>Score : {{ player.score }}</p>
+            <div *ngIf="tour && player.id === 0 ;else other_content">
+                <app-countdown [minutes]="this.gameSettings.timeMinute" [seconds] = "this.gameSettings.timeSecond" (checkTime)="switchTour($event)"></app-countdown>
+            </div>
+            <ng-template #other_content>
+                <app-countdown [minutes]="this.gameSettings.timeMinute" [seconds] = "this.gameSettings.timeSecond" (checkTime)="switchTour($event)"></app-countdown>
+            </ng-template>
         </li>
-
     </ul>
+
 </div>

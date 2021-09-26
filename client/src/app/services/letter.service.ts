@@ -1,17 +1,23 @@
 import { Injectable } from '@angular/core';
-import { Letter } from '@app/classes/letter';
 import { EASEL_SIZE, RESERVE } from '@app/classes/constants';
+import { Letter } from '@app/classes/letter';
 @Injectable({
     providedIn: 'root',
 })
 export class LetterService {
-    randomElement: number;
+    // Property witch return total number of letters available
+    totalLetter: number;
+    // Method for take a letter form reserve
 
-    // Méthode pour prendre des lettres dans la réserve
+    constructor() {
+        for (const item of RESERVE) {
+            this.totalLetter += item.quantity;
+        }
+    }
     getRandomLetter(): Letter {
-        this.randomElement = Math.floor(Math.random() * RESERVE.length);
-        const letter: Letter = RESERVE[this.randomElement];
-        // Mise à jour de la réserve
+        const randomElement = Math.floor(Math.random() * RESERVE.length);
+        const letter: Letter = RESERVE[randomElement];
+        // Update the reserve
         for (const item of RESERVE) {
             if (item.value === letter.value) {
                 item.quantity--;
@@ -19,7 +25,7 @@ export class LetterService {
         }
         return letter;
     }
-
+    // Shuffle  at the initialization of a player seven letters
     getRandomLetters(): Letter[] {
         const tab: Letter[] = [];
         for (let i = 0; i < EASEL_SIZE; i++) {
@@ -30,7 +36,18 @@ export class LetterService {
                 points: letter.points,
             };
         }
-
         return tab;
+    }
+
+    // Methods witch return the numbers of available letters in the reserve
+    getNumbersLetterAvailable(): number {
+        return this.totalLetter;
+    }
+
+    // Method with returns if there are minimum letters inn reserve to play
+    checklistLetters(): boolean {
+        if (this.totalLetter < EASEL_SIZE) {
+            return false;
+        } else return true;
     }
 }

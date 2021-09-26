@@ -1,4 +1,5 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
+import { PasserTourComponent } from '@app/modules/game-view/components/passer-tour/passer-tour.component';
 
 @Component({
     selector: 'app-chatbox',
@@ -7,7 +8,7 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 })
 export class ChatboxComponent {
     // https://stackoverflow.com/questions/35232731/angular-2-scroll-to-bottom-chat-style
-
+    @ViewChild(PasserTourComponent) passer: PasserTourComponent;
     @ViewChild('scrollMe') private myScrollContainer: ElementRef;
 
     message: string = '';
@@ -21,7 +22,10 @@ export class ChatboxComponent {
             this.sendSystemMessage('Message du système');
             this.sendOpponentMessage('Le joueur virtuel fait...');
             this.sendPlayerCommand();
-
+            // Check the entry if equals at the command !passer and switch the tour
+            if (this.message === '!passer') {
+                this.switchTour();
+            }
             this.message = ''; // Clear l'input
             setTimeout(() => {
                 // Le timeout permet de scroll jusqu'au dernier élément ajouté
@@ -95,5 +99,9 @@ export class ChatboxComponent {
 
     scrollToBottom(): void {
         this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
+    }
+
+    switchTour() {
+        this.passer.toogleTour();
     }
 }
