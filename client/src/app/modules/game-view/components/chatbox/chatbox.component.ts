@@ -25,7 +25,7 @@ export class ChatboxComponent {
             this.sendSystemMessage('Message du système');
             this.sendOpponentMessage('Le joueur virtuel fait...');
             this.sendPlayerCommand();
-
+            // Check the entry if equals at the command !passer and switch the tour
             this.message = ''; // Clear l'input
             setTimeout(() => {
                 // Le timeout permet de scroll jusqu'au dernier élément ajouté

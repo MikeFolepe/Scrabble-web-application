@@ -6,6 +6,13 @@ import { Letter } from '@app/classes/letter';
 })
 export class LetterService {
     // Méthode pour prendre des lettres dans la réserve
+    totalLetters: number;
+
+    constructor() {
+        for (const item of RESERVE) {
+            this.totalLetters += item.quantity;
+        }
+    }
     getRandomLetter(): Letter {
         let randomElement = Math.floor(Math.random() * RESERVE.length);
         let letter: Letter = RESERVE[randomElement];
@@ -38,7 +45,7 @@ export class LetterService {
         }
         return true;
     }
-
+    // Shuffle  at the initialization of a player seven letters
     getRandomLetters(): Letter[] {
         const tab: Letter[] = [];
         for (let i = 0; i < EASEL_SIZE; i++) {
@@ -49,7 +56,18 @@ export class LetterService {
                 points: letter.points,
             };
         }
-
         return tab;
+    }
+
+    // Methods witch return the numbers of available letters in the reserve
+    getNumbersLetterAvailable(): number {
+        return this.totalLetters;
+    }
+
+    // Method with returns if there are minimum letters inn reserve to play
+    checklistLetters(): boolean {
+        if (this.totalLetters < EASEL_SIZE) {
+            return false;
+        } else return true;
     }
 }
