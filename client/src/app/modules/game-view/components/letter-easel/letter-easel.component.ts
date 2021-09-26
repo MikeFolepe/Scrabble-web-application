@@ -1,7 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { EASEL_SIZE } from '@app/classes/constants';
+import { DEFAULT_FONT_SIZE, EASEL_SIZE } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
-import { LetterService } from '@app/services/letter.service';
 import { StartingPlayer } from '@app/classes/game-settings';
 import { PlayerService } from '@app/services/player.service';
 import { Player } from '@app/models/player.model';
@@ -14,15 +13,14 @@ import { Subscription } from 'rxjs';
 })
 export class LetterEaselComponent implements OnInit, OnDestroy {
     letterEaselTab: Letter[] = [];
-    players: Player[]= new Array<Player>();
+    players: Player[] = new Array<Player>();
     playerSubscription: Subscription = new Subscription();
 
-    fontSize: number;
-    constructor(private letterService: LetterService, private playerService: PlayerService) {}
+    fontSize: number = DEFAULT_FONT_SIZE;
+    constructor(private playerService: PlayerService) {}
 
     ngOnInit(): void {
         this.initializeTab();
-        this.fontSize= this.letterService.getFontSize();
     }
 
     initializeTab(): void {
@@ -42,9 +40,5 @@ export class LetterEaselComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         this.playerSubscription.unsubscribe();
-    }
-
-    setFontSize(fontSize:number){
-        this.letterService.setFontSize(fontSize);
     }
 }

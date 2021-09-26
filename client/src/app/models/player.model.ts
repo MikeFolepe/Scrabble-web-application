@@ -4,8 +4,6 @@ export class Player {
         public id: number,
         public name: string,
         public score: number,
-        public letterTable: Letter[],
-        // public isTour: boolean,
-    // public isIA: boolean
+        public letterTable: Letter[], // public isTour: boolean, // public isIA: boolean
     ) {}
 }
