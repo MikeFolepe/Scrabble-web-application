@@ -13,6 +13,8 @@ import { ScrabbleBoardComponent } from './components/scrabble-board/scrabble-boa
 import { PlaceLetterComponent } from './components/place-letter/place-letter.component';
 import { FontSizeComponent } from './components/font-size/font-size.component';
 import { CountdownComponent } from './components/countdown/countdown.component';
+// eslint-disable-next-line no-restricted-imports
+import { SharedModule } from '../shared/shared/shared.module';
 import { PlayerIAComponent } from './components/player-ia/player-ia.component';
 
 @NgModule({
@@ -29,7 +31,7 @@ import { PlayerIAComponent } from './components/player-ia/player-ia.component';
         CountdownComponent,
         PlayerIAComponent,
     ],
-    imports: [CommonModule, AppMaterialModule, AppRoutingModule, FormsModule],
+    imports: [CommonModule, AppMaterialModule, AppRoutingModule, FormsModule, SharedModule],
     exports: [GameViewComponent],
     bootstrap: [GameViewComponent],
 })

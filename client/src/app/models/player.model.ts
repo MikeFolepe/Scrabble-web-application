@@ -1,5 +1,5 @@
-/* eslint-disable prettier/prettier */
 import { Letter } from '@app/classes/letter';
+
 export class Player {
     constructor(
         public id: number,
