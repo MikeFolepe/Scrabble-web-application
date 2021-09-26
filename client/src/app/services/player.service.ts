@@ -40,6 +40,10 @@ export class PlayerService {
         return this.players[0].letterTable;
     }
 
+    getPlayers(): Array<Player> {
+        return this.players;
+    }
+
     removeLetter(letterToRemove: string): void {   // Remove one letter from easel
 
         for (let i = 0; i < this.players[0].letterTable.length; i++) {
@@ -61,5 +65,20 @@ export class PlayerService {
             this.players[0].letterTable[i] = letterToInsert;
         }
         this.myFunc();
+    }
+
+    swap(letter: string): void {
+        this.removeLetter(letter);
+        this.letterService.addLetterToReserve(letter);
+        this.refillEasel();
+    }
+
+    easelContainsLetter(letter: string): boolean {
+        for (const letterEasel of this.players[0].letterTable) {
+            if (letter.toUpperCase() === letterEasel.value) {
+                return true;
+            }
+        }
+        return false;
     }
 }

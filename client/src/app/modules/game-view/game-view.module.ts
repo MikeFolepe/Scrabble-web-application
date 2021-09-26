@@ -14,6 +14,7 @@ import { PlaceLetterComponent } from './components/place-letter/place-letter.com
 import { FontSizeComponent } from './components/font-size/font-size.component';
 import { CountdownComponent } from './components/countdown/countdown.component';
 import { PlayerIAComponent } from './components/player-ia/player-ia.component';
+import { SwapLetterComponent } from './components/swap-letter/swap-letter.component';
 
 @NgModule({
     declarations: [
@@ -28,6 +29,7 @@ import { PlayerIAComponent } from './components/player-ia/player-ia.component';
         FontSizeComponent,
         CountdownComponent,
         PlayerIAComponent,
+        SwapLetterComponent,
     ],
     imports: [CommonModule, AppMaterialModule, AppRoutingModule, FormsModule],
     exports: [GameViewComponent],

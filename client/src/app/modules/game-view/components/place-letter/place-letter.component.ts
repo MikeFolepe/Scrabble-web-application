@@ -67,15 +67,12 @@ export class PlaceLetterComponent {
     }
 
     isPossible(position: Vec2, orientation: string, word: string): boolean {
-        // TODO valider si on peut placer le mot à partir de la position donné,
-        //     si les lettres du mot sont dans le chevalet...
-        //     si les lettres sont sur le plateau
-        //     1er tour?
         let isPossible = false;
 
         // 1er Tour
         if (this.isFirstRound) {
             isPossible =
+                this.isItMyTurn() &&
                 this.isFirstWordValid(position, orientation, word) &&
                 this.isWordValid(position, orientation, word) &&
                 this.isWordFitting(position, orientation, word);
@@ -83,6 +80,7 @@ export class PlaceLetterComponent {
         // Les tours suivants
         else {
             isPossible =
+                this.isItMyTurn() &&
                 this.isWordValid(position, orientation, word) && // Si les lettres du mots sont dans le chevalet ou le plateau du jeu
                 this.isWordFitting(position, orientation, word) && // Si le mot n'est pas à l'extérieur de la grille
                 this.isWordTouchingOthers(position, orientation, word); // Si le mot est en contact avec d'autres lettres du plateau
@@ -186,8 +184,8 @@ export class PlaceLetterComponent {
                     if (this.scrabbleBoard[position.x + x][position.y + y - 1]) isWordTouching = true;
                 }
             }
-            return isWordTouching;
         }
+        return isWordTouching;
     }
 
     isPosInBounds(position: number): boolean {
@@ -203,5 +201,10 @@ export class PlaceLetterComponent {
             y: positionTabY * (CASE_SIZE) + CASE_SIZE - DEFAULT_HEIGHT / 2
         };
         return positionGrid;
+    }
+
+    isItMyTurn(): boolean {
+        // TODO
+        return true;
     }
 }

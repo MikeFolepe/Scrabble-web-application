@@ -1,6 +1,8 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { Vec2 } from '@app/classes/vec2';
+import { PlayerService } from '@app/services/player.service';
 import { PlaceLetterComponent } from '../place-letter/place-letter.component';
+import { SwapLetterComponent } from '../swap-letter/swap-letter.component';
 
 @Component({
     selector: 'app-chatbox',
@@ -10,7 +12,10 @@ import { PlaceLetterComponent } from '../place-letter/place-letter.component';
 export class ChatboxComponent {
 
     @ViewChild(PlaceLetterComponent) placeComponent: PlaceLetterComponent;
+    @ViewChild(SwapLetterComponent) swapComponent: SwapLetterComponent;
     @ViewChild('scrollMe') private myScrollContainer: ElementRef;
+
+    constructor(private playerService: PlayerService) {}
 
     message: string = '';
     typeMessage: string = '';
@@ -48,6 +53,15 @@ export class ChatboxComponent {
                     break;
                 }
                 case 'echanger': {
+                    let messageSplitted = this.message.split(/\s/);
+
+                    if (this.swapComponent.swap(messageSplitted[1])) {
+                        this.message = this.playerService.getPlayers()[0].name + ' : ' + this.message;
+                    }
+                    else {
+                        this.typeMessage = 'error';
+                        this.message = 'ERREUR : La commande est impossible à réaliser';
+                    }
 
                     break;
                 }
@@ -65,7 +79,7 @@ export class ChatboxComponent {
 
                     if (this.placeComponent.place(position, orientation, messageSplitted[2]) === false) {
                         this.typeMessage = 'error';
-                        this.message = "ERREUR : La commande est impossible à réaliser";
+                        this.message = 'ERREUR : La commande est impossible à réaliser';
                     }
                     break;
                 }

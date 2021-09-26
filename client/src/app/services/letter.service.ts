@@ -42,6 +42,23 @@ export class LetterService {
         return true;
     }
 
+    reserveSize(): number {
+        let size: number = 0;
+        for (const letter of RESERVE) {
+            size += letter.quantity;
+        }
+        console.log(size);
+        return size;
+    }
+
+    addLetterToReserve(letter: string): void {
+        for (const letterReserve of RESERVE) {
+            if (letter.toUpperCase() === letterReserve.value) {
+                letterReserve.quantity++;
+            }
+        }
+    }
+
     getRandomLetters(): Letter[] {
         const tab: Letter[] = [];
         for (let i = 0; i < EASEL_SIZE; i++) {

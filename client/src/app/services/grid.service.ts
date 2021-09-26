@@ -77,8 +77,6 @@ export class GridService {
         ctx.fillStyle = 'black';
         const lineheight = 12;
         const lines = word.split(' ');
-        console.log(startPosition.x + this.caseWidth / 8 + 1 * lineheight);
-        console.log(lines);
         for (let i = 0; i < lines.length; i++)
             ctx.fillText(lines[i], startPosition.x + this.caseWidth / 8 + i * lineheight, startPosition.y + this.caseWidth / 2 + i * lineheight);
     }
