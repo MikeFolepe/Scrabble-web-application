@@ -1,21 +1,42 @@
 import { Injectable } from '@angular/core';
-import { Letter } from '@app/classes/letter';
 import { EASEL_SIZE, RESERVE } from '@app/classes/constants';
+import { Letter } from '@app/classes/letter';
 @Injectable({
     providedIn: 'root',
 })
 export class LetterService {
     // Méthode pour prendre des lettres dans la réserve
     getRandomLetter(): Letter {
-        const randomElement = Math.floor(Math.random() * RESERVE.length);
-        const letter: Letter = RESERVE[randomElement];
+        let randomElement = Math.floor(Math.random() * RESERVE.length);
+        let letter: Letter = RESERVE[randomElement];
+        const letterEmpty: Letter = {
+            value: '',
+            quantity: 0,
+            points: 0,
+        };
+
+        if (this.isReserveEmpty()) {
+            // Si la réserve est vide
+            return letterEmpty;
+        }
+
+        while (RESERVE[randomElement].quantity === 0 && !this.isReserveEmpty()) {
+            randomElement = Math.floor(Math.random() * RESERVE.length);
+            letter = RESERVE[randomElement];
+        }
+
         // Mise à jour de la réserve
-        for (const item of RESERVE) {
-            if (item.value === letter.value) {
-                item.quantity--;
+        RESERVE[randomElement].quantity--;
+        return letter;
+    }
+
+    isReserveEmpty(): boolean {
+        for (const letter of RESERVE) {
+            if (letter.quantity > 0) {
+                return false;
             }
         }
-        return letter;
+        return true;
     }
 
     getRandomLetters(): Letter[] {

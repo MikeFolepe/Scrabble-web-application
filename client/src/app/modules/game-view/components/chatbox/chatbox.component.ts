@@ -1,4 +1,6 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Vec2 } from '@app/classes/vec2';
+import { PlaceLetterComponent } from '../place-letter/place-letter.component';
 
 @Component({
     selector: 'app-chatbox',
@@ -6,12 +8,14 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
     styleUrls: ['./chatbox.component.scss'],
 })
 export class ChatboxComponent {
-    // https://stackoverflow.com/questions/35232731/angular-2-scroll-to-bottom-chat-style
 
+    @ViewChild(PlaceLetterComponent) placeComponent: PlaceLetterComponent;
     @ViewChild('scrollMe') private myScrollContainer: ElementRef;
 
     message: string = '';
-    type: string = '';
+    typeMessage: string = '';
+    command: string = '';
+
     listMessages: string[] = [];
     listTypes: string[] = [];
 
@@ -32,65 +36,109 @@ export class ChatboxComponent {
 
     sendPlayerCommand() {
         if (this.isValid()) {
-            this.type = 'player';
-            this.listTypes.push(this.type);
-        } else {
-            this.type = 'error';
-            this.listTypes.push(this.type);
+            this.typeMessage = 'player';
+            // Si valide, call les fonctions respectives aux commandes
+            switch (this.command) {
+                case 'debug': {
+
+                    break;
+                }
+                case 'passer': {
+
+                    break;
+                }
+                case 'echanger': {
+
+                    break;
+                }
+                case 'placer': {
+                    let messageSplitted = this.message.split(/\s/);
+
+                    let positionSplitted = messageSplitted[1].split(/([0-9]+)/);
+
+                    // Vecteur contenant la position de départ du mot qu'on veut placer
+                    let position: Vec2 = {
+                        x: Number(positionSplitted[1]) - 1,
+                        y: positionSplitted[0].charCodeAt(0) - 97
+                    };
+                    let orientation = positionSplitted[2];
+
+                    if (this.placeComponent.place(position, orientation, messageSplitted[2]) === false) {
+                        this.typeMessage = 'error';
+                        this.message = "ERREUR : La commande est impossible à réaliser";
+                    }
+                    break;
+                }
+                default: {
+                    break;
+                }
+            }
         }
+        else {   // Si invalide -> erreur
+            this.typeMessage = 'error';
+        }
+        this.command = '';
+        this.listTypes.push(this.typeMessage);
         this.listMessages.push(this.message); // Add le message et update l'affichage de la chatbox
     }
 
     sendSystemMessage(systemMessage: string) {
-        this.type = 'system';
-        this.listTypes.push(this.type);
+        this.typeMessage = 'system';
+        this.listTypes.push(this.typeMessage);
         this.listMessages.push(systemMessage);
     }
 
     sendOpponentMessage(opponentMessage: string) {
-        this.type = 'opponent';
-        this.listTypes.push(this.type);
+        this.typeMessage = 'opponent';
+        this.listTypes.push(this.typeMessage);
         this.listMessages.push(opponentMessage);
     }
 
-    // TODO VALIDATION
     isValid(): boolean {
-        // Check les erreurs ici (syntaxe, invalide, impossible à exécuter)
+        // Check les erreurs ici (syntaxe, invalide)
 
         if (this.message[0] === '!') {
-            // Si c'est une commande, on valide la syntaxe
-            return this.isSyntaxValid() && this.isInputValid() && this.isPossible();
+            // Si c'est une commande, on la valide
+            return this.isInputValid() && this.isSyntaxValid();
         }
         return true;
     }
 
-    isSyntaxValid(): boolean {
-        const regexDebug = /^!debug$/g;
-        const regexPasser = /^!passer$/g;
+    isInputValid(): boolean {
+        const regexDebug = /^!debug/g;
+        const regexPasser = /^!passer/g;
         const regexEchanger = /^!échanger/g;
         const regexPlacer = /^!placer/g;
 
         if (regexDebug.test(this.message) || regexPasser.test(this.message) || regexEchanger.test(this.message) || regexPlacer.test(this.message)) {
             return true;
         }
-        this.message = 'Erreur : La syntaxe est invalide';
+
+        this.message = "ERREUR : L'entrée est invalide";
         return false;
     }
 
-    isInputValid(): boolean {
+    isSyntaxValid(): boolean {
         const regexDebug = /^!debug$/g;
         const regexPasser = /^!passer$/g;
         const regexEchanger = /^!échanger\s([a-z]|[*]){1,7}$/g;
-        const regexPlacer = /^!placer\s[a-o]([1-9]|1[0-5])\s[hv]\s[a-zA-Z]+/g;
+        const regexPlacer = /^!placer\s([a-o]([1-9]|1[0-5])[hv])\s([a-zA-Z]|[*])+/g;
 
-        if (regexDebug.test(this.message) || regexPasser.test(this.message) || regexPlacer.test(this.message) || regexEchanger.test(this.message)) {
-            return true;
+        let valid = true;
+
+        if (regexDebug.test(this.message)) {
+            this.command = 'debug';
+        } else if (regexPasser.test(this.message)) {
+            this.command = 'passer';
+        } else if (regexEchanger.test(this.message)) {
+            this.command = 'echanger';
+        } else if (regexPlacer.test(this.message)) {
+            this.command = 'placer';
+        } else {
+            valid = false;
+            this.message = "ERREUR : La syntaxe est invalide";
         }
-        this.message = "Erreur : L'entrée est invalide";
-        return false;
-    }
-    isPossible(): boolean {
-        return true;
+        return valid;
     }
 
     scrollToBottom(): void {
