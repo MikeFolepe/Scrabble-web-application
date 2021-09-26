@@ -7,11 +7,11 @@ export const BOARD_SIZE = 16;
 export const CASE_SIZE = DEFAULT_WIDTH / BOARD_SIZE;
 export const EASEL_SIZE = 7;
 
-export const BOARD_ROWS: number = 15;
-export const BOARD_COLUMNS: number = 15;
+export const BOARD_ROWS = 15;
+export const BOARD_COLUMNS = 15;
 
-export const CENTRAL_CASE_POSX: number = 7;
-export const CENTRAL_CASE_POSY: number = 7;
+export const CENTRAL_CASE_POSX = 7;
+export const CENTRAL_CASE_POSY = 7;
 
 export const PLAYERS_NUMBER = 2;
 export const FONT_SIZE_MAX = 20;
@@ -25,6 +25,44 @@ export enum MouseButton {
     Back = 3,
     Forward = 4,
 }
+
+export enum IAStrategy {
+    Skip,
+    Swap,
+    Place,
+}
+
+export const strategyBallotBox: IAStrategy[] = [
+    IAStrategy.Place,
+    IAStrategy.Place,
+    IAStrategy.Place,
+    IAStrategy.Skip,
+    IAStrategy.Place,
+    IAStrategy.Swap,
+    IAStrategy.Place,
+    IAStrategy.Place,
+    IAStrategy.Place,
+    IAStrategy.Place,
+];
+
+export enum PlacingStrategy {
+    LessSix,
+    SevenToTwelve,
+    ThirteenToEighteen,
+}
+
+export const placingBallotBox: PlacingStrategy[] = [
+    PlacingStrategy.LessSix,
+    PlacingStrategy.SevenToTwelve,
+    PlacingStrategy.SevenToTwelve,
+    PlacingStrategy.LessSix,
+    PlacingStrategy.ThirteenToEighteen,
+    PlacingStrategy.LessSix,
+    PlacingStrategy.ThirteenToEighteen,
+    PlacingStrategy.ThirteenToEighteen,
+    PlacingStrategy.SevenToTwelve,
+    PlacingStrategy.LessSix,
+];
 
 export const IA_NAME_DATABASE: string[] = ['Mister_Bucky', 'Mister_Samy', 'Miss_Betty'];
 

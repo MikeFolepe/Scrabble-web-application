@@ -9,16 +9,14 @@ export class LetterService {
 
     // Méthode pour prendre des lettres dans la réserve
     getRandomLetter(): Letter {
-
-        const letterEmpty: Letter =
-        {
+        const letterEmpty: Letter = {
             value: '',
             quantity: 0,
             points: 0,
-        }
+        };
 
-        if (this.isReserveEmpty()) // Si la réserve est vide
-        {
+        if (this.isReserveEmpty()) {
+            // Si la réserve est vide
             return letterEmpty;
         }
 
@@ -43,6 +41,7 @@ export class LetterService {
         }
         return true;
     }
+
     getRandomLetters(): Letter[] {
         const tab: Letter[] = [];
         for (let i = 0; i < EASEL_SIZE; i++) {
