@@ -41,9 +41,10 @@ export class LetterService {
         }
         return true;
     }
-    getRandomLetters(nbOfLetters = EASEL_SIZE): Letter[] {
+
+    getRandomLetters(): Letter[] {
         const tab: Letter[] = [];
-        for (let i = 0; i < nbOfLetters; i++) {
+        for (let i = 0; i < EASEL_SIZE; i++) {
             const letter = this.getRandomLetter();
             tab[i] = {
                 value: letter.value,

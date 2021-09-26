@@ -1,5 +1,6 @@
 import { IAStrategy, placingBallotBox, PlacingStrategy, strategyBallotBox } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
+import { PlayerIAComponent } from '@app/modules/game-view/components/player-ia/player-ia.component';
 import { PlayStrategy } from './abstract-strategy.model';
 import { LessSix } from './less-six-placing.model';
 import { PlaceLetters } from './place-letter-strategy.model';
@@ -10,6 +11,7 @@ import { SwapLetter } from './swap-letter-strategy.model';
 import { ThirteenEighteen } from './thirteen-eighteen-placing-strategy.model';
 
 export class PlayerIA extends Player {
+    context: PlayerIAComponent;
     strategy: PlayStrategy;
     constructor(
         public id: number,
@@ -24,7 +26,7 @@ export class PlayerIA extends Player {
 
     play() {
         // Allow the ia to execute the current strategy whoever it is
-        this.strategy.execute(this);
+        this.strategy.execute(this, this.context);
         // Set the next strategy for next turn
         this.setStrategy();
     }
@@ -80,5 +82,9 @@ export class PlayerIA extends Player {
         }
 
         return placingStrategy;
+    }
+
+    setContext(context: PlayerIAComponent) {
+        this.context = context;
     }
 }
