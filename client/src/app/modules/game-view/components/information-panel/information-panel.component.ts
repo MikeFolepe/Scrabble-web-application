@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { GameSettings } from '@app/classes/game-settings';
+import { GameSettings, StartingPlayer } from '@app/classes/game-settings';
 import { PlayerIA } from '@app/models/player-ia.model';
 import { Player } from '@app/models/player.model';
 import { GameSettingsService } from '@app/services/game-settings.service';
@@ -42,9 +42,9 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
         //     this.playerService.addPlayer(player);
         // }
         /** *********************SOLUTION TEMPORAIRE *******************************/
-        let player = new Player(0, this.gameSettings.playersName[0], 0, this.letterService.getRandomLetters());
+        let player = new Player(1, this.gameSettings.playersName[StartingPlayer.Player1], this.letterService.getRandomLetters());
         this.playerService.addPlayer(player);
-        player = new PlayerIA(1, this.gameSettings.playersName[1], 0, this.letterService.getRandomLetters());
+        player = new PlayerIA(2, this.gameSettings.playersName[StartingPlayer.Player2], this.letterService.getRandomLetters());
         this.playerService.addPlayer(player);
         /** ********************************************************************** */
         this.playerSubscription = this.playerService.playerSubject.subscribe((playersFromSubject: Player[]) => {
@@ -63,6 +63,5 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
         this.playerService.clearPlayers();
         this.settingsSubscription.unsubscribe();
         this.playerSubscription.unsubscribe();
-        
     }
 }

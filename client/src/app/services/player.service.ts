@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { EASEL_SIZE } from '@app/classes/constants';
+import { StartingPlayer } from '@app/classes/game-settings';
 import { Letter } from '@app/classes/letter';
 import { Player } from '@app/models/player.model';
 import { Subject } from 'rxjs';
 import { LetterService } from './letter.service';
-
 
 @Injectable({
     providedIn: 'root',
@@ -12,9 +12,14 @@ import { LetterService } from './letter.service';
 export class PlayerService {
     playerSubject = new Subject<Player[]>();
     private players: Player[] = new Array<Player>();
+    private myFunc: () => void;
 
     constructor(private letterService: LetterService) {}
 
+    updateLettersEasel(fn: () => void) {
+        this.myFunc = fn;
+        // from now on, call myFunc wherever you want inside this service
+    }
     emitPlayers() {
         this.playerSubject.next(this.players.slice());
     }
@@ -28,17 +33,12 @@ export class PlayerService {
         this.players = [];
     }
 
-    private myFunc: () => void;
-    updateLettersEasel(fn: () => void) {
-        this.myFunc = fn;
-        // from now on, call myFunc wherever you want inside this service
+    getLettersEasel(): Letter[] {
+        return this.players[StartingPlayer.Player1].letterTable;
     }
 
-    getLettersEasel(): Array<Letter> {
-        return this.players[0].letterTable;
-    }
-
-    removeLetter(letterToRemove: string): void {   // Remove one letter from easel
+    removeLetter(letterToRemove: string): void {
+        // Remove one letter from easel
 
         for (let i = 0; i < this.players[0].letterTable.length; i++) {
             if (this.players[0].letterTable[i].value === letterToRemove.toUpperCase()) {

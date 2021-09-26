@@ -1,5 +1,6 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { Vec2 } from '@app/classes/vec2';
+// eslint-disable-next-line no-restricted-imports
 import { PlaceLetterComponent } from '../place-letter/place-letter.component';
 
 @Component({
@@ -8,7 +9,6 @@ import { PlaceLetterComponent } from '../place-letter/place-letter.component';
     styleUrls: ['./chatbox.component.scss'],
 })
 export class ChatboxComponent {
-
     @ViewChild(PlaceLetterComponent) placeComponent: PlaceLetterComponent;
     @ViewChild('scrollMe') private myScrollContainer: ElementRef;
 
