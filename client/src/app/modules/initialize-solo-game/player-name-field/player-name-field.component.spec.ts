@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { PlayerNameFieldComponent } from './player-name-field.component';
 
 describe('PlayerNameFieldComponent', () => {
-    // let component: PlayerNameFieldComponent;
+    let component: PlayerNameFieldComponent;
     let fixture: ComponentFixture<PlayerNameFieldComponent>;
 
     beforeEach(async () => {
@@ -13,11 +13,7 @@ describe('PlayerNameFieldComponent', () => {
 
     beforeEach(() => {
         fixture = TestBed.createComponent(PlayerNameFieldComponent);
-        // component = fixture.componentInstance;
+        component = fixture.componentInstance;
         fixture.detectChanges();
     });
-
-    // it('should create', () => {
-    //     expect(component).toBeTruthy();
-    // });
 });
