@@ -10,13 +10,20 @@
         <li *ngFor="let player of players">
             <p>Nom : {{ player.name }}</p>
             <p>Score : {{ player.score }}</p>
-            <div *ngIf="tour && player.id === 0 ;else other_content">
-                <app-countdown [minutes]="this.gameSettings.timeMinute" [seconds] = "this.gameSettings.timeSecond" (checkTime)="switchTour($event)"></app-countdown>
+            <div *ngIf="tour === true && player.id === 1">
+                <app-countdown
+                    [minutes]="this.gameSettings.timeMinute"
+                    [seconds]="this.gameSettings.timeSecond"
+                    (checkTime)="switchTour($event)"
+                ></app-countdown>
             </div>
-            <ng-template #other_content>
-                <app-countdown [minutes]="this.gameSettings.timeMinute" [seconds] = "this.gameSettings.timeSecond" (checkTime)="switchTour($event)"></app-countdown>
-            </ng-template>
+            <div *ngIf="tour === false && player.id === 2">
+                <app-countdown
+                    [minutes]="this.gameSettings.timeMinute"
+                    [seconds]="this.gameSettings.timeSecond"
+                    (checkTime)="switchTour($event)"
+                ></app-countdown>
+            </div>
         </li>
     </ul>
-
 </div>

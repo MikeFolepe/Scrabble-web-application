@@ -1,21 +1,33 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
-import { PasserTourComponent } from '@app/modules/game-view/components/passer-tour/passer-tour.component';
+import { Component, ElementRef, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { PassTourComponent } from '@app/modules/game-view/components/pass-tour/pass-tour.component';
+import { TourService } from '@app/services/tour.service';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-chatbox',
     templateUrl: './chatbox.component.html',
     styleUrls: ['./chatbox.component.scss'],
 })
-export class ChatboxComponent {
+export class ChatboxComponent implements OnInit, OnDestroy {
     // https://stackoverflow.com/questions/35232731/angular-2-scroll-to-bottom-chat-style
-    @ViewChild(PasserTourComponent) passer: PasserTourComponent;
+    @ViewChild(PassTourComponent) passer: PassTourComponent;
     @ViewChild('scrollMe') private myScrollContainer: ElementRef;
-
+    tourSubscription: Subscription = new Subscription();
+    tour: boolean;
     message: string = '';
+    // subscription: Subscription;
     type: string = '';
     listMessages: string[] = [];
     listTypes: string[] = [];
 
+    constructor(private tourService: TourService) {}
+
+    ngOnInit(): void {
+        this.tourSubscription = this.tourService.tourSubject.subscribe((tourSubject: boolean) => {
+            this.tour = tourSubject;
+        });
+        this.tourService.emitTour();
+    }
     keyEvent(event: KeyboardEvent) {
         if (event.key === 'Enter') {
             event.preventDefault();
@@ -102,6 +114,17 @@ export class ChatboxComponent {
     }
 
     switchTour() {
-        this.passer.toogleTour();
+        this.tourSubscription = this.tourService.tourSubject.subscribe((tourSubject: boolean) => {
+            this.tour = tourSubject;
+        });
+        this.tourService.emitTour();
+        if (this.tour === true) {
+            this.passer.toogleTour();
+        } else {
+            this.sendSystemMessage('vous ne pouvez pas effectuer cette commande, attendez votre tour');
+        }
+    }
+    ngOnDestroy() {
+        this.tourSubscription.unsubscribe();
     }
 }

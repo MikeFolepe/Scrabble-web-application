@@ -33,6 +33,6 @@
     />
 </div>
 <div>
-    <button mat-raised-button color="primary" id="Pass-button" [disabled]="false" (click)="switchTour()">Passer tour</button>
+    <button mat-raised-button color="primary" id="Pass-button" [disabled]="!tour" (click)="switchTour()">Passer tour</button>
 </div>
-<app-passer-tour></app-passer-tour>
+<app-pass-tour></app-pass-tour>

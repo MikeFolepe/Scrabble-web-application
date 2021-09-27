@@ -1,10 +1,7 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { GameSettings } from '@app/classes/game-settings';
-import { Player } from '@app/models/player.model';
-import { PasserTourComponent } from '@app/modules/game-view/components/passer-tour/passer-tour.component';
-
-// import { GameSettingsService } from '@app/services/game-settings.service';
-// import { TourService } from '@app/services/tour.service';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ONESECOND_TIME } from '@app/classes/constants';
+import { PassTourService } from '@app/services/pass-tour.service';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-countdown',
@@ -16,20 +13,22 @@ export class CountdownComponent implements OnInit {
     // Decorator pour les inputs
     @Input() seconds: string;
     @Input() minutes: string;
-    @ViewChild(PasserTourComponent) passer: PasserTourComponent;
 
     @Output()
     checkTime: EventEmitter<number> = new EventEmitter();
-    players: Player[] = new Array<Player>();
-    gameSettings: GameSettings;
-    tour: boolean;
+    // Temporals  Values  for  contents the cast of string to number for timer
     minuteTemp: number;
     secondeTemp: number;
+    message: string;
+    passSubsciption: Subscription = new Subscription();
 
-    // Temporals  Values  for  contents the cast of string to number for timer
-
+    constructor(private passtourService: PassTourService) {}
     ngOnInit(): void {
-        this.setTimer();
+        setTimeout(() => {
+            this.setTimer();
+        }, ONESECOND_TIME);
+        this.passSubsciption = this.passtourService.currentMessage.subscribe((message) => (this.message = message));
+        this.passtourService.updateTour(this.stopTimer.bind(this));
     }
 
     // Set le time always after a define interval of 1second and repeat it
@@ -47,13 +46,14 @@ export class CountdownComponent implements OnInit {
                 this.checkTime.emit(this.secondeTemp);
                 clearInterval(intervalID);
             }
-        }, 1000);
+        }, ONESECOND_TIME);
     }
 
-    stopTimer(tour: boolean): void {
-        this.tour = tour;
-        this.secondeTemp = 0;
-        this.minuteTemp = 0;
-        this.checkTime.emit(this.secondeTemp);
+    stopTimer(): void {
+        if (this.message === '!passer') {
+            this.secondeTemp = 0;
+            this.minuteTemp = 0;
+            this.checkTime.emit(this.secondeTemp);
+        }
     }
 }

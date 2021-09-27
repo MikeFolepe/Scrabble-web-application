@@ -77,7 +77,7 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
     }
 
     switchTour(counter: number): void {
-        this.tour = this.countDown.tour;
+        this.subscribeToTourSubject();
         if (counter === 0) {
             if (this.tour === false) {
                 this.tour = true;
@@ -88,11 +88,16 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
             }
         }
         this.countDown.setTimer();
+        // setTimeout(() => {
+        // }, 3000);
     }
 
     ngOnDestroy(): void {
+        this.players = [];
         // unsubscription to subjects
         this.settingsSubscription.unsubscribe();
         this.playerSubscription.unsubscribe();
+        // Se desabonner de la sousciption dans le tour
+        this.tourSubscription.unsubscribe();
     }
 }

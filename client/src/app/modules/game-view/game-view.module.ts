@@ -11,8 +11,8 @@ import { FontSizeComponent } from './components/font-size/font-size.component';
 import { GameViewComponent } from './components/game-view/game-view.component';
 import { InformationPanelComponent } from './components/information-panel/information-panel.component';
 import { LetterEaselComponent } from './components/letter-easel/letter-easel.component';
+import { PassTourComponent } from './components/pass-tour/pass-tour.component';
 import { ScrabbleBoardComponent } from './components/scrabble-board/scrabble-board.component';
-import { PasserTourComponent } from './components/passer-tour/passer-tour.component';
 import { WordValidationComponent } from './components/word-validation/word-validation.component';
 
 @NgModule({
@@ -26,7 +26,7 @@ import { WordValidationComponent } from './components/word-validation/word-valid
         ChatboxComponent,
         FontSizeComponent,
         CountdownComponent,
-        PasserTourComponent,
+        PassTourComponent,
         WordValidationComponent,
     ],
     imports: [CommonModule, AppMaterialModule, AppRoutingModule, FormsModule],
