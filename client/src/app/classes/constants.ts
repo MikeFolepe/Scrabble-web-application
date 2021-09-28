@@ -3,6 +3,7 @@ import { Letter } from '@app/classes/letter';
 
 export const DEFAULT_WIDTH = 750;
 export const DEFAULT_HEIGHT = 750;
+export const ONESECOND_TIME = 1000;
 export const BOARD_SIZE = 16;
 export const EASEL_SIZE = 7;
 

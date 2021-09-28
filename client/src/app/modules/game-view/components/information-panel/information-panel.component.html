@@ -6,11 +6,24 @@
     </div>
 
     <h1 class="header-item">Panneau d'information</h1>
-    <div class="players-list" #scrollMe>
-        <p *ngFor="let player of players">
-            >
-            Nom : {{ player.name }}<br>
-            Score : {{ player.score }}
-        </p>
-    </div>
+    <ul id="playersList">
+        <li *ngFor="let player of players">
+            <p>Nom : {{ player.name }}</p>
+            <p>Score : {{ player.score }}</p>
+            <div *ngIf="tour === true && player.id === 1">
+                <app-countdown
+                    [minutes]="this.gameSettings.timeMinute"
+                    [seconds]="this.gameSettings.timeSecond"
+                    (checkTime)="switchTour($event)"
+                ></app-countdown>
+            </div>
+            <div *ngIf="tour === false && player.id === 2">
+                <app-countdown
+                    [minutes]="this.gameSettings.timeMinute"
+                    [seconds]="this.gameSettings.timeSecond"
+                    (checkTime)="switchTour($event)"
+                ></app-countdown>
+            </div>
+        </li>
+    </ul>
 </div>

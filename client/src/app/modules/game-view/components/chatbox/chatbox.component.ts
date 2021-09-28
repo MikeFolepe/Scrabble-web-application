@@ -1,17 +1,24 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+
 import { Vec2 } from '@app/classes/vec2';
 import { PlaceLetterComponent } from '../place-letter/place-letter.component';
+import { Component, ElementRef, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { PassTourComponent } from '@app/modules/game-view/components/pass-tour/pass-tour.component';
+import { TourService } from '@app/services/tour.service';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-chatbox',
     templateUrl: './chatbox.component.html',
     styleUrls: ['./chatbox.component.scss'],
 })
-export class ChatboxComponent {
 
+export class ChatboxComponent implements OnInit, OnDestroy {
+    // https://stackoverflow.com/questions/35232731/angular-2-scroll-to-bottom-chat-style
     @ViewChild(PlaceLetterComponent) placeComponent: PlaceLetterComponent;
+    @ViewChild(PassTourComponent) passer: PassTourComponent;
     @ViewChild('scrollMe') private myScrollContainer: ElementRef;
-
+    tourSubscription: Subscription = new Subscription();
+    tour: boolean;
     message: string = '';
     typeMessage: string = '';
     command: string = '';
@@ -19,13 +26,21 @@ export class ChatboxComponent {
     listMessages: string[] = [];
     listTypes: string[] = [];
 
+    constructor(private tourService: TourService) {}
+
+    ngOnInit(): void {
+        this.tourSubscription = this.tourService.tourSubject.subscribe((tourSubject: boolean) => {
+            this.tour = tourSubject;
+        });
+        this.tourService.emitTour();
+    }
     keyEvent(event: KeyboardEvent) {
         if (event.key === 'Enter') {
             event.preventDefault();
             this.sendSystemMessage('Message du système');
             this.sendOpponentMessage('Le joueur virtuel fait...');
             this.sendPlayerCommand();
-
+            // Check the entry if equals at the command !passer and switch the tour
             this.message = ''; // Clear l'input
             setTimeout(() => {
                 // Le timeout permet de scroll jusqu'au dernier élément ajouté
@@ -44,7 +59,8 @@ export class ChatboxComponent {
                     break;
                 }
                 case 'passer': {
-
+                    
+                    this.switchTour();
                     break;
                 }
                 case 'echanger': {
@@ -143,5 +159,20 @@ export class ChatboxComponent {
 
     scrollToBottom(): void {
         this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
+    }
+
+    switchTour() {
+        this.tourSubscription = this.tourService.tourSubject.subscribe((tourSubject: boolean) => {
+            this.tour = tourSubject;
+        });
+        this.tourService.emitTour();
+        if (this.tour === true) {
+            this.passer.toogleTour();
+        } else {
+            this.sendSystemMessage('vous ne pouvez pas effectuer cette commande, attendez votre tour');
+        }
+    }
+    ngOnDestroy() {
+        this.tourSubscription.unsubscribe();
     }
 }
