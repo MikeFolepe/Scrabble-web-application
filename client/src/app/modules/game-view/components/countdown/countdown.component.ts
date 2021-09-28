@@ -7,7 +7,6 @@ import { Subscription } from 'rxjs';
     selector: 'app-countdown',
     templateUrl: './countdown.component.html',
     styleUrls: ['./countdown.component.scss'],
-    template: '{{countDown|async|formatTime}}',
 })
 export class CountdownComponent implements OnInit {
     // Decorator pour les inputs

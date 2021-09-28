@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { PassTourComponent } from '@app/modules/game-view/components/pass-tour/pass-tour.component';
 import { TourService } from '@app/services/tour.service';
 import { Subscription } from 'rxjs';
@@ -120,6 +120,7 @@ export class ChatboxComponent implements OnInit, OnDestroy {
         this.tourService.emitTour();
         if (this.tour === true) {
             this.passer.toogleTour();
+            this.sendSystemMessage('!passer');
         } else {
             this.sendSystemMessage('vous ne pouvez pas effectuer cette commande, attendez votre tour');
         }
