@@ -1,4 +1,5 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
+import { INDEX_REAL_PLAYER } from '@app/classes/constants';
 import { Vec2 } from '@app/classes/vec2';
 import { PlayerService } from '@app/services/player.service';
 import { PlaceLetterComponent } from '../place-letter/place-letter.component';
@@ -10,19 +11,18 @@ import { SwapLetterComponent } from '../swap-letter/swap-letter.component';
     styleUrls: ['./chatbox.component.scss'],
 })
 export class ChatboxComponent {
-
     @ViewChild(PlaceLetterComponent) placeComponent: PlaceLetterComponent;
     @ViewChild(SwapLetterComponent) swapComponent: SwapLetterComponent;
     @ViewChild('scrollMe') private myScrollContainer: ElementRef;
-
-    constructor(private playerService: PlayerService) {}
 
     message: string = '';
     typeMessage: string = '';
     command: string = '';
 
-    listMessages: string[] = [];
-    listTypes: string[] = [];
+    listMessages: string[] = []; // Message log
+    listTypes: string[] = []; // Message types log
+
+    constructor(private playerService: PlayerService) {}
 
     keyEvent(event: KeyboardEvent) {
         if (event.key === 'Enter') {
@@ -31,9 +31,9 @@ export class ChatboxComponent {
             this.sendOpponentMessage('Le joueur virtuel fait...');
             this.sendPlayerCommand();
 
-            this.message = ''; // Clear l'input
+            this.message = ''; // Clear the input
             setTimeout(() => {
-                // Le timeout permet de scroll jusqu'au dernier élément ajouté
+                // Timeout is used to update the scroll after the last element added
                 this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
             }, 1);
         }
@@ -42,23 +42,20 @@ export class ChatboxComponent {
     sendPlayerCommand() {
         if (this.isValid()) {
             this.typeMessage = 'player';
-            // Si valide, call les fonctions respectives aux commandes
+            // If the command is valid, we call the respective command from here
             switch (this.command) {
                 case 'debug': {
-
                     break;
                 }
                 case 'passer': {
-
                     break;
                 }
                 case 'echanger': {
-                    let messageSplitted = this.message.split(/\s/);
+                    const messageSplitted = this.message.split(/\s/);
 
-                    if (this.swapComponent.swap(messageSplitted[1])) {
-                        this.message = this.playerService.getPlayers()[0].name + ' : ' + this.message;
-                    }
-                    else {
+                    if (this.swapComponent.swap(messageSplitted[1], INDEX_REAL_PLAYER)) {
+                        this.message = this.playerService.getPlayers()[INDEX_REAL_PLAYER].name + ' : ' + this.message;
+                    } else {
                         this.typeMessage = 'error';
                         this.message = 'ERREUR : La commande est impossible à réaliser';
                     }
@@ -66,18 +63,18 @@ export class ChatboxComponent {
                     break;
                 }
                 case 'placer': {
-                    let messageSplitted = this.message.split(/\s/);
+                    const messageSplitted = this.message.split(/\s/);
 
-                    let positionSplitted = messageSplitted[1].split(/([0-9]+)/);
+                    const positionSplitted = messageSplitted[1].split(/([0-9]+)/);
 
-                    // Vecteur contenant la position de départ du mot qu'on veut placer
-                    let position: Vec2 = {
+                    // Vector which contains the word's starting position
+                    const position: Vec2 = {
                         x: Number(positionSplitted[1]) - 1,
-                        y: positionSplitted[0].charCodeAt(0) - 97
+                        y: positionSplitted[0].charCodeAt(0) - 'a'.charCodeAt(0),
                     };
-                    let orientation = positionSplitted[2];
+                    const orientation = positionSplitted[2];
 
-                    if (this.placeComponent.place(position, orientation, messageSplitted[2]) === false) {
+                    if (this.placeComponent.place(position, orientation, messageSplitted[2], INDEX_REAL_PLAYER) === false) {
                         this.typeMessage = 'error';
                         this.message = 'ERREUR : La commande est impossible à réaliser';
                     }
@@ -87,13 +84,14 @@ export class ChatboxComponent {
                     break;
                 }
             }
-        }
-        else {   // Si invalide -> erreur
+        } else {
+            // If command is invalid
             this.typeMessage = 'error';
         }
         this.command = '';
+        // Add message and its type to the logs
         this.listTypes.push(this.typeMessage);
-        this.listMessages.push(this.message); // Add le message et update l'affichage de la chatbox
+        this.listMessages.push(this.message);
     }
 
     sendSystemMessage(systemMessage: string) {
@@ -109,10 +107,8 @@ export class ChatboxComponent {
     }
 
     isValid(): boolean {
-        // Check les erreurs ici (syntaxe, invalide)
-
         if (this.message[0] === '!') {
-            // Si c'est une commande, on la valide
+            // If it's a command, we call the validation
             return this.isInputValid() && this.isSyntaxValid();
         }
         return true;
@@ -150,7 +146,7 @@ export class ChatboxComponent {
             this.command = 'placer';
         } else {
             valid = false;
-            this.message = "ERREUR : La syntaxe est invalide";
+            this.message = 'ERREUR : La syntaxe est invalide';
         }
         return valid;
     }

@@ -9,8 +9,7 @@ import { PlayerService } from '@app/services/player.service';
     styleUrls: ['./letter-easel.component.scss'],
 })
 export class LetterEaselComponent implements OnInit {
-
-    letterEaselTab: Array<Letter> = new Array<Letter>();
+    letterEaselTab: Letter[];
     service: PlayerService;
 
     fontSize: number = DEFAULT_FONT_SIZE;
@@ -25,6 +24,6 @@ export class LetterEaselComponent implements OnInit {
     }
 
     update(): void {
-        this.letterEaselTab = this.playerService.getLettersEasel();
+        this.letterEaselTab = this.playerService.getLettersEasel(0);
     }
 }

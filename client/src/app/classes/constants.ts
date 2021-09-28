@@ -14,6 +14,9 @@ export const CENTRAL_CASE_POSX = 7;
 export const CENTRAL_CASE_POSY = 7;
 
 export const PLAYERS_NUMBER = 2;
+export const INDEX_REAL_PLAYER = 0;
+export const INDEX_PLAYER_IA = 1;
+
 export const FONT_SIZE_MAX = 20;
 export const FONT_SIZE_MIN = 5;
 export const DEFAULT_FONT_SIZE = 13;

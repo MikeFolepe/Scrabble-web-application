@@ -43,11 +43,10 @@ export class LetterService {
     }
 
     reserveSize(): number {
-        let size: number = 0;
+        let size = 0;
         for (const letter of RESERVE) {
             size += letter.quantity;
         }
-        console.log(size);
         return size;
     }
 
