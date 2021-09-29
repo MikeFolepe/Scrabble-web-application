@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { MouseButton } from '@app/classes/constants';
 import { Vec2 } from '@app/classes/vec2';
 import { GridService } from '@app/services/grid.service';
-import { MouseButton } from '@app/classes/constants';
 
 @Component({
     selector: 'app-scrabble-board',
@@ -39,5 +39,6 @@ export class ScrabbleBoardComponent implements AfterViewInit {
         if (event.button === MouseButton.Left) {
             this.mousePosition = { x: event.offsetX, y: event.offsetY };
         }
+        // console.log(this.mousePosition);
     }
 }
