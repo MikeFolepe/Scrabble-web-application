@@ -5,9 +5,6 @@ import { Player } from '@app/models/player.model';
 import { Subject } from 'rxjs';
 import { LetterService } from './letter.service';
 
-
-
-
 @Injectable({
     providedIn: 'root',
 })
@@ -36,20 +33,21 @@ export class PlayerService {
         // from now on, call myFunc wherever you want inside this service
     }
 
-    getLettersEasel(): Array<Letter> {
-        return this.players[0].letterTable;
+    getLettersEasel(): Letter[] {
+        return this.players[1].letterTable;
     }
 
-    getPlayers(): Array<Player> {
+    getPlayers(): Player[] {
         return this.players;
     }
 
-    removeLetter(letterToRemove: string): void {   // Remove one letter from easel
+    removeLetter(letterToRemove: string): void {
+        // Remove one letter from easel
 
         for (let i = 0; i < this.players[0].letterTable.length; i++) {
             if (this.players[0].letterTable[i].value === letterToRemove.toUpperCase()) {
                 this.players[0].letterTable.splice(i, 1);
-                this.myFunc();
+                // this.myFunc();
                 break;
             }
         }

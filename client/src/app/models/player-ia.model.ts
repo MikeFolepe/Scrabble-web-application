@@ -1,14 +1,12 @@
 import { IAStrategy, placingBallotBox, PlacingStrategy, strategyBallotBox } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
+import { Range } from '@app/classes/range';
 import { PlayerIAComponent } from '@app/modules/game-view/components/player-ia/player-ia.component';
 import { PlayStrategy } from './abstract-strategy.model';
-import { LessSix } from './less-six-placing.model';
 import { PlaceLetters } from './place-letter-strategy.model';
 import { Player } from './player.model';
-import { SevenTwelve } from './seven-twelve-placing-strategy.model';
 import { SkipTurn } from './skip-turn-strategy.model';
 import { SwapLetter } from './swap-letter-strategy.model';
-import { ThirteenEighteen } from './thirteen-eighteen-placing-strategy.model';
 
 export class PlayerIA extends Player {
     context: PlayerIAComponent;
@@ -47,7 +45,7 @@ export class PlayerIA extends Player {
                 break;
             case IAStrategy.Place:
                 // Get a pointing range object which extends PlaceLetters
-                this.strategy = this.pointingRange();
+                this.strategy = new PlaceLetters(this.pointingRange());
                 break;
             default:
                 // For bug resolution
@@ -56,8 +54,8 @@ export class PlayerIA extends Player {
         }
     }
 
-    pointingRange(): PlaceLetters {
-        let placingStrategy: PlaceLetters;
+    pointingRange(): Range {
+        let pointingRange: Range;
 
         // Number of seconds since 1st January 1970
         let randomNumber = new Date().getTime();
@@ -67,21 +65,21 @@ export class PlayerIA extends Player {
 
         switch (placingBallotBox[randomNumber]) {
             case PlacingStrategy.LessSix:
-                placingStrategy = new LessSix();
+                pointingRange = { min: 0, max: 6 };
                 break;
             case PlacingStrategy.SevenToTwelve:
-                placingStrategy = new SevenTwelve();
+                pointingRange = { min: 7, max: 12 };
                 break;
             case PlacingStrategy.ThirteenToEighteen:
-                placingStrategy = new ThirteenEighteen();
+                pointingRange = { min: 13, max: 18 };
                 break;
             default:
                 // For bug resolution
-                placingStrategy = new LessSix();
+                pointingRange = { min: 0, max: 0 };
                 break;
         }
 
-        return placingStrategy;
+        return pointingRange;
     }
 
     setContext(context: PlayerIAComponent) {

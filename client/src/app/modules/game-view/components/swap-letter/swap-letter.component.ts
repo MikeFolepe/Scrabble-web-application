@@ -6,14 +6,12 @@ import { PlayerService } from '@app/services/player.service';
 @Component({
   selector: 'app-swap-letter',
   templateUrl: './swap-letter.component.html',
-  styleUrls: ['./swap-letter.component.scss']
+  styleUrls: ['./swap-letter.component.scss'],
 })
 export class SwapLetterComponent implements OnInit {
-
   constructor(private playerService: PlayerService, private letterService: LetterService) {}
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   swap(lettersToSwap: string): boolean {
     if (!this.isPossible(lettersToSwap)) {
@@ -27,8 +25,7 @@ export class SwapLetterComponent implements OnInit {
   }
 
   isPossible(lettersToSwap: string): boolean {
-
-    return (this.isItMyTurn() && this.reserveHasEnoughLetters() && this.areLettersInEasel(lettersToSwap));
+    return this.isItMyTurn() && this.reserveHasEnoughLetters() && this.areLettersInEasel(lettersToSwap);
   }
 
   areLettersInEasel(lettersToSwap: string): boolean {
@@ -49,8 +46,7 @@ export class SwapLetterComponent implements OnInit {
   }
 
   isItMyTurn(): boolean {
-    // TODO 
+    // TODO
     return true;
   }
-
 }

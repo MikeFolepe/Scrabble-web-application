@@ -14,9 +14,10 @@ export class PlaceLetterComponent {
 
     letterEmpty: string = '';
     isFirstRound: boolean = true;
+    isIAPlacementValid: boolean = false;
 
     constructor(private playerService: PlayerService, private gridService: GridService) {
-        this.scrabbleBoard = [];   // Initialise la matrice avec des lettres vides
+        this.scrabbleBoard = []; // Initialise la matrice avec des lettres vides
         for (let i = 0; i < BOARD_ROWS; i++) {
             this.scrabbleBoard[i] = [];
             for (let j = 0; j < BOARD_COLUMNS; j++) {
@@ -25,12 +26,18 @@ export class PlaceLetterComponent {
         }
     }
 
+    placeMethodAdapter(object: { start: Vec2; orientation: string; word: string }) {
+        this.place(object.start, object.orientation, object.word);
+    }
+
     place(position: Vec2, orientation: string, word: string): boolean {
+        console.log('Placing...');
         // Si la commande est possible selon les paramètres
         if (!this.isPossible(position, orientation, word)) {
             return false;
         }
-
+        console.log(this.gridService.gridContext);
+        console.log('placing retourne true');
         for (let i = 0; i < word.length; i++) {
             // Ajoute la lettre à la position respective de la matrice selon l'orientation
             let x = 0;
@@ -46,8 +53,8 @@ export class PlaceLetterComponent {
                 this.scrabbleBoard[position.x + x][position.y + y] = word.charAt(i);
 
                 // Display the letter on the scrabble board
-                let positionGrid = this.posTabToPosGrid(position.x + x, position.y + y);
-                this.gridService.drawLetter(this.gridService.gridContext, word.charAt(i), positionGrid);
+                // const positionGrid = this.posTabToPosGrid(position.x + x, position.y + y);
+                // this.gridService.drawLetter(this.gridService.gridContext, word.charAt(i), positionGrid);
 
                 if (word.charAt(i) === word.charAt(i).toUpperCase()) {
                     // Si on place une majuscule (lettre blanche), on supprime un '*'
@@ -61,6 +68,8 @@ export class PlaceLetterComponent {
 
         console.log(this.scrabbleBoard);
         this.isFirstRound = false;
+        this.isIAPlacementValid = true;
+        console.log('IA placement is valid' + this.isIAPlacementValid);
         // TODO Valider le mot sur le scrabbleboard
         this.playerService.refillEasel(); // Remplie le chevalet avec de nouvelles lettres de la réserve
         return true;
@@ -158,10 +167,9 @@ export class PlaceLetterComponent {
     }
 
     isWordTouchingOthers(position: Vec2, orientation: string, word: string): boolean {
-        let isWordTouching: boolean = false;
+        let isWordTouching = false;
 
         for (let i = 0; i < word.length; i++) {
-
             for (let i = 0; i < word.length; i++) {
                 let x = 0;
                 let y = 0;
@@ -189,16 +197,17 @@ export class PlaceLetterComponent {
     }
 
     isPosInBounds(position: number): boolean {
-        if (position >= 0 && position < BOARD_ROWS) {   // Position in between [0-14]
+        if (position >= 0 && position < BOARD_ROWS) {
+            // Position in between [0-14]
             return true;
         }
         return false;
     }
 
     posTabToPosGrid(positionTabX: number, positionTabY: number): Vec2 {
-        let positionGrid: Vec2 = {
-            x: positionTabX * (CASE_SIZE) + CASE_SIZE - DEFAULT_WIDTH / 2,
-            y: positionTabY * (CASE_SIZE) + CASE_SIZE - DEFAULT_HEIGHT / 2
+        const positionGrid: Vec2 = {
+            x: positionTabX * CASE_SIZE + CASE_SIZE - DEFAULT_WIDTH / 2,
+            y: positionTabY * CASE_SIZE + CASE_SIZE - DEFAULT_HEIGHT / 2,
         };
         return positionGrid;
     }
