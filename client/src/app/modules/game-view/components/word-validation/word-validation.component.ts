@@ -1,15 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-word-validation',
-  templateUrl: './word-validation.component.html',
-  styleUrls: ['./word-validation.component.scss']
+    selector: 'app-word-validation',
+    templateUrl: './word-validation.component.html',
+    styleUrls: ['./word-validation.component.scss'],
 })
-export class WordValidationComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
-}
+export class WordValidationComponent {}

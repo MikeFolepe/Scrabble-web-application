@@ -20,7 +20,6 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
     message: string;
     reserveSubsciption: Subscription = new Subscription();
 
-
     constructor(private playerService: PlayerService, private gridService: GridService, private letterService: LetterService) {
         this.scrabbleBoard = []; // Initialise la matrice avec des lettres vides
         for (let i = 0; i < BOARD_ROWS; i++) {
@@ -182,10 +181,10 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
                 }
 
                 if (this.isPosInBounds(position.x + x + 1)) {
-                    if (this.scrabbleBoard[position.x + x + 1][position.y + y] != '') isWordTouching = true;
+                    if (this.scrabbleBoard[position.x + x + 1][position.y + y] !== '') isWordTouching = true;
                 }
                 if (this.isPosInBounds(position.x + x - 1)) {
-                    if (this.scrabbleBoard[position.x + x - 1][position.y + y] != '') isWordTouching = true;
+                    if (this.scrabbleBoard[position.x + x - 1][position.y + y] !== '') isWordTouching = true;
                 }
                 if (this.isPosInBounds(position.y + y + 1)) {
                     if (this.scrabbleBoard[position.x + x][position.y + y + 1]) isWordTouching = true;
@@ -219,8 +218,7 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
         return true;
     }
 
-    ngOnDestroy(){
+    ngOnDestroy() {
         this.reserveSubsciption.unsubscribe();
     }
-
 }

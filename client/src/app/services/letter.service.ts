@@ -97,7 +97,6 @@ export class LetterService {
         }
         return totalLetter;
         // eslint-disable-next-line no-unreachable
-        console.log(this.reserve);
     }
 
     // Method with returns if there are minimum letters inn reserve to play

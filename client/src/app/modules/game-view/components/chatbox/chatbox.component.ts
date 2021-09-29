@@ -16,7 +16,7 @@ import { SwapLetterComponent } from '../swap-letter/swap-letter.component';
 })
 export class ChatboxComponent implements OnInit, OnDestroy {
     // https://stackoverflow.com/questions/35232731/angular-2-scroll-to-bottom-chat-style
-    @ViewChild(PassTourComponent) passer: PassTourComponent;
+    @ViewChild(PassTourComponent) pass: PassTourComponent;
     @ViewChild(PlaceLetterComponent) placeComponent: PlaceLetterComponent;
     @ViewChild(SwapLetterComponent) swapComponent: SwapLetterComponent;
     @ViewChild('scrollMe') private myScrollContainer: ElementRef;
@@ -109,6 +109,7 @@ export class ChatboxComponent implements OnInit, OnDestroy {
                             this.typeMessage = 'error';
                             this.message = 'ERREUR : La commande est impossible à réaliser';
                         }
+                        this.pass.toogleTour();
                     } else {
                         this.message = 'ERREUR : La commande est impossible à réaliser';
                     }
@@ -193,7 +194,7 @@ export class ChatboxComponent implements OnInit, OnDestroy {
     switchTour() {
         this.getTour();
         if (this.tour === true) {
-            this.passer.toogleTour();
+            this.pass.toogleTour();
             this.sendSystemMessage('!passer');
         } else {
             this.sendSystemMessage('vous ne pouvez pas effectuer cette commande, attendez votre tour');
