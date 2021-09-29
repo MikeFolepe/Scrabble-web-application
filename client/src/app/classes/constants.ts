@@ -1,9 +1,12 @@
+/* eslint-disable max-lines */
 import { Letter } from '@app/classes/letter';
 import { PairLetterValues } from './pair-letter-values';
 
 export const DEFAULT_WIDTH = 750;
 export const DEFAULT_HEIGHT = 750;
+export const ONESECOND_TIME = 1000;
 export const BOARD_SIZE = 16;
+export const CASE_SIZE = DEFAULT_WIDTH / BOARD_SIZE;
 export const EASEL_SIZE = 7;
 
 export const BOARD_ROWS = 15;
@@ -22,6 +25,7 @@ export const TRIPLE_WORD = 3;
 export const DOUBLE_WORD = 2;
 export const TRIPLE_LETTER = 3;
 export const DOUBLE_LETTER = 2;
+export const MIN_RESERVE_SIZE_TOSWAP = 7;
 
 export enum MouseButton {
     Left = 0,
@@ -328,65 +332,52 @@ export const BONUSES_POSITIONS: Map<string, string> = new Map<string, string>([
     ['A8', 'tripleword'],
     ['A12', 'doubleletter'],
     ['A15', 'tripleword'],
-
     ['B2', 'doubleword'],
     ['B6', 'tripleletter'],
     ['B10', 'tripleletter'],
     ['B14', 'doubleword'],
-
     ['C3', 'doubleword'],
     ['C7', 'doubleletter'],
     ['C9', 'doubleletter'],
     ['C13', 'doubleword'],
-
     ['D1', 'doubleletter'],
     ['D4', 'doubleword'],
     ['D8', 'doubleletter'],
     ['D12', 'doubleword'],
     ['D15', 'doubleletter'],
-
     ['E5', 'doubleword'],
     ['E11', 'doubleword'],
-
     ['F2', 'tripleletter'],
     ['F6', 'tripleletter'],
     ['F10', 'tripleletter'],
     ['F14', 'tripleletter'],
-
     ['G3', 'doubleletter'],
     ['G7', 'doubleletter'],
     ['G9', 'doubleletter'],
     ['G13', 'doubleletter'],
-
     ['H1', 'tripleword'],
     ['H4', 'doubleletter'],
     ['H12', 'doubleletter'],
     ['H15', 'tripleword'],
-
     ['I3', 'doubleletter'],
     ['I7', 'doubleletter'],
     ['I9', 'doubleletter'],
     ['I13', 'doubleletter'],
-
     ['J2', 'tripleletter'],
     ['J6', 'tripleletter'],
     ['J10', 'tripleletter'],
     ['J14', 'tripleletter'],
-
     ['K5', 'doubleword'],
     ['K11', 'doubleword'],
-
     ['M1', 'doubleletter'],
     ['M4', 'doubleword'],
     ['M8', 'doubleletter'],
     ['M12', 'doubleword'],
     ['M15', 'doubleletter'],
-
     ['N3', 'doubleword'],
     ['N7', 'doubleletter'],
     ['N9', 'doubleletter'],
     ['N13', 'doubleword'],
-
     ['O1', 'tripleword'],
     ['O4', 'doubleletter'],
     ['O8', 'tripleword'],

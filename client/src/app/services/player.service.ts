@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { EASEL_SIZE } from '@app/classes/constants';
-import { StartingPlayer } from '@app/classes/game-settings';
 import { Letter } from '@app/classes/letter';
 import { Player } from '@app/models/player.model';
 import { Subject } from 'rxjs';
@@ -13,7 +12,6 @@ export class PlayerService {
     playerSubject = new Subject<Player[]>();
     private players: Player[] = new Array<Player>();
     private myFunc: () => void;
-
     constructor(private letterService: LetterService) {}
 
     updateLettersEasel(fn: () => void) {
@@ -34,7 +32,16 @@ export class PlayerService {
     }
 
     getLettersEasel(): Letter[] {
-        return this.players[StartingPlayer.Player1].letterTable;
+        return this.players[0].letterTable;
+    }
+
+    // Service pour cheker le chevalier du IA
+    getLettersEaselIA(): Letter[] {
+        return this.players[1].letterTable;
+    }
+
+    getPlayers(): Player[] {
+        return this.players;
     }
 
     removeLetter(letterToRemove: string): void {
@@ -59,5 +66,20 @@ export class PlayerService {
             this.players[0].letterTable[i] = letterToInsert;
         }
         this.myFunc();
+    }
+
+    swap(letter: string): void {
+        this.removeLetter(letter);
+        this.letterService.addLetterToReserve(letter);
+        this.refillEasel();
+    }
+
+    easelContainsLetter(letter: string): boolean {
+        for (const letterEasel of this.players[0].letterTable) {
+            if (letter.toUpperCase() === letterEasel.value) {
+                return true;
+            }
+        }
+        return false;
     }
 }

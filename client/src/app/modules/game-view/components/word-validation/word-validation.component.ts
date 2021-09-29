@@ -16,7 +16,7 @@ export class WordValidationComponent {
     playedWords: Map<string, string[]>;
     newPlayedWords: Map<string, string[]>;
     newPositions: string[];
-
+    
     constructor() {
         this.dictionary = JSON.parse(JSON.stringify(dictionaryData)).words;
         this.playedWords = new Map<string, string[]>();
@@ -35,7 +35,7 @@ export class WordValidationComponent {
             }
             return false;
         }
-        return false;
+        retucrn false;
     }
 
     findWords(words: string[]): string[] {

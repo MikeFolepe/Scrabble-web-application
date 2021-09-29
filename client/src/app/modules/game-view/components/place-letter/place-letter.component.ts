@@ -1,20 +1,27 @@
-import { Component } from '@angular/core';
-import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSX, CENTRAL_CASE_POSY } from '@app/classes/constants';
+/* eslint-disable @typescript-eslint/prefer-for-of */
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { BOARD_COLUMNS, BOARD_ROWS, CASE_SIZE, CENTRAL_CASE_POSX, CENTRAL_CASE_POSY, DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/classes/constants';
 import { Vec2 } from '@app/classes/vec2';
+import { GridService } from '@app/services/grid.service';
+import { LetterService } from '@app/services/letter.service';
 import { PlayerService } from '@app/services/player.service';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-place-letter',
     templateUrl: './place-letter.component.html',
     styleUrls: ['./place-letter.component.scss'],
 })
-export class PlaceLetterComponent {
+export class PlaceLetterComponent implements OnInit, OnDestroy {
     scrabbleBoard: string[][]; // Matrice 15x15
 
     letterEmpty: string = '';
     isFirstRound: boolean = true;
+    message: string;
+    reserveSubsciption: Subscription = new Subscription();
 
-    constructor(private playerService: PlayerService) {
+
+    constructor(private playerService: PlayerService, private gridService: GridService, private letterService: LetterService) {
         this.scrabbleBoard = []; // Initialise la matrice avec des lettres vides
         for (let i = 0; i < BOARD_ROWS; i++) {
             this.scrabbleBoard[i] = [];
@@ -22,6 +29,10 @@ export class PlaceLetterComponent {
                 this.scrabbleBoard[i][j] = this.letterEmpty;
             }
         }
+    }
+
+    ngOnInit() {
+        this.reserveSubsciption = this.letterService.currentMessage.subscribe((message) => (this.message = message));
     }
 
     place(position: Vec2, orientation: string, word: string): boolean {
@@ -43,6 +54,11 @@ export class PlaceLetterComponent {
             // Si la case est vide, on utilise une lettre de la réserve
             if (this.scrabbleBoard[position.x + x][position.y + y] === '') {
                 this.scrabbleBoard[position.x + x][position.y + y] = word.charAt(i);
+
+                // Display the letter on the scrabble board
+                const positionGrid = this.posTabToPosGrid(position.x + x, position.y + y);
+                this.gridService.drawLetter(this.gridService.gridContext, word.charAt(i), positionGrid);
+
                 if (word.charAt(i) === word.charAt(i).toUpperCase()) {
                     // Si on place une majuscule (lettre blanche), on supprime un '*'
                     this.playerService.removeLetter('*');
@@ -53,23 +69,21 @@ export class PlaceLetterComponent {
             }
         }
 
-        console.log(this.scrabbleBoard);
+        // console.log(this.scrabbleBoard);
         this.isFirstRound = false;
         // TODO Valider le mot sur le scrabbleboard
         this.playerService.refillEasel(); // Remplie le chevalet avec de nouvelles lettres de la réserve
+        this.letterService.newMessage('mise a jour');
         return true;
     }
 
     isPossible(position: Vec2, orientation: string, word: string): boolean {
-        // TODO valider si on peut placer le mot à partir de la position donné,
-        //     si les lettres du mot sont dans le chevalet...
-        //     si les lettres sont sur le plateau
-        //     1er tour?
         let isPossible = false;
 
         // 1er Tour
         if (this.isFirstRound) {
             isPossible =
+                this.isItMyTurn() &&
                 this.isFirstWordValid(position, orientation, word) &&
                 this.isWordValid(position, orientation, word) &&
                 this.isWordFitting(position, orientation, word);
@@ -77,6 +91,7 @@ export class PlaceLetterComponent {
         // Les tours suivants
         else {
             isPossible =
+                this.isItMyTurn() &&
                 this.isWordValid(position, orientation, word) && // Si les lettres du mots sont dans le chevalet ou le plateau du jeu
                 this.isWordFitting(position, orientation, word) && // Si le mot n'est pas à l'extérieur de la grille
                 this.isWordTouchingOthers(position, orientation, word); // Si le mot est en contact avec d'autres lettres du plateau
@@ -157,34 +172,55 @@ export class PlaceLetterComponent {
         let isWordTouching = false;
 
         for (let i = 0; i < word.length; i++) {
-            let x = 0;
-            let y = 0;
-            if (orientation === 'h') {
-                x = i;
-            } else if (orientation === 'v') {
-                y = i;
-            }
+            for (let i = 0; i < word.length; i++) {
+                let x = 0;
+                let y = 0;
+                if (orientation === 'h') {
+                    x = i;
+                } else if (orientation === 'v') {
+                    y = i;
+                }
 
-            if (this.isPosInBounds(position.x + x + 1)) {
-                if (this.scrabbleBoard[position.x + x + 1][position.y + y] != '') isWordTouching = true;
-            }
-            if (this.isPosInBounds(position.x + x - 1)) {
-                if (this.scrabbleBoard[position.x + x - 1][position.y + y] != '') isWordTouching = true;
-            }
-            if (this.isPosInBounds(position.y + y + 1)) {
-                if (this.scrabbleBoard[position.x + x][position.y + y + 1]) isWordTouching = true;
-            }
-            if (this.isPosInBounds(position.y + y - 1)) {
-                if (this.scrabbleBoard[position.x + x][position.y + y - 1]) isWordTouching = true;
+                if (this.isPosInBounds(position.x + x + 1)) {
+                    if (this.scrabbleBoard[position.x + x + 1][position.y + y] != '') isWordTouching = true;
+                }
+                if (this.isPosInBounds(position.x + x - 1)) {
+                    if (this.scrabbleBoard[position.x + x - 1][position.y + y] != '') isWordTouching = true;
+                }
+                if (this.isPosInBounds(position.y + y + 1)) {
+                    if (this.scrabbleBoard[position.x + x][position.y + y + 1]) isWordTouching = true;
+                }
+                if (this.isPosInBounds(position.y + y - 1)) {
+                    if (this.scrabbleBoard[position.x + x][position.y + y - 1]) isWordTouching = true;
+                }
             }
         }
         return isWordTouching;
     }
 
     isPosInBounds(position: number): boolean {
-        if (position >= 0 && position <= BOARD_ROWS) {
+        if (position >= 0 && position < BOARD_ROWS) {
+            // Position in between [0-14]
             return true;
         }
         return false;
     }
+
+    posTabToPosGrid(positionTabX: number, positionTabY: number): Vec2 {
+        const positionGrid: Vec2 = {
+            x: positionTabX * CASE_SIZE + CASE_SIZE - DEFAULT_WIDTH / 2,
+            y: positionTabY * CASE_SIZE + CASE_SIZE - DEFAULT_HEIGHT / 2,
+        };
+        return positionGrid;
+    }
+
+    isItMyTurn(): boolean {
+        // TODO
+        return true;
+    }
+
+    ngOnDestroy(){
+        this.reserveSubsciption.unsubscribe();
+    }
+
 }

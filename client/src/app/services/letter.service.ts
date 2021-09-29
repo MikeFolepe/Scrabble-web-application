@@ -1,19 +1,29 @@
 import { Injectable } from '@angular/core';
 import { EASEL_SIZE, RESERVE } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
+import { BehaviorSubject } from 'rxjs';
 @Injectable({
     providedIn: 'root',
 })
 export class LetterService {
-    // Méthode pour prendre des lettres dans la réserve
-    totalLetters: number;
+    // Property witch return total number of letters available
+    randomElement: number;
+    reserve: Letter[] = RESERVE;
+    messageSource = new BehaviorSubject('default message');
+    // eslint-disable-next-line no-invalid-this
+    currentMessage = this.messageSource.asObservable();
+    private func: () => void;
 
-    constructor() {
-        // eslint-disable-next-line prefer-const
-        for (let item of RESERVE) {
-            this.totalLetters += item.quantity;
-        }
+    updateReserve(fn: () => void) {
+        this.func = fn;
+        // from now on, call myFunc wherever you want inside this service
     }
+
+    newMessage(message: string) {
+        this.messageSource.next(message);
+        this.func();
+    }
+
     getRandomLetter(): Letter {
         let randomElement = Math.floor(Math.random() * RESERVE.length);
         let letter: Letter = RESERVE[randomElement];
@@ -46,6 +56,23 @@ export class LetterService {
         }
         return true;
     }
+
+    reserveSize(): number {
+        let size = 0;
+        for (const letter of RESERVE) {
+            size += letter.quantity;
+        }
+        //  console.log(size);
+        return size;
+    }
+
+    addLetterToReserve(letter: string): void {
+        for (const letterReserve of RESERVE) {
+            if (letter.toUpperCase() === letterReserve.value) {
+                letterReserve.quantity++;
+            }
+        }
+    }
     // Shuffle  at the initialization of a player seven letters
     getRandomLetters(): Letter[] {
         const tab: Letter[] = [];
@@ -62,13 +89,20 @@ export class LetterService {
 
     // Methods witch return the numbers of available letters in the reserve
     getNumbersLetterAvailable(): number {
-        return this.totalLetters;
+        let totalLetter = 0;
+        // eslint-disable-next-line prefer-const
+        for (let item of this.reserve) {
+            totalLetter += item.quantity;
+        }
+        return totalLetter;
+        // eslint-disable-next-line no-unreachable
+        console.log(this.reserve);
     }
 
     // Method with returns if there are minimum letters inn reserve to play
-    checklistLetters(): boolean {
-        if (this.totalLetters < EASEL_SIZE) {
-            return false;
-        } else return true;
-    }
+    // checklistLetters(): boolean {
+    //     if (this.totalLetter < EASEL_SIZE) {
+    //         return false;
+    //     } else return true;
+    // }
 }

@@ -5,12 +5,22 @@
         <div class="fakeButtons fakeZoom"></div>
     </div>
 
-    <h3 class="header-item">Panneau d'information</h3>
-    <ul class="players-list">
+    <h2 class="header-item">Panneau d'information</h2>
+    <ul id="playersList">
+        <!-- Give reserve number -->
+        <p>Nombres de lettres dans la Reserve: {{reservestate }}</p>
         <li *ngFor="let player of players">
             <p>Nom : {{ player.name }}</p>
             <p>Score : {{ player.score }}</p>
+            <div *ngIf="tour === true && player.id === 1">
+                <app-countdown [minutes]="this.gameSettings.timeMinute" [seconds]="this.gameSettings.timeSecond"
+                    (checkTime)="switchTour($event)"></app-countdown>
+            </div>
+            <div *ngIf="tour === false && player.id === 2">
+                <app-countdown [minutes]="this.gameSettings.timeMinute" [seconds]="this.gameSettings.timeSecond"
+                    (checkTime)="switchTour($event)"></app-countdown>
+            </div>
+
         </li>
     </ul>
-
 </div>
