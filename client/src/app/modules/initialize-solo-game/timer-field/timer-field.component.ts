@@ -27,7 +27,7 @@ export class TimerFieldComponent implements OnInit {
             return false;
         }
         // Checking if the inputs are in range
-        return minuteInput + secondInput < this.maxTimer && minuteInput + secondInput > this.minTimer;
+        return minuteInput + secondInput <= this.maxTimer && minuteInput + secondInput >= this.minTimer;
     }
 
     setTimeValidity(): void {

@@ -51,7 +51,7 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
         player = new PlayerIA(2, this.gameSettings.playersName[StartingPlayer.Player2], this.letterService.getRandomLetters());
         this.playerService.addPlayer(player);
         /** ********************************************************************** */
-    //  function to subscribe to Tour subject
+        //  function to subscribe to Tour subject
     }
 
     subscribeToTourSubject(): void {
@@ -84,20 +84,6 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
 
     reAssignTour(tour: boolean): void {
         this.tourService.initializeTour(tour);
-    }
-
-    switchTour(counter: number): void {
-        this.tour = this.countDown.tour;
-        if (counter === 0) {
-            if (this.tour === false) {
-                this.tour = true;
-                this.reAssignTour(this.tour);
-            } else if (this.tour === true) {
-                this.tour = false;
-                this.reAssignTour(this.tour);
-            }
-        }
-        this.countDown.setTimer();
     }
 
     ngOnDestroy(): void {

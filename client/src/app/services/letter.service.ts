@@ -9,7 +9,8 @@ export class LetterService {
     totalLetters: number;
 
     constructor() {
-        for (const item of RESERVE) {
+        // eslint-disable-next-line prefer-const
+        for (let item of RESERVE) {
             this.totalLetters += item.quantity;
         }
     }

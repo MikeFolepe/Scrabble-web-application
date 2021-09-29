@@ -5,7 +5,7 @@
         <div class="fakeButtons fakeZoom"></div>
     </div>
 
-    <h1 class="header-item">Boite de communication</h1>
+    <h3 class="header-item">Boite de communication</h3>
 
     <div class="display" #scrollMe>
         <p id="listDisplay" *ngFor="let message of listMessages, let i=index, let last = last" [ngClass]="{'playerStyle': listTypes[i] === 'player', 'opponentStyle' : listTypes[i] === 'opponent', 
