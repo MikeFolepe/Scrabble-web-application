@@ -58,7 +58,7 @@ export class LetterService {
         return true;
     }
 
-    reserveSize(): number {
+    getReserveSize(): number {
         let size = 0;
         for (const letter of this.reserve) {
             size += letter.quantity;

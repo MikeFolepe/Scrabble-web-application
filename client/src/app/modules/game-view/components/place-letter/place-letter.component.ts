@@ -124,14 +124,13 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
             }
         }
         const finalResult: ScoreValidation = this.wordValidator.validateAllWordsOnBoard(this.scrabbleBoard);
-
+        this.isFirstRound = false;
         if (finalResult.validation === false) {
             return false;
         } else {
             this.playerService.updateScrabbleBoard(this.scrabbleBoard);
             this.playerService.refillEasel(indexPlayer); // Fill the easel with new letters from the reserve
             this.letterService.newMessage('mise a jour');
-            this.isFirstRound = false;
             return true;
         }
 

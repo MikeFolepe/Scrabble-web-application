@@ -19,12 +19,12 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
     players: Player[] = new Array<Player>();
     gameSettings: GameSettings;
     tour: boolean;
-    reservestate: number;
+    reserveState: number;
     settingsSubscription: Subscription = new Subscription();
     playerSubscription: Subscription = new Subscription();
     tourSubscription: Subscription = new Subscription();
     message: string;
-    reserveSubsciption: Subscription = new Subscription();
+    reserveSubscription: Subscription = new Subscription();
     constructor(
         private gameSettingsService: GameSettingsService,
         public letterService: LetterService,
@@ -37,8 +37,8 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
         this.subscribeToPlayers();
         this.initializeFirstTour();
         this.subscribeToTourSubject();
-        this.reservestate = this.letterService.reserveSize();
-        this.reserveSubsciption = this.letterService.currentMessage.subscribe((message) => (this.message = message));
+        this.reserveState = this.letterService.getReserveSize();
+        this.reserveSubscription = this.letterService.currentMessage.subscribe((message) => (this.message = message));
         this.letterService.updateReserve(this.updateReserve.bind(this));
     }
 
@@ -67,13 +67,6 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
             this.gameSettings = gameSettingsFromSubject;
         });
         this.gameSettingsService.emitGameSettings();
-        // Id peut eventuellement devenir une variable statique dans constante.ts
-        // let id = 0;
-        // for (let i = 0; i < PLAYERS_NUMBER; i++) {
-        //     const player = new Player(id++, this.gameSettings.playersName[i], 0, this.letterService.getRandomLetters());
-        //     this.playerService.addPlayer(player);
-        // }
-        /** *********************SOLUTION TEMPORAIRE *******************************/
         let player = new Player(0, this.gameSettings.playersName[0], this.letterService.getRandomLetters());
         this.playerService.addPlayer(player);
         player = new PlayerIA(1, this.gameSettings.playersName[1], [
@@ -113,7 +106,7 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
     }
     updateReserve() {
         if (this.message === 'mise a jour') {
-            this.reservestate = this.letterService.reserveSize();
+            this.reservestate = this.letterService.getReserveSize();
         }
     }
     ngOnDestroy(): void {
@@ -123,6 +116,6 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
         // unsubsciption to tour
         this.tourSubscription.unsubscribe();
         this.playerService.clearPlayers();
-        this.reserveSubsciption.unsubscribe();
+        this.reserveSubscription.unsubscribe();
     }
 }
