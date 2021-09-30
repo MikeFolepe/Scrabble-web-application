@@ -6,7 +6,5 @@ export class Player {
         public id: number,
         public name: string,
         public letterTable: Letter[], // public isTour: boolean, // public isIA: boolean
-    ) {
-        this.score = 0;
-    }
+    ) {this.score=0;}
 }

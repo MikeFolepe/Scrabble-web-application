@@ -7,7 +7,6 @@ import { Subscription } from 'rxjs';
     selector: 'app-countdown',
     templateUrl: './countdown.component.html',
     styleUrls: ['./countdown.component.scss'],
-    template: '{{countDown|async|formatTime}}',
 })
 export class CountdownComponent implements OnInit {
     // Decorator pour les inputs
@@ -32,7 +31,7 @@ export class CountdownComponent implements OnInit {
     }
 
     // Set le time always after a define interval of 1second and repeat it
-    setTimer() {
+    setTimer(): void {
         this.minuteTemp = parseInt(this.minutes, 10);
         this.secondeTemp = parseInt(this.seconds, 10);
         const intervalID = setInterval(() => {

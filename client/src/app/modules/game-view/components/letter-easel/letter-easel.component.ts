@@ -9,8 +9,8 @@ import { PlayerService } from '@app/services/player.service';
     styleUrls: ['./letter-easel.component.scss'],
 })
 export class LetterEaselComponent implements OnInit {
-
-    letterEaselTab: Array<Letter> = new Array<Letter>();
+    letterEaselTab: Letter[] = new Array<Letter>();
+    service: PlayerService;
 
     fontSize: number = DEFAULT_FONT_SIZE;
 

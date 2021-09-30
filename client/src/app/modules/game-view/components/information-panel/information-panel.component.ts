@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { PlayerIA } from '@app/models/player-ia.model';
 import { GameSettings } from '@app/classes/game-settings';
+import { PlayerIA } from '@app/models/player-ia.model';
 import { Player } from '@app/models/player.model';
 import { CountdownComponent } from '@app/modules/game-view/components/countdown/countdown.component';
 import { GameSettingsService } from '@app/services/game-settings.service';
@@ -19,13 +19,15 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
     players: Player[] = new Array<Player>();
     gameSettings: GameSettings;
     tour: boolean;
+    reservestate: number;
     settingsSubscription: Subscription = new Subscription();
     playerSubscription: Subscription = new Subscription();
     tourSubscription: Subscription = new Subscription();
-
+    message: string;
+    reserveSubsciption: Subscription = new Subscription();
     constructor(
         private gameSettingsService: GameSettingsService,
-        private letterService: LetterService,
+        public letterService: LetterService,
         private playerService: PlayerService,
         private tourService: TourService,
     ) {}
@@ -35,22 +37,17 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
         this.subscribeToPlayers();
         this.initializeFirstTour();
         this.subscribeToTourSubject();
+        this.reservestate = this.letterService.getNumbersLetterAvailable();
+        this.reserveSubsciption = this.letterService.currentMessage.subscribe((message) => (this.message = message));
+        this.letterService.updateReserve(this.updateReserve.bind(this));
     }
 
     // initializing players to playersService
     initializePlayers() {
-         // Id peut eventuellement devenir une variable statique dans constante.ts
-        // let id = 0;
-        // for (let i = 0; i < PLAYERS_NUMBER; i++) {
-        //     const player = new Player(id++, this.gameSettings.playersName[i], 0, this.letterService.getRandomLetters());
-        //     this.playerService.addPlayer(player);
-        // }
-        /** *********************SOLUTION TEMPORAIRE *******************************/
         let player = new Player(1, this.gameSettings.playersName[0], this.letterService.getRandomLetters());
         this.playerService.addPlayer(player);
         player = new PlayerIA(2, this.gameSettings.playersName[1], this.letterService.getRandomLetters());
         this.playerService.addPlayer(player);
-        /** ********************************************************************** */
     }
     //  function to subscribe to Tour subject
     subscribeToTourSubject(): void {
@@ -95,13 +92,19 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
             }
         }
         this.countDown.setTimer();
-        // setTimeout(() => {
-        // }, 3000);
     }
-
-    ngOnDestroy() {
-        this.playerService.clearPlayers();
+    updateReserve() {
+        if (this.message === 'mise a jour') {
+            this.reservestate = this.letterService.getNumbersLetterAvailable();
+        }
+    }
+    ngOnDestroy(): void {
+        // unsubscription to subjects
         this.settingsSubscription.unsubscribe();
         this.playerSubscription.unsubscribe();
+        // Se desabonner de la sousciption dans le tour
+        this.tourSubscription.unsubscribe();
+        this.playerService.clearPlayers();
+        this.reserveSubsciption.unsubscribe();
     }
 }

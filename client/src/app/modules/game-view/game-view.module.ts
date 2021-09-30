@@ -9,7 +9,7 @@ import { AppMaterialModule } from '@app/modules/material.module';
 import { CountdownComponent } from './components/countdown/countdown.component';
 import { FontSizeComponent } from './components/font-size/font-size.component';
 import { GameViewComponent } from './components/game-view/game-view.component';
-import { InformationPanelComponent } from './components/information-panel/information-panel.component';
+import { InformationPanelComponent } from '@app/modules/game-view/components/information-panel/information-panel.component';
 import { LetterEaselComponent } from './components/letter-easel/letter-easel.component';
 import { PassTourComponent } from './components/pass-tour/pass-tour.component';
 import { ScrabbleBoardComponent } from './components/scrabble-board/scrabble-board.component';
@@ -17,6 +17,7 @@ import { PlaceLetterComponent } from './components/place-letter/place-letter.com
 // eslint-disable-next-line no-restricted-imports
 import { SharedModule } from '../shared/shared/shared.module';
 import { PlayerIAComponent } from './components/player-ia/player-ia.component';
+import { SwapLetterComponent } from './components/swap-letter/swap-letter.component';
 import { WordValidationComponent } from './components/word-validation/word-validation.component';
 
 @NgModule({
@@ -31,9 +32,10 @@ import { WordValidationComponent } from './components/word-validation/word-valid
         PlaceLetterComponent,
         FontSizeComponent,
         CountdownComponent,
-        PlayerIAComponent,
         PassTourComponent,
         WordValidationComponent,
+        PlayerIAComponent,
+        SwapLetterComponent,
     ],
     imports: [CommonModule, AppMaterialModule, AppRoutingModule, FormsModule, SharedModule],
     exports: [GameViewComponent],
