@@ -68,7 +68,7 @@ export class GridService {
             this.drawSymetricGrid(this.gridContext);
             this.gridContext.rotate((Math.PI / 180) * 90);
         }
-        this.drawStar(0, 0, 5, this.caseWidth / 2 - 3, 8);
+        this.drawStar(0, 0, 5, this.caseWidth / 2 - 9, 6);
         this.writeBonuses();
     }
 
@@ -79,6 +79,23 @@ export class GridService {
         const lines = word.split(' ');
         for (let i = 0; i < lines.length; i++)
             ctx.fillText(lines[i], startPosition.x + this.caseWidth / 8 + i * lineheight, startPosition.y + this.caseWidth / 2 + i * lineheight);
+    }
+
+    drawLetter(ctx: CanvasRenderingContext2D, letter: string, position: Vec2, fontSize: number) {
+        ctx.fillStyle = 'tan';
+        ctx.fillRect(position.x - this.caseWidth / 2, position.y - this.caseWidth / 2, this.caseWidth, this.caseWidth);
+        ctx.strokeStyle = 'black';
+        ctx.strokeRect(position.x - this.caseWidth / 2, position.y - this.caseWidth / 2, this.caseWidth, this.caseWidth);
+
+        ctx.font = fontSize + 'px system-ui';
+        ctx.fillStyle = 'black';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(letter.toUpperCase(), position.x, position.y);
+    }
+
+    eraseLetter(ctx: CanvasRenderingContext2D, position: Vec2) {
+        ctx.clearRect(position.x - this.caseWidth / 2, position.y - this.caseWidth / 2, this.caseWidth, this.caseWidth);
     }
 
     writeBonuses() {

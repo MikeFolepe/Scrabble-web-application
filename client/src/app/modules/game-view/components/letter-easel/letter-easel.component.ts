@@ -9,16 +9,11 @@ import { PlayerService } from '@app/services/player.service';
     styleUrls: ['./letter-easel.component.scss'],
 })
 export class LetterEaselComponent implements OnInit {
-
-    letterEaselTab: Array<Letter> = new Array<Letter>();
-    //playerService: PlayerService;
-   
+    letterEaselTab: Letter[];
 
     fontSize: number = DEFAULT_FONT_SIZE;
 
-    constructor(private playerService: PlayerService) {
-        //this.playerService = playerService;
-    }
+    constructor(private playerService: PlayerService) {}
 
     ngOnInit(): void {
         this.playerService.updateLettersEasel(this.update.bind(this));
@@ -26,6 +21,11 @@ export class LetterEaselComponent implements OnInit {
     }
 
     update(): void {
-        this.letterEaselTab = this.playerService.getLettersEasel();
+        this.letterEaselTab = this.playerService.getLettersEasel(0);
+    }
+
+    fontSizeEvent(event: number) {
+        this.fontSize = event;
+        this.playerService.updateFontSize(this.fontSize);
     }
 }

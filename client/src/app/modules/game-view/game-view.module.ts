@@ -16,6 +16,7 @@ import { CountdownComponent } from './components/countdown/countdown.component';
 // eslint-disable-next-line no-restricted-imports
 import { SharedModule } from '../shared/shared/shared.module';
 import { PlayerIAComponent } from './components/player-ia/player-ia.component';
+import { SwapLetterComponent } from './components/swap-letter/swap-letter.component';
 
 @NgModule({
     declarations: [
@@ -30,6 +31,7 @@ import { PlayerIAComponent } from './components/player-ia/player-ia.component';
         FontSizeComponent,
         CountdownComponent,
         PlayerIAComponent,
+        SwapLetterComponent,
     ],
     imports: [CommonModule, AppMaterialModule, AppRoutingModule, FormsModule, SharedModule],
     exports: [GameViewComponent],

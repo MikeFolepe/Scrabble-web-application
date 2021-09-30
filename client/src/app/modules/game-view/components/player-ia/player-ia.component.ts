@@ -1,4 +1,5 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Vec2 } from '@app/classes/vec2';
 import { PlayerIA } from '@app/models/player-ia.model';
 import { Player } from '@app/models/player.model';
 import { LetterService } from '@app/services/letter.service';
@@ -9,7 +10,7 @@ import { PlayerService } from '@app/services/player.service';
     templateUrl: './player-ia.component.html',
     styleUrls: ['./player-ia.component.scss'],
 })
-export class PlayerIAComponent implements OnInit {
+export class PlayerIAComponent implements OnInit, AfterViewInit {
     // Pour dire à la boite que j'ai passé mon tour.
     @Output() iaSkipped = new EventEmitter();
     // Pour dire à la boite que j'ai echanger des lettres ( je sais pas si c'est une information
@@ -19,6 +20,10 @@ export class PlayerIAComponent implements OnInit {
     @Output() iaPlaced = new EventEmitter();
 
     @Input() isPlacementValid: boolean = false;
+
+    @Input() scrabbleBoard: string[][];
+
+    @Input() isFirstRound: boolean;
 
     iaPlayer: PlayerIA;
 
@@ -35,11 +40,20 @@ export class PlayerIAComponent implements OnInit {
         this.iaPlayer.setContext(this);
     }
 
+    ngAfterViewInit() {
+        // debugger;
+        this.iaPlayer.play();
+    }
+
     skip() {
         this.iaSkipped.emit();
     }
 
     swap() {
         this.iaSwapped.emit();
+    }
+
+    place(object: { start: Vec2; orientation: string; word: string; indexPlayer: number }) {
+        this.iaPlaced.emit(object);
     }
 }

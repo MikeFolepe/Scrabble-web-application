@@ -44,7 +44,13 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
         /** *********************SOLUTION TEMPORAIRE *******************************/
         let player = new Player(0, this.gameSettings.playersName[0], 0, this.letterService.getRandomLetters());
         this.playerService.addPlayer(player);
-        player = new PlayerIA(1, this.gameSettings.playersName[1], 0, this.letterService.getRandomLetters());
+        player = new PlayerIA(1, this.gameSettings.playersName[1], 0, [
+            { value: 'm', quantity: 1, points: 0 },
+            { value: 'a', quantity: 1, points: 0 },
+            { value: 'j', quantity: 1, points: 0 },
+            { value: 'i', quantity: 1, points: 0 },
+            { value: 'd', quantity: 1, points: 0 },
+        ]);
         this.playerService.addPlayer(player);
         /** ********************************************************************** */
         this.playerSubscription = this.playerService.playerSubject.subscribe((playersFromSubject: Player[]) => {
@@ -63,6 +69,5 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
         this.playerService.clearPlayers();
         this.settingsSubscription.unsubscribe();
         this.playerSubscription.unsubscribe();
-        
     }
 }

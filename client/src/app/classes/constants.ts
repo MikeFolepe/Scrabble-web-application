@@ -1,9 +1,11 @@
 // TODO : Avoir un fichier séparé pour les constantes!
 import { Letter } from '@app/classes/letter';
+import dictionaryData from '../../assets/dictionnary.json';
 
 export const DEFAULT_WIDTH = 750;
 export const DEFAULT_HEIGHT = 750;
 export const BOARD_SIZE = 16;
+export const CASE_SIZE = DEFAULT_WIDTH / BOARD_SIZE;
 export const EASEL_SIZE = 7;
 
 export const BOARD_ROWS = 15;
@@ -13,10 +15,16 @@ export const CENTRAL_CASE_POSX = 7;
 export const CENTRAL_CASE_POSY = 7;
 
 export const PLAYERS_NUMBER = 2;
+export const INDEX_REAL_PLAYER = 0;
+export const INDEX_PLAYER_IA = 1;
+
 export const FONT_SIZE_MAX = 20;
 export const FONT_SIZE_MIN = 10;
 export const DEFAULT_FONT_SIZE = 13;
 export const SIZE_VARIATION = 1;
+
+export const MIN_RESERVE_SIZE_TOSWAP = 7;
+
 export enum MouseButton {
     Left = 0,
     Middle = 1,
@@ -64,6 +72,8 @@ export const placingBallotBox: PlacingStrategy[] = [
 ];
 
 export const IA_NAME_DATABASE: string[] = ['Mister_Bucky', 'Mister_Samy', 'Miss_Betty'];
+
+export const MAX_SOLUTION = 3;
 
 export const RESERVE: Letter[] = [
     {
@@ -202,3 +212,5 @@ export const RESERVE: Letter[] = [
         points: 0,
     },
 ];
+
+export const dictionary: string[] = JSON.parse(JSON.stringify(dictionaryData)).words;
