@@ -1,5 +1,15 @@
 import { Injectable } from '@angular/core';
-import { BOARD_COLUMNS, BOARD_ROWS, CASE_SIZE, DEFAULT_HEIGHT, DEFAULT_WIDTH, EASEL_SIZE, DEFAULT_FONT_SIZE } from '@app/classes/constants';
+import {
+    BOARD_COLUMNS,
+    BOARD_ROWS,
+    CASE_SIZE,
+    DEFAULT_HEIGHT,
+    DEFAULT_WIDTH,
+    EASEL_SIZE,
+    DEFAULT_FONT_SIZE,
+    FONT_SIZE_MAX,
+    FONT_SIZE_MIN,
+} from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
 import { Player } from '@app/models/player.model';
@@ -13,7 +23,7 @@ import { LetterService } from './letter.service';
 export class PlayerService {
     playerSubject = new Subject<Player[]>();
     scrabbleBoard: string[][];
-    fontSize: number;
+    fontSize = DEFAULT_FONT_SIZE;
 
     private players: Player[] = new Array<Player>();
     private myFunc: () => void;
@@ -44,8 +54,13 @@ export class PlayerService {
     }
 
     updateFontSize(fontSize: number): void {
+        if (fontSize < FONT_SIZE_MIN) {
+            fontSize = FONT_SIZE_MIN;
+        } else if (fontSize > FONT_SIZE_MAX) {
+            fontSize = FONT_SIZE_MAX;
+        }
         this.fontSize = fontSize * 2;
-        this.updateGridFontSize(this.fontSize);
+        this.updateGridFontSize();
     }
 
     getLettersEasel(indexPlayer: number): Letter[] {
@@ -57,21 +72,20 @@ export class PlayerService {
     }
 
     // Update the font size of the letters placed on the grid
-    updateGridFontSize(fontSize: number): void {
+    updateGridFontSize(): void {
         for (let i = 0; i < BOARD_ROWS; i++) {
             for (let j = 0; j < BOARD_COLUMNS; j++) {
                 if (this.scrabbleBoard[i][j] !== '') {
                     const positionGrid = this.posTabToPosGrid(j, i);
                     this.gridService.eraseLetter(this.gridService.gridContext, positionGrid);
-                    this.gridService.drawLetter(this.gridService.gridContext, this.scrabbleBoard[i][j], positionGrid, fontSize);
+                    this.gridService.drawLetter(this.gridService.gridContext, this.scrabbleBoard[i][j], positionGrid, this.fontSize);
                 }
             }
         }
     }
 
+    // Remove one letter from easel
     removeLetter(letterToRemove: string, indexPlayer: number): void {
-        // Remove one letter from easel
-
         for (let i = 0; i < this.players[indexPlayer].letterTable.length; i++) {
             if (this.players[indexPlayer].letterTable[i].value === letterToRemove.toUpperCase()) {
                 this.players[indexPlayer].letterTable.splice(i, 1);
@@ -110,10 +124,9 @@ export class PlayerService {
 
     // Transpose the positions from 15x15 array to 750x750 grid
     posTabToPosGrid(positionTabX: number, positionTabY: number): Vec2 {
-        const positionGrid: Vec2 = {
+        return {
             x: positionTabX * CASE_SIZE + CASE_SIZE - DEFAULT_WIDTH / 2,
             y: positionTabY * CASE_SIZE + CASE_SIZE - DEFAULT_HEIGHT / 2,
         };
-        return positionGrid;
     }
 }
