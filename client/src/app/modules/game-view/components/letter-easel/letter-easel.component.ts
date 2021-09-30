@@ -26,4 +26,9 @@ export class LetterEaselComponent implements OnInit {
     update(): void {
         this.letterEaselTab = this.playerService.getLettersEasel(0);
     }
+
+    fontSizeEvent(event: number) {
+        this.fontSize = event;
+        this.playerService.updateFontSize(this.fontSize);
+    }
 }

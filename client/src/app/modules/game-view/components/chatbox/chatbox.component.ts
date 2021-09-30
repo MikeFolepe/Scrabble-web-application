@@ -69,8 +69,8 @@ export class ChatboxComponent {
 
                     // Vector which contains the word's starting position
                     const position: Vec2 = {
-                        x: Number(positionSplitted[1]) - 1,
-                        y: positionSplitted[0].charCodeAt(0) - 'a'.charCodeAt(0),
+                        x: positionSplitted[0].charCodeAt(0) - 'a'.charCodeAt(0),
+                        y: Number(positionSplitted[1]) - 1,
                     };
                     const orientation = positionSplitted[2];
 
@@ -132,7 +132,7 @@ export class ChatboxComponent {
         const regexDebug = /^!debug$/g;
         const regexPasser = /^!passer$/g;
         const regexEchanger = /^!échanger\s([a-z]|[*]){1,7}$/g;
-        const regexPlacer = /^!placer\s([a-o]([1-9]|1[0-5])[hv])\s([a-zA-Z]|[*])+/g;
+        const regexPlacer = /^!placer\s([a-o]([1-9]|1[0-5])[hv])\s([a-zA-Z\u00C0-\u00FF]|[*])+/g;
 
         let valid = true;
 

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { BOARD_COLUMNS, BOARD_ROWS, CASE_SIZE, CENTRAL_CASE_POSX, CENTRAL_CASE_POSY, DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/classes/constants';
+import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSX, CENTRAL_CASE_POSY } from '@app/classes/constants';
 import { Vec2 } from '@app/classes/vec2';
 import { GridService } from '@app/services/grid.service';
 import { PlayerService } from '@app/services/player.service';
@@ -32,6 +32,7 @@ export class PlaceLetterComponent {
 
     ngOnInit(): void {
         this.initializeTour();
+        this.playerService.updateScrabbleBoard(this.scrabbleBoard);
     }
 
     initializeTour(): void {
@@ -42,8 +43,10 @@ export class PlaceLetterComponent {
     }
 
     place(position: Vec2, orientation: string, word: string, indexPlayer: number): boolean {
+        // Remove accents from the word to place
+        const wordNoAccents = word.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
         // If the command is possible according to the parameters
-        if (!this.isPossible(position, orientation, word, indexPlayer)) {
+        if (!this.isPossible(position, orientation, wordNoAccents, indexPlayer)) {
             return false;
         }
 
@@ -51,34 +54,56 @@ export class PlaceLetterComponent {
             // Adds the letter to the respective position of the array based on the orientation
             let x = 0;
             let y = 0;
-            if (orientation === 'h') {
+            if (orientation === 'v') {
                 x = i;
-            } else if (orientation === 'v') {
+            } else if (orientation === 'h') {
                 y = i;
             }
 
             // If the position is empty, we use a letter from the reserve
             if (this.scrabbleBoard[position.x + x][position.y + y] === '') {
-                this.scrabbleBoard[position.x + x][position.y + y] = word.charAt(i);
+                this.scrabbleBoard[position.x + x][position.y + y] = wordNoAccents.charAt(i);
 
                 // Display the letter on the scrabble board grid
-                const positionGrid = this.posTabToPosGrid(position.x + x, position.y + y);
-                this.gridService.drawLetter(this.gridService.gridContext, word.charAt(i), positionGrid);
-
-                if (word.charAt(i) === word.charAt(i).toUpperCase()) {
-                    // If we put a capital letter (white letter), we remove a '*' from the easel
-                    this.playerService.removeLetter('*', indexPlayer);
-                } else {
-                    // Otherwise we remove the respective letter from the easel
-                    this.playerService.removeLetter(word.charAt(i), indexPlayer);
-                }
+                const positionGrid = this.playerService.posTabToPosGrid(position.y + y, position.x + x);
+                this.gridService.drawLetter(this.gridService.gridContext, wordNoAccents.charAt(i), positionGrid, this.playerService.fontSize);
             }
         }
-
         console.log(this.scrabbleBoard);
-        this.isFirstRound = false;
         // TODO Valider le mot sur le scrabbleboard
+
+        // INVALID
+        /*
+        setTimeout(() => {
+            for (let i = 0; i < word.length; i++) {
+                let x = 0;
+                let y = 0;
+                if (orientation === 'v') {
+                    x = i;
+                } else if (orientation === 'h') {
+                    y = i;
+                }
+                // If the word is invalid, we remove the letters placed on the grid
+                this.scrabbleBoard[position.x + x][position.y + y] = '';
+                const positionGrid = this.posTabToPosGrid(position.y + y, position.x + x);
+                this.gridService.eraseLetter(this.gridService.gridContext, positionGrid);
+            }
+            return false;
+        }, 3000); // Waiting 3 seconds to erase the letters on the grid
+        */
+        // VALID
+        for (let i = 0; i < word.length; i++) {
+            if (wordNoAccents.charAt(i) === wordNoAccents.charAt(i).toUpperCase()) {
+                // If we put a capital letter (white letter), we remove a '*' from the easel
+                this.playerService.removeLetter('*', indexPlayer);
+            } else {
+                // Otherwise we remove the respective letter from the easel
+                this.playerService.removeLetter(wordNoAccents.charAt(i), indexPlayer);
+            }
+        }
+        this.playerService.updateScrabbleBoard(this.scrabbleBoard);
         this.playerService.refillEasel(indexPlayer); // Fill the easel with new letters from the reserve
+        this.isFirstRound = false;
         return true;
     }
 
@@ -106,12 +131,12 @@ export class PlaceLetterComponent {
     }
 
     isWordFitting(position: Vec2, orientation: string, word: string): boolean {
-        if (orientation === 'h') {
+        if (orientation === 'v') {
             if (position.x + word.length > BOARD_ROWS) {
                 // Out of bounds on x axis
                 return false;
             }
-        } else if (orientation === 'v') {
+        } else if (orientation === 'h') {
             if (position.y + word.length > BOARD_COLUMNS) {
                 // Out of bounds on y axis
                 return false;
@@ -139,11 +164,11 @@ export class PlaceLetterComponent {
             // Search the scrabble board if the letter isn't in the easel
             if (isLetterExisting === false) {
                 for (let i = 0; i < word.length; i++) {
-                    if (orientation === 'h') {
+                    if (orientation === 'v') {
                         if (letter.toUpperCase() === this.scrabbleBoard[position.x + i][position.y].toUpperCase()) {
                             isLetterExisting = true;
                         }
-                    } else if (orientation === 'v') {
+                    } else if (orientation === 'h') {
                         if (letter.toUpperCase() === this.scrabbleBoard[position.x][position.y + i].toUpperCase()) {
                             isLetterExisting = true;
                         }
@@ -160,14 +185,14 @@ export class PlaceLetterComponent {
 
     isFirstWordValid(position: Vec2, orientation: string, word: string): boolean {
         // If one letter of the word is placed on the central case (H8)
-        if (orientation === 'h') {
+        if (orientation === 'v') {
             for (let i = 0; i < word.length; i++) {
                 if (position.x + i === CENTRAL_CASE_POSX && position.y === CENTRAL_CASE_POSY) {
                     return true;
                 }
             }
         }
-        if (orientation === 'v') {
+        if (orientation === 'h') {
             for (let i = 0; i < word.length; i++) {
                 if (position.x === CENTRAL_CASE_POSX && position.y + i === CENTRAL_CASE_POSY) {
                     return true;
@@ -183,9 +208,9 @@ export class PlaceLetterComponent {
         for (let i = 0; i < word.length; i++) {
             let x = 0;
             let y = 0;
-            if (orientation === 'h') {
+            if (orientation === 'v') {
                 x = i;
-            } else if (orientation === 'v') {
+            } else if (orientation === 'h') {
                 y = i;
             }
             // Search each position around the word that are in bounds of the board
@@ -211,15 +236,6 @@ export class PlaceLetterComponent {
             return true;
         }
         return false;
-    }
-
-    // Transpose the positions from 15x15 array to 750x750 grid
-    posTabToPosGrid(positionTabX: number, positionTabY: number): Vec2 {
-        const positionGrid: Vec2 = {
-            x: positionTabX * CASE_SIZE + CASE_SIZE - DEFAULT_WIDTH / 2,
-            y: positionTabY * CASE_SIZE + CASE_SIZE - DEFAULT_HEIGHT / 2,
-        };
-        return positionGrid;
     }
 
     isItMyTurn(): boolean {
