@@ -12,12 +12,12 @@ import { PlayerService } from '@app/services/player.service';
 })
 export class PlayerIAComponent implements OnInit, AfterViewInit {
     // Pour dire à la boite que j'ai passé mon tour.
-    @Output() iaSkipped = new EventEmitter();
+    @Output() iaSkipped: EventEmitter<string> = new EventEmitter();
     // Pour dire à la boite que j'ai echanger des lettres ( je sais pas si c'est une information
     // requise dans le flux de la BC ??).
-    @Output() iaSwapped = new EventEmitter();
+    @Output() iaSwapped: EventEmitter<string> = new EventEmitter();
     // Pour dire à la boite que j'ai placer des lettres.
-    @Output() iaPlaced = new EventEmitter();
+    @Output() iaPlaced: EventEmitter<string> = new EventEmitter();
 
     @Input() isPlacementValid: boolean = false;
 
@@ -46,11 +46,11 @@ export class PlayerIAComponent implements OnInit, AfterViewInit {
     }
 
     skip() {
-        this.iaSkipped.emit();
+        this.iaSkipped.emit('!passer');
     }
 
     swap() {
-        this.iaSwapped.emit();
+        this.iaSwapped.emit('!echanger<>');
     }
 
     place(object: { start: Vec2; orientation: string; word: string; indexPlayer: number }) {

@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+/* eslint-disable @typescript-eslint/prefer-for-of */
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSX, CENTRAL_CASE_POSY } from '@app/classes/constants';
 import { Vec2 } from '@app/classes/vec2';
 import { GridService } from '@app/services/grid.service';
+import { LetterService } from '@app/services/letter.service';
 import { PlayerService } from '@app/services/player.service';
 import { TourService } from '@app/services/tour.service';
 import { Subscription } from 'rxjs';
@@ -11,17 +13,24 @@ import { Subscription } from 'rxjs';
     templateUrl: './place-letter.component.html',
     styleUrls: ['./place-letter.component.scss'],
 })
-export class PlaceLetterComponent {
+export class PlaceLetterComponent implements OnInit, OnDestroy {
     tour: boolean;
     tourSubscription: Subscription = new Subscription();
+    reserveSubsciption: Subscription = new Subscription();
 
     scrabbleBoard: string[][]; // 15x15 array
 
     letterEmpty: string = '';
     isFirstRound: boolean = true;
     isIAPlacementValid: boolean = false;
+    message: string;
 
-    constructor(private playerService: PlayerService, private gridService: GridService, private tourService: TourService) {
+    constructor(
+        private playerService: PlayerService,
+        private gridService: GridService,
+        private tourService: TourService,
+        private letterService: LetterService,
+    ) {
         this.scrabbleBoard = []; // Initializes the array with empty letters
         for (let i = 0; i < BOARD_ROWS; i++) {
             this.scrabbleBoard[i] = [];
@@ -34,6 +43,7 @@ export class PlaceLetterComponent {
     ngOnInit(): void {
         this.initializeTour();
         this.playerService.updateScrabbleBoard(this.scrabbleBoard);
+        this.reserveSubsciption = this.letterService.currentMessage.subscribe((message) => (this.message = message));
     }
 
     initializeTour(): void {
@@ -112,6 +122,7 @@ export class PlaceLetterComponent {
         }
         this.playerService.updateScrabbleBoard(this.scrabbleBoard);
         this.playerService.refillEasel(indexPlayer); // Fill the easel with new letters from the reserve
+        this.letterService.newMessage('mise a jour');
         this.isFirstRound = false;
         return true;
     }
@@ -252,5 +263,9 @@ export class PlaceLetterComponent {
             return true;
         }
         return true;
+    }
+
+    ngOnDestroy() {
+        this.reserveSubsciption.unsubscribe();
     }
 }

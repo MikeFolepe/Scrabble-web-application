@@ -8,9 +8,13 @@ import { GameSettings } from '@app/classes/game-settings';
 export class GameSettingsService {
     gameSettingsSubject = new Subject<GameSettings>();
     private gameSettings: GameSettings;
+
+    constructor(){}
+
     emitGameSettings() {
         this.gameSettingsSubject.next(this.gameSettings);
     }
+    
     initializeSettings(settings: GameSettings) {
         this.gameSettings = settings;
         this.emitGameSettings();

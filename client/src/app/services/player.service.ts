@@ -22,7 +22,7 @@ export class PlayerService {
         this.fontSize = DEFAULT_FONT_SIZE * 2;
     }
 
-    emitPlayers() {
+    emitPlayers(): void {
         this.playerSubject.next(this.players.slice());
     }
 
@@ -31,7 +31,7 @@ export class PlayerService {
         this.emitPlayers();
     }
 
-    clearPlayers() {
+    clearPlayers(): void {
         this.players = [];
     }
 

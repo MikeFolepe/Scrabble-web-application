@@ -8,5 +8,5 @@
             <mat-icon>expand_less</mat-icon>
         </button>
     </div>
-    <mat-slider min="10" max="20" step="1" [(ngModel)]="fontSize"></mat-slider>
+    <mat-slider min="10" max="20" step="1" [(ngModel)]="fontSize" (click)="this.sizeChange.emit(this.fontSize)"></mat-slider>
 </div>

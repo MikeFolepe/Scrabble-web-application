@@ -1,12 +1,31 @@
 import { Injectable } from '@angular/core';
 import { EASEL_SIZE, RESERVE } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
+import { BehaviorSubject } from 'rxjs';
 @Injectable({
     providedIn: 'root',
 })
 export class LetterService {
+    // Property witch return total number of letters available
     randomElement: number;
-    // Méthode pour prendre des lettres dans la réserve
+    // Deep copy
+    reserve: Letter[] = JSON.parse(JSON.stringify(RESERVE));
+    messageSource = new BehaviorSubject('default message');
+    // eslint-disable-next-line no-invalid-this
+    currentMessage = this.messageSource.asObservable();
+    private func: () => void;
+
+    updateReserve(fn: () => void) {
+        this.func = fn;
+        // from now on, call myFunc wherever you want inside this service
+    }
+
+    newMessage(message: string) {
+        this.messageSource.next(message);
+        this.func();
+    }
+
+    // Returns a random letter from the reserve if reserve is not empty
     getRandomLetter(): Letter {
         const letterEmpty: Letter = {
             value: '',
@@ -15,25 +34,23 @@ export class LetterService {
         };
 
         if (this.isReserveEmpty()) {
-            // Si la réserve est vide
             return letterEmpty;
         }
 
-        this.randomElement = Math.floor(Math.random() * RESERVE.length);
-        let letter: Letter = RESERVE[this.randomElement];
+        let letter: Letter;
 
-        while (RESERVE[this.randomElement].quantity === 0 && !this.isReserveEmpty()) {
-            this.randomElement = Math.floor(Math.random() * RESERVE.length);
-            letter = RESERVE[this.randomElement];
-        }
+        do {
+            this.randomElement = Math.floor(Math.random() * this.reserve.length);
+            letter = this.reserve[this.randomElement];
+        } while (letter.quantity === 0);
 
-        // Mise à jour de la réserve
-        RESERVE[this.randomElement].quantity--;
+        // Update reserve
+        letter.quantity--;
         return letter;
     }
 
     isReserveEmpty(): boolean {
-        for (const letter of RESERVE) {
+        for (const letter of this.reserve) {
             if (letter.quantity > 0) {
                 return false;
             }
@@ -43,20 +60,23 @@ export class LetterService {
 
     reserveSize(): number {
         let size = 0;
-        for (const letter of RESERVE) {
+        for (const letter of this.reserve) {
             size += letter.quantity;
         }
         return size;
     }
 
     addLetterToReserve(letter: string): void {
-        for (const letterReserve of RESERVE) {
+        for (const letterReserve of this.reserve) {
             if (letter.toUpperCase() === letterReserve.value) {
                 letterReserve.quantity++;
+                return;
             }
         }
     }
 
+    // Draw seven letters from the reserve
+    // Useful for initialize player's easel
     getRandomLetters(): Letter[] {
         const tab: Letter[] = [];
         for (let i = 0; i < EASEL_SIZE; i++) {
@@ -67,7 +87,6 @@ export class LetterService {
                 points: letter.points,
             };
         }
-
         return tab;
     }
 }

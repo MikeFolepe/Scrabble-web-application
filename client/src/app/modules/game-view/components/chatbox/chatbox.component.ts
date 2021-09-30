@@ -1,8 +1,13 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { INDEX_REAL_PLAYER } from '@app/classes/constants';
 import { Vec2 } from '@app/classes/vec2';
+import { PassTourComponent } from '@app/modules/game-view/components/pass-tour/pass-tour.component';
 import { PlayerService } from '@app/services/player.service';
+import { TourService } from '@app/services/tour.service';
+import { Subscription } from 'rxjs';
+// eslint-disable-next-line no-restricted-imports
 import { PlaceLetterComponent } from '../place-letter/place-letter.component';
+// eslint-disable-next-line no-restricted-imports
 import { SwapLetterComponent } from '../swap-letter/swap-letter.component';
 
 @Component({
@@ -10,28 +15,43 @@ import { SwapLetterComponent } from '../swap-letter/swap-letter.component';
     templateUrl: './chatbox.component.html',
     styleUrls: ['./chatbox.component.scss'],
 })
-export class ChatboxComponent {
+export class ChatboxComponent implements OnInit, OnDestroy {
+    @ViewChild(PassTourComponent) pass: PassTourComponent;
     @ViewChild(PlaceLetterComponent) placeComponent: PlaceLetterComponent;
     @ViewChild(SwapLetterComponent) swapComponent: SwapLetterComponent;
     @ViewChild('scrollMe') private myScrollContainer: ElementRef;
 
-    message: string = '';
+    tourSubscription: Subscription = new Subscription();
+    tour: boolean;
+
+    debugOn: boolean = true;
+
     typeMessage: string = '';
+    message: string = '';
     command: string = '';
 
-    listMessages: string[] = []; // Message log
-    listTypes: string[] = []; // Message types log
+    listMessages: string[] = [];
+    listTypes: string[] = [];
 
-    constructor(private playerService: PlayerService) {}
+    // Table to stock debug message from IA. Test with random strings
+    virtualmessage: string[] = ['!passer', '!placer<manger>', '!echanger<aeb>'];
 
+    constructor(private tourService: TourService, private playerService: PlayerService) {}
+
+    ngOnInit(): void {
+        this.tourSubscription = this.tourService.tourSubject.subscribe((tourSubject: boolean) => {
+            this.tour = tourSubject;
+        });
+        this.tourService.emitTour();
+    }
     keyEvent(event: KeyboardEvent) {
         if (event.key === 'Enter') {
             event.preventDefault();
             this.sendSystemMessage('Message du système');
             this.sendOpponentMessage('Le joueur virtuel fait...');
             this.sendPlayerCommand();
+            this.message = ''; // Clear l'input
 
-            this.message = ''; // Clear the input
             setTimeout(() => {
                 // Timeout is used to update the scroll after the last element added
                 this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
@@ -45,37 +65,57 @@ export class ChatboxComponent {
             // If the command is valid, we call the respective command from here
             switch (this.command) {
                 case 'debug': {
+                    if (this.debugOn) {
+                        this.sendSystemMessage('affichages de débogage activés');
+                        this.receiveAImessage('a');
+                        this.displayAimessage();
+                        this.debugOn = false;
+                    } else {
+                        this.sendSystemMessage('affichages de débogage désactivés');
+                        this.debugOn = true;
+                    }
                     break;
                 }
                 case 'passer': {
+                    this.switchTour();
                     break;
                 }
                 case 'echanger': {
-                    const messageSplitted = this.message.split(/\s/);
+                    this.getTour();
+                    if (this.tour === true) {
+                        const messageSplitted = this.message.split(/\s/);
 
-                    if (this.swapComponent.swap(messageSplitted[1], INDEX_REAL_PLAYER)) {
-                        this.message = this.playerService.getPlayers()[INDEX_REAL_PLAYER].name + ' : ' + this.message;
+                        if (this.swapComponent.swap(messageSplitted[1], INDEX_REAL_PLAYER)) {
+                            this.message = this.playerService.getPlayers()[INDEX_REAL_PLAYER].name + ' : ' + this.message;
+                        } else {
+                            this.typeMessage = 'error';
+                            this.message = 'ERREUR : La commande est impossible à réaliser';
+                        }
                     } else {
-                        this.typeMessage = 'error';
                         this.message = 'ERREUR : La commande est impossible à réaliser';
                     }
-
                     break;
                 }
                 case 'placer': {
-                    const messageSplitted = this.message.split(/\s/);
+                    this.getTour();
+                    if (this.tour === true) {
+                        const messageSplitted = this.message.split(/\s/);
 
-                    const positionSplitted = messageSplitted[1].split(/([0-9]+)/);
+                        const positionSplitted = messageSplitted[1].split(/([0-9]+)/);
 
-                    // Vector which contains the word's starting position
-                    const position: Vec2 = {
-                        x: positionSplitted[0].charCodeAt(0) - 'a'.charCodeAt(0),
-                        y: Number(positionSplitted[1]) - 1,
-                    };
-                    const orientation = positionSplitted[2];
+                        // Vecteur contenant la position de départ du mot qu'on veut placer
+                        const position: Vec2 = {
+                            x: positionSplitted[0].charCodeAt(0) - 'a'.charCodeAt(0),
+                            y: Number(positionSplitted[1]) - 1,
+                        };
+                        const orientation = positionSplitted[2];
 
-                    if (this.placeComponent.place(position, orientation, messageSplitted[2], INDEX_REAL_PLAYER) === false) {
-                        this.typeMessage = 'error';
+                        if (this.placeComponent.place(position, orientation, messageSplitted[2], INDEX_REAL_PLAYER) === false) {
+                            this.typeMessage = 'error';
+                            this.message = 'ERREUR : La commande est impossible à réaliser';
+                        }
+                        this.pass.toogleTour();
+                    } else {
                         this.message = 'ERREUR : La commande est impossible à réaliser';
                     }
                     break;
@@ -153,5 +193,37 @@ export class ChatboxComponent {
 
     scrollToBottom(): void {
         this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
+    }
+
+    switchTour() {
+        this.getTour();
+        if (this.tour === true) {
+            this.pass.toogleTour();
+            this.sendSystemMessage('!passer');
+        } else {
+            this.sendSystemMessage('vous ne pouvez pas effectuer cette commande, attendez votre tour');
+        }
+    }
+
+    receiveAImessage(action: string): void {
+        this.virtualmessage.push(action);
+    }
+
+    // Methode which display IA message
+    displayAimessage(): void {
+        for (const x of this.virtualmessage) {
+            this.sendOpponentMessage(x);
+        }
+    }
+
+    getTour(): void {
+        this.tourSubscription = this.tourService.tourSubject.subscribe((tourSubject: boolean) => {
+            this.tour = tourSubject;
+        });
+        this.tourService.emitTour();
+    }
+
+    ngOnDestroy() {
+        this.tourSubscription.unsubscribe();
     }
 }

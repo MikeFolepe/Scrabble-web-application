@@ -14,10 +14,9 @@ export class PlayerIA extends Player {
     constructor(
         public id: number,
         public name: string,
-        public score: number,
         public letterTable: Letter[], // public isTour: boolean, // public isIA: boolean
     ) {
-        super(id, name, score, letterTable);
+        super(id, name, letterTable);
         // Initialize the first concrete strategy to be executed later
         this.setStrategy();
     }
