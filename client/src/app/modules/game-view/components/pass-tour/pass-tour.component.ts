@@ -17,7 +17,7 @@ export class PassTourComponent implements OnInit, OnDestroy {
     }
 
     toogleTour(): void {
-        this.passtourService.changeMessage('!passer');
+        this.passtourService.writeMessage('!passer');
     }
     ngOnDestroy() {
         this.passSubsciption.unsubscribe();

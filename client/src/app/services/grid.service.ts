@@ -48,18 +48,6 @@ export class GridService {
         return this.canvasSize.y;
     }
 
-    // setTilesSize(tilesSize:number):void{
-    //     if (this.tilesSize < MINTILESIZE){
-    //         this.tilesSize = MINTILESIZE;
-    //     } else
-    //     if (this.tilesSize > MAXTILESIZE){
-    //         this.tilesSize = MAXTILESIZE;
-    //     } else
-    //     {
-    //         this.tilesSize = tilesSize;
-    //     }
-    // }
-
     drawGrid() {
         this.writeColumnsIndex(this.gridContext, 15);
         this.writeLinesIndex(this.gridContext, 15);

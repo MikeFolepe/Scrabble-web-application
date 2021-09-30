@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 
 import { LetterService } from './letter.service';
-import { EASEL_SIZE } from '@app/classes/constants';
+import { EASEL_SIZE, RESERVE } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 
 describe('LetterService', () => {
@@ -24,16 +24,20 @@ describe('LetterService', () => {
 
     it('should add a letter to the reserve', () => {
         const letterTest = service.reserve[0].value;
-        const INITIAL_QUANTITY = service.reserve[0].quantity;
+        const initial_quantity = service.reserve[0].quantity;
         service.addLetterToReserve(letterTest);
-        expect(service.reserve[0].quantity).toEqual(INITIAL_QUANTITY + 1);
+        expect(service.reserve[0].quantity).toEqual(initial_quantity + 1);
+    });
+
+    it('should not add a letter to the reserve if this one does not exists', () => {
+        const letterTest = '-';
+        service.addLetterToReserve(letterTest);
+        expect(service.reserve).toEqual(RESERVE);
     });
 
     it('should return an empty letter if reserve is empty', () => {
         // Empty reserve
-        for (const letter of service.reserve) {
-            letter.quantity = 0;
-        }
+        service.reserve = [];
         const letterEmpty: Letter = {
             value: '',
             quantity: 0,
@@ -45,9 +49,7 @@ describe('LetterService', () => {
     it('should know wether the reserve is empty or not', () => {
         expect(service.isReserveEmpty()).toBeFalsy();
         // Empty reserve
-        for (const letter of service.reserve) {
-            letter.quantity = 0;
-        }
+        service.reserve = [];
         expect(service.isReserveEmpty()).toBeTruthy();
     });
 
@@ -58,10 +60,27 @@ describe('LetterService', () => {
         expect(letters).toHaveSize(EASEL_SIZE);
     });
 
-    it('should know how many letters left are in the easel', () => {
+    it('should return right reserve size', () => {
         const REAL_TOTAL_NUMBER = 102;
-        expect(service.reserveSize()).toEqual(REAL_TOTAL_NUMBER);
-        service.getRandomLetters();
-        expect(service.reserveSize()).toEqual(REAL_TOTAL_NUMBER - EASEL_SIZE);
+        expect(service.getReserveSize()).toEqual(REAL_TOTAL_NUMBER);
+        service.reserve[0].quantity--;
+        expect(service.getReserveSize()).toEqual(REAL_TOTAL_NUMBER - 1);
+        service.reserve = [];
+        let emptyQuantity: number = 0;
+        expect(service.getReserveSize()).toEqual(emptyQuantity);
+    });
+
+    it('should call updated func when changing message', () => {
+        let number:number = 1;
+        let message: string = 'test message';
+        let fn = () => {
+            number = number*=2; 
+            return;
+        }
+        service.updateReserve(fn);
+        expect(service['func']).toBe(fn);
+        let funcSpy =  spyOn<any>(service, 'func');
+        service.writeMessage(message);
+        expect(funcSpy).toHaveBeenCalled();
     });
 });

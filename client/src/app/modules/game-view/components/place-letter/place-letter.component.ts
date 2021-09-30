@@ -130,7 +130,7 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
         } else {
             this.playerService.updateScrabbleBoard(this.scrabbleBoard);
             this.playerService.refillEasel(indexPlayer); // Fill the easel with new letters from the reserve
-            this.letterService.newMessage('mise a jour');
+            this.letterService.writeMessage('mise a jour');
             return true;
         }
 

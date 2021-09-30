@@ -17,10 +17,10 @@ export class LetterService {
 
     updateReserve(fn: () => void) {
         this.func = fn;
-        // from now on, call myFunc wherever you want inside this service
+        // from now on, call func wherever you want inside this service
     }
 
-    newMessage(message: string) {
+    writeMessage(message: string) {
         this.messageSource.next(message);
         this.func();
     }

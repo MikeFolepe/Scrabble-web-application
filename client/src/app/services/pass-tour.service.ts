@@ -9,14 +9,14 @@ export class PassTourService {
     // Method to update
     messageSource = new BehaviorSubject('default message');
     currentMessage = this.messageSource.asObservable();
-    private func: () => void;
+    func: () => void;
 
     updateTour(fn: () => void) {
         this.func = fn;
-        // from now on, call myFunc wherever you want inside this service
+        // from now on, call func wherever you want inside this service
     }
 
-    changeMessage(message: string) {
+    writeMessage(message: string) {
         this.messageSource.next(message);
         this.func();
     }

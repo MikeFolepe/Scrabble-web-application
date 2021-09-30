@@ -13,4 +13,12 @@ describe('TourService', () => {
     it('should be created', () => {
         expect(service).toBeTruthy();
     });
+
+    it('should initialize and emit tour', () => {
+        let emitTourSpy = spyOn<any>(service, 'emitTour').and.callThrough();
+        let expectedTour: boolean = false;
+        service.initializeTour(expectedTour);
+        expect(service['tour']).toBe(expectedTour);
+        expect(emitTourSpy).toHaveBeenCalled();
+    })
 });
