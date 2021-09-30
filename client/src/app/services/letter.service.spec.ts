@@ -49,7 +49,10 @@ describe('LetterService', () => {
     it('should know wether the reserve is empty or not', () => {
         expect(service.isReserveEmpty()).toBeFalsy();
         // Empty reserve
-        service.reserve = [];
+        for (const letter of service.reserve) {
+            letter.quantity = 0;
+        }
+        //service.reserve = [];
         expect(service.isReserveEmpty()).toBeTruthy();
     });
 
