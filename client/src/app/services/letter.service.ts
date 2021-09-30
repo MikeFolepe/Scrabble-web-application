@@ -15,7 +15,7 @@ export class LetterService {
     currentMessage = this.messageSource.asObservable();
     private func: () => void;
 
-    updateReserve(fn: () => void) {
+    updateView(fn: () => void) {
         this.func = fn;
         // from now on, call myFunc wherever you want inside this service
     }
@@ -48,7 +48,7 @@ export class LetterService {
         letter.quantity--;
         return letter;
     }
-    
+
     isReserveEmpty(): boolean {
         for (const letter of this.reserve) {
             if (letter.quantity > 0) {

@@ -81,7 +81,8 @@ export class ChatboxComponent implements OnInit, OnDestroy {
                     break;
                 }
                 case 'echanger': {
-                    this.getTour();
+                    // this.getTour();
+                    this.tour = this.tourService.getTour();
                     if (this.tour === true) {
                         const messageSplitted = this.message.split(/\s/);
 
@@ -98,7 +99,7 @@ export class ChatboxComponent implements OnInit, OnDestroy {
                     break;
                 }
                 case 'placer': {
-                    this.getTour();
+                    this.tour = this.tourService.getTour();
                     if (this.tour === true) {
                         const messageSplitted = this.message.split(/\s/);
 
@@ -198,7 +199,7 @@ export class ChatboxComponent implements OnInit, OnDestroy {
     }
 
     switchTour() {
-        this.getTour();
+        this.tour = this.tourService.getTour();
         if (this.tour === true) {
             this.pass.toogleTour();
             this.sendSystemMessage('!passer');
@@ -218,12 +219,12 @@ export class ChatboxComponent implements OnInit, OnDestroy {
         }
     }
 
-    getTour(): void {
-        this.tourSubscription = this.tourService.tourSubject.subscribe((tourSubject: boolean) => {
-            this.tour = tourSubject;
-        });
-        this.tourService.emitTour();
-    }
+    // getTour(): void {
+    //     this.tourSubscription = this.tourService.tourSubject.subscribe((tourSubject: boolean) => {
+    //         this.tour = tourSubject;
+    //     });
+    //     this.tourService.emitTour();
+    // }
 
     ngOnDestroy() {
         this.tourSubscription.unsubscribe();

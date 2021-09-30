@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { INDEX_PLAYER_IA, INDEX_REAL_PLAYER } from '@app/classes/constants';
 import { GameSettings } from '@app/classes/game-settings';
 import { PlayerIA } from '@app/models/player-ia.model';
 import { Player } from '@app/models/player.model';
@@ -20,11 +21,8 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
     gameSettings: GameSettings;
     tour: boolean;
     reserveState: number;
-    settingsSubscription: Subscription = new Subscription();
-    playerSubscription: Subscription = new Subscription();
-    tourSubscription: Subscription = new Subscription();
     message: string;
-    reserveSubscription: Subscription = new Subscription();
+    viewSubscription: Subscription = new Subscription();
     constructor(
         private gameSettingsService: GameSettingsService,
         public letterService: LetterService,
@@ -32,14 +30,15 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
         private tourService: TourService,
     ) {}
     ngOnInit(): void {
-        this.subscribeToGameSettings();
+        this.gameSettings = this.gameSettingsService.getSettings();
         this.initializePlayers();
-        this.subscribeToPlayers();
+        this.players = this.playerService.getPlayers();
         this.initializeFirstTour();
-        this.subscribeToTourSubject();
+        // this.subscribeToTourSubject();
+        this.tour = this.tourService.getTour();
         this.reserveState = this.letterService.getReserveSize();
-        this.reserveSubscription = this.letterService.currentMessage.subscribe((message) => (this.message = message));
-        this.letterService.updateReserve(this.updateReserve.bind(this));
+        this.viewSubscription = this.letterService.currentMessage.subscribe((message) => (this.message = message));
+        this.letterService.updateView(this.updateView.bind(this));
     }
 
     // initializing players to playersService
@@ -49,31 +48,10 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
         player = new PlayerIA(2, this.gameSettings.playersName[1], this.letterService.getRandomLetters());
         this.playerService.addPlayer(player);
     }
-    //  function to subscribe to Tour subject
-    subscribeToTourSubject(): void {
-        this.tourSubscription = this.tourService.tourSubject.subscribe((tourSubject: boolean) => {
-            this.tour = tourSubject;
-        });
-        this.tourService.emitTour();
-    }
 
     // function to initialize the boolean specifying which player will start first
     initializeFirstTour(): void {
         this.tourService.initializeTour(Boolean(this.gameSettings.startingPlayer.valueOf()));
-    }
-    //  function to subscribe to gameSettings subject
-    subscribeToGameSettings(): void {
-        this.settingsSubscription = this.gameSettingsService.gameSettingsSubject.subscribe((gameSettingsFromSubject: GameSettings) => {
-            this.gameSettings = gameSettingsFromSubject;
-        });
-        this.gameSettingsService.emitGameSettings();
-    }
-    //  function to subscribe to players subject
-    subscribeToPlayers(): void {
-        this.playerSubscription = this.playerService.playerSubject.subscribe((playersFromSubject: Player[]) => {
-            this.players = playersFromSubject;
-        });
-        this.playerService.emitPlayers();
     }
 
     reAssignTour(tour: boolean): void {
@@ -81,7 +59,7 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
     }
 
     switchTour(counter: number): void {
-        this.subscribeToTourSubject();
+        this.tour = this.tourService.getTour();
         if (counter === 0) {
             if (this.tour === false) {
                 this.tour = true;
@@ -93,18 +71,17 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
         }
         this.countDown.setTimer();
     }
-    updateReserve() {
+    updateView() {
         if (this.message === 'mise a jour') {
             this.reserveState = this.letterService.getReserveSize();
+            this.players[INDEX_REAL_PLAYER].letterTable = this.playerService.getLettersEasel(INDEX_REAL_PLAYER);
+            this.players[INDEX_PLAYER_IA].letterTable = this.playerService.getLettersEasel(INDEX_PLAYER_IA);
+            this.players[INDEX_REAL_PLAYER].score = this.playerService.getScore(INDEX_REAL_PLAYER);
+            this.players[INDEX_PLAYER_IA].score = this.playerService.getScore(INDEX_PLAYER_IA);
         }
     }
     ngOnDestroy(): void {
-        // unsubscription to subjects
-        this.settingsSubscription.unsubscribe();
-        this.playerSubscription.unsubscribe();
-        // unsubsciption to tour
-        this.tourSubscription.unsubscribe();
         this.playerService.clearPlayers();
-        this.reserveSubscription.unsubscribe();
+        this.viewSubscription.unsubscribe();
     }
 }
