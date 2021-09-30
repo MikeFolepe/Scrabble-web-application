@@ -113,7 +113,7 @@ export class ChatboxComponent implements OnInit, OnDestroy {
 
                         if (this.placeComponent.place(position, orientation, messageSplitted[2], INDEX_REAL_PLAYER) === false) {
                             this.typeMessage = 'error';
-                            this.message = 'ERREUR : La commande est impossible à réaliser';
+                            this.message = 'ERREUR : Le placement est invalide';
                         }
                         this.pass.toogleTour();
                     } else {

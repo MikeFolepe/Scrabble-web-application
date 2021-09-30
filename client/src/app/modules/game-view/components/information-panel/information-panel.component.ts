@@ -67,17 +67,6 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
             this.gameSettings = gameSettingsFromSubject;
         });
         this.gameSettingsService.emitGameSettings();
-        let player = new Player(0, this.gameSettings.playersName[0], this.letterService.getRandomLetters());
-        this.playerService.addPlayer(player);
-        player = new PlayerIA(1, this.gameSettings.playersName[1], [
-            { value: 'm', quantity: 1, points: 0 },
-            { value: 'a', quantity: 1, points: 0 },
-            { value: 'j', quantity: 1, points: 0 },
-            { value: 'i', quantity: 1, points: 0 },
-            { value: 'd', quantity: 1, points: 0 },
-        ]);
-        this.playerService.addPlayer(player);
-        /** ********************************************************************** */
     }
     //  function to subscribe to players subject
     subscribeToPlayers(): void {
