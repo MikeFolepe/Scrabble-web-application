@@ -95,7 +95,6 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
         console.log(this.scrabbleBoard);
 
         this.isIAPlacementValid = true;
-        console.log('IA placement is valid' + this.isIAPlacementValid);
         // TODO Valider le mot sur le scrabbleboard
 
         // INVALID

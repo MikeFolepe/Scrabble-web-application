@@ -1,5 +1,6 @@
 /* eslint-disable max-lines */
 import { Letter } from '@app/classes/letter';
+// eslint-disable-next-line no-restricted-imports
 import dictionaryData from '../../assets/dictionnary.json';
 
 export const DEFAULT_WIDTH = 750;
