@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BOARD_COLUMNS, BOARD_ROWS, CASE_SIZE, DEFAULT_HEIGHT, DEFAULT_WIDTH, EASEL_SIZE, DEFAULT_FONT_SIZE } from '@app/classes/constants';
+import { BOARD_COLUMNS, BOARD_ROWS, CASE_SIZE, DEFAULT_FONT_SIZE, DEFAULT_HEIGHT, DEFAULT_WIDTH, EASEL_SIZE } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
 import { Player } from '@app/models/player.model';
@@ -107,6 +107,9 @@ export class PlayerService {
         }
         return false;
     }
+    addScore(score: number, indexPlayer: number): void {
+        this.players[indexPlayer].score += score;
+    }
 
     // Transpose the positions from 15x15 array to 750x750 grid
     posTabToPosGrid(positionTabX: number, positionTabY: number): Vec2 {
@@ -115,5 +118,9 @@ export class PlayerService {
             y: positionTabY * CASE_SIZE + CASE_SIZE - DEFAULT_HEIGHT / 2,
         };
         return positionGrid;
+    }
+
+    getScore(indexPlayer: number): number {
+        return this.players[indexPlayer].score;
     }
 }

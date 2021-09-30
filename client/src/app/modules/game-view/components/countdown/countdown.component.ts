@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, OnDestroy } from '@angular/core';
 import { ONESECOND_TIME } from '@app/classes/constants';
 import { PassTourService } from '@app/services/pass-tour.service';
 import { Subscription } from 'rxjs';
@@ -8,7 +8,7 @@ import { Subscription } from 'rxjs';
     templateUrl: './countdown.component.html',
     styleUrls: ['./countdown.component.scss'],
 })
-export class CountdownComponent implements OnInit {
+export class CountdownComponent implements OnInit, OnDestroy {
     // Decorator pour les inputs
     @Input() seconds: string;
     @Input() minutes: string;
@@ -19,14 +19,14 @@ export class CountdownComponent implements OnInit {
     minuteTemp: number;
     secondeTemp: number;
     message: string;
-    passSubsciption: Subscription = new Subscription();
+    passSubscription: Subscription = new Subscription();
 
     constructor(private passtourService: PassTourService) {}
     ngOnInit(): void {
         setTimeout(() => {
             this.setTimer();
         }, ONESECOND_TIME);
-        this.passSubsciption = this.passtourService.currentMessage.subscribe((message) => (this.message = message));
+        this.passSubscription = this.passtourService.currentMessage.subscribe((message) => (this.message = message));
         this.passtourService.updateTour(this.stopTimer.bind(this));
     }
 
@@ -54,5 +54,9 @@ export class CountdownComponent implements OnInit {
             this.minuteTemp = 0;
             this.checkTime.emit(this.secondeTemp);
         }
+    }
+
+    ngOnDestroy(): void {
+        this.passSubscription.unsubscribe();
     }
 }
