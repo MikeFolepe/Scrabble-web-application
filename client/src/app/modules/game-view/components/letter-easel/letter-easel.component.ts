@@ -11,13 +11,10 @@ import { PlayerService } from '@app/services/player.service';
 export class LetterEaselComponent implements OnInit {
 
     letterEaselTab: Array<Letter> = new Array<Letter>();
-    //playerService: PlayerService;
-   
 
     fontSize: number = DEFAULT_FONT_SIZE;
 
     constructor(private playerService: PlayerService) {
-        //this.playerService = playerService;
     }
 
     ngOnInit(): void {
