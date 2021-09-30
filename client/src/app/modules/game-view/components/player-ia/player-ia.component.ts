@@ -56,7 +56,6 @@ export class PlayerIAComponent implements OnInit {
 
     play() {
         this.iaPlayer.play();
-        
     }
 
     skip() {

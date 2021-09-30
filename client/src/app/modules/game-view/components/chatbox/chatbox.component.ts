@@ -29,7 +29,7 @@ export class ChatboxComponent implements OnInit, OnDestroy {
     type: string = '';
     listMessages: string[] = [];
     listTypes: string[] = [];
-    debugmessage: { word: string; nbPt: number }[] = [];
+    debugmessage: { word: string; nbPt: number }[] = [{ word: 'papier', nbPt: 6 }];
     // Table to stock debug message from IA test avec des trings aléatoire
 
     constructor(private tourService: TourService, private playerService: PlayerService) {}
@@ -202,11 +202,6 @@ export class ChatboxComponent implements OnInit, OnDestroy {
 
     receiveAImessage(table: { word: string; nbPt: number }[]): void {
         this.debugmessage = table;
-        // for (const alternative of table) {
-        //     this.sendOpponentMessage(alternative.word);
-        //     this.sendOpponentMessage(alternative.points.toString());
-        // }
-        // this.virtualmessage.push(action);
     }
 
     displaymessage(): void {

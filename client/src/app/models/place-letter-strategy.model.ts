@@ -141,7 +141,6 @@ export class PlaceLetters extends PlayStrategy {
         else if (!randomPointingFound && !alternativePointingFound) {
             context.skip();
         }
-        context.tourService.initializeTour(true);
     }
 
     private playerQuantityOf(letter: string, player: PlayerIA): number {

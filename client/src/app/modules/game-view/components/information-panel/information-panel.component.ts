@@ -9,6 +9,7 @@ import { LetterService } from '@app/services/letter.service';
 import { PlayerService } from '@app/services/player.service';
 import { TourService } from '@app/services/tour.service';
 import { Subscription } from 'rxjs';
+// eslint-disable-next-line no-restricted-imports
 import { PlayerIAComponent } from '../player-ia/player-ia.component';
 
 @Component({
