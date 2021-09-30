@@ -1,4 +1,4 @@
-import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSX, CENTRAL_CASE_POSY, dictionary, INDEX_PLAYER_IA, RESERVE } from '@app/classes/constants';
+import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSX, CENTRAL_CASE_POSY, dictionary, RESERVE } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { Range } from '@app/classes/range';
 import { board } from '@app/classes/scrabble-board';
@@ -10,6 +10,7 @@ import { PlayerIA } from './player-ia.model';
 const ROW_OFFSET = 65; /* = 'A' */
 const COLUMN_OFFSET = 1; /* Array starting at 0 */
 const WORDOVERFLOWS = -1;
+const WORDOVERWRITES = -2;
 
 export class PlaceLetters extends PlayStrategy {
     constructor(private pointingRange: Range) {
@@ -101,7 +102,7 @@ export class PlaceLetters extends PlayStrategy {
         const alternativePossibilities: { word: string; nbPt: number }[] = [];
 
         // Whitin all the possible words separate those who matches this turn randomPointing
-        // from those who doesn't matches the randomPointing but are in range min < x < max
+        // from those who doesn't matches the randomPointing but are in range 0 < x < max
         for (const word of possibleWord) {
             const nbPt = this.calculatePoint(startPos, randomOrientation, word, context.scrabbleBoard);
             if (nbPt === randomPointing) {
@@ -189,6 +190,10 @@ export class PlaceLetters extends PlayStrategy {
             } else {
                 key = String.fromCharCode(startPos.x + ROW_OFFSET + i) + (startPos.y + COLUMN_OFFSET).toString();
                 matrixPos = { x: startPos.x + i, y: startPos.y };
+            }
+
+            if (scrabbleBoard[matrixPos.x][matrixPos.y] !== '') {
+                return WORDOVERWRITES;
             }
             // letter value : A = 1, B = 3, C = 3 ...etc
             const letterContribution: number = RESERVE[word[i].toUpperCase().charCodeAt(0) - ROW_OFFSET].points;
