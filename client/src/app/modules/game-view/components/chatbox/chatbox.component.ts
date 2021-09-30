@@ -92,7 +92,8 @@ export class ChatboxComponent implements OnInit, OnDestroy {
                             this.message = 'ERREUR : La commande est impossible à réaliser';
                         }
                     } else {
-                        this.message = 'ERREUR : La commande est impossible à réaliser';
+                        this.typeMessage = 'error';
+                        this.message = "ERREUR : Ce n'est pas ton tour";
                     }
                     break;
                 }
@@ -116,7 +117,8 @@ export class ChatboxComponent implements OnInit, OnDestroy {
                         }
                         this.pass.toogleTour();
                     } else {
-                        this.message = 'ERREUR : La commande est impossible à réaliser';
+                        this.typeMessage = 'error';
+                        this.message = "ERREUR : Ce n'est pas ton tour";
                     }
                     break;
                 }

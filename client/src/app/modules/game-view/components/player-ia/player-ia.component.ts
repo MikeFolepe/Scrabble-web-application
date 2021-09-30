@@ -17,7 +17,8 @@ export class PlayerIAComponent implements OnInit, AfterViewInit {
     // requise dans le flux de la BC ??).
     @Output() iaSwapped: EventEmitter<string> = new EventEmitter();
     // Pour dire à la boite que j'ai placer des lettres.
-    @Output() iaPlaced: EventEmitter<string> = new EventEmitter();
+    @Output() iaPlacedMessage: EventEmitter<string> = new EventEmitter();
+    @Output() iaPlaced: EventEmitter<{ start: Vec2; orientation: string; word: string; indexPlayer: number }> = new EventEmitter();
 
     @Input() isPlacementValid: boolean = false;
 
@@ -55,5 +56,8 @@ export class PlayerIAComponent implements OnInit, AfterViewInit {
 
     place(object: { start: Vec2; orientation: string; word: string; indexPlayer: number }) {
         this.iaPlaced.emit(object);
+        this.iaPlacedMessage.emit(
+            '!placer ' + String.fromCharCode('a'.charCodeAt(0) + object.start.x) + object.start.y + object.orientation + ' ' + object.word,
+        );
     }
 }
