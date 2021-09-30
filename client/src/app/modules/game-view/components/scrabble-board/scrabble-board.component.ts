@@ -1,7 +1,6 @@
 import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
-import { MouseButton } from '@app/classes/constants';
-import { Vec2 } from '@app/classes/vec2';
 import { GridService } from '@app/services/grid.service';
+import { MouseHandlerService } from '@app/services/mouse-handler.service';
 
 @Component({
     selector: 'app-scrabble-board',
@@ -9,12 +8,12 @@ import { GridService } from '@app/services/grid.service';
     styleUrls: ['./scrabble-board.component.scss'],
 })
 export class ScrabbleBoardComponent implements AfterViewInit {
-    @ViewChild('gridCanvas', { static: false }) private gridCanvas!: ElementRef<HTMLCanvasElement>;
 
-    mousePosition: Vec2 = { x: 0, y: 0 };
+    @ViewChild('gridCanvas', { static: false }) gridCanvas!: ElementRef<HTMLCanvasElement>;
+
     buttonPressed = '';
-    constructor(private readonly gridService: GridService) {}
-
+   
+ constructor(private readonly gridService: GridService, private mouseService: MouseHandlerService) {}
     @HostListener('keydown', ['$event'])
     buttonDetect(event: KeyboardEvent) {
         this.buttonPressed = event.key;
@@ -34,10 +33,7 @@ export class ScrabbleBoardComponent implements AfterViewInit {
         return this.gridService.height;
     }
 
-    // TODO : déplacer ceci dans un service de gestion de la souris!
-    mouseHitDetect(event: MouseEvent) {
-        if (event.button === MouseButton.Left) {
-            this.mousePosition = { x: event.offsetX, y: event.offsetY };
-        }
+    mouseHitDetect(event: MouseEvent){
+        this.mouseService.mouseHitDetect(event);
     }
 }

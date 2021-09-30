@@ -7,7 +7,6 @@ describe('TimerFieldComponent', () => {
     let fixture: ComponentFixture<TimerFieldComponent>;
     let minuteInput:string;
     let secondInput:string;
-    // let parentFormSpy: any;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
@@ -38,13 +37,17 @@ describe('TimerFieldComponent', () => {
     });
 
     it('Time must be invalidated if the input time is not in valid the range', () => {
+        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
         minuteInput = '70';
+        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
         secondInput = '00';
         expect(component.isValidTime(minuteInput, secondInput)).toBe(false);
     });
 
     it('Time must be validated if the input time is in valid the range', () => {
+        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
         minuteInput = '05';
+        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
         secondInput = '00';
         expect(component.isValidTime(minuteInput, secondInput)).toBe(true);
     });
