@@ -14,8 +14,7 @@ export class LetterEaselComponent implements OnInit {
 
     fontSize: number = DEFAULT_FONT_SIZE;
 
-    constructor(private playerService: PlayerService) {
-    }
+    constructor(private playerService: PlayerService) {}
 
     ngOnInit(): void {
         this.playerService.updateLettersEasel(this.update.bind(this));

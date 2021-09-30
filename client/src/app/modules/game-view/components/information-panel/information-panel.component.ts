@@ -37,7 +37,7 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
         this.subscribeToPlayers();
         this.initializeFirstTour();
         this.subscribeToTourSubject();
-        this.reservestate = this.letterService.getNumbersLetterAvailable();
+        this.reservestate = this.letterService.reserveSize();
         this.reserveSubsciption = this.letterService.currentMessage.subscribe((message) => (this.message = message));
         this.letterService.updateReserve(this.updateReserve.bind(this));
     }
@@ -95,7 +95,7 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
     }
     updateReserve() {
         if (this.message === 'mise a jour') {
-            this.reservestate = this.letterService.getNumbersLetterAvailable();
+            this.reservestate = this.letterService.reserveSize();
         }
     }
     ngOnDestroy(): void {

@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { EASEL_SIZE } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { Player } from '@app/models/player.model';
 import { Subject } from 'rxjs';
@@ -15,7 +14,7 @@ export class PlayerService {
     private myFunc: () => void;
     constructor(private letterService: LetterService) {}
 
-    emitPlayers() {
+    emitPlayers(): void {
         this.playerSubject.next(this.players.slice());
     }
 
@@ -24,7 +23,7 @@ export class PlayerService {
         this.emitPlayers();
     }
 
-    clearPlayers() {
+    clearPlayers(): void {
         this.players = [];
     }
 
@@ -48,7 +47,6 @@ export class PlayerService {
 
     removeLetter(letterToRemove: string): void {
         // Remove one letter from easel
-
         for (let i = 0; i < this.players[0].letterTable.length; i++) {
             if (this.players[0].letterTable[i].value === letterToRemove.toUpperCase()) {
                 this.players[0].letterTable.splice(i, 1);
@@ -59,14 +57,7 @@ export class PlayerService {
     }
 
     refillEasel(): void {
-        let letterToInsert: Letter;
-        for (let i = this.players[0].letterTable.length; i < EASEL_SIZE; i++) {
-            letterToInsert = this.letterService.getRandomLetter();
-            if (letterToInsert.value === '') {
-                break;
-            }
-            this.players[0].letterTable[i] = letterToInsert;
-        }
+        this.players[0].letterTable = this.letterService.getRandomLetters();
         this.myFunc();
     }
 
