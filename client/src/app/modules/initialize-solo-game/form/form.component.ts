@@ -17,10 +17,10 @@ export class FormComponent {
         levelInput: new FormControl('Facile'),
     });
 
-    constructor(private gameSettingsService: GameSettingsService) {
-        // do nothing
-    }
-    initRandomIAName(): string {
+    constructor(private gameSettingsService: GameSettingsService) {}
+
+    // Generates a random name for the AI
+    chooseRandomAIName(): string {
         let randomName: string;
         do {
             // Number of seconds since 1st january 1970
@@ -33,7 +33,8 @@ export class FormComponent {
         return randomName;
     }
 
-    initStartingPlayer(): StartingPlayer {
+    // Chooses randomly the player that will play first
+    chooseStartingPlayer(): StartingPlayer {
         const enumLength = Object.keys(StartingPlayer).length / 2;
         // Number of seconds since 1st january 1970
         let randomNumber = new Date().getTime();
@@ -43,11 +44,12 @@ export class FormComponent {
         return randomNumber % enumLength;
     }
 
+    // Initializes the game with its settings
     initGame(): void {
-        const playersName: string[] = [this.form.controls.playerName.value, this.initRandomIAName()];
+        const playersName: string[] = [this.form.controls.playerName.value, this.chooseRandomAIName()];
         const settings = new GameSettings(
             playersName,
-            this.initStartingPlayer(),
+            this.chooseStartingPlayer(),
             this.form.controls.minuteInput.value,
             this.form.controls.secondInput.value,
             this.form.controls.levelInput.value,

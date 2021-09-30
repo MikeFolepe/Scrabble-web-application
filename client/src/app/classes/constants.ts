@@ -1,5 +1,6 @@
 /* eslint-disable max-lines */
 import { Letter } from '@app/classes/letter';
+import dictionaryData from '../../assets/dictionnary.json';
 
 export const DEFAULT_WIDTH = 750;
 export const DEFAULT_HEIGHT = 750;
@@ -15,6 +16,9 @@ export const CENTRAL_CASE_POSX = 7;
 export const CENTRAL_CASE_POSY = 7;
 
 export const PLAYERS_NUMBER = 2;
+export const INDEX_REAL_PLAYER = 0;
+export const INDEX_PLAYER_IA = 1;
+
 export const FONT_SIZE_MAX = 20;
 export const FONT_SIZE_MIN = 10;
 export const DEFAULT_FONT_SIZE = 13;
@@ -73,6 +77,8 @@ export const placingBallotBox: PlacingStrategy[] = [
 ];
 
 export const IA_NAME_DATABASE: string[] = ['Mister_Bucky', 'Mister_Samy', 'Miss_Betty'];
+
+export const MAX_SOLUTION = 3;
 
 export const RESERVE: Letter[] = [
     {
@@ -272,3 +278,4 @@ export const BONUSES_POSITIONS: Map<string, string> = new Map<string, string>([
     ['O12', 'doubleletter'],
     ['O15', 'tripleword'],
 ]);
+export const dictionary: string[] = JSON.parse(JSON.stringify(dictionaryData)).words;

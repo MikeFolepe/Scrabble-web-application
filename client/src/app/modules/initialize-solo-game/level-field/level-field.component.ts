@@ -10,6 +10,7 @@ export class LevelFieldComponent implements OnInit {
     @Input() parentForm: FormGroup;
     difficultySelectionList: string[] = ['Facile', 'Difficile'];
 
+    constructor() {}
     ngOnInit(): void {
         this.parentForm.controls.levelInput.setValidators([Validators.required]);
     }

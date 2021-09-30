@@ -8,7 +8,8 @@ export class SwapLetter extends PlayStrategy {
         const numberOfLetterToChange = new Date().getTime() % EASEL_SIZE;
 
         if (
-            numberOfLetterToChange - numberOfLetterToChange /* Verifier que la reserve a autant de lettres que le nombre d'echange 
+            numberOfLetterToChange - numberOfLetterToChange
+            /* Verifier que la reserve a autant de lettres que le nombre d'echange 
         généré*/
         ) {
             context.swap();

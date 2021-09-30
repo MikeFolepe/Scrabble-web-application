@@ -72,7 +72,7 @@ export class GridService {
         this.writeBonuses();
     }
 
-    drawWord(ctx: CanvasRenderingContext2D, word: string, startPosition: Vec2) {
+    writeWord(ctx: CanvasRenderingContext2D, word: string, startPosition: Vec2) {
         ctx.font = '12px system-ui';
         ctx.fillStyle = 'black';
         const lineheight = 12;
@@ -81,17 +81,21 @@ export class GridService {
             ctx.fillText(lines[i], startPosition.x + this.caseWidth / 8 + i * lineheight, startPosition.y + this.caseWidth / 2 + i * lineheight);
     }
 
-    drawLetter(ctx: CanvasRenderingContext2D, letter: string, position: Vec2) {
+    drawLetter(ctx: CanvasRenderingContext2D, letter: string, position: Vec2, fontSize: number) {
         ctx.fillStyle = 'tan';
         ctx.fillRect(position.x - this.caseWidth / 2, position.y - this.caseWidth / 2, this.caseWidth, this.caseWidth);
-        ctx.fillStyle = 'darkGreen';
+        ctx.strokeStyle = 'black';
         ctx.strokeRect(position.x - this.caseWidth / 2, position.y - this.caseWidth / 2, this.caseWidth, this.caseWidth);
 
-        ctx.font = '30px system-ui';
-        ctx.fillStyle = 'darkGreen';
+        ctx.font = fontSize + 'px system-ui';
+        ctx.fillStyle = 'black';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(letter.toUpperCase(), position.x, position.y);
+    }
+
+    eraseLetter(ctx: CanvasRenderingContext2D, position: Vec2) {
+        ctx.clearRect(position.x - this.caseWidth / 2, position.y - this.caseWidth / 2, this.caseWidth, this.caseWidth);
     }
 
     writeBonuses() {
@@ -101,34 +105,34 @@ export class GridService {
             for (let j = 0; j < 8; j++) {
                 startPosition.y = j * this.caseWidth - this.caseWidth / 2;
                 if (this.doubleLetters.some((element) => element.x === i && element.y === j)) {
-                    this.drawWord(this.gridContext, 'Lettre x2', startPosition);
-                    this.drawWord(this.gridContext, 'Lettre x2', { x: startPosition.x - 2 * i * this.caseWidth, y: startPosition.y });
-                    this.drawWord(this.gridContext, 'Lettre x2', { x: startPosition.x, y: startPosition.y - 2 * j * this.caseWidth });
-                    this.drawWord(this.gridContext, 'Lettre x2', {
+                    this.writeWord(this.gridContext, 'Lettre x2', startPosition);
+                    this.writeWord(this.gridContext, 'Lettre x2', { x: startPosition.x - 2 * i * this.caseWidth, y: startPosition.y });
+                    this.writeWord(this.gridContext, 'Lettre x2', { x: startPosition.x, y: startPosition.y - 2 * j * this.caseWidth });
+                    this.writeWord(this.gridContext, 'Lettre x2', {
                         x: startPosition.x - 2 * i * this.caseWidth,
                         y: startPosition.y - 2 * j * this.caseWidth,
                     });
                 } else if (this.tripleLetters.some((element) => element.x === i && element.y === j)) {
-                    this.drawWord(this.gridContext, 'Lettre x3', startPosition);
-                    this.drawWord(this.gridContext, 'Lettre x3', { x: startPosition.x - 2 * i * this.caseWidth, y: startPosition.y });
-                    this.drawWord(this.gridContext, 'Lettre x3', { x: startPosition.x, y: startPosition.y - 2 * j * this.caseWidth });
-                    this.drawWord(this.gridContext, 'Lettre x3', {
+                    this.writeWord(this.gridContext, 'Lettre x3', startPosition);
+                    this.writeWord(this.gridContext, 'Lettre x3', { x: startPosition.x - 2 * i * this.caseWidth, y: startPosition.y });
+                    this.writeWord(this.gridContext, 'Lettre x3', { x: startPosition.x, y: startPosition.y - 2 * j * this.caseWidth });
+                    this.writeWord(this.gridContext, 'Lettre x3', {
                         x: startPosition.x - 2 * i * this.caseWidth,
                         y: startPosition.y - 2 * j * this.caseWidth,
                     });
                 } else if (this.doubleWords.some((element) => element.x === i && element.y === j)) {
-                    this.drawWord(this.gridContext, 'Word x2', startPosition);
-                    this.drawWord(this.gridContext, 'Word x2', { x: startPosition.x - 2 * i * this.caseWidth, y: startPosition.y });
-                    this.drawWord(this.gridContext, 'Word x2', { x: startPosition.x, y: startPosition.y - 2 * j * this.caseWidth });
-                    this.drawWord(this.gridContext, 'Word x2', {
+                    this.writeWord(this.gridContext, 'Word x2', startPosition);
+                    this.writeWord(this.gridContext, 'Word x2', { x: startPosition.x - 2 * i * this.caseWidth, y: startPosition.y });
+                    this.writeWord(this.gridContext, 'Word x2', { x: startPosition.x, y: startPosition.y - 2 * j * this.caseWidth });
+                    this.writeWord(this.gridContext, 'Word x2', {
                         x: startPosition.x - 2 * i * this.caseWidth,
                         y: startPosition.y - 2 * j * this.caseWidth,
                     });
                 } else if (this.tripleWords.some((element) => element.x === i && element.y === j)) {
-                    this.drawWord(this.gridContext, 'Word x3', startPosition);
-                    this.drawWord(this.gridContext, 'Word x3', { x: startPosition.x - 2 * i * this.caseWidth, y: startPosition.y });
-                    this.drawWord(this.gridContext, 'Word x3', { x: startPosition.x, y: startPosition.y - 2 * j * this.caseWidth });
-                    this.drawWord(this.gridContext, 'Word x3', {
+                    this.writeWord(this.gridContext, 'Word x3', startPosition);
+                    this.writeWord(this.gridContext, 'Word x3', { x: startPosition.x - 2 * i * this.caseWidth, y: startPosition.y });
+                    this.writeWord(this.gridContext, 'Word x3', { x: startPosition.x, y: startPosition.y - 2 * j * this.caseWidth });
+                    this.writeWord(this.gridContext, 'Word x3', {
                         x: startPosition.x - 2 * i * this.caseWidth,
                         y: startPosition.y - 2 * j * this.caseWidth,
                     });

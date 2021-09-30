@@ -14,10 +14,12 @@ import { LetterEaselComponent } from './components/letter-easel/letter-easel.com
 import { PassTourComponent } from './components/pass-tour/pass-tour.component';
 import { ScrabbleBoardComponent } from './components/scrabble-board/scrabble-board.component';
 import { PlaceLetterComponent } from './components/place-letter/place-letter.component';
+// eslint-disable-next-line no-restricted-imports
+import { SharedModule } from '../shared/shared/shared.module';
 import { PlayerIAComponent } from './components/player-ia/player-ia.component';
 import { SwapLetterComponent } from './components/swap-letter/swap-letter.component';
 import { WordValidationComponent } from './components/word-validation/word-validation.component';
-import { SharedModule } from '@app/modules/shared/shared/shared.module';
+
 @NgModule({
     declarations: [
         GameViewComponent,

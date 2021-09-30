@@ -39,6 +39,6 @@ export class ScrabbleBoardComponent implements AfterViewInit {
         if (event.button === MouseButton.Left) {
             this.mousePosition = { x: event.offsetX, y: event.offsetY };
         }
-        // console.log(this.mousePosition);
+        console.log(this.mousePosition);
     }
 }
