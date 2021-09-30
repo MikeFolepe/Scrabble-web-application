@@ -1,5 +1,7 @@
 // TODO : Avoir un fichier séparé pour les constantes!
 import { Letter } from '@app/classes/letter';
+// eslint-disable-next-line no-restricted-imports
+import dictionaryData from '../../assets/dictionnary.json';
 
 export const DEFAULT_WIDTH = 750;
 export const DEFAULT_HEIGHT = 750;
@@ -69,6 +71,8 @@ export const placingBallotBox: PlacingStrategy[] = [
 ];
 
 export const IA_NAME_DATABASE: string[] = ['Mister_Bucky', 'Mister_Samy', 'Miss_Betty'];
+
+export const MAX_SOLUTION = 3;
 
 export const RESERVE: Letter[] = [
     {
@@ -207,3 +211,5 @@ export const RESERVE: Letter[] = [
         points: 0,
     },
 ];
+
+export const dictionary: string[] = JSON.parse(JSON.stringify(dictionaryData)).words;

@@ -52,7 +52,7 @@ export class PlayerService {
         for (let i = 0; i < this.players[0].letterTable.length; i++) {
             if (this.players[0].letterTable[i].value === letterToRemove.toUpperCase()) {
                 this.players[0].letterTable.splice(i, 1);
-                this.myFunc();
+                // this.myFunc();
                 break;
             }
         }

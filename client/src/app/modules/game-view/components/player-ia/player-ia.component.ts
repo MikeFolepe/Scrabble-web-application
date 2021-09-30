@@ -1,8 +1,12 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Vec2 } from '@app/classes/vec2';
 import { PlayerIA } from '@app/models/player-ia.model';
 import { Player } from '@app/models/player.model';
 import { LetterService } from '@app/services/letter.service';
+// eslint-disable-next-line import/no-deprecated
 import { PlayerService } from '@app/services/player.service';
+import { TourService } from '@app/services/tour.service';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-player-ia',
@@ -11,18 +15,25 @@ import { PlayerService } from '@app/services/player.service';
 })
 export class PlayerIAComponent implements OnInit {
     // Pour dire à la boite que j'ai passé mon tour.
-    @Output() iaSkipped: EventEmitter<string> = new EventEmitter();
+    @Output() iaSkipped = new EventEmitter();
     // Pour dire à la boite que j'ai echanger des lettres ( je sais pas si c'est une information
     // requise dans le flux de la BC ??).
-    @Output() iaSwapped: EventEmitter<string> = new EventEmitter();
+    @Output() iaSwappedr = new EventEmitter();
     // Pour dire à la boite que j'ai placer des lettres.
-    @Output() iaPlaced: EventEmitter<string> = new EventEmitter();
+    @Output() iaPlaced = new EventEmitter();
+    // Pour le mode debug
+    @Output() iaPossibility = new EventEmitter();
 
     @Input() isPlacementValid: boolean = false;
 
-    iaPlayer: PlayerIA;
+    @Input() scrabbleBoard: string[][];
 
-    constructor(public letterService: LetterService, public playerService: PlayerService) {}
+    @Input() isFirstRound: boolean;
+
+    iaPlayer: PlayerIA;
+    tourSubscription: Subscription = new Subscription();
+    tour: boolean;
+    constructor(public letterService: LetterService, public playerService: PlayerService, public tourService: TourService) {}
 
     ngOnInit(): void {
         // Subscribe to get access to IA Player
@@ -33,13 +44,35 @@ export class PlayerIAComponent implements OnInit {
         this.playerService.emitPlayers();
         // Set the playerIA context so that the player can lunch event
         this.iaPlayer.setContext(this);
+
+        this.tourSubscription = this.tourService.tourSubject.subscribe((tourSubject: boolean) => {
+            this.tour = tourSubject;
+        });
+
+        if (this.tour === false) {
+            this.play();
+        }
+    }
+
+    play() {
+        this.iaPlayer.play();
+        
     }
 
     skip() {
-        this.iaSkipped.emit('!passer');
+        this.iaSkipped.emit();
     }
 
     swap() {
-        this.iaSwapped.emit('!echanger<>');
+        this.iaSwappedr.emit();
+    }
+
+    place(object: { start: Vec2; orientation: string; word: string }, possibility: { word: string; nbPt: number }[]) {
+        this.iaPlaced.emit(object);
+        this.iaPossibility.emit(possibility);
+    }
+
+    ngOndestroy() {
+        this.tourSubscription.unsubscribe();
     }
 }

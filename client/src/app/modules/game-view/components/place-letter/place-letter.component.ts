@@ -19,6 +19,7 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
     isFirstRound: boolean = true;
     message: string;
     reserveSubsciption: Subscription = new Subscription();
+    isIAPlacementValid: boolean = false;
 
     constructor(private playerService: PlayerService, private gridService: GridService, private letterService: LetterService) {
         this.scrabbleBoard = []; // Initialise la matrice avec des lettres vides
@@ -33,13 +34,17 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.reserveSubsciption = this.letterService.currentMessage.subscribe((message) => (this.message = message));
     }
+    placeMethodAdapter(object: { start: Vec2; orientation: string; word: string }) {
+        this.place(object.start, object.orientation, object.word);
+    }
 
     place(position: Vec2, orientation: string, word: string): boolean {
+        console.log('on rentre');
         // Si la commande est possible selon les paramètres
         if (!this.isPossible(position, orientation, word)) {
             return false;
         }
-
+        console.log('retourne true');
         for (let i = 0; i < word.length; i++) {
             // Ajoute la lettre à la position respective de la matrice selon l'orientation
             let x = 0;
@@ -68,8 +73,9 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
             }
         }
 
-        // console.log(this.scrabbleBoard);
+        console.log(this.scrabbleBoard);
         this.isFirstRound = false;
+        this.isIAPlacementValid = true;
         // TODO Valider le mot sur le scrabbleboard
         this.playerService.refillEasel(); // Remplie le chevalet avec de nouvelles lettres de la réserve
         this.letterService.newMessage('mise a jour');

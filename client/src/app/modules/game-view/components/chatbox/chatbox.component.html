@@ -23,8 +23,8 @@
 </div>
 <div>
     <!-- Catch event from player-IA by sending message witch catch by chatbox and add to chatbox -->
-    <app-player-ia (iaSkipped)="receiveAImessage($event)" (iaSwapped)="receiveAImessage($event)"
-        (iaPlaced)="receiveAImessage($event)">
+    <app-player-ia 
+        (iaPossibility)="receiveAImessage($event)">
     </app-player-ia>
 </div>
 <div>

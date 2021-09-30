@@ -5,9 +5,11 @@ import { Player } from '@app/models/player.model';
 import { CountdownComponent } from '@app/modules/game-view/components/countdown/countdown.component';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { LetterService } from '@app/services/letter.service';
+// eslint-disable-next-line import/no-deprecated
 import { PlayerService } from '@app/services/player.service';
 import { TourService } from '@app/services/tour.service';
 import { Subscription } from 'rxjs';
+import { PlayerIAComponent } from '../player-ia/player-ia.component';
 
 @Component({
     selector: 'app-information-panel',
@@ -16,6 +18,7 @@ import { Subscription } from 'rxjs';
 })
 export class InformationPanelComponent implements OnInit, OnDestroy {
     @ViewChild(CountdownComponent) countDown: CountdownComponent;
+    @ViewChild(PlayerIAComponent) playerIA: PlayerIAComponent;
     players: Player[] = new Array<Player>();
     gameSettings: GameSettings;
     tour: boolean;
@@ -86,12 +89,14 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
             if (this.tour === false) {
                 this.tour = true;
                 this.reAssignTour(this.tour);
+                this.countDown.setTimer();
             } else if (this.tour === true) {
                 this.tour = false;
                 this.reAssignTour(this.tour);
+                this.countDown.setTimer();
+                this.playerIA.play();
             }
         }
-        this.countDown.setTimer();
     }
     updateReserve() {
         if (this.message === 'mise a jour') {

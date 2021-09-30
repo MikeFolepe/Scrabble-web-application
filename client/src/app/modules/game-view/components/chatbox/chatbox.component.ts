@@ -1,11 +1,11 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Vec2 } from '@app/classes/vec2';
 import { PassTourComponent } from '@app/modules/game-view/components/pass-tour/pass-tour.component';
+// eslint-disable-next-line no-restricted-imports
+import { PlaceLetterComponent } from '@app/modules/game-view/components/place-letter/place-letter.component';
 import { PlayerService } from '@app/services/player.service';
 import { TourService } from '@app/services/tour.service';
 import { Subscription } from 'rxjs';
-// eslint-disable-next-line no-restricted-imports
-import { PlaceLetterComponent } from '../place-letter/place-letter.component';
 // eslint-disable-next-line no-restricted-imports
 import { SwapLetterComponent } from '../swap-letter/swap-letter.component';
 
@@ -29,8 +29,8 @@ export class ChatboxComponent implements OnInit, OnDestroy {
     type: string = '';
     listMessages: string[] = [];
     listTypes: string[] = [];
+    debugmessage: { word: string; nbPt: number }[] = [];
     // Table to stock debug message from IA test avec des trings aléatoire
-    virtualmessage: string[] = ['!passer', '!placer<manger>', '!echanger<aeb>'];
 
     constructor(private tourService: TourService, private playerService: PlayerService) {}
 
@@ -62,8 +62,7 @@ export class ChatboxComponent implements OnInit, OnDestroy {
                 case 'debug': {
                     if (this.debugOn) {
                         this.sendSystemMessage('affichages de débogage activés');
-                        this.receiveAImessage('a');
-                        this.displayAimessage();
+                        this.displaymessage();
                         this.debugOn = false;
                     } else {
                         this.sendSystemMessage('affichages de débogage désactivés');
@@ -201,16 +200,23 @@ export class ChatboxComponent implements OnInit, OnDestroy {
         }
     }
 
-    receiveAImessage(action: string): void {
-        this.virtualmessage.push(action);
+    receiveAImessage(table: { word: string; nbPt: number }[]): void {
+        this.debugmessage = table;
+        // for (const alternative of table) {
+        //     this.sendOpponentMessage(alternative.word);
+        //     this.sendOpponentMessage(alternative.points.toString());
+        // }
+        // this.virtualmessage.push(action);
+    }
+
+    displaymessage(): void {
+        for (const alternative of this.debugmessage) {
+            this.sendOpponentMessage(alternative.word);
+            this.sendOpponentMessage(alternative.nbPt.toString());
+        }
     }
 
     // Methode which dsplay IA message
-    displayAimessage(): void {
-        for (const x of this.virtualmessage) {
-            this.sendOpponentMessage(x);
-        }
-    }
 
     getTour(): void {
         this.tourSubscription = this.tourService.tourSubject.subscribe((tourSubject: boolean) => {
