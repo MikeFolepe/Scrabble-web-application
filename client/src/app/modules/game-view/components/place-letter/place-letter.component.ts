@@ -43,9 +43,9 @@ export class PlaceLetterComponent {
         this.tourService.emitTour();
     }
 
-    /* placeMethodAdapter(object: { start: Vec2; orientation: string; word: string }) {
-        this.place(object.start, object.orientation, object.word);
-    } */
+    placeMethodAdapter(object: { start: Vec2; orientation: string; word: string; indexPlayer: number }) {
+        this.place(object.start, object.orientation, object.word, object.indexPlayer);
+    }
 
     place(position: Vec2, orientation: string, word: string, indexPlayer: number): boolean {
         // Remove accents from the word to place

@@ -53,7 +53,7 @@ export class PlayerIAComponent implements OnInit, AfterViewInit {
         this.iaSwapped.emit();
     }
 
-    place(object: { start: Vec2; orientation: string; word: string }) {
+    place(object: { start: Vec2; orientation: string; word: string; indexPlayer: number }) {
         this.iaPlaced.emit(object);
     }
 }

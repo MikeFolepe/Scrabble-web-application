@@ -1,4 +1,4 @@
-import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSX, CENTRAL_CASE_POSY, dictionary, RESERVE } from '@app/classes/constants';
+import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSX, CENTRAL_CASE_POSY, dictionary, INDEX_PLAYER_IA, RESERVE } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { Range } from '@app/classes/range';
 import { board } from '@app/classes/scrabble-board';
@@ -10,6 +10,7 @@ import { PlayerIA } from './player-ia.model';
 const ROW_OFFSET = 65; /* = 'A' */
 const COLUMN_OFFSET = 1; /* Array starting at 0 */
 const WORDOVERFLOWS = -1;
+
 export class PlaceLetters extends PlayStrategy {
     constructor(private pointingRange: Range) {
         super();
@@ -120,6 +121,7 @@ export class PlaceLetters extends PlayStrategy {
                 start: startPos,
                 orientation: randomOrientation,
                 word: priorityPossibilities[new Date().getTime() % priorityPossibilities.length],
+                indexPlayer: INDEX_PLAYER_IA,
             });
             // set le score du joueur
         }
@@ -129,6 +131,7 @@ export class PlaceLetters extends PlayStrategy {
                 start: startPos,
                 orientation: randomOrientation,
                 word: alternativePossibilities[new Date().getTime() % alternativePossibilities.length],
+                indexPlayer: INDEX_PLAYER_IA,
             });
             // set le score du joueur
         }
