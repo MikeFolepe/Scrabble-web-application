@@ -121,18 +121,18 @@ export class GridService {
                         y: startPosition.y - 2 * j * this.caseWidth,
                     });
                 } else if (this.doubleWords.some((element) => element.x === i && element.y === j)) {
-                    this.writeWord(this.gridContext, 'Word x2', startPosition);
-                    this.writeWord(this.gridContext, 'Word x2', { x: startPosition.x - 2 * i * this.caseWidth, y: startPosition.y });
-                    this.writeWord(this.gridContext, 'Word x2', { x: startPosition.x, y: startPosition.y - 2 * j * this.caseWidth });
-                    this.writeWord(this.gridContext, 'Word x2', {
+                    this.writeWord(this.gridContext, 'Mot x2', startPosition);
+                    this.writeWord(this.gridContext, 'Mot x2', { x: startPosition.x - 2 * i * this.caseWidth, y: startPosition.y });
+                    this.writeWord(this.gridContext, 'Mot x2', { x: startPosition.x, y: startPosition.y - 2 * j * this.caseWidth });
+                    this.writeWord(this.gridContext, 'Mot x2', {
                         x: startPosition.x - 2 * i * this.caseWidth,
                         y: startPosition.y - 2 * j * this.caseWidth,
                     });
                 } else if (this.tripleWords.some((element) => element.x === i && element.y === j)) {
-                    this.writeWord(this.gridContext, 'Word x3', startPosition);
-                    this.writeWord(this.gridContext, 'Word x3', { x: startPosition.x - 2 * i * this.caseWidth, y: startPosition.y });
-                    this.writeWord(this.gridContext, 'Word x3', { x: startPosition.x, y: startPosition.y - 2 * j * this.caseWidth });
-                    this.writeWord(this.gridContext, 'Word x3', {
+                    this.writeWord(this.gridContext, 'Mot x3', startPosition);
+                    this.writeWord(this.gridContext, 'Mot x3', { x: startPosition.x - 2 * i * this.caseWidth, y: startPosition.y });
+                    this.writeWord(this.gridContext, 'Mot x3', { x: startPosition.x, y: startPosition.y - 2 * j * this.caseWidth });
+                    this.writeWord(this.gridContext, 'Mot x3', {
                         x: startPosition.x - 2 * i * this.caseWidth,
                         y: startPosition.y - 2 * j * this.caseWidth,
                     });
@@ -218,35 +218,27 @@ export class GridService {
         ctx.fillStyle = 'lightBlue';
         ctx.fillRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
         ctx.strokeRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
-        // ctx.fillStyle = 'black';
-        // ctx.textAlign = 'center';
-        // ctx.fillText('Lx2', startPosition.x + this.caseWidth/4, startPosition.y + this.caseWidth/2);
+
     }
 
     private tripleLetter = (ctx: CanvasRenderingContext2D, startPosition: Vec2): void => {
         ctx.fillStyle = 'cadetBlue';
         ctx.fillRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
         ctx.strokeRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
-        // ctx.fillStyle = 'black';
-        // ctx.textAlign = 'center';
-        // ctx.fillText('Lx3', startPosition.x + this.caseWidth/4, startPosition.y + this.caseWidth/2);
+
     };
 
     private doubleWord = (ctx: CanvasRenderingContext2D, startPosition: Vec2): void => {
         ctx.fillStyle = 'pink';
         ctx.fillRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
         ctx.strokeRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
-        // ctx.fillStyle = 'black';
-        // ctx.textAlign = 'center';
-        // ctx.fillText('Wx2', startPosition.x + this.caseWidth/4, startPosition.y + this.caseWidth/2);
+
     };
 
     private tripleWord = (ctx: CanvasRenderingContext2D, startPosition: Vec2): void => {
         ctx.fillStyle = 'red';
         ctx.fillRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
         ctx.strokeRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
-        // ctx.fillStyle = 'black';
-        // ctx.textAlign = 'center';
-        // ctx.fillText('Wx3', startPosition.x + this.caseWidth/4, startPosition.y + this.caseWidth/2);
+
     };
 }

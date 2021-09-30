@@ -55,7 +55,7 @@ export class SwapLetterComponent implements OnInit {
 
     // Reserve needs to have at least 7 letters to perform a swap
     reserveHasEnoughLetters(): boolean {
-        if (this.letterService.reserveSize() >= MIN_RESERVE_SIZE_TOSWAP) {
+        if (this.letterService.getReserveSize() >= MIN_RESERVE_SIZE_TOSWAP) {
             return true;
         }
         return false;

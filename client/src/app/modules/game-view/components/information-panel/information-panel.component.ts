@@ -106,7 +106,7 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
     }
     updateReserve() {
         if (this.message === 'mise a jour') {
-            this.reservestate = this.letterService.getReserveSize();
+            this.reserveState = this.letterService.getReserveSize();
         }
     }
     ngOnDestroy(): void {
