@@ -19,6 +19,7 @@ export class PlaceLetterComponent {
 
     letterEmpty: string = '';
     isFirstRound: boolean = true;
+    isIAPlacementValid: boolean = false;
 
     constructor(private playerService: PlayerService, private gridService: GridService, private tourService: TourService) {
         this.scrabbleBoard = []; // Initializes the array with empty letters
@@ -42,6 +43,10 @@ export class PlaceLetterComponent {
         this.tourService.emitTour();
     }
 
+    /* placeMethodAdapter(object: { start: Vec2; orientation: string; word: string }) {
+        this.place(object.start, object.orientation, object.word);
+    } */
+
     place(position: Vec2, orientation: string, word: string, indexPlayer: number): boolean {
         // Remove accents from the word to place
         const wordNoAccents = word.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
@@ -49,7 +54,8 @@ export class PlaceLetterComponent {
         if (!this.isPossible(position, orientation, wordNoAccents, indexPlayer)) {
             return false;
         }
-
+        console.log(this.gridService.gridContext);
+        console.log('placing retourne true');
         for (let i = 0; i < word.length; i++) {
             // Adds the letter to the respective position of the array based on the orientation
             let x = 0;
@@ -70,6 +76,9 @@ export class PlaceLetterComponent {
             }
         }
         console.log(this.scrabbleBoard);
+
+        this.isIAPlacementValid = true;
+        console.log('IA placement is valid' + this.isIAPlacementValid);
         // TODO Valider le mot sur le scrabbleboard
 
         // INVALID
