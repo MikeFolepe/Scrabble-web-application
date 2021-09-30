@@ -7,7 +7,6 @@
 
     <h1 class="header-item">Panneau d'information</h1>
     <ul id="playersList">
-        <!-- Give reserve number -->
         <p>Nombres de lettres dans la Reserve: {{reservestate }}</p>
         <li *ngFor="let player of players">
             <p>Nom : {{ player.name }}</p>
@@ -23,5 +22,7 @@
 
         </li>
     </ul>
-    <app-player-ia></app-player-ia>
+    <app-player-ia (iaSkipped)=>
+
+    </app-player-ia>
 </div>

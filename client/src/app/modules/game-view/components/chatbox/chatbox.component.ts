@@ -196,7 +196,7 @@ export class ChatboxComponent implements OnInit, OnDestroy {
             this.pass.toogleTour();
             this.sendSystemMessage('!passer');
         } else {
-            this.sendSystemMessage('vous ne pouvez pas effectuer cette commande, attendez votre tour');
+            this.sendSystemMessage('Commande impossible à realiser !');
         }
     }
 
@@ -206,8 +206,8 @@ export class ChatboxComponent implements OnInit, OnDestroy {
 
     displaymessage(): void {
         for (const alternative of this.debugmessage) {
-            this.sendOpponentMessage(alternative.word);
-            this.sendOpponentMessage(alternative.nbPt.toString());
+            const x: string = alternative.word;
+            this.sendSystemMessage(x + ': -- ' + alternative.nbPt.toString());
         }
     }
 
