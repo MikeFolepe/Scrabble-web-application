@@ -1,3 +1,4 @@
+/* eslint-disable dot-notation */
 import { TestBed } from '@angular/core/testing';
 
 import { LetterService } from './letter.service';
@@ -72,15 +73,24 @@ describe('LetterService', () => {
         expect(service.getReserveSize()).toEqual(emptyQuantity);
     });
 
-    it('should call updated func when changing message', () => {
+    it('should change function when updateReserve() is called', () => {
         let number = 1;
-        const message = 'test message';
         const fn = () => {
             number = number *= 2;
             return;
         };
-        service.updateReserve(fn);
+        service.updateView(fn);
         expect(service['func']).toBe(fn);
+    });
+
+    it('should write message when writeMessage() is called', () => {
+        let number = 1;
+        const message = 'test message';
+        service['func'] = () => {
+            number = number *= 2;
+            return;
+        };
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const funcSpy = spyOn<any>(service, 'func');
         service.writeMessage(message);
         expect(funcSpy).toHaveBeenCalled();
