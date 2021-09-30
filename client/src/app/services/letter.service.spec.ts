@@ -24,9 +24,9 @@ describe('LetterService', () => {
 
     it('should add a letter to the reserve', () => {
         const letterTest = service.reserve[0].value;
-        const initial_quantity = service.reserve[0].quantity;
+        const initialQuantity = service.reserve[0].quantity;
         service.addLetterToReserve(letterTest);
-        expect(service.reserve[0].quantity).toEqual(initial_quantity + 1);
+        expect(service.reserve[0].quantity).toEqual(initialQuantity + 1);
     });
 
     it('should not add a letter to the reserve if this one does not exists', () => {
@@ -52,7 +52,6 @@ describe('LetterService', () => {
         for (const letter of service.reserve) {
             letter.quantity = 0;
         }
-        //service.reserve = [];
         expect(service.isReserveEmpty()).toBeTruthy();
     });
 
@@ -69,20 +68,20 @@ describe('LetterService', () => {
         service.reserve[0].quantity--;
         expect(service.getReserveSize()).toEqual(REAL_TOTAL_NUMBER - 1);
         service.reserve = [];
-        let emptyQuantity: number = 0;
+        const emptyQuantity = 0;
         expect(service.getReserveSize()).toEqual(emptyQuantity);
     });
 
-    it('should call updated func when changing message', () => {
-        let number:number = 1;
-        let message: string = 'test message';
-        let fn = () => {
-            number = number*=2; 
+    it('should call updated func when changing message', () => {
+        let number = 1;
+        const message = 'test message';
+        const fn = () => {
+            number = number *= 2;
             return;
-        }
+        };
         service.updateReserve(fn);
         expect(service['func']).toBe(fn);
-        let funcSpy =  spyOn<any>(service, 'func');
+        const funcSpy = spyOn<any>(service, 'func');
         service.writeMessage(message);
         expect(funcSpy).toHaveBeenCalled();
     });
