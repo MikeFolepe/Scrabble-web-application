@@ -100,8 +100,8 @@ export class ChatboxComponent implements OnInit, OnDestroy {
 
                         // Vecteur contenant la position de départ du mot qu'on veut placer
                         const position: Vec2 = {
-                            x: Number(positionSplitted[1]) - 1,
-                            y: positionSplitted[0].charCodeAt(0) - 97,
+                            x: positionSplitted[0].charCodeAt(0) - 97,
+                            y: Number(positionSplitted[1]) - 1,
                         };
                         const orientation = positionSplitted[2];
 

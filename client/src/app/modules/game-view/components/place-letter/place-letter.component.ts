@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/prefer-for-of */
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { BOARD_COLUMNS, BOARD_ROWS, CASE_SIZE, CENTRAL_CASE_POSX, CENTRAL_CASE_POSY, DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/classes/constants';
+import { ScoreValidation } from '@app/classes/validation-score';
 import { Vec2 } from '@app/classes/vec2';
 import { GridService } from '@app/services/grid.service';
 import { LetterService } from '@app/services/letter.service';
 import { PlayerService } from '@app/services/player.service';
 import { Subscription } from 'rxjs';
+import { WordValidationComponent } from '../word-validation/word-validation.component';
 
 @Component({
     selector: 'app-place-letter',
@@ -13,13 +15,13 @@ import { Subscription } from 'rxjs';
     styleUrls: ['./place-letter.component.scss'],
 })
 export class PlaceLetterComponent implements OnInit, OnDestroy {
+    @ViewChild(WordValidationComponent) wordValidator: WordValidationComponent;
     scrabbleBoard: string[][]; // Matrice 15x15
 
     letterEmpty: string = '';
     isFirstRound: boolean = true;
     message: string;
     reserveSubsciption: Subscription = new Subscription();
-
 
     constructor(private playerService: PlayerService, private gridService: GridService, private letterService: LetterService) {
         this.scrabbleBoard = []; // Initialise la matrice avec des lettres vides
@@ -45,9 +47,9 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
             // Ajoute la lettre à la position respective de la matrice selon l'orientation
             let x = 0;
             let y = 0;
-            if (orientation === 'h') {
+            if (orientation === 'v') {
                 x = i;
-            } else if (orientation === 'v') {
+            } else if (orientation === 'h') {
                 y = i;
             }
 
@@ -56,7 +58,7 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
                 this.scrabbleBoard[position.x + x][position.y + y] = word.charAt(i);
 
                 // Display the letter on the scrabble board
-                const positionGrid = this.posTabToPosGrid(position.x + x, position.y + y);
+                const positionGrid = this.posTabToPosGrid(position.y + y, position.x + x);
                 this.gridService.drawLetter(this.gridService.gridContext, word.charAt(i), positionGrid);
 
                 if (word.charAt(i) === word.charAt(i).toUpperCase()) {
@@ -69,11 +71,20 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
             }
         }
 
-        // console.log(this.scrabbleBoard);
+        console.log(this.scrabbleBoard);
         this.isFirstRound = false;
         // TODO Valider le mot sur le scrabbleboard
-        this.playerService.refillEasel(); // Remplie le chevalet avec de nouvelles lettres de la réserve
-        this.letterService.newMessage('mise a jour');
+        const finalResult: ScoreValidation = this.wordValidator.validateAllWordsOnBoard(this.scrabbleBoard);
+
+        if (finalResult.validation === false) {
+            return false;
+        } else {
+            this.playerService.refillEasel(); // Remplie le chevalet avec de nouvelles lettres de la réserve
+            this.letterService.newMessage('mise a jour');
+            console.log(finalResult.score);
+        }
+
+
         return true;
     }
 
@@ -101,11 +112,11 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
     }
 
     isWordFitting(position: Vec2, orientation: string, word: string): boolean {
-        if (orientation === 'h') {
+        if (orientation === 'v') {
             if (position.x + word.length > BOARD_ROWS) {
                 return false;
             }
-        } else if (orientation === 'v') {
+        } else if (orientation === 'h') {
             if (position.y + word.length > BOARD_COLUMNS) {
                 return false;
             }
@@ -131,11 +142,11 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
             // Si elle n'est pas dans le chevalet, check le plateau
             if (isLetterExisting === false) {
                 for (let i = 0; i < word.length; i++) {
-                    if (orientation === 'h') {
+                    if (orientation === 'v') {
                         if (letter.toUpperCase() === this.scrabbleBoard[position.x + i][position.y].toUpperCase()) {
                             isLetterExisting = true;
                         }
-                    } else if (orientation === 'v') {
+                    } else if (orientation === 'h') {
                         if (letter.toUpperCase() === this.scrabbleBoard[position.x][position.y + i].toUpperCase()) {
                             isLetterExisting = true;
                         }
@@ -151,14 +162,14 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
     }
 
     isFirstWordValid(position: Vec2, orientation: string, word: string): boolean {
-        if (orientation === 'h') {
+        if (orientation === 'v') {
             for (let i = 0; i < word.length; i++) {
                 if (position.x + i === CENTRAL_CASE_POSX && position.y === CENTRAL_CASE_POSY) {
                     return true;
                 }
             }
         }
-        if (orientation === 'v') {
+        if (orientation === 'h') {
             for (let i = 0; i < word.length; i++) {
                 if (position.x === CENTRAL_CASE_POSX && position.y + i === CENTRAL_CASE_POSY) {
                     return true;
@@ -175,9 +186,9 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
             for (let i = 0; i < word.length; i++) {
                 let x = 0;
                 let y = 0;
-                if (orientation === 'h') {
+                if (orientation === 'v') {
                     x = i;
-                } else if (orientation === 'v') {
+                } else if (orientation === 'h') {
                     y = i;
                 }
 
@@ -219,8 +230,7 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
         return true;
     }
 
-    ngOnDestroy(){
+    ngOnDestroy() {
         this.reserveSubsciption.unsubscribe();
     }
-
 }

@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable prefer-const */
 import { Component } from '@angular/core';
-import dictionaryData from 'src/assets/dictionnary.json';
-import { LETTER_VALUES, BONUSES_POSITIONS } from '@app/classes/constants';
+import { BONUSES_POSITIONS, RESERVE } from '@app/classes/constants';
 import { ScoreValidation } from '@app/classes/validation-score';
+import dictionaryData from 'src/assets/dictionnary.json';
 
 @Component({
     selector: 'app-word-validation',
@@ -16,13 +16,14 @@ export class WordValidationComponent {
     playedWords: Map<string, string[]>;
     newPlayedWords: Map<string, string[]>;
     newPositions: string[];
-    
+    bonusesPositions: Map<string, string>;
     constructor() {
         this.dictionary = JSON.parse(JSON.stringify(dictionaryData)).words;
         this.playedWords = new Map<string, string[]>();
         this.newPlayedWords = new Map<string, string[]>();
         this.newWords = new Array<string>();
         this.newPositions = new Array<string>();
+        this.bonusesPositions = new Map<string, string>(BONUSES_POSITIONS);
     }
 
     isValidInDictionary(word: string): boolean {
@@ -35,7 +36,7 @@ export class WordValidationComponent {
             }
             return false;
         }
-        retucrn false;
+        return false;
     }
 
     findWords(words: string[]): string[] {
@@ -71,66 +72,81 @@ export class WordValidationComponent {
     }
 
     checkIfNotPlayed(word: string, positions: string[]): boolean {
+        let result = true;
         if (this.playedWords.has(word)) {
             if (this.playedWords.get(word) !== undefined) {
                 let mapValues: any = this.playedWords.get(word);
-                let result = this.containsArray(mapValues, positions);
+                result = this.containsArray(mapValues, positions);
                 return !result;
             }
-            return true;
+        } else if (this.playedWords.size === 0) {
+            for (let pos of this.newPlayedWords.values()) {
+                result = this.containsArray(pos, positions);
+                return !result;
+            }
         }
-        return true;
+        return result;
     }
 
-    getWordPositions(word: string, index: number): string[] {
+    getWordPositionsHorizontal(word: string, index: number): string[] {
         let positions: string[] = new Array<string>();
-        if (word !== '') {
-            for (const char of word) {
-                let indexChar = this.newWords.indexOf(char);
-                positions.push(this.getCharPosition(index) + indexChar.toString());
-            }
+        for (const char of word) {
+            let indexChar = this.newWords.indexOf(char) + 1;
+            positions.push(this.getCharPosition(index) + indexChar.toString());
         }
 
         return positions;
     }
 
+    getWordPositionsVertical(word: string, index: number): string[] {
+        let positions: string[] = new Array<string>();
+        for (const char of word) {
+            let indexChar = this.newWords.indexOf(char);
+            let column = index + 1;
+            positions.push(this.getCharPosition(indexChar) + column.toString());
+        }
+        return positions;
+    }
+
     passTroughAllLines(scrabbleBoard: string[][]) {
         for (let i = 0; i < 15; i++) {
-            for (let j = 0; j < 15; j++) {
-                this.newWords.push(scrabbleBoard[i][j]);
-                const words = this.findWords(this.newWords);
-                this.newPositions = new Array<string>(words.length);
+            for (let k = 0; k < 15; k++) {
+                this.newWords.push(scrabbleBoard[i][k]);
+            }
+            const words = this.findWords(this.newWords);
+            this.newPositions = new Array<string>(words.length);
 
-                for (let word of words) {
-                    this.newPositions = this.getWordPositions(word, i);
-
+            for (let word of words) {
+                if (word.length >= 2) {
+                    this.newPositions = this.getWordPositionsHorizontal(word, i);
                     if (this.checkIfNotPlayed(word, this.newPositions)) {
                         this.addToPlayedWords(word, this.newPositions, this.newPlayedWords);
                     }
-                    this.newPositions = [];
                 }
-                this.newWords = [];
+                this.newPositions = [];
             }
+            this.newWords = [];
         }
     }
 
     passThroughAllColumns(scrabbleBoard: string[][]) {
-        for (let i = 0; i < 15; i++) {
-            for (let j = 0; j < 15; j++) {
-                this.newWords.push(scrabbleBoard[j][i]);
-                const words = this.findWords(this.newWords);
-                this.newPositions = new Array<string>(words.length);
+        for (let k = 0; k < 15; k++) {
+            for (let i = 0; i < 15; i++) {
+                this.newWords.push(scrabbleBoard[i][k]);
+            }
+            const words = this.findWords(this.newWords);
+            this.newPositions = new Array<string>(words.length);
 
-                for (let word of words) {
-                    this.newPositions = this.getWordPositions(word, j);
-
+            for (let word of words) {
+                if (word.length >= 2) {
+                    this.newPositions = this.getWordPositionsVertical(word, k);
                     if (this.checkIfNotPlayed(word, this.newPositions)) {
                         this.addToPlayedWords(word, this.newPositions, this.newPlayedWords);
                     }
-                    this.newPositions = [];
                 }
-                this.newWords = [];
+                this.newPositions = [];
             }
+            this.newWords = [];
         }
     }
 
@@ -141,51 +157,51 @@ export class WordValidationComponent {
     }
 
     calculateTotalScore(score: number, words: Map<string, string[]>): number {
-
-        for (let word of words.keys()){
-            this.calculateLettersScore(score, word, words.get(word));
-            this.applyBonusesWord(score, word, words.get(word));
+        let scoreWord = 0;
+        for (let word of words.keys()) {
+            let scoreLetter = this.calculateLettersScore(score, word, words.get(word));
+            scoreWord = this.applyBonusesWord(scoreLetter, word, words.get(word));
         }
-        return score;
+        return scoreWord;
     }
 
-    calculateLettersScore(score: number, word: string, positions: any) {
-        for (let letter of LETTER_VALUES) {
-            for (let i = 0; i < word.length; i++) {
-                if (word.charAt(i).toUpperCase() === letter.letter) {
-                    switch (BONUSES_POSITIONS.get(positions[i])) {
+    calculateLettersScore(score: number, word: string, positions: any): number {
+        for (let i = 0; i < word.length; i++) {
+            for (let letter of RESERVE) {
+                if (word.charAt(i).toUpperCase() === letter.value) {
+                    switch (this.bonusesPositions.get(positions[i])) {
                         case 'doubleletter': {
-                            score += letter.value * 2;
+                            score += letter.points * 2;
                             break;
                         }
                         case 'tripleletter': {
-                            score += letter.value * 3;
+                            score += letter.points * 3;
                             break;
                         }
                         default: {
-                            score += letter.value;
+                            score += letter.points;
                             break;
                         }
                     }
                 }
             }
         }
+        return score;
     }
 
     removeBonuses(map: Map<string, string[]>) {
         for (let positions of map.values()) {
             for (let position of positions) {
-                if (BONUSES_POSITIONS.has(position)) {
-                    BONUSES_POSITIONS.delete(position);
+                if (this.bonusesPositions.has(position)) {
+                    this.bonusesPositions.delete(position);
                 }
             }
-
         }
     }
 
-    applyBonusesWord(score: number, word: string, positions: any) {
+    applyBonusesWord(score: number, word: string, positions: any): number {
         for (let position of positions) {
-            switch (BONUSES_POSITIONS.get(position)) {
+            switch (this.bonusesPositions.get(position)) {
                 case 'doubleword': {
                     score = score * 2;
                     break;
@@ -199,6 +215,7 @@ export class WordValidationComponent {
                 }
             }
         }
+        return score;
     }
 
     validateAllWordsOnBoard(scrabbleBoard: string[][]): ScoreValidation {
@@ -207,6 +224,7 @@ export class WordValidationComponent {
         this.passThroughAllColumns(scrabbleBoard);
         for (let word of this.newPlayedWords.keys()) {
             if (!this.isValidInDictionary(word)) {
+                this.newPlayedWords.clear();
                 return { validation: false, score: scoreTotal };
             }
         }
@@ -217,10 +235,8 @@ export class WordValidationComponent {
             this.addToPlayedWords(word, this.newPlayedWords.get(word), this.playedWords);
         }
 
+        this.newPlayedWords.clear();
+
         return { validation: true, score: scoreTotal };
     }
 }
-
-
-
-

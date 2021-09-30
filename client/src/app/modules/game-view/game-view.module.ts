@@ -17,7 +17,7 @@ import { PlaceLetterComponent } from './components/place-letter/place-letter.com
 import { PlayerIAComponent } from './components/player-ia/player-ia.component';
 import { SwapLetterComponent } from './components/swap-letter/swap-letter.component';
 import { WordValidationComponent } from './components/word-validation/word-validation.component';
-
+import { SharedModule } from '@app/modules/shared/shared/shared.module';
 @NgModule({
     declarations: [
         GameViewComponent,
@@ -35,7 +35,7 @@ import { WordValidationComponent } from './components/word-validation/word-valid
         PlayerIAComponent,
         SwapLetterComponent,
     ],
-    imports: [CommonModule, AppMaterialModule, AppRoutingModule, FormsModule],
+    imports: [CommonModule, AppMaterialModule, AppRoutingModule, FormsModule, SharedModule],
     exports: [GameViewComponent],
     bootstrap: [GameViewComponent],
 })
