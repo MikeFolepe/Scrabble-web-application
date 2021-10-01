@@ -78,7 +78,6 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
                 this.gridService.drawLetter(this.gridService.gridContextLayer, wordNoAccents.charAt(i), positionGrid, this.playerService.fontSize);
             }
         }
-        console.log(this.scrabbleBoard);
 
         this.isIAPlacementValid = true;
 
@@ -105,17 +104,18 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
             return false;
         } else {
             for (let i = 0; i < word.length; i++) {
-                if (wordNoAccents.charAt(i) === wordNoAccents.charAt(i).toUpperCase()) {
-                    // If we put a capital letter (white letter), we remove a '*' from the easel
-                    this.playerService.removeLetter('*', indexPlayer);
-                } else {
-                    // Otherwise we remove the respective letter from the easel
-                    this.playerService.removeLetter(wordNoAccents.charAt(i), indexPlayer);
+                if (invalidLetters[i]) {
+                    if (wordNoAccents.charAt(i) === wordNoAccents.charAt(i).toUpperCase()) {
+                        // If we put a capital letter (white letter), we remove a '*' from the easel
+                        this.playerService.removeLetter('*', indexPlayer);
+                    } else {
+                        // Otherwise we remove the respective letter from the easel
+                        this.playerService.removeLetter(wordNoAccents.charAt(i), indexPlayer);
+                    }
                 }
             }
             this.playerService.addScore(finalResult.score, indexPlayer);
             this.playerService.updateScrabbleBoard(this.scrabbleBoard);
-            console.log(this.scrabbleBoard);
             this.playerService.refillEasel(indexPlayer); // Fill the easel with new letters from the reserve
             this.letterService.writeMessage('mise a jour');
             this.isFirstRound = false;
@@ -176,6 +176,7 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
                 }
             }
             // Search the scrabble board if the letter isn't in the easel
+            // TODO ne pas itérer, seulement check l'index de la lettre 
             if (isLetterExisting === false) {
                 for (let i = 0; i < word.length; i++) {
                     if (orientation === 'v') {

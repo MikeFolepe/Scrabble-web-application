@@ -224,7 +224,8 @@ export class WordValidationComponent {
         this.passTroughAllRows(scrabbleBoard);
         this.passThroughAllColumns(scrabbleBoard);
         for (let word of this.newPlayedWords.keys()) {
-            if (!this.isValidInDictionary(word)) {
+            let lowerCaseWord = word.toLowerCase();
+            if (!this.isValidInDictionary(lowerCaseWord)) {
                 this.newPlayedWords.clear();
                 return { validation: false, score: scoreTotal };
             }
