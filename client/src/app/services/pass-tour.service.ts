@@ -5,7 +5,7 @@ import { BehaviorSubject } from 'rxjs';
     providedIn: 'root',
 })
 export class PassTourService {
-    //Method to update
+    // Method to update
     messageSource = new BehaviorSubject('default message');
     currentMessage = this.messageSource.asObservable();
     tour: boolean;

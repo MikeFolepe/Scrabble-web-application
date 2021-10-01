@@ -1,6 +1,14 @@
 /* eslint-disable @typescript-eslint/prefer-for-of */
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSX, CENTRAL_CASE_POSY, EASEL_SIZE } from '@app/classes/constants';
+import {
+    BOARD_COLUMNS,
+    BOARD_ROWS,
+    THREE_SECONDS_DELAY,
+    CENTRAL_CASE_POSX,
+    CENTRAL_CASE_POSY,
+    EASEL_SIZE,
+    INDEX_PLAYER_IA,
+} from '@app/classes/constants';
 import { ScoreValidation } from '@app/classes/validation-score';
 import { Vec2 } from '@app/classes/vec2';
 import { GridService } from '@app/services/grid.service';
@@ -45,7 +53,7 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
         this.place(object.start, object.orientation, object.word, object.indexPlayer);
     }
 
-    place(position: Vec2, orientation: string, word: string, indexPlayer = 1): boolean {
+    place(position: Vec2, orientation: string, word: string, indexPlayer = INDEX_PLAYER_IA): boolean {
         // Remove accents from the word to place
         const wordNoAccents = word.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
         // If the command is possible according to the parameters
@@ -106,7 +114,7 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
                     } else if (orientation === 'h') {
                         y = i;
                     }
-                    // If the word is invalid, we remove the letters placed on the grid
+                    // If the word is invalid, we remove only the letters that we just placed on the grid
                     if (invalidLetters[i]) {
                         this.scrabbleBoard[position.x + x][position.y + y] = '';
                         const positionGrid = this.playerService.posTabToPosGrid(position.y + y, position.x + x);
@@ -114,7 +122,7 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
                         this.playerService.addLetterToEasel(wordNoAccents[i], indexPlayer);
                     }
                 }
-            }, 3000); // Waiting 3 seconds to erase the letters on the grid
+            }, THREE_SECONDS_DELAY); // Waiting 3 seconds to erase the letters on the grid
 
             return false;
         } else {

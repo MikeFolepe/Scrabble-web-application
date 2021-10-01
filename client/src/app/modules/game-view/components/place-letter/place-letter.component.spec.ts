@@ -1,12 +1,13 @@
 /* eslint-disable dot-notation */
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { INDEX_PLAYER_IA, THREE_SECONDS_DELAY, INDEX_REAL_PLAYER } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
 import { Player } from '@app/models/player.model';
 import { GridService } from '@app/services/grid.service';
+// eslint-disable-next-line no-restricted-imports
 import { WordValidationComponent } from '../word-validation/word-validation.component';
 import { PlaceLetterComponent } from './place-letter.component';
-import { INDEX_PLAYER_IA, INDEX_REAL_PLAYER } from '@app/classes/constants';
 
 fdescribe('PlaceLetterComponent', () => {
     let component: PlaceLetterComponent;
@@ -141,10 +142,15 @@ fdescribe('PlaceLetterComponent', () => {
         expect(isWordTouching).toEqual(false);
     });
     it("placing letters that aren't present in the easel or the scrabbleboard should be invalid", () => {
+        // Fake these methods to be able to call place()
+        spyOn(component['playerService'], 'removeLetter');
+        spyOn(component['playerService'], 'refillEasel');
+        spyOn(component['letterService'], 'writeMessage');
+        spyOn(component.wordValidator, 'validateAllWordsOnBoard').and.returnValue({ validation: true, score: 0 });
         const position: Vec2 = { x: 7, y: 7 };
         const orientation = 'h';
         const word = 'fil';
-        expect(component.isWordValid(position, orientation, word, INDEX_REAL_PLAYER)).toEqual(false);
+        expect(component.place(position, orientation, word, INDEX_REAL_PLAYER)).toEqual(false);
     });
     it('placing letters present in the easel or the scrabbleboard should be valid', () => {
         // Fake these methods to be able to call place()
@@ -174,5 +180,79 @@ fdescribe('PlaceLetterComponent', () => {
         const orientation = 'h';
         const word = 'bOa'; // white letter is used as 'O'
         expect(component.isWordValid(position, orientation, word, INDEX_PLAYER_IA)).toEqual(true);
+    });
+    it("placing letters that doesn't form a valid word should be removed from scrabbleBoard", () => {
+        // Fake these methods to be able to call place()
+        spyOn(component['playerService'], 'removeLetter');
+        spyOn(component['playerService'], 'refillEasel');
+        spyOn(component['letterService'], 'writeMessage');
+        spyOn(component.wordValidator, 'validateAllWordsOnBoard').and.returnValue({ validation: false, score: 0 });
+        // Player 1 places an invalid word
+        const position: Vec2 = { x: 7, y: 7 };
+        const orientation = 'h';
+        const word = 'abcd';
+        expect(component.place(position, orientation, word, INDEX_REAL_PLAYER)).toEqual(false);
+    });
+    it('only the invalid letters that we just placed should be removed from scrabbleBoard', () => {
+        // Fake these methods to be able to call place()
+        spyOn(component['playerService'], 'removeLetter');
+        spyOn(component['playerService'], 'refillEasel');
+        spyOn(component['letterService'], 'writeMessage');
+        spyOn(component.wordValidator, 'validateAllWordsOnBoard').and.returnValue({ validation: true, score: 0 });
+        // Player 1 places the 1st word
+        let position: Vec2 = { x: 7, y: 7 };
+        let orientation = 'h';
+        let word = 'bac';
+        component.place(position, orientation, word, INDEX_REAL_PLAYER);
+
+        // Player 2 places an invalid word on top of the previous one
+        component.wordValidator.validateAllWordsOnBoard = jasmine.createSpy().and.returnValue({ validation: false, score: 0 });
+        jasmine.clock().install();
+        // Horizontally
+        position = { x: 7, y: 7 };
+        orientation = 'h';
+        word = 'bacbhhV';
+        let lettersRemoved = component.place(position, orientation, word, INDEX_PLAYER_IA);
+        jasmine.clock().tick(THREE_SECONDS_DELAY + 1);
+        expect(lettersRemoved).toEqual(false);
+        // Vertically
+        position = { x: 7, y: 7 };
+        orientation = 'v';
+        word = 'bEcchhL';
+        lettersRemoved = component.place(position, orientation, word, INDEX_PLAYER_IA);
+        jasmine.clock().tick(THREE_SECONDS_DELAY + 1);
+        expect(lettersRemoved).toEqual(false);
+        jasmine.clock().uninstall();
+    });
+    it('placing a word on top of a different existing word should be invalid', () => {
+        // Fake these methods to be able to call place()
+        spyOn(component['playerService'], 'removeLetter');
+        spyOn(component['playerService'], 'refillEasel');
+        spyOn(component['letterService'], 'writeMessage');
+        spyOn(component.wordValidator, 'validateAllWordsOnBoard').and.returnValue({ validation: false, score: 0 });
+        // Player 1 places the 1st word
+        const position: Vec2 = { x: 7, y: 7 };
+        const orientation = 'h';
+        let word = 'aaaa';
+        component.place(position, orientation, word, INDEX_REAL_PLAYER);
+        // Player 1 places a second word on top of the 1st word that has different letters
+        word = 'baaa';
+        expect(component.place(position, orientation, word, INDEX_REAL_PLAYER)).toEqual(false);
+    });
+    it('calling placeMethodAdapter() should call place()', () => {
+        // Fake these methods to be able to call place()
+        spyOn(component['playerService'], 'removeLetter');
+        spyOn(component['playerService'], 'refillEasel');
+        spyOn(component['letterService'], 'writeMessage');
+        spyOn(component.wordValidator, 'validateAllWordsOnBoard').and.returnValue({ validation: false, score: 0 });
+        const spy = spyOn(component, 'place').and.callThrough();
+        const start: Vec2 = { x: 7, y: 7 };
+        const orientation = 'h';
+        const word = 'dab';
+        const indexPlayer = INDEX_REAL_PLAYER;
+        const object = { start, orientation, word, indexPlayer };
+        component.placeMethodAdapter(object);
+        // spyOn<any>(component, 'place');
+        expect(spy).toHaveBeenCalled();
     });
 });

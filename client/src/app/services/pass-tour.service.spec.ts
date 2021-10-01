@@ -21,8 +21,8 @@ describe('PassTourService', () => {
             return;
         }
         service.updateTour(fn);
-        expect(service['func']).toBe(fn);
-        let funcSpy =  spyOn<any>(service, 'func');
+        expect(service['updateFunc']).toBe(fn);
+        let funcSpy = spyOn<any>(service, 'func');
         service.writeMessage(message);
         expect(funcSpy).toHaveBeenCalled();
     });
