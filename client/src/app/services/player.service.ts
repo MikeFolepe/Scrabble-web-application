@@ -3,12 +3,13 @@ import {
     BOARD_COLUMNS,
     BOARD_ROWS,
     CASE_SIZE,
+    DEFAULT_FONT_SIZE,
     DEFAULT_HEIGHT,
     DEFAULT_WIDTH,
     EASEL_SIZE,
-    DEFAULT_FONT_SIZE,
     FONT_SIZE_MAX,
     FONT_SIZE_MIN,
+    RESERVE,
 } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
@@ -28,7 +29,7 @@ export class PlayerService {
     private players: Player[] = new Array<Player>();
     private myFunc: () => void;
     constructor(private letterService: LetterService, private gridService: GridService) {
-        this.fontSize = DEFAULT_FONT_SIZE * 2;
+        this.fontSize = DEFAULT_FONT_SIZE;
     }
 
     updateLettersEasel(fn: () => void) {
@@ -59,7 +60,7 @@ export class PlayerService {
         } else if (fontSize > FONT_SIZE_MAX) {
             fontSize = FONT_SIZE_MAX;
         }
-        this.fontSize = fontSize * 2;
+        this.fontSize = fontSize;
         this.updateGridFontSize();
     }
 
@@ -76,9 +77,9 @@ export class PlayerService {
         for (let i = 0; i < BOARD_ROWS; i++) {
             for (let j = 0; j < BOARD_COLUMNS; j++) {
                 if (this.scrabbleBoard[i][j] !== '') {
-                    const positionGrid = this.posTabToPosGrid(j, i);
-                    this.gridService.eraseLetter(this.gridService.gridContext, positionGrid);
-                    this.gridService.drawLetter(this.gridService.gridContext, this.scrabbleBoard[i][j], positionGrid, this.fontSize);
+                    const positionGrid = this.convertSizeFormat(j, i);
+                    this.gridService.eraseLetter(this.gridService.gridContextLayer, positionGrid);
+                    this.gridService.drawLetter(this.gridService.gridContextLayer, this.scrabbleBoard[i][j], positionGrid, this.fontSize);
                 }
             }
         }
@@ -91,6 +92,14 @@ export class PlayerService {
                 this.players[indexPlayer].letterTable.splice(i, 1);
                 this.myFunc();
                 break;
+            }
+        }
+    }
+
+    addLetterToEasel(letterToAdd: string, indexPlayer: number): void {
+        for (const letter of RESERVE) {
+            if (letterToAdd.toUpperCase() === letter.value) {
+                this.players[indexPlayer].letterTable.push(letter);
             }
         }
     }
@@ -121,12 +130,13 @@ export class PlayerService {
         }
         return false;
     }
+
     addScore(score: number, indexPlayer: number): void {
         this.players[indexPlayer].score += score;
     }
 
-    // Transpose the positions from 15x15 array to 750x750 grid
-    posTabToPosGrid(positionTabX: number, positionTabY: number): Vec2 {
+    // Convert the positions from 15x15 array to 750x750 grid
+    convertSizeFormat(positionTabX: number, positionTabY: number): Vec2 {
         return {
             x: positionTabX * CASE_SIZE + CASE_SIZE - DEFAULT_WIDTH / 2,
             y: positionTabY * CASE_SIZE + CASE_SIZE - DEFAULT_HEIGHT / 2,

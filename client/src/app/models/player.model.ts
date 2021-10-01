@@ -4,7 +4,7 @@ export class Player {
     constructor(
         public id: number,
         public name: string,
-        public letterTable: Letter[], // public isTour: boolean, // public isIA: boolean
+        public letterTable: Letter[], // public isTurn: boolean, // public isIA: boolean
     ) {
         this.score = 0;
     }
