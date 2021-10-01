@@ -25,7 +25,7 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
     scrabbleBoard: string[][]; // 15x15 array
 
     letterEmpty: string = '';
-    isFirstRound: boolean = true;
+    isFirstRound: boolean = false;
     isIAPlacementValid: boolean = false;
     message: string;
 
