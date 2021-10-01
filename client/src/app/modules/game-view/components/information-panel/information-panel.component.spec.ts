@@ -1,21 +1,21 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { InformationPanelComponent } from './information-panel.component';
-// import { GameSettings, StartingPlayer } from '@app/classes/game-settings';
-//import { GameSettingsService } from '@app/services/game-settings.service';
-import { PlayerService } from '@app/services/player.service';
 import { LetterService } from '@app/services/letter.service';
+// import { GameSettings, StartingPlayer } from '@app/classes/game-settings';
+// import { GameSettingsService } from '@app/services/game-settings.service';
+import { PlayerService } from '@app/services/player.service';
 import { TourService } from '@app/services/tour.service';
+import { InformationPanelComponent } from './information-panel.component';
 
 describe('InformationPannelComponent', () => {
     let component: InformationPanelComponent;
     let fixture: ComponentFixture<InformationPanelComponent>;
-    //let gameSettingsServiceSpy: jasmine.SpyObj<GameSettingsService>;
+    // let gameSettingsServiceSpy: jasmine.SpyObj<GameSettingsService>;
     let letterServiceSpy: jasmine.SpyObj<LetterService>;
     let playerServiceSpy: jasmine.SpyObj<PlayerService>;
     let tourServiceSpy: jasmine.SpyObj<TourService>;
 
     beforeEach(() => {
-        //gameSettingsServiceSpy = jasmine.createSpyObj('GameSettingsService', ['getSettings']);
+        // gameSettingsServiceSpy = jasmine.createSpyObj('GameSettingsService', ['getSettings']);
         letterServiceSpy = jasmine.createSpyObj('LetterService', ['getReserveSize', 'updateView', 'getRandomLetters', 'getReserveSize']);
         playerServiceSpy = jasmine.createSpyObj('PlayerService', ['getPlayers', 'addPlayer', 'getLettersEasel', 'getScore', 'clearPlayers']);
         tourServiceSpy = jasmine.createSpyObj('TourService', ['getTour', 'initializeTour']);
@@ -24,11 +24,12 @@ describe('InformationPannelComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [InformationPanelComponent],
-            providers: [/*{ provide: GameSettingsService, useValue: gameSettingsServiceSpy },*/
-                        { provide: LetterService, useValue: letterServiceSpy},
-                        { provide: PlayerService, useValue: playerServiceSpy},
-                        { provide: TourService, useValue: tourServiceSpy}]
-                   // GameSettingsService, { provide: PlayerService, useValue: playerServiceSpy}]
+            providers: [
+                /* { provide: GameSettingsService, useValue: gameSettingsServiceSpy },*/ { provide: LetterService, useValue: letterServiceSpy },
+                { provide: PlayerService, useValue: playerServiceSpy },
+                { provide: TourService, useValue: tourServiceSpy },
+            ],
+            // GameSettingsService, { provide: PlayerService, useValue: playerServiceSpy}]
         }).compileComponents();
     });
 
@@ -36,18 +37,18 @@ describe('InformationPannelComponent', () => {
         fixture = TestBed.createComponent(InformationPanelComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
-    })
+    });
 
     afterEach(() => {
         component.ngOnDestroy();
-    })
+    });
 
     it('should create', () => {
         expect(component).toBeTruthy();
     });
 
     it('initialization should initialize players, initialize tour and update view', () => {
-        //ngOnInit has made players initialization by calling initialize players.
+        // ngOnInit has made players initialization by calling initialize players.
         expect(playerServiceSpy.addPlayer).toHaveBeenCalledTimes(2);
         expect(tourServiceSpy.initializeTour).toHaveBeenCalled();
         expect(letterServiceSpy.updateView).toHaveBeenCalled();
@@ -55,24 +56,24 @@ describe('InformationPannelComponent', () => {
 
     it('should switch tour value only if counter is null', () => {
         spyOn<any>(TourService, 'getTour').and.returnValue(true);
-        //component.tour = true;
-        let counter: number = 0;
+        // component.tour = true;
+        const counter = 0;
         component.switchTour(counter);
         expect(component.tour).toEqual(false);
     });
 
     it('switch tour should switch tour value only if counter is null', () => {
         spyOn<any>(TourService, 'getTour').and.returnValue(false);
-        let counter: number = 0;
-        //component.tour =  false;
+        const counter = 0;
+        // component.tour =  false;
         component.switchTour(counter);
         expect(component.tour).toEqual(true);
     });
 
     it('switch tour should not switch tour value if counter is not null', () => {
-        spyOn<any>(TourService, 'getTour').and.returnValue(true);;
-        let counter: number = 30;
-        component.switchTour(counter)
+        spyOn<any>(TourService, 'getTour').and.returnValue(true);
+        const counter = 30;
+        component.switchTour(counter);
         expect(component.tour).toEqual(true);
     });
 
@@ -93,7 +94,7 @@ describe('InformationPannelComponent', () => {
     it('should clear players and unsubscribe on destroy', () => {
         spyOn<any>(component.viewSubscription, 'unsubscribe');
         component.ngOnDestroy;
-        let clearPlayerSpy = spyOn<any>(PlayerService, 'clearPlayers');
+        const clearPlayerSpy = spyOn<any>(PlayerService, 'clearPlayers');
         expect(clearPlayerSpy).toHaveBeenCalled();
         expect(component.viewSubscription).toHaveBeenCalled();
     });

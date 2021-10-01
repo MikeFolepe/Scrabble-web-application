@@ -25,7 +25,7 @@ export class SwapLetterComponent implements OnInit {
         this.tourSubscription = this.tourService.tourSubject.subscribe((tourSubject: boolean) => {
             this.tour = tourSubject;
         });
-        this.tourService.emitTurn();
+        this.tourService.emitTour();
     }
 
     // Swap all the letters selected from the easel with new ones from the reserve

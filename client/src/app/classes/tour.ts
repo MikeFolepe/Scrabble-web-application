@@ -1,5 +1,5 @@
 import { Player } from './player';
-export interface Tour {
+export interface tour {
     time: number;
     activePlayer: Player;
 }

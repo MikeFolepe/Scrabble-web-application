@@ -5,15 +5,7 @@ import { GameSettings, StartingPlayer } from '@app/classes/game-settings';
     providedIn: 'root',
 })
 export class GameSettingsService {
-    gameSettings: GameSettings =  new GameSettings(
-        ['player1','player2'],
-        StartingPlayer.Player1,
-        '00',
-        '30',
-        'facile',
-        false,
-        'français',
-    );
+    gameSettings: GameSettings = new GameSettings(['player1', 'player2'], StartingPlayer.Player1, '00', '30', 'facile', false, 'français');
 
     initializeSettings(settings: GameSettings) {
         this.gameSettings = settings;

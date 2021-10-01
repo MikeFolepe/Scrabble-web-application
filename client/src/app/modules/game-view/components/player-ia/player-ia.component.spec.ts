@@ -4,16 +4,16 @@ import { PlayerIAComponent } from './player-ia.component';
 describe('PlayerIAComponent', () => {
     let component: PlayerIAComponent;
     let fixture: ComponentFixture<PlayerIAComponent>;
-    //let playerIASpy: jasmine.SpyObj<PlayerIA>;
+    // let playerIASpy: jasmine.SpyObj<PlayerIA>;
 
     beforeEach(() => {
-        //playerIASpy = jasmine.createSpyObj('PlayerIA',['setContext']);
-     });
+        // playerIASpy = jasmine.createSpyObj('PlayerIA',['setContext']);
+    });
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [PlayerIAComponent],
-            //providers: [{ provide: PlayerIA, useValue: playerIASpy }]
+            // providers: [{ provide: PlayerIA, useValue: playerIASpy }]
         }).compileComponents();
     });
 

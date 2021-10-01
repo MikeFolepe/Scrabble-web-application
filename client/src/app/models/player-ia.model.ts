@@ -2,10 +2,10 @@ import { IAStrategy, placingBallotBox, PlacingStrategy, strategyBallotBox } from
 import { Letter } from '@app/classes/letter';
 import { Range } from '@app/classes/range';
 import { PlayerIAComponent } from '@app/modules/game-view/components/player-ia/player-ia.component';
-import { PlayStrategy } from './abstract-strategy.model';
-import { PlaceLetters } from './place-letter-strategy.model';
-import { Player } from './player.model';
-import { SkipTurn } from './skip-turn-strategy.model';
+import { PlayStrategy } from '@app/models/abstract-strategy.model';
+import { PlaceLetters } from '@app/models/place-letter-strategy.model';
+import { Player } from '@app/models/player.model';
+import { SkipTurn } from '@app/models/skip-tour-strategy.model';
 
 export class PlayerIA extends Player {
     context: PlayerIAComponent;
@@ -13,7 +13,7 @@ export class PlayerIA extends Player {
     constructor(
         public id: number,
         public name: string,
-        public letterTable: Letter[], // public isTurn: boolean, // public isIA: boolean
+        public letterTable: Letter[], // public tour: boolean, // public isIA: boolean
     ) {
         super(id, name, letterTable);
         // Initialize the first concrete strategy to be executed later
@@ -23,7 +23,7 @@ export class PlayerIA extends Player {
     play() {
         // Allow the ia to execute the current strategy whoever it is
         this.strategy.execute(this, this.context);
-        // Set the next strategy for next turn
+        // Set the next strategy for next tour
         this.setStrategy();
     }
 

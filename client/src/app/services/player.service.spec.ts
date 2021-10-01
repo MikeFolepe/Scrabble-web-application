@@ -105,7 +105,7 @@ describe('PlayerService', () => {
         }
         const newFontSize = 18;
         service.updateFontSize(newFontSize);
-        expect(service.fontSize).toEqual(newFontSize * 2);
+        expect(service.fontSize).toEqual(newFontSize);
     });
 
     it('should give font size a valid value', () => {
@@ -118,11 +118,11 @@ describe('PlayerService', () => {
         }
         const tooSmallValue = -2;
         service.updateFontSize(tooSmallValue);
-        expect(service.fontSize).toEqual(FONT_SIZE_MIN * 2);
+        expect(service.fontSize).toEqual(FONT_SIZE_MIN);
 
         const tooBigValue = 300;
         service.updateFontSize(tooBigValue);
-        expect(service.fontSize).toEqual(FONT_SIZE_MAX * 2);
+        expect(service.fontSize).toEqual(FONT_SIZE_MAX);
     });
 
     it("should return right player's easel when getLettersEasel() is called", () => {

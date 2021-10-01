@@ -57,7 +57,7 @@ export class PlayerIAComponent implements OnInit {
         this.tourSubscription = this.tourService.tourSubject.subscribe((tourSubject: boolean) => {
             this.tour = tourSubject;
         });
-        this.tourService.emitTurn();
+        this.tourService.emitTour();
 
         if (this.tour === false) {
             setTimeout(() => {
@@ -69,7 +69,7 @@ export class PlayerIAComponent implements OnInit {
     play() {
         // debugger;
         console.log(this.iaPlayer.letterTable);
-        if (this.tourService.getTurn() === false) {
+        if (this.tourService.getTour() === false) {
             setTimeout(() => {
                 this.iaPlayer.play();
             }, 5000);
@@ -78,7 +78,7 @@ export class PlayerIAComponent implements OnInit {
 
     skip() {
         this.iaSkipped.emit();
-        if (this.tourService.getTurn() === false) {
+        if (this.tourService.getTour() === false) {
             setTimeout(() => {
                 this.passTurn.toogleTour();
             }, 5000);
@@ -89,7 +89,7 @@ export class PlayerIAComponent implements OnInit {
         console.log('swap');
         console.log(this.iaPlayer.letterTable);
         this.iaSwappedr.emit();
-        if (this.tourService.getTurn() === false) {
+        if (this.tourService.getTour() === false) {
             setTimeout(() => {
                 this.passTurn.toogleTour();
             }, 5000);

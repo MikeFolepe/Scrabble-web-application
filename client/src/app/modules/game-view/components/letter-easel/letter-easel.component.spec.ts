@@ -9,12 +9,12 @@ describe('LetterEaselComponent', () => {
 
     beforeEach(() => {
         playerServiceSpy = jasmine.createSpyObj('PlayerService', ['updateLettersEasel', 'getLettersEasel', 'updateFontSize']);
-     });
+    });
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [LetterEaselComponent],
-            providers: [{ provide: PlayerService, useValue: playerServiceSpy }]
+            providers: [{ provide: PlayerService, useValue: playerServiceSpy }],
         }).compileComponents();
     });
 
@@ -29,14 +29,14 @@ describe('LetterEaselComponent', () => {
     });
 
     it('each initialization should update by calling by calling getLettersEasel of player service', () => {
-        let updateSpy = spyOn<any>(component, 'update');
+        const updateSpy = spyOn<any>(component, 'update');
         component.ngOnInit();
         expect(updateSpy).toHaveBeenCalled();
         expect(playerServiceSpy.getLettersEasel).toHaveBeenCalled();
     });
 
     it('should update component fontSize and playerService fontSize with new fontSize', () => {
-        let fontSize: number = 10;
+        const fontSize = 10;
         component.handleFontSizeEvent(fontSize);
         expect(component.fontSize).toEqual(fontSize);
         expect(playerServiceSpy.updateFontSize).toHaveBeenCalled();

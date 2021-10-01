@@ -13,17 +13,17 @@ describe('PassTourService', () => {
         expect(service).toBeTruthy();
     });
 
-    it('should call updated func when changing message', () => {
-        let number:number = 1;
-        let message: string = 'test message';
-        let fn = () => {
-            number = number*=2; 
+    it('should call updated func when changing message', () => {
+        let number = 1;
+        const message = 'test message';
+        const fn = () => {
+            number = number *= 2;
             return;
-        }
+        };
         service.updateTour(fn);
-        expect(service['func']).toBe(fn);
-        let funcSpy =  spyOn<any>(service, 'func');
+        expect(service.updateTour).toBe(fn);
+        const updateTourSpy = spyOn<any>(service, 'updateTour');
         service.writeMessage(message);
-        expect(funcSpy).toHaveBeenCalled();
+        expect(updateTourSpy).toHaveBeenCalled();
     });
 });
