@@ -41,7 +41,7 @@ export class ChatboxComponent implements OnInit, OnDestroy {
         this.tourSubscription = this.tourService.tourSubject.subscribe((tourSubject: boolean) => {
             this.tour = tourSubject;
         });
-        this.tourService.emitTour();
+        this.tourService.emitTurn();
     }
     handleKeyEvent(event: KeyboardEvent) {
         if (event.key === 'Enter') {
@@ -79,8 +79,8 @@ export class ChatboxComponent implements OnInit, OnDestroy {
                     break;
                 }
                 case 'echanger': {
-                    // this.getTour();
-                    this.tour = this.tourService.getTour();
+                    // this.isTurn();
+                    this.tour = this.tourService.isTurn();
                     if (this.tour === true) {
                         const messageSplitted = this.message.split(/\s/);
 
@@ -97,7 +97,7 @@ export class ChatboxComponent implements OnInit, OnDestroy {
                     break;
                 }
                 case 'placer': {
-                    this.tour = this.tourService.getTour();
+                    this.tour = this.tourService.isTurn();
                     if (this.tour === true) {
                         const messageSplitted = this.message.split(/\s/);
 
@@ -197,7 +197,7 @@ export class ChatboxComponent implements OnInit, OnDestroy {
     }
 
     switchTour() {
-        this.tour = this.tourService.getTour();
+        this.tour = this.tourService.isTurn();
         if (this.tour === true) {
             this.pass.toogleTour();
             this.sendSystemMessage('!passer');

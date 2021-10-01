@@ -18,14 +18,14 @@ export class SwapLetterComponent implements OnInit {
     constructor(private playerService: PlayerService, private letterService: LetterService, private tourService: TourService) {}
 
     ngOnInit(): void {
-        this.initializeTour();
+        this.initializeTurn();
     }
 
-    initializeTour(): void {
+    initializeTurn(): void {
         this.tourSubscription = this.tourService.tourSubject.subscribe((tourSubject: boolean) => {
             this.tour = tourSubject;
         });
-        this.tourService.emitTour();
+        this.tourService.emitTurn();
     }
 
     // Swap all the letters selected from the easel with new ones from the reserve

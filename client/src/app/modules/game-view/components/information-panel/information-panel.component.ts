@@ -39,7 +39,7 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
         this.players = this.playerService.getPlayers();
         this.initializeFirstTour();
         // this.subscribeToTourSubject();
-        this.tour = this.tourService.getTour();
+        this.tour = this.tourService.isTurn();
         this.reserveState = this.letterService.getReserveSize();
         this.viewSubscription = this.letterService.currentMessage.subscribe((message) => (this.message = message));
         this.letterService.updateView(this.updateView.bind(this));
@@ -55,15 +55,15 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
 
     // function to initialize the boolean specifying which player will start first
     initializeFirstTour(): void {
-        this.tourService.initializeTour(Boolean(this.gameSettings.startingPlayer.valueOf()));
+        this.tourService.initializeTurn(Boolean(this.gameSettings.startingPlayer.valueOf()));
     }
 
     reAssignTour(tour: boolean): void {
-        this.tourService.initializeTour(tour);
+        this.tourService.initializeTurn(tour);
     }
 
     switchTour(counter: number): void {
-        this.tour = this.tourService.getTour();
+        this.tour = this.tourService.isTurn();
         if (counter === 0) {
             if (this.tour === false) {
                 this.tour = true;

@@ -45,16 +45,16 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        this.initializeTour();
+        this.initializeTurn();
         this.playerService.updateScrabbleBoard(this.scrabbleBoard);
         this.viewSubscription = this.letterService.currentMessage.subscribe((message) => (this.message = message));
     }
 
-    initializeTour(): void {
+    initializeTurn(): void {
         this.tourSubscription = this.tourService.tourSubject.subscribe((tourSubject: boolean) => {
             this.tour = tourSubject;
         });
-        this.tourService.emitTour();
+        this.tourService.emitTurn();
     }
 
     placeMethodAdapter(object: { start: Vec2; orientation: string; word: string; indexPlayer: number }) {
