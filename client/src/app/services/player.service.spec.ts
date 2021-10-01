@@ -6,7 +6,7 @@ import { PlayerIA } from '@app/models/player-ia.model';
 import { Player } from '@app/models/player.model';
 import { PlayerService } from './player.service';
 
-fdescribe('PlayerService', () => {
+describe('PlayerService', () => {
     let service: PlayerService;
 
     let letterA: Letter;
