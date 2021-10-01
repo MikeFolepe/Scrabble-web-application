@@ -40,6 +40,10 @@ export class GridService {
     // TODO : pas de valeurs magiques!! Faudrait avoir une meilleure manière de le faire
     /* eslint-disable @typescript-eslint/no-magic-numbers */
 
+    setGridContext(gridContext: CanvasRenderingContext2D) {
+        this.gridContext = gridContext;
+    }
+
     get width(): number {
         return this.canvasSize.x;
     }
@@ -206,27 +210,23 @@ export class GridService {
         ctx.fillStyle = 'lightBlue';
         ctx.fillRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
         ctx.strokeRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
-
     }
 
     private tripleLetter = (ctx: CanvasRenderingContext2D, startPosition: Vec2): void => {
         ctx.fillStyle = 'cadetBlue';
         ctx.fillRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
         ctx.strokeRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
-
     };
 
     private doubleWord = (ctx: CanvasRenderingContext2D, startPosition: Vec2): void => {
         ctx.fillStyle = 'pink';
         ctx.fillRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
         ctx.strokeRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
-
     };
 
     private tripleWord = (ctx: CanvasRenderingContext2D, startPosition: Vec2): void => {
         ctx.fillStyle = 'red';
         ctx.fillRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
         ctx.strokeRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
-
     };
 }

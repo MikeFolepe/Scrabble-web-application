@@ -60,10 +60,11 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
         this.place(object.start, object.orientation, object.word, object.indexPlayer);
     }
 
-    place(position: Vec2, orientation: string, word: string, indexPlayer: number): boolean {
+    place(position: Vec2, orientation: string, word: string, indexPlayer = 1): boolean {
         // Remove accents from the word to place
         const wordNoAccents = word.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
         // If the command is possible according to the parameters
+        // debugger;
         if (!this.isPossible(position, orientation, wordNoAccents, indexPlayer)) {
             return false;
         }
@@ -71,7 +72,7 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
         if (word.length === EASEL_SIZE) {
             isEaselSize = true;
         }
-        console.log(this.gridService.gridContext);
+        // console.log(this.gridService.gridContext);
         console.log('placing retourne true');
         for (let i = 0; i < word.length; i++) {
             // Adds the letter to the respective position of the array based on the orientation
@@ -137,7 +138,6 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
             this.letterService.writeMessage('mise a jour');
             return true;
         }
-
     }
 
     isPossible(position: Vec2, orientation: string, word: string, indexPlayer: number): boolean {
