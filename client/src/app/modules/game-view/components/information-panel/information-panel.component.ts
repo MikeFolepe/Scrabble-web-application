@@ -18,7 +18,7 @@ import { PlayerIAComponent } from '../player-ia/player-ia.component';
     templateUrl: './information-panel.component.html',
     styleUrls: ['./information-panel.component.scss'],
 })
-export class InformationPanelComponent implements OnInit, OnDestroy {
+export class InformationPanelComponent implements OnDestroy, OnInit {
     @ViewChild(CountdownComponent) countDown: CountdownComponent;
     @ViewChild(PlayerIAComponent) playerIA: PlayerIAComponent;
     players: Player[] = new Array<Player>();
@@ -38,8 +38,7 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
         this.initializePlayers();
         this.players = this.playerService.getPlayers();
         this.initializeFirstTour();
-        // this.subscribeToTourSubject();
-        this.tour = this.tourService.isTurn();
+        this.tour = this.tourService.getTurn();
         this.reserveState = this.letterService.getReserveSize();
         this.viewSubscription = this.letterService.currentMessage.subscribe((message) => (this.message = message));
         this.letterService.updateView(this.updateView.bind(this));
@@ -63,7 +62,7 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
     }
 
     switchTour(counter: number): void {
-        this.tour = this.tourService.isTurn();
+        this.tour = this.tourService.getTurn();
         if (counter === 0) {
             if (this.tour === false) {
                 this.tour = true;
@@ -77,6 +76,7 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
             }
         }
     }
+
     updateView() {
         if (this.message === 'mise a jour') {
             this.reserveState = this.letterService.getReserveSize();

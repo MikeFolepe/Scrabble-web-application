@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable prefer-const */
 import { Component } from '@angular/core';
-import { ALL_EASEL_BONUS, BONUSES_POSITIONS, dictionary, RESERVE, BOARD_ROWS , BOARD_COLUMNS } from '@app/classes/constants';
+import { ALL_EASEL_BONUS, BOARD_COLUMNS, BOARD_ROWS, BONUSES_POSITIONS, dictionary, RESERVE } from '@app/classes/constants';
 import { ScoreValidation } from '@app/classes/validation-score';
 
 @Component({
@@ -157,7 +157,7 @@ export class WordValidationComponent {
         let scoreWord = 0;
         for (let word of words.keys()) {
             let scoreLetter = this.calculateLettersScore(score, word, words.get(word));
-            scoreWord = this.applyBonusesWord(scoreLetter, word, words.get(word));
+            scoreWord += this.applyBonusesWord(scoreLetter, words.get(word));
         }
         return scoreWord;
     }
@@ -200,7 +200,7 @@ export class WordValidationComponent {
         }
     }
 
-    applyBonusesWord(score: number, word: string, positions: any): number {
+    applyBonusesWord(score: number, positions: any): number {
         for (let position of positions) {
             switch (this.bonusesPositions.get(position)) {
                 case 'doubleword': {
@@ -219,22 +219,22 @@ export class WordValidationComponent {
         return score;
     }
 
-    validateAllWordsOnBoard(scrabbleBoard: string[][] , isEaselSize: boolean): ScoreValidation {
+    validateAllWordsOnBoard(scrabbleBoard: string[][], isEaselSize: boolean): ScoreValidation {
         let scoreTotal = 0;
         this.passTroughAllRows(scrabbleBoard);
         this.passThroughAllColumns(scrabbleBoard);
         for (let word of this.newPlayedWords.keys()) {
-            if (!this.isValidInDictionary(word)) {
+            let lowerCaseWord = word.toLowerCase();
+            if (!this.isValidInDictionary(lowerCaseWord)) {
                 this.newPlayedWords.clear();
                 return { validation: false, score: scoreTotal };
             }
         }
-        scoreTotal += this.calculateTotalScore(scoreTotal, this.newPlayedWords);4
+        scoreTotal += this.calculateTotalScore(scoreTotal, this.newPlayedWords);
 
         if (isEaselSize) {
             scoreTotal += ALL_EASEL_BONUS;
         }
-
         this.removeBonuses(this.newPlayedWords);
 
         for (let word of this.newPlayedWords.keys()) {
