@@ -62,33 +62,47 @@ export class PlayerIAComponent implements OnInit {
         if (this.tour === false) {
             setTimeout(() => {
                 this.play();
-            }, 3000);
+            }, 5000);
         }
     }
 
     play() {
         // debugger;
         console.log(this.iaPlayer.letterTable);
-        this.iaPlayer.play();
+        if (this.tourService.getTour() === false) {
+            setTimeout(() => {
+                this.iaPlayer.play();
+            }, 5000);
+        }
     }
 
     skip() {
         this.iaSkipped.emit();
-        this.passTurn.toogleTour();
+        if (this.tourService.getTour() === false) {
+            setTimeout(() => {
+                this.passTurn.toogleTour();
+            }, 5000);
+        }
     }
 
     swap() {
         console.log('swap');
         console.log(this.iaPlayer.letterTable);
         this.iaSwappedr.emit();
-        this.passTurn.toogleTour();
+        if (this.tourService.getTour() === false) {
+            setTimeout(() => {
+                this.passTurn.toogleTour();
+            }, 5000);
+        }
     }
 
     place(object: { start: Vec2; orientation: string; word: string }, possibility: { word: string; nbPt: number }[]) {
         console.log(this.iaPlayer.letterTable);
         this.iaPlaced.emit(object);
         this.iaPossibility.emit(possibility);
-        this.passTurn.toogleTour();
+        setTimeout(() => {
+            this.passTurn.toogleTour();
+        }, 5000);
     }
 
     ngOndestroy() {

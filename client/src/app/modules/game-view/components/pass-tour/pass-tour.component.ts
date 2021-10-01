@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { PassTourService } from '@app/services/pass-tour.service';
 import { Subscription } from 'rxjs';
 
@@ -7,20 +7,19 @@ import { Subscription } from 'rxjs';
     templateUrl: './pass-tour.component.html',
     styleUrls: ['./pass-tour.component.scss'],
 })
-export class PassTourComponent {
+export class PassTourComponent implements OnInit, OnDestroy {
     message: string;
     passSubscription: Subscription = new Subscription();
 
     constructor(private passtourService: PassTourService) {}
-    // ngOnInit(): void {
-    //     // this.passSubscription = this.passtourService.currentMessage.subscribe((message) => (this.message = message));
-    // }
+    ngOnInit(): void {
+        this.passSubscription = this.passtourService.currentMessage.subscribe((message) => (this.message = message));
+    }
 
     toogleTour(): void {
-        this.passtourService.switchTour(true);
-        // this.passtourService.writeMessage('!passer');
+        this.passtourService.writeMessage('!passer');
     }
-    // ngOnDestroy() {
-    //     this.passSubscription.unsubscribe();
-    // }
+    ngOnDestroy() {
+        this.passSubscription.unsubscribe();
+    }
 }
