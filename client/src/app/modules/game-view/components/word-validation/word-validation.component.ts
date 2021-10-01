@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable prefer-const */
 import { Component } from '@angular/core';
-import { ALL_EASEL_BONUS, BONUSES_POSITIONS, dictionary, RESERVE, BOARD_ROWS , BOARD_COLUMNS } from '@app/classes/constants';
+import { ALL_EASEL_BONUS, BONUSES_POSITIONS, dictionary, RESERVE, BOARD_ROWS, BOARD_COLUMNS } from '@app/classes/constants';
 import { ScoreValidation } from '@app/classes/validation-score';
 
 @Component({
