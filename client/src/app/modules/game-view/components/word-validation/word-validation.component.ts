@@ -157,7 +157,7 @@ export class WordValidationComponent {
         let scoreWord = 0;
         for (let word of words.keys()) {
             let scoreLetter = this.calculateLettersScore(score, word, words.get(word));
-            scoreWord = this.applyBonusesWord(scoreLetter, words.get(word));
+            scoreWord += this.applyBonusesWord(scoreLetter, words.get(word));
         }
         return scoreWord;
     }
