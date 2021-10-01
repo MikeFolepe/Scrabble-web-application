@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { Vec2 } from '@app/classes/vec2';
 import { PlayerIA } from '@app/models/player-ia.model';
 import { Player } from '@app/models/player.model';
@@ -7,6 +7,7 @@ import { LetterService } from '@app/services/letter.service';
 import { PlayerService } from '@app/services/player.service';
 import { TourService } from '@app/services/tour.service';
 import { Subscription } from 'rxjs';
+import { PassTourComponent } from '../pass-tour/pass-tour.component';
 
 @Component({
     selector: 'app-player-ia',
@@ -14,6 +15,7 @@ import { Subscription } from 'rxjs';
     styleUrls: ['./player-ia.component.scss'],
 })
 export class PlayerIAComponent implements OnInit {
+    @ViewChild(PassTourComponent) passTurn: PassTourComponent;
     // Pour dire à la boite que j'ai passé mon tour.
     @Output() iaSkipped = new EventEmitter();
     // Pour dire à la boite que j'ai echanger des lettres ( je sais pas si c'est une information
@@ -60,15 +62,18 @@ export class PlayerIAComponent implements OnInit {
 
     skip() {
         this.iaSkipped.emit();
+        this.passTurn.toogleTour();
     }
 
     swap() {
         this.iaSwappedr.emit();
+        this.passTurn.toogleTour();
     }
 
     place(object: { start: Vec2; orientation: string; word: string }, possibility: { word: string; nbPt: number }[]) {
         this.iaPlaced.emit(object);
         this.iaPossibility.emit(possibility);
+        this.passTurn.toogleTour();
     }
 
     ngOndestroy() {

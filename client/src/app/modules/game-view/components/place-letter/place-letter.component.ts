@@ -72,6 +72,13 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
             if (this.scrabbleBoard[position.x + x][position.y + y] === '') {
                 this.scrabbleBoard[position.x + x][position.y + y] = wordNoAccents.charAt(i);
                 invalidLetters[i] = true;
+                if (wordNoAccents.charAt(i) === wordNoAccents.charAt(i).toUpperCase()) {
+                    // If we put a capital letter (white letter), we remove a '*' from the easel
+                    this.playerService.removeLetter('*', indexPlayer);
+                } else {
+                    // Otherwise we remove the respective letter from the easel
+                    this.playerService.removeLetter(wordNoAccents.charAt(i), indexPlayer);
+                }
 
                 // Display the letter on the scrabble board grid
                 const positionGrid = this.playerService.posTabToPosGrid(position.y + y, position.x + x);
@@ -80,15 +87,6 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
         }
         this.isIAPlacementValid = true;
 
-        for (let i = 0; i < word.length; i++) {
-            if (wordNoAccents.charAt(i) === wordNoAccents.charAt(i).toUpperCase()) {
-                // If we put a capital letter (white letter), we remove a '*' from the easel
-                this.playerService.removeLetter('*', indexPlayer);
-            } else {
-                // Otherwise we remove the respective letter from the easel
-                this.playerService.removeLetter(wordNoAccents.charAt(i), indexPlayer);
-            }
-        }
         const finalResult: ScoreValidation = this.wordValidator.validateAllWordsOnBoard(this.scrabbleBoard, isEaselSize);
         this.isFirstRound = false;
         if (finalResult.validation === false) {
@@ -106,9 +104,11 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
                         this.scrabbleBoard[position.x + x][position.y + y] = '';
                         const positionGrid = this.playerService.posTabToPosGrid(position.y + y, position.x + x);
                         this.gridService.eraseLetter(this.gridService.gridContextLayer, positionGrid);
+                        this.playerService.addLetterToEasel(wordNoAccents.charAt(i), indexPlayer);
                     }
                 }
             }, 3000); // Waiting 3 seconds to erase the letters on the grid
+
             return false;
         } else {
             this.playerService.addScore(finalResult.score, indexPlayer);

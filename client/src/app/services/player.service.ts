@@ -97,11 +97,9 @@ export class PlayerService {
     }
 
     addLetterToEasel(letterToAdd: string, indexPlayer: number): void {
-        for (const char of letterToAdd) {
-            for (const letter of RESERVE) {
-                if (char.toUpperCase() === letter.value) {
-                    this.players[indexPlayer].letterTable.push(letter);
-                }
+        for (const letter of RESERVE) {
+            if (letterToAdd.toUpperCase() === letter.value) {
+                this.players[indexPlayer].letterTable.push(letter);
             }
         }
     }

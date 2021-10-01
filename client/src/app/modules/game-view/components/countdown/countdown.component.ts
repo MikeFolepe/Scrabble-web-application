@@ -32,8 +32,8 @@ export class CountdownComponent implements OnInit, OnDestroy {
 
     // Set time always after a define interval of 1second and repeat it
     setTimer(): void {
-        this.minutesInt = parseInt(this.minutes);
-        this.secondsInt = parseInt(this.seconds);
+        this.minutesInt = parseInt(this.minutes, 10);
+        this.secondsInt = parseInt(this.seconds, 10);
         const intervalID = setInterval(() => {
             if (this.secondsInt === 0 && this.minutesInt !== 0) {
                 this.minutesInt = this.minutesInt - 1;
