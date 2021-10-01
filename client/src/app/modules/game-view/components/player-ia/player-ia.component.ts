@@ -18,7 +18,7 @@ export class PlayerIAComponent implements OnInit {
     @Output() iaSkipped = new EventEmitter();
     // Pour dire à la boite que j'ai echanger des lettres ( je sais pas si c'est une information
     // requise dans le flux de la BC ??).
-    @Output() iaSwappedr = new EventEmitter();
+    @Output() iaSwapped = new EventEmitter();
     // Pour dire à la boite que j'ai placer des lettres.
     @Output() iaPlaced = new EventEmitter();
     // Pour le mode debug
@@ -63,7 +63,7 @@ export class PlayerIAComponent implements OnInit {
     }
 
     swap() {
-        this.iaSwappedr.emit();
+        this.iaSwapped.emit();
     }
 
     place(object: { start: Vec2; orientation: string; word: string }, possibility: { word: string; nbPt: number }[]) {
