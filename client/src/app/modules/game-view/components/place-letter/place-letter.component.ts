@@ -55,8 +55,6 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
         if (word.length === EASEL_SIZE) {
             isEaselSize = true;
         }
-        console.log(this.gridService.gridContext);
-        console.log('placing retourne true');
         for (let i = 0; i < word.length; i++) {
             // Adds the letter to the respective position of the array based on the orientation
             let x = 0;
@@ -76,10 +74,7 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
                 this.gridService.drawLetter(this.gridService.gridContextLayer, wordNoAccents.charAt(i), positionGrid, this.playerService.fontSize);
             }
         }
-        console.log(this.scrabbleBoard);
-
         this.isIAPlacementValid = true;
-
 
         for (let i = 0; i < word.length; i++) {
             if (wordNoAccents.charAt(i) === wordNoAccents.charAt(i).toUpperCase()) {
