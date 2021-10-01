@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
-import { MouseHandlerService } from '@app/services/mouse-handler.service';
 import { Vec2 } from '@app/classes/vec2';
 import { GridService } from '@app/services/grid.service';
+import { MouseHandlerService } from '@app/services/mouse-handler.service';
 
 @Component({
     selector: 'app-scrabble-board',

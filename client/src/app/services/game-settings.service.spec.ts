@@ -16,9 +16,12 @@ describe('GameSettingsService', () => {
 
     it('settings initialization should emit game settings', () => {
         const settings: GameSettings = new GameSettings(['player1', 'player2'], StartingPlayer.Player1, '00', '30', 'facile', false, 'français');
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const emitGameSettingsSpy = spyOn<any>(service, 'emitGameSettings').and.callThrough();
         service.initializeSettings(settings);
-        expect(emitGameSettingsSpy).toHaveBeenCalled();
+        expect(service.gameSettings).toEqual(settings);
+    });
+
+    it('settings getter should return right game settings', () => {
+        service.gameSettings = new GameSettings(['player1', 'player2'], StartingPlayer.Player1, '02', '30', 'difficile', false, 'français');
+        expect(service.getSettings()).toEqual(service.gameSettings);
     });
 });

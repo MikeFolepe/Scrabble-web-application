@@ -9,7 +9,6 @@ export class GameSettingsService {
 
     initializeSettings(settings: GameSettings) {
         this.gameSettings = settings;
-        // this.emitGameSettings();
     }
 
     getSettings(): GameSettings {
