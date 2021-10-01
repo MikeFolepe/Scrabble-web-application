@@ -23,9 +23,21 @@ describe('GameSettingsService', () => {
             'facile',
             false,
             'français',
-        ) 
-        let emitGameSettingsSpy = spyOn<any>(service, 'emitGameSettings').and.callThrough(); 
+        )  
         service.initializeSettings(settings);
-        expect(emitGameSettingsSpy).toHaveBeenCalled();
+        expect(service.gameSettings).toEqual(settings);
+    });
+
+    it('settings getter should return right game settings', () => {
+        service.gameSettings = new GameSettings(
+            ['player1','player2'],
+            StartingPlayer.Player1,
+            '02',
+            '30',
+            'difficile',
+            false,
+            'français',
+        )  
+        expect(service.getSettings()).toEqual(service.gameSettings);
     });
 });
