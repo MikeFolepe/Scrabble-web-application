@@ -15,16 +15,9 @@ describe('GameSettingsService', () => {
     });
 
     it('settings initialization should emit game settings', () => {
-        let settings: GameSettings = new GameSettings(
-            ['player1','player2'],
-            StartingPlayer.Player1,
-            '00',
-            '30',
-            'facile',
-            false,
-            'français',
-        ) 
-        let emitGameSettingsSpy = spyOn<any>(service, 'emitGameSettings').and.callThrough(); 
+        const settings: GameSettings = new GameSettings(['player1', 'player2'], StartingPlayer.Player1, '00', '30', 'facile', false, 'français');
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const emitGameSettingsSpy = spyOn<any>(service, 'emitGameSettings').and.callThrough();
         service.initializeSettings(settings);
         expect(emitGameSettingsSpy).toHaveBeenCalled();
     });

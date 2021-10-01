@@ -8,6 +8,7 @@ import { LetterService } from '@app/services/letter.service';
 import { PlayerService } from '@app/services/player.service';
 import { TourService } from '@app/services/tour.service';
 import { Subscription } from 'rxjs';
+// eslint-disable-next-line no-restricted-imports
 import { WordValidationComponent } from '../word-validation/word-validation.component';
 
 @Component({
@@ -71,8 +72,6 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
         if (word.length === EASEL_SIZE) {
             isEaselSize = true;
         }
-        console.log(this.gridService.gridContext);
-        console.log('placing retourne true');
         for (let i = 0; i < word.length; i++) {
             // Adds the letter to the respective position of the array based on the orientation
             let x = 0;
@@ -88,11 +87,10 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
                 this.scrabbleBoard[position.x + x][position.y + y] = wordNoAccents.charAt(i);
 
                 // Display the letter on the scrabble board grid
-                const positionGrid = this.playerService.posTabToPosGrid(position.y + y, position.x + x);
+                const positionGrid = this.playerService.convertSizeFormat(position.y + y, position.x + x);
                 this.gridService.drawLetter(this.gridService.gridContext, wordNoAccents.charAt(i), positionGrid, this.playerService.fontSize);
             }
         }
-        console.log(this.scrabbleBoard);
 
         this.isIAPlacementValid = true;
         // TODO Valider le mot sur le scrabbleboard
@@ -110,7 +108,7 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
                 }
                 // If the word is invalid, we remove the letters placed on the grid
                 this.scrabbleBoard[position.x + x][position.y + y] = '';
-                const positionGrid = this.posTabToPosGrid(position.y + y, position.x + x);
+                const positionGrid = this.convertSizeFormat(position.y + y, position.x + x);
                 this.gridService.eraseLetter(this.gridService.gridContext, positionGrid);
             }
             return false;
@@ -137,7 +135,6 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
             this.letterService.writeMessage('mise a jour');
             return true;
         }
-
     }
 
     isPossible(position: Vec2, orientation: string, word: string, indexPlayer: number): boolean {
