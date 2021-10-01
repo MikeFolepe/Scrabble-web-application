@@ -42,7 +42,7 @@
 //         const priorityPossibilities: string[] = [];
 //         const alternativePossibilities: string[] = [];
 
-//         // Whitin all the possible words separate those who matches this turn randomPointing
+//         // Whitin all the possible words separate those who matches this tour randomPointing
 //         // from those who doesn't matches the randomPointing but are in range min < x < max
 //         for (let i = 0; i < possibleWord.length; i++) {
 //             const nbPt = this.calculatePoint(startPos, randomOrientation, possibleWord[i], context.scrabbleBoard);
@@ -56,7 +56,7 @@
 //         }
 //         debugger;
 
-//         // If a word matching this turn randomPointing is found place it on the scrabble board
+//         // If a word matching this tour randomPointing is found place it on the scrabble board
 //         if (randomPointingFound) {
 //             context.place({
 //                 start: startPos,
@@ -65,7 +65,7 @@
 //             });
 //             // set le score du joueur
 //         }
-//         // If there isn't word matching this turn randomPointing but exists alternatives place it as well
+//         // If there isn't word matching this tour randomPointing but exists alternatives place it as well
 //         else if (!randomPointingFound && alternativePointingFound) {
 //             context.place({
 //                 start: startPos,
@@ -74,7 +74,7 @@
 //             });
 //             // set le score du joueur
 //         }
-//         // If there isn't word matching this turn randomPointing & existing alternatives skip the turn
+//         // If there isn't word matching this tour randomPointing & existing alternatives skip the tour
 //         else if (!randomPointingFound && !alternativePointingFound) {
 //             context.skip();
 //         }

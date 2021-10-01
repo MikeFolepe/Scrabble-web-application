@@ -15,19 +15,19 @@ describe('TourService', () => {
 
     it('should initialize and emit tour', () => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const emitTourSpy = spyOn<any>(service, 'emitTurn').and.callThrough();
+        const emitTourSpy = spyOn<any>(service, 'emitTour').and.callThrough();
         const expectedTour = false;
-        service.initializeTurn(expectedTour);
-        expect(service.isTurn()).toBe(expectedTour);
+        service.initializeTour(expectedTour);
+        expect(service.getTour()).toBe(expectedTour);
         expect(emitTourSpy).toHaveBeenCalled();
     });
 
-    it('should emit when emitTurn() is called', () => {
+    it('should emit when emitTour() is called', () => {
         let emitted = false;
         service.tourSubject.subscribe(() => {
             emitted = true;
         });
-        service.emitTurn();
+        service.emitTour();
         expect(emitted).toBeTrue();
     });
 });

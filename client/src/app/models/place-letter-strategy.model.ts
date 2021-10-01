@@ -101,7 +101,7 @@ export class PlaceLetters extends PlayStrategy {
         const priorityPossibilities: { word: string; nbPt: number }[] = [];
         const alternativePossibilities: { word: string; nbPt: number }[] = [];
 
-        // Whitin all the possible words separate those who matches this turn randomPointing
+        // Whitin all the possible words separate those who matches this tour randomPointing
         // from those who doesn't matches the randomPointing but are in range 0 < x < max
         for (const word of possibleWord) {
             const nbPt = this.calculatePoint(startPos, randomOrientation, word, context.scrabbleBoard);
@@ -115,7 +115,7 @@ export class PlaceLetters extends PlayStrategy {
         }
         // debugger;
 
-        // If a word matching this turn randomPointing is found place it on the scrabble board
+        // If a word matching this tour randomPointing is found place it on the scrabble board
         if (randomPointingFound) {
             context.place(
                 {
@@ -127,7 +127,7 @@ export class PlaceLetters extends PlayStrategy {
             );
             // set le score du joueur
         }
-        // If there isn't word matching this turn randomPointing but exists alternatives place it as well
+        // If there isn't word matching this tour randomPointing but exists alternatives place it as well
         else if (!randomPointingFound && alternativePointingFound) {
             context.place(
                 {
@@ -139,7 +139,7 @@ export class PlaceLetters extends PlayStrategy {
             );
             // set le score du joueur
         }
-        // If there isn't word matching this turn randomPointing & existing alternatives skip the turn
+        // If there isn't word matching this tour randomPointing & existing alternatives skip the tour
         else if (!randomPointingFound && !alternativePointingFound) {
             context.skip();
         }

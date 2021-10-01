@@ -6,17 +6,18 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class TourService {
     tourSubject = new BehaviorSubject<boolean>(false);
-    private isTour: boolean;
-    emitTurn() {
-        this.tourSubject.next(this.isTour);
+    private tour: boolean;
+
+    emitTour() {
+        this.tourSubject.next(this.tour);
     }
 
-    initializeTurn(isTour: boolean) {
-        this.isTour = isTour;
-        this.emitTurn();
+    initializeTour(tour: boolean) {
+        this.tour = tour;
+        this.emitTour();
     }
 
-    isTurn(): boolean {
-        return this.isTour;
+    getTour(): boolean {
+        return this.tour;
     }
 }
