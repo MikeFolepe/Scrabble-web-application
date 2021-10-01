@@ -5,7 +5,7 @@ import { PlayerIAComponent } from '@app/modules/game-view/components/player-ia/p
 import { PlayStrategy } from '@app/models/abstract-strategy.model';
 import { PlaceLetters } from '@app/models/place-letter-strategy.model';
 import { Player } from '@app/models/player.model';
-import { SkipTurn } from '@app/models/skip-tour-strategy.model';
+import { SkipTurn } from '@app/models/skip-turn-strategy.model';
 
 export class PlayerIA extends Player {
     context: PlayerIAComponent;

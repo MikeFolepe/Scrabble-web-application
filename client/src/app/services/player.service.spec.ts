@@ -1,41 +1,33 @@
 /* eslint-disable dot-notation */
 import { TestBed } from '@angular/core/testing';
-import { BOARD_COLUMNS, BOARD_ROWS, FONT_SIZE_MAX, FONT_SIZE_MIN, CASE_SIZE, DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/classes/constants';
+import { BOARD_COLUMNS, BOARD_ROWS, CASE_SIZE, DEFAULT_HEIGHT, DEFAULT_WIDTH, FONT_SIZE_MAX, FONT_SIZE_MIN, RESERVE } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { PlayerIA } from '@app/models/player-ia.model';
 import { Player } from '@app/models/player.model';
 import { PlayerService } from './player.service';
 
-describe('PlayerService', () => {
+fdescribe('PlayerService', () => {
     let service: PlayerService;
 
-    const letterA: Letter = {
-        value: 'A',
-        quantity: 0,
-        points: 0,
-    };
-    const letterB: Letter = {
-        value: 'B',
-        quantity: 0,
-        points: 0,
-    };
-    const letterC: Letter = {
-        value: 'C',
-        quantity: 0,
-        points: 0,
-    };
-    const letterD: Letter = {
-        value: 'D',
-        quantity: 0,
-        points: 0,
-    };
+    let letterA: Letter;
+    let letterB: Letter;
+    let letterC: Letter;
+    let letterD: Letter;
 
-    const player = new Player(1, 'Player 1', [letterA]);
-    const playerIA = new PlayerIA(2, 'Player IA', [letterB]);
+    let player: Player;
+    let playerIA: PlayerIA;
 
     beforeEach(() => {
         TestBed.configureTestingModule({});
         service = TestBed.inject(PlayerService);
+
+        letterA = RESERVE[0];
+        letterB = RESERVE[1];
+        letterC = RESERVE[2];
+        letterD = RESERVE[3];
+
+        player = new Player(1, 'Player 1', [letterA]);
+        playerIA = new PlayerIA(2, 'Player IA', [letterB]);
     });
 
     it('should be created', () => {
@@ -277,10 +269,18 @@ describe('PlayerService', () => {
         expect(service['players'][0].letterTable).toEqual(expectedEasel);
     });
 
+    it('should add letters when addLetterToEasel() is called', () => {
+        service['players'].push(player);
+
+        const expectedEasel = [letterA, letterB, letterD];
+        service.addLetterToEasel('B', 0);
+        service.addLetterToEasel('D', 0);
+        expect(service['players'][0].letterTable).toEqual(expectedEasel);
+    });
+
     it('should know if easel contains letter', () => {
         player.letterTable = [letterA, letterB];
         service['players'].push(player);
-
         playerIA.letterTable = [];
         service['players'].push(playerIA);
 
@@ -316,7 +316,6 @@ describe('PlayerService', () => {
         const playerScore = 40;
         player.score = playerScore;
         service['players'].push(player);
-
         const playerIaScore = 60;
         playerIA.score = playerIaScore;
         service['players'].push(playerIA);

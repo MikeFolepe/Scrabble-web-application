@@ -88,7 +88,7 @@ export class PlayerIAComponent implements OnInit {
     swap() {
         console.log('swap');
         console.log(this.iaPlayer.letterTable);
-        this.iaSwappedr.emit();
+        this.iaSwapped.emit();
         if (this.tourService.getTour() === false) {
             setTimeout(() => {
                 this.passTurn.toogleTour();
