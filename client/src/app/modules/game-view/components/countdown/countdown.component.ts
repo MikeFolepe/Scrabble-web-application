@@ -15,9 +15,9 @@ export class CountdownComponent implements OnInit, OnDestroy {
 
     @Output()
     checkTime: EventEmitter<number> = new EventEmitter();
-    // Temporals  Values  for  contents the cast of string to number for timer
-    minuteTemp: number;
-    secondeTemp: number;
+    // Values  that will contain the time casted in number
+    minutesInt: number;
+    secondsInt: number;
     message: string;
     passSubscription: Subscription = new Subscription();
 
@@ -30,29 +30,28 @@ export class CountdownComponent implements OnInit, OnDestroy {
         this.passtourService.updateTour(this.stopTimer.bind(this));
     }
 
-    // Set le time always after a define interval of 1second and repeat it
+    // Set time always after a define interval of 1second and repeat it
     setTimer(): void {
-        this.minuteTemp = parseInt(this.minutes, 10);
-        this.secondeTemp = parseInt(this.seconds, 10);
+        this.minutesInt = parseInt(this.minutes);
+        this.secondsInt = parseInt(this.seconds);
         const intervalID = setInterval(() => {
-            if (this.secondeTemp - 1 === -1) {
-                this.minuteTemp = this.minuteTemp - 1;
-                this.secondeTemp = 59;
-            } else {
-                this.secondeTemp -= 1;
-            }
-            if (this.secondeTemp === 0 && this.minuteTemp === 0) {
-                this.checkTime.emit(this.secondeTemp);
+            if (this.secondsInt === 0 && this.minutesInt !== 0) {
+                this.minutesInt = this.minutesInt - 1;
+                this.secondsInt = 59;
+            } else if (this.secondsInt === 0 && this.minutesInt === 0) {
+                this.checkTime.emit(this.secondsInt);
                 clearInterval(intervalID);
+            } else {
+                this.secondsInt -= 1;
             }
         }, ONESECOND_TIME);
     }
 
     stopTimer(): void {
         if (this.message === '!passer') {
-            this.secondeTemp = 0;
-            this.minuteTemp = 0;
-            this.checkTime.emit(this.secondeTemp);
+            this.secondsInt = 0;
+            this.minutesInt = 0;
+            this.checkTime.emit(this.secondsInt);
         }
     }
 

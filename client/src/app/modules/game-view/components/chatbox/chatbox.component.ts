@@ -43,7 +43,7 @@ export class ChatboxComponent implements OnInit, OnDestroy {
         });
         this.tourService.emitTour();
     }
-    keyEvent(event: KeyboardEvent) {
+    handleKeyEvent(event: KeyboardEvent) {
         if (event.key === 'Enter') {
             event.preventDefault();
             this.sendSystemMessage('Message du système');

@@ -9,7 +9,7 @@ import {
     EASEL_SIZE,
     FONT_SIZE_MAX,
     FONT_SIZE_MIN,
-    RESERVE
+    RESERVE,
 } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
@@ -29,7 +29,7 @@ export class PlayerService {
     private players: Player[] = new Array<Player>();
     private myFunc: () => void;
     constructor(private letterService: LetterService, private gridService: GridService) {
-        this.fontSize = DEFAULT_FONT_SIZE * 2;
+        this.fontSize = DEFAULT_FONT_SIZE;
     }
 
     updateLettersEasel(fn: () => void) {
@@ -60,7 +60,7 @@ export class PlayerService {
         } else if (fontSize > FONT_SIZE_MAX) {
             fontSize = FONT_SIZE_MAX;
         }
-        this.fontSize = fontSize * 2;
+        this.fontSize = fontSize;
         this.updateGridFontSize();
     }
 
@@ -78,8 +78,8 @@ export class PlayerService {
             for (let j = 0; j < BOARD_COLUMNS; j++) {
                 if (this.scrabbleBoard[i][j] !== '') {
                     const positionGrid = this.posTabToPosGrid(j, i);
-                    this.gridService.eraseLetter(this.gridService.gridContext, positionGrid);
-                    this.gridService.drawLetter(this.gridService.gridContext, this.scrabbleBoard[i][j], positionGrid, this.fontSize);
+                    this.gridService.eraseLetter(this.gridService.gridContextLayer, positionGrid);
+                    this.gridService.drawLetter(this.gridService.gridContextLayer, this.scrabbleBoard[i][j], positionGrid, this.fontSize);
                 }
             }
         }

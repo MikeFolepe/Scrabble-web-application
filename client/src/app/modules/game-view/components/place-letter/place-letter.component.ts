@@ -6,7 +6,6 @@ import { Vec2 } from '@app/classes/vec2';
 import { GridService } from '@app/services/grid.service';
 import { LetterService } from '@app/services/letter.service';
 import { PlayerService } from '@app/services/player.service';
-import { TourService } from '@app/services/tour.service';
 import { Subscription } from 'rxjs';
 import { WordValidationComponent } from '../word-validation/word-validation.component';
 
@@ -17,8 +16,6 @@ import { WordValidationComponent } from '../word-validation/word-validation.comp
 })
 export class PlaceLetterComponent implements OnInit, OnDestroy {
     @ViewChild(WordValidationComponent) wordValidator: WordValidationComponent;
-    tour: boolean;
-    tourSubscription: Subscription = new Subscription();
     viewSubscription: Subscription = new Subscription();
 
     scrabbleBoard: string[][]; // 15x15 array
@@ -28,12 +25,7 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
     isIAPlacementValid: boolean = false;
     message: string;
 
-    constructor(
-        private playerService: PlayerService,
-        private gridService: GridService,
-        private tourService: TourService,
-        private letterService: LetterService,
-    ) {
+    constructor(private playerService: PlayerService, private gridService: GridService, private letterService: LetterService) {
         this.scrabbleBoard = []; // Initializes the array with empty letters
         for (let i = 0; i < BOARD_ROWS; i++) {
             this.scrabbleBoard[i] = [];
@@ -44,16 +36,8 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        this.initializeTour();
         this.playerService.updateScrabbleBoard(this.scrabbleBoard);
         this.viewSubscription = this.letterService.currentMessage.subscribe((message) => (this.message = message));
-    }
-
-    initializeTour(): void {
-        this.tourSubscription = this.tourService.tourSubject.subscribe((tourSubject: boolean) => {
-            this.tour = tourSubject;
-        });
-        this.tourService.emitTour();
     }
 
     placeMethodAdapter(object: { start: Vec2; orientation: string; word: string; indexPlayer: number }) {
@@ -89,34 +73,14 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
 
                 // Display the letter on the scrabble board grid
                 const positionGrid = this.playerService.posTabToPosGrid(position.y + y, position.x + x);
-                this.gridService.drawLetter(this.gridService.gridContext, wordNoAccents.charAt(i), positionGrid, this.playerService.fontSize);
+                this.gridService.drawLetter(this.gridService.gridContextLayer, wordNoAccents.charAt(i), positionGrid, this.playerService.fontSize);
             }
         }
         console.log(this.scrabbleBoard);
 
         this.isIAPlacementValid = true;
-        // TODO Valider le mot sur le scrabbleboard
 
-        // INVALID
-        /*
-        setTimeout(() => {
-            for (let i = 0; i < word.length; i++) {
-                let x = 0;
-                let y = 0;
-                if (orientation === 'v') {
-                    x = i;
-                } else if (orientation === 'h') {
-                    y = i;
-                }
-                // If the word is invalid, we remove the letters placed on the grid
-                this.scrabbleBoard[position.x + x][position.y + y] = '';
-                const positionGrid = this.posTabToPosGrid(position.y + y, position.x + x);
-                this.gridService.eraseLetter(this.gridService.gridContext, positionGrid);
-            }
-            return false;
-        }, 3000); // Waiting 3 seconds to erase the letters on the grid
-        */
-        // VALID
+
         for (let i = 0; i < word.length; i++) {
             if (wordNoAccents.charAt(i) === wordNoAccents.charAt(i).toUpperCase()) {
                 // If we put a capital letter (white letter), we remove a '*' from the easel
@@ -129,15 +93,31 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
         const finalResult: ScoreValidation = this.wordValidator.validateAllWordsOnBoard(this.scrabbleBoard, isEaselSize);
         this.isFirstRound = false;
         if (finalResult.validation === false) {
+            setTimeout(() => {
+                for (let i = 0; i < word.length; i++) {
+                    let x = 0;
+                    let y = 0;
+                    if (orientation === 'v') {
+                        x = i;
+                    } else if (orientation === 'h') {
+                        y = i;
+                    }
+                    // If the word is invalid, we remove the letters placed on the grid
+                    this.scrabbleBoard[position.x + x][position.y + y] = '';
+                    const positionGrid = this.playerService.posTabToPosGrid(position.y + y, position.x + x);
+                    this.gridService.eraseLetter(this.gridService.gridContextLayer, positionGrid);
+                }
+            }, 3000); // Waiting 3 seconds to erase the letters on the grid
             return false;
         } else {
             this.playerService.addScore(finalResult.score, indexPlayer);
             this.playerService.updateScrabbleBoard(this.scrabbleBoard);
+            console.log(this.scrabbleBoard);
             this.playerService.refillEasel(indexPlayer); // Fill the easel with new letters from the reserve
             this.letterService.writeMessage('mise a jour');
+            this.isFirstRound = false;
             return true;
         }
-
     }
 
     isPossible(position: Vec2, orientation: string, word: string, indexPlayer: number): boolean {
@@ -146,7 +126,6 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
         // 1st Round
         if (this.isFirstRound) {
             isPossible =
-                this.isItMyTurn() &&
                 this.isFirstWordValid(position, orientation, word) && // If the 1st word is placed onto the central position
                 this.isWordValid(position, orientation, word, indexPlayer) && // If the letters of the word are in the easel or the scrabble board
                 this.isWordFitting(position, orientation, word); // If the word is fitting inside the scrabble board
@@ -154,7 +133,6 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
         // The following rounds
         else {
             isPossible =
-                this.isItMyTurn() &&
                 this.isWordValid(position, orientation, word, indexPlayer) &&
                 this.isWordFitting(position, orientation, word) &&
                 this.isWordTouchingOthers(position, orientation, word); // If the word is in contact with other letters on the board
@@ -271,15 +249,7 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
         return false;
     }
 
-    isItMyTurn(): boolean {
-        if (this.tour) {
-            return true;
-        }
-        return true;
-    }
-
     ngOnDestroy() {
         this.viewSubscription.unsubscribe();
-        this.tourSubscription.unsubscribe();
     }
 }
