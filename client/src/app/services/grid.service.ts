@@ -41,6 +41,10 @@ export class GridService {
     // TODO : pas de valeurs magiques!! Faudrait avoir une meilleure manière de le faire
     /* eslint-disable @typescript-eslint/no-magic-numbers */
 
+    setGridContext(gridContext: CanvasRenderingContext2D) {
+        this.gridContext = gridContext;
+    }
+
     get width(): number {
         return this.canvasSize.x;
     }

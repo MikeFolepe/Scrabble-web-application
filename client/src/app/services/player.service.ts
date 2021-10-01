@@ -2,10 +2,14 @@ import { Injectable } from '@angular/core';
 import {
     BOARD_COLUMNS,
     BOARD_ROWS,
-    CASE_SIZE, DEFAULT_FONT_SIZE, DEFAULT_HEIGHT,
+    CASE_SIZE,
+    DEFAULT_FONT_SIZE,
+    DEFAULT_HEIGHT,
     DEFAULT_WIDTH,
-    EASEL_SIZE, FONT_SIZE_MAX,
-    FONT_SIZE_MIN
+    EASEL_SIZE,
+    FONT_SIZE_MAX,
+    FONT_SIZE_MIN,
+    RESERVE,
 } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
@@ -88,6 +92,14 @@ export class PlayerService {
                 this.players[indexPlayer].letterTable.splice(i, 1);
                 this.myFunc();
                 break;
+            }
+        }
+    }
+
+    addLetterToEasel(letterToAdd: string, indexPlayer: number): void {
+        for (const letter of RESERVE) {
+            if (letterToAdd.toUpperCase() === letter.value) {
+                this.players[indexPlayer].letterTable.push(letter);
             }
         }
     }

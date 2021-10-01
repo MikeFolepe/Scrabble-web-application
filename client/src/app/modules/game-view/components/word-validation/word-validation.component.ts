@@ -157,7 +157,7 @@ export class WordValidationComponent {
         let scoreWord = 0;
         for (let word of words.keys()) {
             let scoreLetter = this.calculateLettersScore(score, word, words.get(word));
-            scoreWord = this.applyBonusesWord(scoreLetter, word, words.get(word));
+            scoreWord += this.applyBonusesWord(scoreLetter, words.get(word));
         }
         return scoreWord;
     }
@@ -200,7 +200,7 @@ export class WordValidationComponent {
         }
     }
 
-    applyBonusesWord(score: number, word: string, positions: any): number {
+    applyBonusesWord(score: number, positions: any): number {
         for (let position of positions) {
             switch (this.bonusesPositions.get(position)) {
                 case 'doubleword': {
@@ -235,7 +235,6 @@ export class WordValidationComponent {
         if (isEaselSize) {
             scoreTotal += ALL_EASEL_BONUS;
         }
-
         this.removeBonuses(this.newPlayedWords);
 
         for (let word of this.newPlayedWords.keys()) {
