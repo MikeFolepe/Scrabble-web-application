@@ -55,6 +55,8 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
         if (word.length === EASEL_SIZE) {
             isEaselSize = true;
         }
+        const invalidLetters: boolean[] = [];
+
         for (let i = 0; i < word.length; i++) {
             // Adds the letter to the respective position of the array based on the orientation
             let x = 0;
@@ -64,10 +66,12 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
             } else if (orientation === 'h') {
                 y = i;
             }
+            invalidLetters[i] = false;
 
             // If the position is empty, we use a letter from the reserve
             if (this.scrabbleBoard[position.x + x][position.y + y] === '') {
                 this.scrabbleBoard[position.x + x][position.y + y] = wordNoAccents.charAt(i);
+                invalidLetters[i] = true;
 
                 // Display the letter on the scrabble board grid
                 const positionGrid = this.playerService.posTabToPosGrid(position.y + y, position.x + x);
@@ -98,9 +102,11 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
                         y = i;
                     }
                     // If the word is invalid, we remove the letters placed on the grid
-                    this.scrabbleBoard[position.x + x][position.y + y] = '';
-                    const positionGrid = this.playerService.posTabToPosGrid(position.y + y, position.x + x);
-                    this.gridService.eraseLetter(this.gridService.gridContextLayer, positionGrid);
+                    if (invalidLetters[i]) {
+                        this.scrabbleBoard[position.x + x][position.y + y] = '';
+                        const positionGrid = this.playerService.posTabToPosGrid(position.y + y, position.x + x);
+                        this.gridService.eraseLetter(this.gridService.gridContextLayer, positionGrid);
+                    }
                 }
             }, 3000); // Waiting 3 seconds to erase the letters on the grid
             return false;
