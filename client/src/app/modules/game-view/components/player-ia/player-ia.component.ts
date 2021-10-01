@@ -3,6 +3,7 @@ import { Vec2 } from '@app/classes/vec2';
 import { PlayerIA } from '@app/models/player-ia.model';
 import { Player } from '@app/models/player.model';
 import { LetterService } from '@app/services/letter.service';
+import { PassTourService } from '@app/services/pass-tour.service';
 // eslint-disable-next-line import/no-deprecated
 import { PlayerService } from '@app/services/player.service';
 import { TourService } from '@app/services/tour.service';
@@ -31,11 +32,17 @@ export class PlayerIAComponent implements OnInit {
     @Input() scrabbleBoard: string[][];
 
     @Input() isFirstRound: boolean;
-
+    message: string;
+    passSubscription: Subscription = new Subscription();
     iaPlayer: PlayerIA;
     tourSubscription: Subscription = new Subscription();
     tour: boolean;
-    constructor(public letterService: LetterService, public playerService: PlayerService, public tourService: TourService) {}
+    constructor(
+        public letterService: LetterService,
+        public playerService: PlayerService,
+        public tourService: TourService,
+        public passtourService: PassTourService,
+    ) {}
 
     ngOnInit(): void {
         // Subscribe to get access to IA Player
@@ -46,17 +53,22 @@ export class PlayerIAComponent implements OnInit {
         this.playerService.emitPlayers();
         // Set the playerIA context so that the player can lunch event
         this.iaPlayer.setContext(this);
-
+        // this.passSubscription = this.passtourService.currentMessage.subscribe((message) => (this.message = message));
         this.tourSubscription = this.tourService.tourSubject.subscribe((tourSubject: boolean) => {
             this.tour = tourSubject;
         });
+        this.tourService.emitTour();
 
         if (this.tour === false) {
-            this.play();
+            setTimeout(() => {
+                this.play();
+            }, 3000);
         }
     }
 
     play() {
+        // debugger;
+        console.log(this.iaPlayer.letterTable);
         this.iaPlayer.play();
     }
 
@@ -66,11 +78,14 @@ export class PlayerIAComponent implements OnInit {
     }
 
     swap() {
+        console.log('swap');
+        console.log(this.iaPlayer.letterTable);
         this.iaSwappedr.emit();
         this.passTurn.toogleTour();
     }
 
     place(object: { start: Vec2; orientation: string; word: string }, possibility: { word: string; nbPt: number }[]) {
+        console.log(this.iaPlayer.letterTable);
         this.iaPlaced.emit(object);
         this.iaPossibility.emit(possibility);
         this.passTurn.toogleTour();
@@ -78,5 +93,6 @@ export class PlayerIAComponent implements OnInit {
 
     ngOndestroy() {
         this.tourSubscription.unsubscribe();
+        // this.passSubscription.unsubscribe();
     }
 }

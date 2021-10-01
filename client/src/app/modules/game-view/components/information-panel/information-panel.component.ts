@@ -6,6 +6,7 @@ import { Player } from '@app/models/player.model';
 import { CountdownComponent } from '@app/modules/game-view/components/countdown/countdown.component';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { LetterService } from '@app/services/letter.service';
+import { PassTourService } from '@app/services/pass-tour.service';
 // eslint-disable-next-line import/no-deprecated
 import { PlayerService } from '@app/services/player.service';
 import { TourService } from '@app/services/tour.service';
@@ -18,7 +19,7 @@ import { PlayerIAComponent } from '../player-ia/player-ia.component';
     templateUrl: './information-panel.component.html',
     styleUrls: ['./information-panel.component.scss'],
 })
-export class InformationPanelComponent implements OnInit, OnDestroy {
+export class InformationPanelComponent implements OnDestroy, OnInit {
     @ViewChild(CountdownComponent) countDown: CountdownComponent;
     @ViewChild(PlayerIAComponent) playerIA: PlayerIAComponent;
     players: Player[] = new Array<Player>();
@@ -32,17 +33,18 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
         public letterService: LetterService,
         private playerService: PlayerService,
         private tourService: TourService,
+        private passTourService: PassTourService,
     ) {}
     ngOnInit(): void {
         this.gameSettings = this.gameSettingsService.getSettings();
         this.initializePlayers();
         this.players = this.playerService.getPlayers();
         this.initializeFirstTour();
-        // this.subscribeToTourSubject();
         this.tour = this.tourService.getTour();
         this.reserveState = this.letterService.getReserveSize();
         this.viewSubscription = this.letterService.currentMessage.subscribe((message) => (this.message = message));
         this.letterService.updateView(this.updateView.bind(this));
+        this.passTourService.updateTour(this.updateTour.bind(this));
     }
 
     // initializing players to playersService
@@ -58,25 +60,32 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
         this.tourService.initializeTour(Boolean(this.gameSettings.startingPlayer.valueOf()));
     }
 
-    reAssignTour(tour: boolean): void {
-        this.tourService.initializeTour(tour);
-    }
-
-    switchTour(counter: number): void {
+    updateTour() {
         this.tour = this.tourService.getTour();
-        if (counter === 0) {
-            if (this.tour === false) {
-                this.tour = true;
-                this.reAssignTour(this.tour);
-                this.countDown.setTimer();
-            } else if (this.tour === true) {
-                this.tour = false;
-                this.reAssignTour(this.tour);
-                this.countDown.setTimer();
-                this.playerIA.play();
-            }
+        this.countDown.stopTimer();
+        if (this.tour) {
+            this.countDown.setTimer();
+        } else {
+            this.countDown.setTimer();
+            this.playerIA.play();
         }
     }
+
+    // switchTour(counter: number) {
+    //     if (counter === 0) {
+    //         this.countDown.stopTimer();
+    //         this.tour = this.tourService.getTour();
+    //         if (this.tour) {
+    //             this.countDown.setTimer();
+    //         } else {
+    //             this.countDown.setTimer();
+    //             setTimeout(() => {
+    //                 this.playerIA.play();
+    //             }, 3000);
+    //         }
+    //     }
+    // }
+
     updateView() {
         if (this.message === 'mise a jour') {
             this.reserveState = this.letterService.getReserveSize();

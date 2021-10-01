@@ -16,13 +16,15 @@
                 Nombre de lettres sur le chevalet: {{player.letterTable.length}}
             </div>
             <div *ngIf="tour === true && player.id === 1">
-                <app-countdown [minutes]="this.gameSettings.timeMinute" [seconds]="this.gameSettings.timeSecond"
-                    (checkTime)="switchTour($event)"></app-countdown>
+                <app-countdown [minutes]="this.gameSettings.timeMinute" [seconds]="this.gameSettings.timeSecond">
+                </app-countdown>
+
             </div>
             <div *ngIf="tour === false && player.id === 2">
-                <app-countdown [minutes]="this.gameSettings.timeMinute" [seconds]="this.gameSettings.timeSecond"
-                    (checkTime)="switchTour($event)"></app-countdown>
+                <app-countdown [minutes]="this.gameSettings.timeMinute" [seconds]="this.gameSettings.timeSecond">
+                </app-countdown>
             </div>
         </li>
     </ul>
 </div>
+<app-player-ia></app-player-ia>

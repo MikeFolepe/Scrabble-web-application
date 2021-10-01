@@ -8,7 +8,7 @@ import { MouseHandlerService } from '@app/services/mouse-handler.service';
     templateUrl: './scrabble-board.component.html',
     styleUrls: ['./scrabble-board.component.scss'],
 })
-export class ScrabbleBoardComponent implements AfterViewInit {
+export class ScrabbleBoardComponent implements /* OnInit,*/ AfterViewInit {
     @ViewChild('gridCanvas', { static: false }) private gridCanvas!: ElementRef<HTMLCanvasElement>;
     @ViewChild('gridCanvasLayer', { static: false }) private gridCanvasLayer!: ElementRef<HTMLCanvasElement>;
 
@@ -20,13 +20,18 @@ export class ScrabbleBoardComponent implements AfterViewInit {
     buttonDetect(event: KeyboardEvent) {
         this.buttonPressed = event.key;
     }
+    // ngOnInit(): void {
+    //     this.gridService.gridContext = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+    //     this.gridService.drawGrid();
+    //     this.gridCanvas.nativeElement.focus();
+    // }
 
     ngAfterViewInit(): void {
         this.gridService.gridContextLayer = this.gridCanvasLayer.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.gridService.gridContext = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.gridService.drawGrid();
         this.gridCanvas.nativeElement.focus();
-        this.gridCanvasLayer.nativeElement.focus();
+        this.gridService.setGridContext(this.gridService.gridContext);
     }
 
     get width(): number {
