@@ -1,4 +1,4 @@
-import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSX, CENTRAL_CASE_POSY, dictionary, INDEX_PLAYER_IA, RESERVE } from '@app/classes/constants';
+import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSX, CENTRAL_CASE_POSY, dictionary, RESERVE } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { Range } from '@app/classes/range';
 import { board } from '@app/classes/scrabble-board';
@@ -10,6 +10,7 @@ import { PlayerIA } from './player-ia.model';
 const ROW_OFFSET = 65; /* = 'A' */
 const COLUMN_OFFSET = 1; /* Array starting at 0 */
 const WORDOVERFLOWS = -1;
+const WORDOVERWRITES = -2;
 
 export class PlaceLetters extends PlayStrategy {
     constructor(private pointingRange: Range) {
@@ -93,46 +94,49 @@ export class PlaceLetters extends PlayStrategy {
     }
 
     private choosePossibility(possibleWord: string[], context: PlayerIAComponent, startPos: Vec2): void {
-        const MAX_POINTING = 6;
-        const randomPointing = new Date().getTime() % MAX_POINTING;
+        const randomPointing = Math.floor(Math.random() * (this.pointingRange.max - this.pointingRange.min + 1)) + this.pointingRange.min;
         const randomOrientation: string = ['h', 'v'][new Date().getTime() % ['h', 'v'].length];
         let randomPointingFound = false;
         let alternativePointingFound = false;
-        const priorityPossibilities: string[] = [];
-        const alternativePossibilities: string[] = [];
+        const priorityPossibilities: { word: string; nbPt: number }[] = [];
+        const alternativePossibilities: { word: string; nbPt: number }[] = [];
 
         // Whitin all the possible words separate those who matches this turn randomPointing
-        // from those who doesn't matches the randomPointing but are in range min < x < max
+        // from those who doesn't matches the randomPointing but are in range 0 < x < max
         for (const word of possibleWord) {
             const nbPt = this.calculatePoint(startPos, randomOrientation, word, context.scrabbleBoard);
             if (nbPt === randomPointing) {
                 randomPointingFound = true;
-                priorityPossibilities.push(word);
-            } else if (nbPt <= this.pointingRange.max && nbPt > this.pointingRange.min) {
+                priorityPossibilities.push({ word, nbPt });
+            } else if (nbPt <= this.pointingRange.max && nbPt >= 0) {
                 alternativePointingFound = true;
-                alternativePossibilities.push(word);
+                alternativePossibilities.push({ word, nbPt });
             }
         }
-        debugger;
+        // debugger;
 
         // If a word matching this turn randomPointing is found place it on the scrabble board
         if (randomPointingFound) {
-            context.place({
-                start: startPos,
-                orientation: randomOrientation,
-                word: priorityPossibilities[new Date().getTime() % priorityPossibilities.length],
-                indexPlayer: INDEX_PLAYER_IA,
-            });
+            context.place(
+                {
+                    start: startPos,
+                    orientation: randomOrientation,
+                    word: priorityPossibilities[new Date().getTime() % priorityPossibilities.length].word,
+                },
+                priorityPossibilities,
+            );
             // set le score du joueur
         }
         // If there isn't word matching this turn randomPointing but exists alternatives place it as well
         else if (!randomPointingFound && alternativePointingFound) {
-            context.place({
-                start: startPos,
-                orientation: randomOrientation,
-                word: alternativePossibilities[new Date().getTime() % alternativePossibilities.length],
-                indexPlayer: INDEX_PLAYER_IA,
-            });
+            context.place(
+                {
+                    start: startPos,
+                    orientation: randomOrientation,
+                    word: alternativePossibilities[new Date().getTime() % alternativePossibilities.length].word,
+                },
+                alternativePossibilities,
+            );
             // set le score du joueur
         }
         // If there isn't word matching this turn randomPointing & existing alternatives skip the turn
@@ -145,7 +149,7 @@ export class PlaceLetters extends PlayStrategy {
         let quantity = 0;
 
         for (const playerLetter of player.letterTable) {
-            if (playerLetter.value === letter) {
+            if (playerLetter.value === letter.toUpperCase()) {
                 quantity++;
             }
         }
@@ -186,6 +190,10 @@ export class PlaceLetters extends PlayStrategy {
             } else {
                 key = String.fromCharCode(startPos.x + ROW_OFFSET + i) + (startPos.y + COLUMN_OFFSET).toString();
                 matrixPos = { x: startPos.x + i, y: startPos.y };
+            }
+
+            if (scrabbleBoard[matrixPos.x][matrixPos.y] !== '') {
+                return WORDOVERWRITES;
             }
             // letter value : A = 1, B = 3, C = 3 ...etc
             const letterContribution: number = RESERVE[word[i].toUpperCase().charCodeAt(0) - ROW_OFFSET].points;

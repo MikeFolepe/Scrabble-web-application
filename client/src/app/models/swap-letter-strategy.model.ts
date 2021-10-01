@@ -4,24 +4,27 @@ import { PlayStrategy } from './abstract-strategy.model';
 import { PlayerIA } from './player-ia.model';
 export class SwapLetter extends PlayStrategy {
     execute(player: PlayerIA, context: PlayerIAComponent): void {
-        // number [0, 7[
         const numberOfLetterToChange = new Date().getTime() % EASEL_SIZE;
 
-        if (
-            numberOfLetterToChange - numberOfLetterToChange
-            /* Verifier que la reserve a autant de lettres que le nombre d'echange 
-        généré*/
-        ) {
-            context.swap();
+        // If change not possible skip
+        if (numberOfLetterToChange > context.letterService.getReserveSize()) {
+            context.skip();
             return;
         }
-        for (let index = 0; index < numberOfLetterToChange; index++) {
-            // index of the letter to be replaced from the player's letter array
-            // const letterToBeReplaced = new Date().getTime() % EASEL_SIZE;
-            // the new letter picked in replacement
-            // player.letterTable[letterToBeReplaced] = context.letterService.swapLetter(player.letterTable[letterToBeReplaced]);
+
+        // Choose the index of letters to be changed
+        const indexOfLetterToBeChanged: number[] = [];
+        for (let i = 0; i < numberOfLetterToChange; i++) {
+            indexOfLetterToBeChanged.push(Math.floor(Math.random() * EASEL_SIZE));
         }
-        // Event emetting
+
+        // For each letter choosen to be changed : 1. add it to reserve ; 2.get new letter
+        for (const index of indexOfLetterToBeChanged) {
+            context.letterService.addLetterToReserve(player.letterTable[indexOfLetterToBeChanged[index]].value);
+            player.letterTable[indexOfLetterToBeChanged[index]] = context.letterService.getRandomLetter();
+        }
+
+        // Alert the context that AI Player swapped
         context.swap();
     }
 }

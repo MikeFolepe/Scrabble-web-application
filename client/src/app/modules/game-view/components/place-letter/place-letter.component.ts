@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/prefer-for-of */
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSX, CENTRAL_CASE_POSY } from '@app/classes/constants';
+import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSX, CENTRAL_CASE_POSY, EASEL_SIZE } from '@app/classes/constants';
 import { ScoreValidation } from '@app/classes/validation-score';
 import { Vec2 } from '@app/classes/vec2';
 import { GridService } from '@app/services/grid.service';
@@ -19,7 +19,7 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
     @ViewChild(WordValidationComponent) wordValidator: WordValidationComponent;
     tour: boolean;
     tourSubscription: Subscription = new Subscription();
-    reserveSubscription: Subscription = new Subscription();
+    viewSubscription: Subscription = new Subscription();
 
     scrabbleBoard: string[][]; // 15x15 array
 
@@ -46,7 +46,7 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         this.initializeTour();
         this.playerService.updateScrabbleBoard(this.scrabbleBoard);
-        this.reserveSubscription = this.letterService.currentMessage.subscribe((message) => (this.message = message));
+        this.viewSubscription = this.letterService.currentMessage.subscribe((message) => (this.message = message));
     }
 
     initializeTour(): void {
@@ -66,6 +66,10 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
         // If the command is possible according to the parameters
         if (!this.isPossible(position, orientation, wordNoAccents, indexPlayer)) {
             return false;
+        }
+        let isEaselSize = false;
+        if (word.length === EASEL_SIZE) {
+            isEaselSize = true;
         }
         console.log(this.gridService.gridContext);
         console.log('placing retourne true');
@@ -91,7 +95,6 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
         console.log(this.scrabbleBoard);
 
         this.isIAPlacementValid = true;
-        console.log('IA placement is valid' + this.isIAPlacementValid);
         // TODO Valider le mot sur le scrabbleboard
 
         // INVALID
@@ -123,11 +126,12 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
                 this.playerService.removeLetter(wordNoAccents.charAt(i), indexPlayer);
             }
         }
-        const finalResult: ScoreValidation = this.wordValidator.validateAllWordsOnBoard(this.scrabbleBoard);
+        const finalResult: ScoreValidation = this.wordValidator.validateAllWordsOnBoard(this.scrabbleBoard, isEaselSize);
         this.isFirstRound = false;
         if (finalResult.validation === false) {
             return false;
         } else {
+            this.playerService.addScore(finalResult.score, indexPlayer);
             this.playerService.updateScrabbleBoard(this.scrabbleBoard);
             this.playerService.refillEasel(indexPlayer); // Fill the easel with new letters from the reserve
             this.letterService.writeMessage('mise a jour');
@@ -275,7 +279,7 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.reserveSubscription.unsubscribe();
+        this.viewSubscription.unsubscribe();
         this.tourSubscription.unsubscribe();
     }
 }

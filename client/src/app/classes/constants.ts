@@ -1,5 +1,6 @@
 /* eslint-disable max-lines */
 import { Letter } from '@app/classes/letter';
+// eslint-disable-next-line no-restricted-imports
 import dictionaryData from '../../assets/dictionnary.json';
 
 export const DEFAULT_WIDTH = 750;
@@ -8,7 +9,7 @@ export const ONESECOND_TIME = 1000;
 export const BOARD_SIZE = 16;
 export const CASE_SIZE = DEFAULT_WIDTH / BOARD_SIZE;
 export const EASEL_SIZE = 7;
-
+export const ALL_EASEL_BONUS = 50;
 export const BOARD_ROWS = 15;
 export const BOARD_COLUMNS = 15;
 

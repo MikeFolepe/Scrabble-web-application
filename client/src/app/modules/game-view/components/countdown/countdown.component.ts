@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, OnDestroy } from '@angular/core';
 import { ONESECOND_TIME } from '@app/classes/constants';
 import { PassTourService } from '@app/services/pass-tour.service';
 import { Subscription } from 'rxjs';
@@ -8,7 +8,7 @@ import { Subscription } from 'rxjs';
     templateUrl: './countdown.component.html',
     styleUrls: ['./countdown.component.scss'],
 })
-export class CountdownComponent implements OnInit {
+export class CountdownComponent implements OnInit, OnDestroy {
     // Decorator pour les inputs
     @Input() seconds: string;
     @Input() minutes: string;
@@ -53,5 +53,9 @@ export class CountdownComponent implements OnInit {
             this.minutesInt = 0;
             this.checkTime.emit(this.secondsInt);
         }
+    }
+
+    ngOnDestroy(): void {
+        this.passSubscription.unsubscribe();
     }
 }

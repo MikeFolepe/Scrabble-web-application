@@ -14,4 +14,8 @@ export class TourService {
         this.tour = tour;
         this.emitTour();
     }
+
+    getTour(): boolean {
+        return this.tour;
+    }
 }

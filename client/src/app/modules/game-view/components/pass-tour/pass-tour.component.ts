@@ -9,17 +9,17 @@ import { Subscription } from 'rxjs';
 })
 export class PassTourComponent implements OnInit, OnDestroy {
     message: string;
-    passSubsciption: Subscription = new Subscription();
+    passSubscription: Subscription = new Subscription();
 
     constructor(private passtourService: PassTourService) {}
     ngOnInit(): void {
-        this.passSubsciption = this.passtourService.currentMessage.subscribe((message) => (this.message = message));
+        this.passSubscription = this.passtourService.currentMessage.subscribe((message) => (this.message = message));
     }
 
     toogleTour(): void {
         this.passtourService.writeMessage('!passer');
     }
     ngOnDestroy() {
-        this.passSubsciption.unsubscribe();
+        this.passSubscription.unsubscribe();
     }
 }
