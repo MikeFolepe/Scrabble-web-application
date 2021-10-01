@@ -11,14 +11,16 @@ describe('ScrabbleBoardComponent', () => {
 
     beforeEach(() => {
         gridServiceSpy = jasmine.createSpyObj('gridService', ['drawGrid']);
-        mouseServiceSpy = jasmine.createSpyObj('MouseHandlerService',['mouseHitDetect']);
-     });
+        mouseServiceSpy = jasmine.createSpyObj('MouseHandlerService', ['mouseHitDetect']);
+    });
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [ScrabbleBoardComponent],
-            providers: [{ provide: GridService, useValue: gridServiceSpy },
-                        { provide: MouseHandlerService, useValue: mouseServiceSpy }]
+            providers: [
+                { provide: GridService, useValue: gridServiceSpy },
+                { provide: MouseHandlerService, useValue: mouseServiceSpy },
+            ],
         }).compileComponents();
     });
 
@@ -42,12 +44,12 @@ describe('ScrabbleBoardComponent', () => {
     });
 
     it('mouse hit detect should call mouse hit detect from gridService', () => {
-        let mouseEvent = {
+        const mouseEvent = {
             offsetX: 10,
             offsetY: 1,
             button: 0,
         } as MouseEvent;
         component.mouseHitDetect(mouseEvent);
-        expect(mouseServiceSpy. mouseHitDetect).toHaveBeenCalledWith(mouseEvent);
+        expect(mouseServiceSpy.mouseHitDetect).toHaveBeenCalledWith(mouseEvent);
     });
 });

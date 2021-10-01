@@ -71,18 +71,20 @@ export class GridService {
     }
 
     drawLetter(ctx: CanvasRenderingContext2D, letter: string, position: Vec2, fontSize: number) {
+        // Grid case style
         ctx.fillStyle = 'tan';
         ctx.fillRect(position.x + DEFAULT_HEIGHT / 2, position.y + DEFAULT_HEIGHT / 2, this.caseWidth, this.caseWidth);
         ctx.strokeStyle = 'black';
         ctx.strokeRect(position.x + DEFAULT_HEIGHT / 2, position.y + DEFAULT_HEIGHT / 2, this.caseWidth, this.caseWidth);
 
+        // Score of the letter placed
         let letterScore = 0;
         for (const letterReserve of RESERVE) {
             if (letter.toUpperCase() === letterReserve.value) {
                 letterScore = letterReserve.points;
             }
         }
-
+        // Placing the respective letter
         ctx.font = fontSize * 1.5 + 'px system-ui';
         ctx.fillStyle = 'black';
         ctx.textAlign = 'center';
@@ -92,11 +94,12 @@ export class GridService {
             position.x + DEFAULT_HEIGHT / 2 + this.caseWidth / 2,
             position.y + DEFAULT_HEIGHT / 2 + this.caseWidth / 2,
         );
+        // Placing the letter's score
         ctx.font = (fontSize / 2) * 1.5 + 'px system-ui';
         ctx.fillText(
             letterScore.toString(),
-            position.x + DEFAULT_HEIGHT / 2 + this.caseWidth / 2 + this.caseWidth / 4,
-            position.y + DEFAULT_HEIGHT / 2 + this.caseWidth / 2 + this.caseWidth / 4,
+            position.x + DEFAULT_HEIGHT / 2 + this.caseWidth / 2 + this.caseWidth / 3,
+            position.y + DEFAULT_HEIGHT / 2 + this.caseWidth / 2 + this.caseWidth / 3,
         );
     }
 

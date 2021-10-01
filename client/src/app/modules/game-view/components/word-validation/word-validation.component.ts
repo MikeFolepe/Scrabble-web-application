@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable prefer-const */
 import { Component } from '@angular/core';
-import { BONUSES_POSITIONS, RESERVE } from '@app/classes/constants';
+import { ALL_EASEL_BONUS, BOARD_COLUMNS, BOARD_ROWS, BONUSES_POSITIONS, dictionary, RESERVE } from '@app/classes/constants';
 import { ScoreValidation } from '@app/classes/validation-score';
-import dictionaryData from 'src/assets/dictionnary.json';
 
 @Component({
     selector: 'app-word-validation',
@@ -11,14 +10,12 @@ import dictionaryData from 'src/assets/dictionnary.json';
     styleUrls: ['./word-validation.component.scss'],
 })
 export class WordValidationComponent {
-    dictionary: string[];
     newWords: string[];
     playedWords: Map<string, string[]>;
     newPlayedWords: Map<string, string[]>;
     newPositions: string[];
     bonusesPositions: Map<string, string>;
     constructor() {
-        this.dictionary = JSON.parse(JSON.stringify(dictionaryData)).words;
         this.playedWords = new Map<string, string[]>();
         this.newPlayedWords = new Map<string, string[]>();
         this.newWords = new Array<string>();
@@ -29,7 +26,7 @@ export class WordValidationComponent {
     isValidInDictionary(word: string): boolean {
         if (word.length >= 2) {
             // eslint-disable-next-line prefer-const
-            for (let item of this.dictionary) {
+            for (let item of dictionary) {
                 if (word === item) {
                     return true;
                 }
@@ -108,9 +105,9 @@ export class WordValidationComponent {
         return positions;
     }
 
-    passTroughAllLines(scrabbleBoard: string[][]) {
-        for (let i = 0; i < 15; i++) {
-            for (let k = 0; k < 15; k++) {
+    passTroughAllRows(scrabbleBoard: string[][]) {
+        for (let i = 0; i < BOARD_ROWS; i++) {
+            for (let k = 0; k < BOARD_COLUMNS; k++) {
                 this.newWords.push(scrabbleBoard[i][k]);
             }
             const words = this.findWords(this.newWords);
@@ -130,8 +127,8 @@ export class WordValidationComponent {
     }
 
     passThroughAllColumns(scrabbleBoard: string[][]) {
-        for (let k = 0; k < 15; k++) {
-            for (let i = 0; i < 15; i++) {
+        for (let k = 0; k < BOARD_COLUMNS; k++) {
+            for (let i = 0; i < BOARD_ROWS; i++) {
                 this.newWords.push(scrabbleBoard[i][k]);
             }
             const words = this.findWords(this.newWords);
@@ -167,8 +164,12 @@ export class WordValidationComponent {
 
     calculateLettersScore(score: number, word: string, positions: any): number {
         for (let i = 0; i < word.length; i++) {
+            let char = word.charAt(i);
+            if (char.toUpperCase() === char) {
+                char = '*';
+            }
             for (let letter of RESERVE) {
-                if (word.charAt(i).toUpperCase() === letter.value) {
+                if (char.toUpperCase() === letter.value) {
                     switch (this.bonusesPositions.get(positions[i])) {
                         case 'doubleletter': {
                             score += letter.points * 2;
@@ -218,9 +219,9 @@ export class WordValidationComponent {
         return score;
     }
 
-    validateAllWordsOnBoard(scrabbleBoard: string[][]): ScoreValidation {
+    validateAllWordsOnBoard(scrabbleBoard: string[][], isEaselSize: boolean): ScoreValidation {
         let scoreTotal = 0;
-        this.passTroughAllLines(scrabbleBoard);
+        this.passTroughAllRows(scrabbleBoard);
         this.passThroughAllColumns(scrabbleBoard);
         for (let word of this.newPlayedWords.keys()) {
             if (!this.isValidInDictionary(word)) {
@@ -229,6 +230,11 @@ export class WordValidationComponent {
             }
         }
         scoreTotal += this.calculateTotalScore(scoreTotal, this.newPlayedWords);
+
+        if (isEaselSize) {
+            scoreTotal += ALL_EASEL_BONUS;
+        }
+
         this.removeBonuses(this.newPlayedWords);
 
         for (let word of this.newPlayedWords.keys()) {

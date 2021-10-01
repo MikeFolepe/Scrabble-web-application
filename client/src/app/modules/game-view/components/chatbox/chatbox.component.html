@@ -19,12 +19,11 @@
     </div>
 
     <input type="text" placeholder="Veuillez entrer un message ou une commande" maxlength="512" [(ngModel)]="message"
-        (keypress)="keyEvent($event)" onblur="this.focus()" autofocus />
+        (keypress)="handleKeyEvent($event)" onblur="this.focus()" autofocus />
 </div>
 <div>
     <!-- Catch event from player-IA by sending message witch catch by chatbox and add to chatbox -->
-    <app-player-ia (iaSkipped)="receiveAImessage($event)" (iaSwapped)="receiveAImessage($event)"
-        (iaPlacedMessage)="receiveAImessage($event)">
+    <app-player-ia (iaPossibility)="receiveAImessage($event)">
     </app-player-ia>
 </div>
 <div>

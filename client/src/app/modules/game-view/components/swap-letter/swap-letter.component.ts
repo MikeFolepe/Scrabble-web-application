@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MIN_RESERVE_SIZE_TOSWAP } from '@app/classes/constants';
 import { LetterService } from '@app/services/letter.service';
+// eslint-disable-next-line import/no-deprecated
 import { PlayerService } from '@app/services/player.service';
 import { TourService } from '@app/services/tour.service';
 import { Subscription } from 'rxjs';

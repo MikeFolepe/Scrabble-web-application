@@ -2,11 +2,11 @@ import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/co
 import { INDEX_REAL_PLAYER } from '@app/classes/constants';
 import { Vec2 } from '@app/classes/vec2';
 import { PassTourComponent } from '@app/modules/game-view/components/pass-tour/pass-tour.component';
+// eslint-disable-next-line no-restricted-imports
+import { PlaceLetterComponent } from '@app/modules/game-view/components/place-letter/place-letter.component';
 import { PlayerService } from '@app/services/player.service';
 import { TourService } from '@app/services/tour.service';
 import { Subscription } from 'rxjs';
-// eslint-disable-next-line no-restricted-imports
-import { PlaceLetterComponent } from '../place-letter/place-letter.component';
 // eslint-disable-next-line no-restricted-imports
 import { SwapLetterComponent } from '../swap-letter/swap-letter.component';
 
@@ -32,9 +32,8 @@ export class ChatboxComponent implements OnInit, OnDestroy {
 
     listMessages: string[] = [];
     listTypes: string[] = [];
-
-    // Table to stock debug message from IA. Test with random strings
-    virtualmessage: string[] = ['!passer', '!placer<manger>', '!echanger<aeb>'];
+    debugmessage: { word: string; nbPt: number }[] = [{ word: 'papier', nbPt: 6 }];
+    // Table to stock debug message from IA test avec des trings aléatoire
 
     constructor(private tourService: TourService, private playerService: PlayerService) {}
 
@@ -44,7 +43,7 @@ export class ChatboxComponent implements OnInit, OnDestroy {
         });
         this.tourService.emitTour();
     }
-    keyEvent(event: KeyboardEvent) {
+    handleKeyEvent(event: KeyboardEvent) {
         if (event.key === 'Enter') {
             event.preventDefault();
             this.sendSystemMessage('Message du système');
@@ -67,8 +66,7 @@ export class ChatboxComponent implements OnInit, OnDestroy {
                 case 'debug': {
                     if (this.debugOn) {
                         this.sendSystemMessage('affichages de débogage activés');
-                        this.receiveAImessage('a');
-                        this.displayAimessage();
+                        this.displaymessage();
                         this.debugOn = false;
                     } else {
                         this.sendSystemMessage('affichages de débogage désactivés');
@@ -81,7 +79,8 @@ export class ChatboxComponent implements OnInit, OnDestroy {
                     break;
                 }
                 case 'echanger': {
-                    this.getTour();
+                    // this.getTour();
+                    this.tour = this.tourService.getTour();
                     if (this.tour === true) {
                         const messageSplitted = this.message.split(/\s/);
 
@@ -98,7 +97,7 @@ export class ChatboxComponent implements OnInit, OnDestroy {
                     break;
                 }
                 case 'placer': {
-                    this.getTour();
+                    this.tour = this.tourService.getTour();
                     if (this.tour === true) {
                         const messageSplitted = this.message.split(/\s/);
 
@@ -198,32 +197,26 @@ export class ChatboxComponent implements OnInit, OnDestroy {
     }
 
     switchTour() {
-        this.getTour();
+        this.tour = this.tourService.getTour();
         if (this.tour === true) {
             this.pass.toogleTour();
             this.sendSystemMessage('!passer');
         } else {
-            this.sendSystemMessage('vous ne pouvez pas effectuer cette commande, attendez votre tour');
+            this.sendSystemMessage('Commande impossible à realiser !');
         }
     }
 
-    receiveAImessage(action: string): void {
-        this.virtualmessage.push(action);
+    receiveAImessage(table: { word: string; nbPt: number }[]): void {
+        this.debugmessage = table;
     }
 
-    // Methode which display IA message
-    displayAimessage(): void {
-        for (const x of this.virtualmessage) {
-            this.sendOpponentMessage(x);
+    displaymessage(): void {
+        for (const alternative of this.debugmessage) {
+            const x: string = alternative.word;
+            this.sendSystemMessage(x + ': -- ' + alternative.nbPt.toString());
         }
     }
 
-    getTour(): void {
-        this.tourSubscription = this.tourService.tourSubject.subscribe((tourSubject: boolean) => {
-            this.tour = tourSubject;
-        });
-        this.tourService.emitTour();
-    }
 
     ngOnDestroy() {
         this.tourSubscription.unsubscribe();
