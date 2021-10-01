@@ -21,4 +21,5 @@ describe('WordValidationComponent', () => {
     it('should create', () => {
         expect(component).toBeTruthy();
     });
+    
 });
