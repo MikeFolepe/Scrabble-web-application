@@ -10,6 +10,7 @@ import { GridService } from '@app/services/grid.service';
 })
 export class ScrabbleBoardComponent implements AfterViewInit {
     @ViewChild('gridCanvas', { static: false }) private gridCanvas!: ElementRef<HTMLCanvasElement>;
+    @ViewChild('gridCanvasLayer', { static: false }) private gridCanvasLayer!: ElementRef<HTMLCanvasElement>;
 
     mousePosition: Vec2 = { x: 0, y: 0 };
     buttonPressed = '';
@@ -21,9 +22,11 @@ export class ScrabbleBoardComponent implements AfterViewInit {
     }
 
     ngAfterViewInit(): void {
+        this.gridService.gridContextLayer = this.gridCanvasLayer.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.gridService.gridContext = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.gridService.drawGrid();
         this.gridCanvas.nativeElement.focus();
+        this.gridCanvasLayer.nativeElement.focus();
     }
 
     get width(): number {

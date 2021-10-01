@@ -1,6 +1,6 @@
 /* eslint-disable no-invalid-this */
 import { Injectable } from '@angular/core';
-import { BOARD_SIZE, DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/classes/constants';
+import { BOARD_SIZE, DEFAULT_HEIGHT, DEFAULT_WIDTH, RESERVE } from '@app/classes/constants';
 import { Vec2 } from '@app/classes/vec2';
 
 // TODO : Avoir un fichier séparé pour les constantes et ne pas les répéter!
@@ -10,6 +10,7 @@ import { Vec2 } from '@app/classes/vec2';
 })
 export class GridService {
     gridContext: CanvasRenderingContext2D;
+    gridContextLayer: CanvasRenderingContext2D;
     private canvasSize: Vec2 = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
     private caseWidth = DEFAULT_WIDTH / BOARD_SIZE;
     private doubleLetters: Vec2[] = [
@@ -71,19 +72,36 @@ export class GridService {
 
     drawLetter(ctx: CanvasRenderingContext2D, letter: string, position: Vec2, fontSize: number) {
         ctx.fillStyle = 'tan';
-        ctx.fillRect(position.x - this.caseWidth / 2, position.y - this.caseWidth / 2, this.caseWidth, this.caseWidth);
+        ctx.fillRect(position.x + DEFAULT_HEIGHT / 2, position.y + DEFAULT_HEIGHT / 2, this.caseWidth, this.caseWidth);
         ctx.strokeStyle = 'black';
-        ctx.strokeRect(position.x - this.caseWidth / 2, position.y - this.caseWidth / 2, this.caseWidth, this.caseWidth);
+        ctx.strokeRect(position.x + DEFAULT_HEIGHT / 2, position.y + DEFAULT_HEIGHT / 2, this.caseWidth, this.caseWidth);
 
-        ctx.font = fontSize + 'px system-ui';
+        let letterScore = 0;
+        for (const letterReserve of RESERVE) {
+            if (letter.toUpperCase() === letterReserve.value) {
+                letterScore = letterReserve.points;
+            }
+        }
+
+        ctx.font = fontSize * 1.5 + 'px system-ui';
         ctx.fillStyle = 'black';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText(letter.toUpperCase(), position.x, position.y);
+        ctx.fillText(
+            letter.toUpperCase(),
+            position.x + DEFAULT_HEIGHT / 2 + this.caseWidth / 2,
+            position.y + DEFAULT_HEIGHT / 2 + this.caseWidth / 2,
+        );
+        ctx.font = (fontSize / 2) * 1.5 + 'px system-ui';
+        ctx.fillText(
+            letterScore.toString(),
+            position.x + DEFAULT_HEIGHT / 2 + this.caseWidth / 2 + this.caseWidth / 4,
+            position.y + DEFAULT_HEIGHT / 2 + this.caseWidth / 2 + this.caseWidth / 4,
+        );
     }
 
     eraseLetter(ctx: CanvasRenderingContext2D, position: Vec2) {
-        ctx.clearRect(position.x - this.caseWidth / 2, position.y - this.caseWidth / 2, this.caseWidth, this.caseWidth);
+        ctx.clearRect(position.x + DEFAULT_HEIGHT / 2, position.y + DEFAULT_HEIGHT / 2, this.caseWidth, this.caseWidth);
     }
 
     writeBonuses() {
@@ -206,27 +224,23 @@ export class GridService {
         ctx.fillStyle = 'lightBlue';
         ctx.fillRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
         ctx.strokeRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
-
     }
 
     private tripleLetter = (ctx: CanvasRenderingContext2D, startPosition: Vec2): void => {
         ctx.fillStyle = 'cadetBlue';
         ctx.fillRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
         ctx.strokeRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
-
     };
 
     private doubleWord = (ctx: CanvasRenderingContext2D, startPosition: Vec2): void => {
         ctx.fillStyle = 'pink';
         ctx.fillRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
         ctx.strokeRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
-
     };
 
     private tripleWord = (ctx: CanvasRenderingContext2D, startPosition: Vec2): void => {
         ctx.fillStyle = 'red';
         ctx.fillRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
         ctx.strokeRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
-
     };
 }

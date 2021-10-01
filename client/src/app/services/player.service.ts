@@ -18,7 +18,7 @@ export class PlayerService {
     private players: Player[] = new Array<Player>();
     private myFunc: () => void;
     constructor(private letterService: LetterService, private gridService: GridService) {
-        this.fontSize = DEFAULT_FONT_SIZE * 2;
+        this.fontSize = DEFAULT_FONT_SIZE;
     }
 
     updateLettersEasel(fn: () => void) {
@@ -44,8 +44,8 @@ export class PlayerService {
     }
 
     updateFontSize(fontSize: number): void {
-        this.fontSize = fontSize * 2;
-        this.updateGridFontSize(this.fontSize);
+        // this.fontSize = fontSize * 2;
+        this.updateGridFontSize(fontSize);
     }
 
     getLettersEasel(indexPlayer: number): Letter[] {
@@ -62,8 +62,8 @@ export class PlayerService {
             for (let j = 0; j < BOARD_COLUMNS; j++) {
                 if (this.scrabbleBoard[i][j] !== '') {
                     const positionGrid = this.posTabToPosGrid(j, i);
-                    this.gridService.eraseLetter(this.gridService.gridContext, positionGrid);
-                    this.gridService.drawLetter(this.gridService.gridContext, this.scrabbleBoard[i][j], positionGrid, fontSize);
+                    this.gridService.eraseLetter(this.gridService.gridContextLayer, positionGrid);
+                    this.gridService.drawLetter(this.gridService.gridContextLayer, this.scrabbleBoard[i][j], positionGrid, fontSize);
                 }
             }
         }

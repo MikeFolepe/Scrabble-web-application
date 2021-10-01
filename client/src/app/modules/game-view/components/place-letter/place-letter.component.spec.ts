@@ -20,4 +20,6 @@ describe('PlaceLetterComponent', () => {
     it('should create', () => {
         expect(component).toBeTruthy();
     });
+
+    
 });

@@ -85,7 +85,7 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
 
                 // Display the letter on the scrabble board grid
                 const positionGrid = this.playerService.posTabToPosGrid(position.y + y, position.x + x);
-                this.gridService.drawLetter(this.gridService.gridContext, wordNoAccents.charAt(i), positionGrid, this.playerService.fontSize);
+                this.gridService.drawLetter(this.gridService.gridContextLayer, wordNoAccents.charAt(i), positionGrid, this.playerService.fontSize);
             }
         }
         console.log(this.scrabbleBoard);
@@ -114,26 +114,41 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
         }, 3000); // Waiting 3 seconds to erase the letters on the grid
         */
         // VALID
-        for (let i = 0; i < word.length; i++) {
-            if (wordNoAccents.charAt(i) === wordNoAccents.charAt(i).toUpperCase()) {
-                // If we put a capital letter (white letter), we remove a '*' from the easel
-                this.playerService.removeLetter('*', indexPlayer);
-            } else {
-                // Otherwise we remove the respective letter from the easel
-                this.playerService.removeLetter(wordNoAccents.charAt(i), indexPlayer);
-            }
-        }
         const finalResult: ScoreValidation = this.wordValidator.validateAllWordsOnBoard(this.scrabbleBoard);
-        this.isFirstRound = false;
         if (finalResult.validation === false) {
+            setTimeout(() => {
+                for (let i = 0; i < word.length; i++) {
+                    let x = 0;
+                    let y = 0;
+                    if (orientation === 'v') {
+                        x = i;
+                    } else if (orientation === 'h') {
+                        y = i;
+                    }
+                    // If the word is invalid, we remove the letters placed on the grid
+                    this.scrabbleBoard[position.x + x][position.y + y] = '';
+                    const positionGrid = this.playerService.posTabToPosGrid(position.y + y, position.x + x);
+                    this.gridService.eraseLetter(this.gridService.gridContextLayer, positionGrid);
+                }
+            }, 3000); // Waiting 3 seconds to erase the letters on the grid
             return false;
         } else {
+            for (let i = 0; i < word.length; i++) {
+                if (wordNoAccents.charAt(i) === wordNoAccents.charAt(i).toUpperCase()) {
+                    // If we put a capital letter (white letter), we remove a '*' from the easel
+                    this.playerService.removeLetter('*', indexPlayer);
+                } else {
+                    // Otherwise we remove the respective letter from the easel
+                    this.playerService.removeLetter(wordNoAccents.charAt(i), indexPlayer);
+                }
+            }
             this.playerService.updateScrabbleBoard(this.scrabbleBoard);
+            console.log(this.scrabbleBoard);
             this.playerService.refillEasel(indexPlayer); // Fill the easel with new letters from the reserve
             this.letterService.writeMessage('mise a jour');
+            this.isFirstRound = false;
             return true;
         }
-
     }
 
     isPossible(position: Vec2, orientation: string, word: string, indexPlayer: number): boolean {
