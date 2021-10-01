@@ -3,19 +3,19 @@
 <div id="logo-scrabble"><img src="https://bit.ly/3m206ss" width="400" height="80" class="img-title" alt="Logo Scrabble" /></div>
 <form id="main-form-box">
     <fieldset>
-        <legend id="main-form-name">Game Settings</legend>
+        <legend id="main-form-name">Paramètres de la partie</legend>
         <fieldset class="form-section" id="player-name-box">
-            <legend>Player Information</legend>
+            <legend>Informations du joueur</legend>
             <app-player-name-field [formGroup]="form" [parentForm]="form"></app-player-name-field>
         </fieldset>
 
         <fieldset class="form-section">
-            <legend>Time</legend>
+            <legend>Durée</legend>
             <app-timer-field [formGroup]="form" [parentForm]="form"></app-timer-field>
         </fieldset>
 
         <fieldset class="form-section">
-            <legend>Game Difficulty</legend>
+            <legend>Difficulté de l'IA</legend>
             <app-level-field [formGroup]="form" [parentForm]="form"></app-level-field>
         </fieldset>
     </fieldset>

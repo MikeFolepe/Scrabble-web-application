@@ -1,23 +1,32 @@
 import { Component, OnInit } from '@angular/core';
-import { EASEL_SIZE } from '@app/classes/constants';
-import { LetterEasel } from '@app/classes/letter-easel';
-import { LetterService } from '@app/services/letter.service';
+import { DEFAULT_FONT_SIZE, INDEX_REAL_PLAYER } from '@app/classes/constants';
+import { Letter } from '@app/classes/letter';
+// eslint-disable-next-line import/no-deprecated
+import { PlayerService } from '@app/services/player.service';
+
 @Component({
     selector: 'app-letter-easel',
     templateUrl: './letter-easel.component.html',
     styleUrls: ['./letter-easel.component.scss'],
 })
 export class LetterEaselComponent implements OnInit {
-    letterEaselTab: LetterEasel[] = [];
-    constructor(private letterService: LetterService) {}
+    letterEaselTab: Letter[];
+
+    fontSize: number = DEFAULT_FONT_SIZE;
+
+    constructor(private playerService: PlayerService) {}
 
     ngOnInit(): void {
-        this.initializeTab();
+        this.playerService.updateLettersEasel(this.update.bind(this));
+        this.update();
     }
 
-    initializeTab(): void {
-        for (let i = 0; i < EASEL_SIZE; i++) {
-            this.letterEaselTab[i] = this.letterService.getRandomLetter();
-        }
+    update(): void {
+        this.letterEaselTab = this.playerService.getLettersEasel(INDEX_REAL_PLAYER);
+    }
+
+    handleFontSizeEvent(fontSizeEvent: number) {
+        this.fontSize = fontSizeEvent;
+        this.playerService.updateFontSize(this.fontSize);
     }
 }

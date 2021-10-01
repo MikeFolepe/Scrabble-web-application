@@ -5,21 +5,18 @@
     "version": "1.0.0",
     "configurations": [
         {
-            "name": "Debug server (Attach)",
-            "port": 9229,
-            "request": "attach",
-            "skipFiles": ["<node_internals>/**"],
-            "restart": true,
-            "sourceMaps": true,
-            "localRoot": "${workspaceFolder}/server",
-            "type": "pwa-node"
-        },
-        {
-            "name": "Launch Client With Debug",
+            "type": "chrome",
             "request": "launch",
-            "type": "pwa-chrome",
+            "name": "Launch Chrome",
             "url": "http://localhost:4200",
-            "webRoot": "${workspaceFolder}/client"
+            "webRoot": "${workspaceFolder}/client",
+            "sourceMaps": true,
+            "sourceMapPathOverrides": {
+                "/./*": "${webRoot}/*",
+                "/src/*": "${webRoot}/*",
+                "/*": "*",
+                "/./~/*": "${webRoot}/node_modules/*"
+            }
         }
     ]
 }

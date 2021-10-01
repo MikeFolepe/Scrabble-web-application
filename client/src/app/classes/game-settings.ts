@@ -1,20 +1,16 @@
-// eslint-disable-next-line unicorn/filename-case
 export enum StartingPlayer {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    humanPlayer,
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    iaPlayer,
+    Player1,
+    Player2,
 }
-/* eslint-disable prettier/prettier */
-/* eslint-disable unicorn/filename-case */
-export interface GameSettings {
-    playerName: string;
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    iaName: string;
-    startingPlayer: StartingPlayer;
-    timeMinute: string;
-    timeSecond: string;
-    level: string;
-    randomBonus: boolean;
-    dictionary: string;
+
+export class GameSettings {
+    constructor(
+        public playersName: string[],
+        public startingPlayer: StartingPlayer,
+        public timeMinute: string,
+        public timeSecond: string,
+        public level: string,
+        public randomBonus: boolean,
+        public dictionary: string,
+    ) {}
 }

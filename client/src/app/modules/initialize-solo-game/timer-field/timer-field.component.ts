@@ -12,8 +12,10 @@ export class TimerFieldComponent implements OnInit {
     minuteSelectionList: string[] = ['00', '01', '02', '03', '04', '05'];
     secondSelectionList: string[] = ['00', '30'];
     // Min and Max value of timer in HHMM to allow string comparison
-    minTimer: string = '0030';
-    maxTimer: string = '0500';
+    minTime: string = '0030';
+    maxTime: string = '0500';
+
+    constructor(){}
 
     ngOnInit(): void {
         // The Timer field is required for form submit
@@ -21,22 +23,22 @@ export class TimerFieldComponent implements OnInit {
         this.parentForm.controls.secondInput.setValidators([Validators.required]);
     }
 
-    isValidHours(minuteInput: string, secondInput: string): boolean {
+    isValidTime(minuteInput: string, secondInput: string): boolean {
         // If one of the timer input is not initialized the timer field input should be in error
         if (minuteInput === '' || secondInput === '') {
             return false;
         }
         // Checking if the inputs are in range
-        return minuteInput + secondInput < this.maxTimer && minuteInput + secondInput > this.minTimer;
+        return minuteInput + secondInput <= this.maxTime && minuteInput + secondInput >= this.minTime;
     }
 
     setTimeValidity(): void {
         // Triggered by the click on any selection value in the view
         // Verifies the validity of the actual timer input
-        const isTimeValid: boolean = this.isValidHours(this.parentForm.controls.minuteInput.value, this.parentForm.controls.secondInput.value);
+        const isValidTime: boolean = this.isValidTime(this.parentForm.controls.minuteInput.value, this.parentForm.controls.secondInput.value);
 
         // Set the form field validity
-        if (!isTimeValid) {
+        if (!isValidTime) {
             this.parentForm.controls.minuteInput.setErrors({ incorrect: true });
             this.parentForm.controls.secondInput.setErrors({ incorrect: true });
         } else {
