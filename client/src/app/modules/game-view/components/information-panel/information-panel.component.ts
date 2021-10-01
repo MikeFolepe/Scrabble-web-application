@@ -24,7 +24,7 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
     players: Player[] = new Array<Player>();
     gameSettings: GameSettings;
     tour: boolean;
-    reserveState: number;
+    reserveSize: number;
     message: string;
     viewSubscription: Subscription = new Subscription();
     constructor(
@@ -33,14 +33,14 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
         private playerService: PlayerService,
         private tourService: TourService,
     ) {}
+
     ngOnInit(): void {
         this.gameSettings = this.gameSettingsService.getSettings();
         this.initializePlayers();
         this.players = this.playerService.getPlayers();
         this.initializeFirstTour();
-        // this.subscribeToTourSubject();
         this.tour = this.tourService.getTour();
-        this.reserveState = this.letterService.getReserveSize();
+        this.reserveSize = this.letterService.getReserveSize();
         this.viewSubscription = this.letterService.currentMessage.subscribe((message) => (this.message = message));
         this.letterService.updateView(this.updateView.bind(this));
     }
@@ -51,6 +51,7 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
         this.playerService.addPlayer(player);
         player = new PlayerIA(2, this.gameSettings.playersName[1], this.letterService.getRandomLetters());
         this.playerService.addPlayer(player);
+        console.log(this.playerService.getPlayers());
     }
 
     // function to initialize the boolean specifying which player will start first
@@ -79,7 +80,7 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
     }
     updateView() {
         if (this.message === 'mise a jour') {
-            this.reserveState = this.letterService.getReserveSize();
+            this.reserveSize = this.letterService.getReserveSize();
             this.players[INDEX_REAL_PLAYER].letterTable = this.playerService.getLettersEasel(INDEX_REAL_PLAYER);
             this.players[INDEX_PLAYER_IA].letterTable = this.playerService.getLettersEasel(INDEX_PLAYER_IA);
             this.players[INDEX_REAL_PLAYER].score = this.playerService.getScore(INDEX_REAL_PLAYER);
