@@ -46,8 +46,6 @@ export class ChatboxComponent implements OnInit, OnDestroy {
     handleKeyEvent(event: KeyboardEvent) {
         if (event.key === 'Enter') {
             event.preventDefault();
-            this.sendSystemMessage('Message du système');
-            this.sendOpponentMessage('Le joueur virtuel fait...');
             this.sendPlayerCommand();
             this.message = ''; // Clear l'input
 
@@ -216,7 +214,6 @@ export class ChatboxComponent implements OnInit, OnDestroy {
             this.sendSystemMessage(x + ': -- ' + alternative.nbPt.toString());
         }
     }
-
 
     ngOnDestroy() {
         this.tourSubscription.unsubscribe();
