@@ -41,8 +41,6 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
     handleKeyEvent(event: KeyboardEvent) {
         if (event.key === 'Enter') {
             event.preventDefault();
-            this.sendSystemMessage('Message du système');
-            this.sendOpponentMessage('Le joueur virtuel fait...');
             this.sendPlayerCommand();
             this.message = '';
 

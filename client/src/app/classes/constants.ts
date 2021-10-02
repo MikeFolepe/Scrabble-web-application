@@ -18,6 +18,7 @@ export const CENTRAL_CASE_POSX = 7;
 export const CENTRAL_CASE_POSY = 7;
 
 export const PLAYERS_NUMBER = 2;
+export const INDEX_INVALID = -1;
 export const INDEX_REAL_PLAYER = 0;
 export const INDEX_PLAYER_IA = 1;
 
@@ -31,6 +32,8 @@ export const DOUBLE_WORD = 2;
 export const TRIPLE_LETTER = 3;
 export const DOUBLE_LETTER = 2;
 export const MIN_RESERVE_SIZE_TOSWAP = 7;
+
+export const THREE_SECONDS_DELAY = 3000;
 
 export enum MouseButton {
     Left = 0,

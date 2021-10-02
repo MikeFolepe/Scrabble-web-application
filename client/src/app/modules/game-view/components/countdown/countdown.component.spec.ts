@@ -19,13 +19,13 @@ describe('CountdownComponent', () => {
         fixture.detectChanges();
     });
 
-    beforeEach(() => {
+    beforeEach(() => {
         jasmine.clock().install();
-      });
-      
-      afterEach(function() {
+    });
+
+    afterEach(function () {
         jasmine.clock().uninstall();
-      });
+    });
 
     it('should create', () => {
         expect(component).toBeTruthy();
@@ -34,7 +34,7 @@ describe('CountdownComponent', () => {
     it('should call setTimer onInit', () => {
         component.ngOnInit();
         spyOn<any>(component, 'setTimer');
-        jasmine.clock().tick(ONESECOND_TIME+1);
+        jasmine.clock().tick(ONESECOND_TIME + 1);
         expect(component.setTimer).toHaveBeenCalled();
     });
 
