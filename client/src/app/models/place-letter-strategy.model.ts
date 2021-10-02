@@ -6,13 +6,16 @@ import { Vec2 } from '@app/classes/vec2';
 import { PlayerIAComponent } from '@app/modules/game-view/components/player-ia/player-ia.component';
 import { PlayStrategy } from './abstract-strategy.model';
 import { PlayerIA } from './player-ia.model';
+import { SwapLetter } from './swap-letter-strategy.model';
 
-const ROW_OFFSET = 65; /* = 'A' */
-const COLUMN_OFFSET = 1; /* Array starting at 0 */
+const ROW_OFFSET = 65;
+const COLUMN_OFFSET = 1;
 const WORDOVERFLOWS = -1;
 const WORDOVERWRITES = -2;
+const MULTIPLICATION_NEUTRAL = 1;
 
 export class PlaceLetters extends PlayStrategy {
+    private isFirstRound: boolean;
     constructor(private pointingRange: Range) {
         super();
     }
@@ -20,29 +23,29 @@ export class PlaceLetters extends PlayStrategy {
     execute(player: PlayerIA, context: PlayerIAComponent): void {
         // get the player's hand to generate a pattern containing
         // only player's disponible letters
+        this.isFirstRound = context.isFirstRound;
         let pattern: string = this.pattern(player.letterTable);
         let randomX: number = CENTRAL_CASE_POSX;
         let randomY: number = CENTRAL_CASE_POSY;
 
         if (!context.isFirstRound) {
             do {
-                randomX = new Date().getTime() % BOARD_COLUMNS;
-                randomY = new Date().getTime() % BOARD_ROWS;
+                randomX = Math.floor(Math.random() * BOARD_COLUMNS);
+                randomY = Math.floor(Math.random() * BOARD_COLUMNS);
             } while (context.scrabbleBoard[randomX][randomY] === '');
             // get the player's hand to generate a pattern containing
             // a character already on the scrabbleBoard + player's disponible letters (only)
-            pattern = this.pattern(player.letterTable, context.scrabbleBoard[randomX][randomY]);
+            pattern = this.pattern(player.letterTable, context.scrabbleBoard[randomX][randomY].toUpperCase());
         }
-
-        // debugger;
 
         // generate all possibilities matching the pattern
         const allPossibleWord: string[] = this.generateAllPossibilities(pattern);
         // remove those who nb(char(x)) > nb(char(x of player's hand))
-        const possibleWord: string[] = this.generatePossibilities(allPossibleWord, player);
+        const possibleWord: string[] = this.generatePossibilities(allPossibleWord, player, context.isFirstRound);
         // Choose within the possibilities
         this.choosePossibility(possibleWord, context, { x: randomX, y: randomY });
     }
+
     private pattern(letterTable: Letter[], startingChar = ''): string {
         let pattern = '^[';
 
@@ -62,7 +65,7 @@ export class PlaceLetters extends PlayStrategy {
         const allPossibleWord: string[] = [];
         const re = new RegExp(pattern, 'igm');
         for (const word of dictionary) {
-            // test all word and retain those who satisfies the pattern
+            // test all words and retain those who satisfies the pattern
             if (re.test(word)) {
                 allPossibleWord.push(word);
             }
@@ -70,17 +73,20 @@ export class PlaceLetters extends PlayStrategy {
         return allPossibleWord;
     }
 
-    private generatePossibilities(allPossibleWord: string[], player: PlayerIA): string[] {
+    private generatePossibilities(allPossibleWord: string[], player: PlayerIA, isFirstRound: boolean): string[] {
         const possibleWord: string[] = [];
         // Into all possible word...
         for (const word of allPossibleWord) {
             let isValidWord = true;
+            let i = 0;
+            if (!isFirstRound) {
+                i = 1;
+            }
             // ...pick those who letter's quantity matches the player letter quantity
-            for (const letter of word) {
-                const re = new RegExp(letter, 'g');
+            for (i; i < word.length; i++) {
+                const re = new RegExp(word[i], 'g');
                 const count: number = (word.match(re) || []).length;
-
-                if (count > this.playerQuantityOf(letter, player)) {
+                if (count > this.playerQuantityOf(word[i], player)) {
                     isValidWord = false;
                     break;
                 }
@@ -93,55 +99,56 @@ export class PlaceLetters extends PlayStrategy {
         return possibleWord;
     }
 
-    private choosePossibility(possibleWord: string[], context: PlayerIAComponent, startPos: Vec2): void {
+    private choosePossibility(possibleWord: string[], context: PlayerIAComponent, startPos: Vec2) {
         const randomPointing = Math.floor(Math.random() * (this.pointingRange.max - this.pointingRange.min + 1)) + this.pointingRange.min;
-        const randomOrientation: string = ['h', 'v'][new Date().getTime() % ['h', 'v'].length];
-        let randomPointingFound = false;
-        let alternativePointingFound = false;
-        const priorityPossibilities: { word: string; nbPt: number }[] = [];
-        const alternativePossibilities: { word: string; nbPt: number }[] = [];
+        let priorityPoss: { word: string; nbPt: number }[] = [];
+        let altPoss: { word: string; nbPt: number }[] = [];
+        let orientationPos = 'h';
 
-        // Whitin all the possible words separate those who matches this turn randomPointing
-        // from those who doesn't matches the randomPointing but are in range 0 < x < max
-        for (const word of possibleWord) {
-            const nbPt = this.calculatePoint(startPos, randomOrientation, word, context.scrabbleBoard);
-            if (nbPt === randomPointing) {
-                randomPointingFound = true;
-                priorityPossibilities.push({ word, nbPt });
-            } else if (nbPt <= this.pointingRange.max && nbPt >= 0) {
-                alternativePointingFound = true;
-                alternativePossibilities.push({ word, nbPt });
-            }
+        // filter the possible words by priority
+        // priorityPoss : words who calculation Point earns randomPointing vale
+        // altPoss : words who calculation Point doesn't earns ramdomPoingValue
+        priorityPoss = this.find(possibleWord, startPos, orientationPos, context.scrabbleBoard, randomPointing).priorityPoss;
+        altPoss = this.find(possibleWord, startPos, orientationPos, context.scrabbleBoard, randomPointing).altPoss;
+
+        let thereIsNoSolution = priorityPoss.length === 0 && altPoss.length === 0;
+
+        if (thereIsNoSolution) {
+            orientationPos = 'v';
+            priorityPoss = this.find(possibleWord, startPos, orientationPos, context.scrabbleBoard, randomPointing).priorityPoss;
+            altPoss = this.find(possibleWord, startPos, orientationPos, context.scrabbleBoard, randomPointing).altPoss;
         }
-        // debugger;
 
-        // If a word matching this turn randomPointing is found place it on the scrabble board
-        if (randomPointingFound) {
+        thereIsNoSolution = priorityPoss.length === 0 && altPoss.length === 0;
+
+        // If there is a word matching this turn randomPointing
+        if (priorityPoss.length !== 0) {
+            const wordUsed = priorityPoss[Math.floor(Math.random() * priorityPoss.length)].word;
             context.place(
                 {
                     start: startPos,
-                    orientation: randomOrientation,
-                    word: priorityPossibilities[new Date().getTime() % priorityPossibilities.length].word,
+                    orientation: orientationPos,
+                    word: wordUsed,
                 },
-                priorityPossibilities,
+                priorityPoss,
             );
-            // set le score du joueur
         }
         // If there isn't word matching this turn randomPointing but exists alternatives place it as well
-        else if (!randomPointingFound && alternativePointingFound) {
+        else if (altPoss.length !== 0) {
+            const wordUsed = altPoss[Math.floor(Math.random() * priorityPoss.length)].word;
             context.place(
                 {
                     start: startPos,
-                    orientation: randomOrientation,
-                    word: alternativePossibilities[new Date().getTime() % alternativePossibilities.length].word,
+                    orientation: orientationPos,
+                    word: wordUsed,
                 },
-                alternativePossibilities,
+                altPoss,
             );
-            // set le score du joueur
         }
-        // If there isn't word matching this turn randomPointing & existing alternatives skip the turn
-        else if (!randomPointingFound && !alternativePointingFound) {
-            context.skip();
+        // If there isn't word matching this turn randomPointing & existing alternatives swap
+        // letter to get new opportunities next turn
+        else if (priorityPoss.length === 0 && thereIsNoSolution) {
+            context.iaPlayer.replaceStrategy(new SwapLetter());
         }
     }
 
@@ -157,14 +164,12 @@ export class PlaceLetters extends PlayStrategy {
     }
 
     private bonusFactor(bonusFactor: number, matrixPos: Vec2, scrabbleBoard: string[][]): number {
-        // check if there is a word on the matrixPos and applies or not the wordFactor
+        // check if there is a word on the matrixPos
         if (scrabbleBoard[matrixPos.x][matrixPos.y] === '') {
             return bonusFactor;
         }
 
-        // There is already a word on the matrixPos
-        // No bonus
-        return 1;
+        return MULTIPLICATION_NEUTRAL;
     }
 
     private calculatePoint(startPos: Vec2, orientation: string, word: string, scrabbleBoard: string[][]): number {
@@ -175,15 +180,22 @@ export class PlaceLetters extends PlayStrategy {
         if (orientation === 'v' && startPos.y + word.length > BOARD_ROWS) {
             return WORDOVERFLOWS;
         }
+
         let totalPoint = 0;
         let wordFactor = 1;
 
+        let i = 0;
+
+        if (!this.isFirstRound) {
+            i = 1;
+        }
+
         // For each letter compute it's value and bonus earning
-        for (let i = 0; i < word.length; i++) {
-            // A0 < key < O15 to find the right bonus from board variable (see import)
+        for (i; i < word.length; i++) {
             let key: string;
             // current position in word earning point calculation
             let matrixPos: Vec2;
+
             if (orientation === 'h') {
                 key = String.fromCharCode(startPos.x + ROW_OFFSET) + (startPos.y + COLUMN_OFFSET + i).toString();
                 matrixPos = { x: startPos.x, y: startPos.y + i };
@@ -231,5 +243,25 @@ export class PlaceLetters extends PlayStrategy {
         }
 
         return { letterPt, wordFactor };
+    }
+
+    private find(
+        possibleWord: string[],
+        startPos: Vec2,
+        orientation: string,
+        scrabbleBoard: string[][],
+        randomPointing: number,
+    ): { priorityPoss: { word: string; nbPt: number }[]; altPoss: { word: string; nbPt: number }[] } {
+        const priorityPoss: { word: string; nbPt: number }[] = [];
+        const altPoss: { word: string; nbPt: number }[] = [];
+        for (const word of possibleWord) {
+            const nbPt = this.calculatePoint(startPos, orientation, word, scrabbleBoard);
+            if (nbPt === randomPointing) {
+                priorityPoss.push({ word, nbPt });
+            } else if (nbPt <= this.pointingRange.max && nbPt >= 0) {
+                altPoss.push({ word, nbPt });
+            }
+        }
+        return { priorityPoss, altPoss };
     }
 }
