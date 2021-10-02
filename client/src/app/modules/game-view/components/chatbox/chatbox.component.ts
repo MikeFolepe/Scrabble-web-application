@@ -1,39 +1,34 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { INDEX_REAL_PLAYER } from '@app/classes/constants';
 import { Vec2 } from '@app/classes/vec2';
-import { PassTourComponent } from '@app/modules/game-view/components/pass-tour/pass-tour.component';
-// eslint-disable-next-line no-restricted-imports
+import { PassTurnComponent } from '@app/modules/game-view/components/pass-turn/pass-turn.component';
 import { PlaceLetterComponent } from '@app/modules/game-view/components/place-letter/place-letter.component';
 import { PlayerService } from '@app/services/player.service';
 import { TourService } from '@app/services/tour.service';
 import { Subscription } from 'rxjs';
-// eslint-disable-next-line no-restricted-imports
-import { SwapLetterComponent } from '../swap-letter/swap-letter.component';
+import { SwapLetterComponent } from '@app/modules/game-view/components/swap-letter/swap-letter.component';
 
 @Component({
     selector: 'app-chatbox',
     templateUrl: './chatbox.component.html',
     styleUrls: ['./chatbox.component.scss'],
 })
-export class ChatboxComponent implements OnInit, OnDestroy {
-    @ViewChild(PassTourComponent) pass: PassTourComponent;
+export class ChatBoxComponent implements OnInit, OnDestroy {
+    @ViewChild(PassTurnComponent) passTurn: PassTurnComponent;
     @ViewChild(PlaceLetterComponent) placeComponent: PlaceLetterComponent;
     @ViewChild(SwapLetterComponent) swapComponent: SwapLetterComponent;
     @ViewChild('scrollMe') private myScrollContainer: ElementRef;
-
     tourSubscription: Subscription = new Subscription();
     tour: boolean;
 
     debugOn: boolean = true;
-
     typeMessage: string = '';
     message: string = '';
     command: string = '';
 
     listMessages: string[] = [];
     listTypes: string[] = [];
-    debugmessage: { word: string; nbPt: number }[] = [{ word: 'papier', nbPt: 6 }];
-    // Table to stock debug message from IA test avec des trings aléatoire
+    debugMessage: { word: string; nbPt: number }[] = [];
 
     constructor(private tourService: TourService, private playerService: PlayerService) {}
 
@@ -49,10 +44,9 @@ export class ChatboxComponent implements OnInit, OnDestroy {
             this.sendSystemMessage('Message du système');
             this.sendOpponentMessage('Le joueur virtuel fait...');
             this.sendPlayerCommand();
-            this.message = ''; // Clear l'input
+            this.message = '';
 
             setTimeout(() => {
-                // Timeout is used to update the scroll after the last element added
                 this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
             }, 1);
         }
@@ -61,12 +55,11 @@ export class ChatboxComponent implements OnInit, OnDestroy {
     sendPlayerCommand() {
         if (this.isValid()) {
             this.typeMessage = 'player';
-            // If the command is valid, we call the respective command from here
             switch (this.command) {
                 case 'debug': {
                     if (this.debugOn) {
                         this.sendSystemMessage('affichages de débogage activés');
-                        this.displaymessage();
+                        this.displayDebugMessage();
                         this.debugOn = false;
                     } else {
                         this.sendSystemMessage('affichages de débogage désactivés');
@@ -79,9 +72,7 @@ export class ChatboxComponent implements OnInit, OnDestroy {
                     break;
                 }
                 case 'echanger': {
-                    // this.getTour();
-                    this.tour = this.tourService.getTour();
-                    if (this.tour === true) {
+                    if (this.tourService.getTour()) {
                         const messageSplitted = this.message.split(/\s/);
 
                         if (this.swapComponent.swap(messageSplitted[1], INDEX_REAL_PLAYER)) {
@@ -97,13 +88,11 @@ export class ChatboxComponent implements OnInit, OnDestroy {
                     break;
                 }
                 case 'placer': {
-                    this.tour = this.tourService.getTour();
-                    if (this.tour === true) {
+                    if (this.tourService.getTour()) {
                         const messageSplitted = this.message.split(/\s/);
 
                         const positionSplitted = messageSplitted[1].split(/([0-9]+)/);
 
-                        // Vecteur contenant la position de départ du mot qu'on veut placer
                         const position: Vec2 = {
                             x: positionSplitted[0].charCodeAt(0) - 'a'.charCodeAt(0),
                             y: Number(positionSplitted[1]) - 1,
@@ -114,7 +103,7 @@ export class ChatboxComponent implements OnInit, OnDestroy {
                             this.typeMessage = 'error';
                             this.message = 'ERREUR : Le placement est invalide';
                         }
-                        this.pass.toogleTour();
+                        this.passTurn.toggleTurn();
                     } else {
                         this.typeMessage = 'error';
                         this.message = "ERREUR : Ce n'est pas ton tour";
@@ -126,11 +115,9 @@ export class ChatboxComponent implements OnInit, OnDestroy {
                 }
             }
         } else {
-            // If command is invalid
             this.typeMessage = 'error';
         }
         this.command = '';
-        // Add message and its type to the logs
         this.listTypes.push(this.typeMessage);
         this.listMessages.push(this.message);
     }
@@ -149,7 +136,6 @@ export class ChatboxComponent implements OnInit, OnDestroy {
 
     isValid(): boolean {
         if (this.message[0] === '!') {
-            // If it's a command, we call the validation
             return this.isInputValid() && this.isSyntaxValid();
         }
         return true;
@@ -157,11 +143,11 @@ export class ChatboxComponent implements OnInit, OnDestroy {
 
     isInputValid(): boolean {
         const regexDebug = /^!debug/g;
-        const regexPasser = /^!passer/g;
-        const regexEchanger = /^!échanger/g;
-        const regexPlacer = /^!placer/g;
+        const regexPass = /^!passer/g;
+        const regexChange = /^!échanger/g;
+        const regexPlace = /^!placer/g;
 
-        if (regexDebug.test(this.message) || regexPasser.test(this.message) || regexEchanger.test(this.message) || regexPlacer.test(this.message)) {
+        if (regexDebug.test(this.message) || regexPass.test(this.message) || regexChange.test(this.message) || regexPlace.test(this.message)) {
             return true;
         }
 
@@ -171,19 +157,19 @@ export class ChatboxComponent implements OnInit, OnDestroy {
 
     isSyntaxValid(): boolean {
         const regexDebug = /^!debug$/g;
-        const regexPasser = /^!passer$/g;
-        const regexEchanger = /^!échanger\s([a-z]|[*]){1,7}$/g;
-        const regexPlacer = /^!placer\s([a-o]([1-9]|1[0-5])[hv])\s([a-zA-Z\u00C0-\u00FF]|[*])+/g;
+        const regexPass = /^!passer$/g;
+        const regexChange = /^!échanger\s([a-z]|[*]){1,7}$/g;
+        const regexPlace = /^!placer\s([a-o]([1-9]|1[0-5])[hv])\s([a-zA-Z\u00C0-\u00FF]|[*])+/g;
 
         let valid = true;
 
         if (regexDebug.test(this.message)) {
             this.command = 'debug';
-        } else if (regexPasser.test(this.message)) {
+        } else if (regexPass.test(this.message)) {
             this.command = 'passer';
-        } else if (regexEchanger.test(this.message)) {
+        } else if (regexChange.test(this.message)) {
             this.command = 'echanger';
-        } else if (regexPlacer.test(this.message)) {
+        } else if (regexPlace.test(this.message)) {
             this.command = 'placer';
         } else {
             valid = false;
@@ -198,25 +184,28 @@ export class ChatboxComponent implements OnInit, OnDestroy {
 
     switchTour() {
         this.tour = this.tourService.getTour();
-        if (this.tour === true) {
-            this.pass.toogleTour();
+        if (this.tour) {
+            this.passTurn.toggleTurn();
             this.sendSystemMessage('!passer');
         } else {
             this.sendSystemMessage('Commande impossible à realiser !');
         }
     }
 
-    receiveAImessage(table: { word: string; nbPt: number }[]): void {
-        this.debugmessage = table;
+    receiveAIdebugMessage(table: { word: string; nbPt: number }[]): void {
+        this.debugMessage = table;
     }
 
-    displaymessage(): void {
-        for (const alternative of this.debugmessage) {
-            const x: string = alternative.word;
-            this.sendSystemMessage(x + ': -- ' + alternative.nbPt.toString());
+    displayDebugMessage(): void {
+        if (this.debugMessage.length === 0) {
+            this.sendSystemMessage('Aucune alternative de placement trouvé ');
+        } else {
+            for (const alternative of this.debugMessage) {
+                const x: string = alternative.word;
+                this.sendSystemMessage(x + ': -- ' + alternative.nbPt.toString());
+            }
         }
     }
-
 
     ngOnDestroy() {
         this.tourSubscription.unsubscribe();

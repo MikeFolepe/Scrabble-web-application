@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ALL_EASEL_BONUS, BOARD_COLUMNS, BOARD_ROWS, BONUSES_POSITIONS, dictionary, RESERVE } from '@app/classes/constants';
+import { ALL_EASEL_BONUS, BOARD_COLUMNS, BOARD_ROWS, BONUSES_POSITIONS, DICTIONARY, RESERVE } from '@app/classes/constants';
 import { ScoreValidation } from '@app/classes/validation-score';
 
 @Component({
@@ -24,7 +24,7 @@ export class WordValidationComponent {
     isValidInDictionary(word: string): boolean {
         if (word.length >= 2) {
             // eslint-disable-next-line prefer-const
-            for (const item of dictionary) {
+            for (const item of DICTIONARY) {
                 if (word === item) {
                     return true;
                 }

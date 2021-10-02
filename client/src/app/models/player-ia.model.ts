@@ -1,14 +1,14 @@
 import { IAStrategy, placingBallotBox, PlacingStrategy, strategyBallotBox } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { Range } from '@app/classes/range';
-import { PlayerIAComponent } from '@app/modules/game-view/components/player-ia/player-ia.component';
+import { PlayerAIComponent } from '@app/modules/game-view/components/player-ia/player-ia.component';
 import { PlayStrategy } from './abstract-strategy.model';
 import { PlaceLetters } from './place-letter-strategy.model';
 import { Player } from './player.model';
 import { SkipTurn } from './skip-turn-strategy.model';
 
 export class PlayerIA extends Player {
-    context: PlayerIAComponent;
+    context: PlayerAIComponent;
     strategy: PlayStrategy;
     constructor(
         public id: number,
@@ -80,7 +80,7 @@ export class PlayerIA extends Player {
         return pointingRange;
     }
 
-    setContext(context: PlayerIAComponent) {
+    setContext(context: PlayerAIComponent) {
         this.context = context;
     }
 }

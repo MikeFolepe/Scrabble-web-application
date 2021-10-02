@@ -1,9 +1,9 @@
-import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSX, CENTRAL_CASE_POSY, dictionary, RESERVE } from '@app/classes/constants';
+import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSX, CENTRAL_CASE_POSY, DICTIONARY, RESERVE } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { Range } from '@app/classes/range';
 import { board } from '@app/classes/scrabble-board';
 import { Vec2 } from '@app/classes/vec2';
-import { PlayerIAComponent } from '@app/modules/game-view/components/player-ia/player-ia.component';
+import { PlayerAIComponent } from '@app/modules/game-view/components/player-ia/player-ia.component';
 import { PlayStrategy } from './abstract-strategy.model';
 import { PlayerIA } from './player-ia.model';
 
@@ -17,7 +17,7 @@ export class PlaceLetters extends PlayStrategy {
         super();
     }
 
-    execute(player: PlayerIA, context: PlayerIAComponent): void {
+    execute(player: PlayerIA, context: PlayerAIComponent): void {
         // get the player's hand to generate a pattern containing
         // only player's disponible letters
         let pattern: string = this.pattern(player.letterTable);
@@ -61,7 +61,7 @@ export class PlaceLetters extends PlayStrategy {
     private generateAllPossibilities(pattern: string): string[] {
         const allPossibleWord: string[] = [];
         const re = new RegExp(pattern, 'igm');
-        for (const word of dictionary) {
+        for (const word of DICTIONARY) {
             // test all word and retain those who satisfies the pattern
             if (re.test(word)) {
                 allPossibleWord.push(word);
@@ -93,7 +93,7 @@ export class PlaceLetters extends PlayStrategy {
         return possibleWord;
     }
 
-    private choosePossibility(possibleWord: string[], context: PlayerIAComponent, startPos: Vec2): void {
+    private choosePossibility(possibleWord: string[], context: PlayerAIComponent, startPos: Vec2): void {
         const randomPointing = Math.floor(Math.random() * (this.pointingRange.max - this.pointingRange.min + 1)) + this.pointingRange.min;
         const randomOrientation: string = ['h', 'v'][new Date().getTime() % ['h', 'v'].length];
         let randomPointingFound = false;

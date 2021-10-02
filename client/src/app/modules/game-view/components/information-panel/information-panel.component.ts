@@ -3,15 +3,13 @@ import { INDEX_PLAYER_IA, INDEX_REAL_PLAYER } from '@app/classes/constants';
 import { GameSettings } from '@app/classes/game-settings';
 import { PlayerIA } from '@app/models/player-ia.model';
 import { Player } from '@app/models/player.model';
-import { CountdownComponent } from '@app/modules/game-view/components/countdown/countdown.component';
+import { CountDownComponent } from '@app/modules/game-view/components/countdown/countdown.component';
+import { PlayerAIComponent } from '@app/modules/game-view/components/player-ia/player-ia.component';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { LetterService } from '@app/services/letter.service';
-// eslint-disable-next-line import/no-deprecated
 import { PlayerService } from '@app/services/player.service';
 import { TourService } from '@app/services/tour.service';
 import { Subscription } from 'rxjs';
-// eslint-disable-next-line no-restricted-imports
-import { PlayerIAComponent } from '../player-ia/player-ia.component';
 
 @Component({
     selector: 'app-information-panel',
@@ -19,8 +17,8 @@ import { PlayerIAComponent } from '../player-ia/player-ia.component';
     styleUrls: ['./information-panel.component.scss'],
 })
 export class InformationPanelComponent implements OnDestroy, OnInit {
-    @ViewChild(CountdownComponent) countDown: CountdownComponent;
-    @ViewChild(PlayerIAComponent) playerIA: PlayerIAComponent;
+    @ViewChild(CountDownComponent) countDown: CountDownComponent;
+    @ViewChild(PlayerAIComponent) playerIA: PlayerAIComponent;
     players: Player[] = new Array<Player>();
     gameSettings: GameSettings;
     tour: boolean;
@@ -44,7 +42,6 @@ export class InformationPanelComponent implements OnDestroy, OnInit {
         this.letterService.updateView(this.updateView.bind(this));
     }
 
-    // initializing players to playersService
     initializePlayers() {
         let player = new Player(1, this.gameSettings.playersName[0], this.letterService.getRandomLetters());
         this.playerService.addPlayer(player);
@@ -52,7 +49,6 @@ export class InformationPanelComponent implements OnDestroy, OnInit {
         this.playerService.addPlayer(player);
     }
 
-    // function to initialize the boolean specifying which player will start first
     initializeFirstTour(): void {
         this.tourService.initializeTour(Boolean(this.gameSettings.startingPlayer.valueOf()));
     }

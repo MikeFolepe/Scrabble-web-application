@@ -4,13 +4,12 @@ import { BehaviorSubject } from 'rxjs';
 @Injectable({
     providedIn: 'root',
 })
-export class PassTourService {
-    //Method to update
+export class PassTurnService {
     messageSource = new BehaviorSubject('default message');
     currentMessage = this.messageSource.asObservable();
     tour: boolean;
     updateFunc: () => void;
-    updateTour(fn: () => void) {
+    updateTurn(fn: () => void) {
         this.updateFunc = fn;
         // from now on, call func wherever you want inside this service
     }

@@ -3,26 +3,21 @@ import { Vec2 } from '@app/classes/vec2';
 import { PlayerIA } from '@app/models/player-ia.model';
 import { Player } from '@app/models/player.model';
 import { LetterService } from '@app/services/letter.service';
-import { PassTourService } from '@app/services/pass-tour.service';
-// eslint-disable-next-line import/no-deprecated
+import { PassTurnService } from '@app/services/pass-turn.service';
 import { PlayerService } from '@app/services/player.service';
 import { TourService } from '@app/services/tour.service';
 import { Subscription } from 'rxjs';
-import { PassTourComponent } from '../pass-tour/pass-tour.component';
+import { PassTurnComponent } from '@app/modules/game-view/components/pass-turn/pass-turn.component';
 
 @Component({
     selector: 'app-player-ia',
     templateUrl: './player-ia.component.html',
     styleUrls: ['./player-ia.component.scss'],
 })
-export class PlayerIAComponent implements OnInit {
-    @ViewChild(PassTourComponent) passTurn: PassTourComponent;
-    // Pour dire à la boite que j'ai passé mon tour.
+export class PlayerAIComponent implements OnInit {
+    @ViewChild(PassTurnComponent) passTurn: PassTurnComponent;
     @Output() iaSkipped = new EventEmitter();
-    // Pour dire à la boite que j'ai echanger des lettres ( je sais pas si c'est une information
-    // requise dans le flux de la BC ??).
-    @Output() iaSwappedr = new EventEmitter();
-    // Pour dire à la boite que j'ai placer des lettres.
+    @Output() iaSwapped = new EventEmitter();
     @Output() iaPlaced = new EventEmitter();
     // Pour le mode debug
     @Output() iaPossibility = new EventEmitter();
@@ -41,7 +36,7 @@ export class PlayerIAComponent implements OnInit {
         public letterService: LetterService,
         public playerService: PlayerService,
         public tourService: TourService,
-        public passtourService: PassTourService,
+        public passTurnService: PassTurnService,
     ) {}
 
     ngOnInit(): void {
@@ -53,7 +48,7 @@ export class PlayerIAComponent implements OnInit {
         this.playerService.emitPlayers();
         // Set the playerIA context so that the player can lunch event
         this.iaPlayer.setContext(this);
-        // this.passSubscription = this.passtourService.currentMessage.subscribe((message) => (this.message = message));
+        // this.passSubscription = this.passTurnService.currentMessage.subscribe((message) => (this.message = message));
         this.tourSubscription = this.tourService.tourSubject.subscribe((tourSubject: boolean) => {
             this.tour = tourSubject;
         });
@@ -68,8 +63,7 @@ export class PlayerIAComponent implements OnInit {
 
     play() {
         // debugger;
-        console.log(this.iaPlayer.letterTable);
-        if (this.tourService.getTour() === false) {
+        if (this.tourService.getTour()) {
             setTimeout(() => {
                 this.iaPlayer.play();
             }, 5000);
@@ -80,18 +74,16 @@ export class PlayerIAComponent implements OnInit {
         this.iaSkipped.emit();
         if (this.tourService.getTour() === false) {
             setTimeout(() => {
-                this.passTurn.toogleTour();
-            }, 5000);
+                this.passTurn.toggleTurn();
+            },5000 );
         }
     }
 
     swap() {
-        console.log('swap');
-        console.log(this.iaPlayer.letterTable);
-        this.iaSwappedr.emit();
+        this.iaSwapped.emit();
         if (this.tourService.getTour() === false) {
             setTimeout(() => {
-                this.passTurn.toogleTour();
+                this.passTurn.toggleTurn();
             }, 5000);
         }
     }
@@ -101,7 +93,7 @@ export class PlayerIAComponent implements OnInit {
         this.iaPlaced.emit(object);
         this.iaPossibility.emit(possibility);
         setTimeout(() => {
-            this.passTurn.toogleTour();
+            this.passTurn.toggleTurn();
         }, 5000);
     }
 
