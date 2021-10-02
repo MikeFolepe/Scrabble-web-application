@@ -17,6 +17,7 @@ export const CENTRAL_CASE_POSX = 7;
 export const CENTRAL_CASE_POSY = 7;
 
 export const PLAYERS_NUMBER = 2;
+export const INDEX_INVALID = -1;
 export const INDEX_REAL_PLAYER = 0;
 export const INDEX_PLAYER_IA = 1;
 

@@ -1,6 +1,6 @@
 /* eslint-disable dot-notation */
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { INDEX_PLAYER_IA, THREE_SECONDS_DELAY, INDEX_REAL_PLAYER } from '@app/classes/constants';
+import { INDEX_PLAYER_IA, INDEX_REAL_PLAYER, THREE_SECONDS_DELAY } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
 import { Player } from '@app/models/player.model';
@@ -9,7 +9,7 @@ import { GridService } from '@app/services/grid.service';
 import { WordValidationComponent } from '../word-validation/word-validation.component';
 import { PlaceLetterComponent } from './place-letter.component';
 
-fdescribe('PlaceLetterComponent', () => {
+describe('PlaceLetterComponent', () => {
     let component: PlaceLetterComponent;
     let gridServiceSpy: unknown;
     let fixture: ComponentFixture<PlaceLetterComponent>;
