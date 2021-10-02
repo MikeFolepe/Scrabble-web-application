@@ -47,17 +47,6 @@ export class PlayerAIComponent implements OnInit {
         this.playerService.emitPlayers();
         // Set the playerIA context so that the player can lunch event
         this.iaPlayer.setContext(this);
-        // this.passSubscription = this.passTurnService.currentMessage.subscribe((message) => (this.message = message));
-        this.tourSubscription = this.tourService.tourSubject.subscribe((tourSubject: boolean) => {
-            this.tour = tourSubject;
-        });
-        this.tourService.emitTour();
-
-        if (this.tour === false) {
-            setTimeout(() => {
-                this.play();
-            }, DELAY_TO_PLAY);
-        }
     }
 
     play() {
@@ -102,7 +91,4 @@ export class PlayerAIComponent implements OnInit {
         }, DELAY_TO_PLAY);
     }
 
-    ngOndestroy() {
-        this.tourSubscription.unsubscribe();
-    }
 }
