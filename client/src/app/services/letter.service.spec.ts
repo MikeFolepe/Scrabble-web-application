@@ -1,9 +1,8 @@
 /* eslint-disable dot-notation */
 import { TestBed } from '@angular/core/testing';
-
-import { LetterService } from './letter.service';
 import { EASEL_SIZE, RESERVE } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
+import { LetterService } from './letter.service';
 
 describe('LetterService', () => {
     let service: LetterService;

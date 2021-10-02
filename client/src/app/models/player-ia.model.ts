@@ -24,11 +24,7 @@ export class PlayerIA extends Player {
     }
 
     setStrategy() {
-        // Number of seconds since 1st January 1970
-        let randomNumber = new Date().getTime();
-        // Random number [0, 10[ which corresponds on the placing strategies defined on the
-        // strategiesBallotBox urn in constants.ts
-        randomNumber = randomNumber % strategyBallotBox.length;
+        const randomNumber = this.generateRandomNumber(strategyBallotBox.length);
 
         switch (strategyBallotBox[randomNumber]) {
             case IAStrategy.Skip:
@@ -50,10 +46,7 @@ export class PlayerIA extends Player {
     pointingRange(): Range {
         let pointingRange: Range;
 
-        let randomNumber = new Date().getTime();
-        // Random number [0, 10[ which corresponds on the placing strategies defined on the
-        // placingBallotBox urn in constants.ts
-        randomNumber = randomNumber % placingBallotBox.length;
+        const randomNumber = this.generateRandomNumber(placingBallotBox.length);
 
         switch (placingBallotBox[randomNumber]) {
             case PlacingStrategy.LessSix:
@@ -80,5 +73,9 @@ export class PlayerIA extends Player {
     replaceStrategy(strategy: PlayStrategy) {
         this.strategy = strategy;
         this.play();
+    }
+
+    private generateRandomNumber(maxValue: number): number {
+        return Math.floor(Number(Math.random()) * maxValue);
     }
 }

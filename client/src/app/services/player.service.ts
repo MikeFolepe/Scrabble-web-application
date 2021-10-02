@@ -10,6 +10,7 @@ import {
     FONT_SIZE_MAX,
     FONT_SIZE_MIN,
     RESERVE,
+    INDEX_INVALID,
 } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
@@ -122,14 +123,15 @@ export class PlayerService {
         this.refillEasel(indexPlayer);
     }
 
-    easelContainsLetter(letter: string, indexPlayer: number): boolean {
-        for (const letterEasel of this.players[indexPlayer].letterTable) {
-            if (letter.toUpperCase() === letterEasel.value) {
-                return true;
+    easelContainsLetter(letter: string, startIndex: number, indexPlayer: number): number {
+        for (let i = startIndex; i < this.players[indexPlayer].letterTable.length; i++) {
+            if (letter.toUpperCase() === this.players[indexPlayer].letterTable[i].value) {
+                return i;
             }
         }
-        return false;
+        return INDEX_INVALID;
     }
+
     addScore(score: number, indexPlayer: number): void {
         this.players[indexPlayer].score += score;
     }

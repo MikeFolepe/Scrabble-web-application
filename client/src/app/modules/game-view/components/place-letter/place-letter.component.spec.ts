@@ -9,7 +9,7 @@ import { GridService } from '@app/services/grid.service';
 import { WordValidationComponent } from '../word-validation/word-validation.component';
 import { PlaceLetterComponent } from './place-letter.component';
 
-fdescribe('PlaceLetterComponent', () => {
+describe('PlaceLetterComponent', () => {
     let component: PlaceLetterComponent;
     let gridServiceSpy: unknown;
     let fixture: ComponentFixture<PlaceLetterComponent>;

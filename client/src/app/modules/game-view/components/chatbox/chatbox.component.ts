@@ -32,8 +32,7 @@ export class ChatboxComponent implements OnInit, OnDestroy {
 
     listMessages: string[] = [];
     listTypes: string[] = [];
-    debugmessage: { word: string; nbPt: number }[] = [{ word: 'papier', nbPt: 6 }];
-    // Table to stock debug message from IA test avec des trings aléatoire
+    debugMessage: { word: string; nbPt: number }[] = [];
 
     constructor(private tourService: TourService, private playerService: PlayerService) {}
 
@@ -46,8 +45,6 @@ export class ChatboxComponent implements OnInit, OnDestroy {
     handleKeyEvent(event: KeyboardEvent) {
         if (event.key === 'Enter') {
             event.preventDefault();
-            this.sendSystemMessage('Message du système');
-            this.sendOpponentMessage('Le joueur virtuel fait...');
             this.sendPlayerCommand();
             this.message = ''; // Clear l'input
 
@@ -207,16 +204,15 @@ export class ChatboxComponent implements OnInit, OnDestroy {
     }
 
     receiveAImessage(table: { word: string; nbPt: number }[]): void {
-        this.debugmessage = table;
+        this.debugMessage = table;
     }
 
     displaymessage(): void {
-        for (const alternative of this.debugmessage) {
+        for (const alternative of this.debugMessage) {
             const x: string = alternative.word;
             this.sendSystemMessage(x + ': -- ' + alternative.nbPt.toString());
         }
     }
-
 
     ngOnDestroy() {
         this.tourSubscription.unsubscribe();

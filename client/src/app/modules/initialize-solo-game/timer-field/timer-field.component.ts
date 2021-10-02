@@ -15,7 +15,7 @@ export class TimerFieldComponent implements OnInit {
     minTime: string = '0030';
     maxTime: string = '0500';
 
-    constructor(){}
+    constructor() {}
 
     ngOnInit(): void {
         // The Timer field is required for form submit
