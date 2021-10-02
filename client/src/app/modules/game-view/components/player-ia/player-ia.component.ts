@@ -47,11 +47,14 @@ export class PlayerAIComponent implements OnInit {
         this.playerService.emitPlayers();
         // Set the playerIA context so that the player can lunch event
         this.iaPlayer.setContext(this);
+        if (!this.tourService.getTour()) {
+            setTimeout(() => {
+                this.iaPlayer.play();
+            }, DELAY_TO_PLAY);
+        }
     }
 
     play() {
-        // debugger;
-        console.log('on joue');
         if (!this.tourService.getTour()) {
             setTimeout(() => {
                 this.iaPlayer.play();
@@ -61,7 +64,6 @@ export class PlayerAIComponent implements OnInit {
 
     skip() {
         this.iaSkipped.emit();
-        console.log('skip');
         if (!this.tourService.getTour()) {
             setTimeout(() => {
                 this.passTurn.toggleTurn();
@@ -71,8 +73,6 @@ export class PlayerAIComponent implements OnInit {
 
     swap() {
         this.iaSwapped.emit();
-        console.log('swap');
-        console.log(this.iaPlayer.letterTable);
         if (!this.tourService.getTour()) {
             setTimeout(() => {
                 this.passTurn.toggleTurn();
@@ -82,13 +82,9 @@ export class PlayerAIComponent implements OnInit {
 
     place(object: { start: Vec2; orientation: string; word: string }, possibility: { word: string; nbPt: number }[]) {
         this.iaPlaced.emit(object);
-        console.log(object.word);
-        console.log(object.start);
-        console.log(this.iaPlayer.letterTable);
         this.iaPossibility.emit(possibility);
         setTimeout(() => {
             this.passTurn.toggleTurn();
         }, DELAY_TO_PLAY);
     }
-
 }

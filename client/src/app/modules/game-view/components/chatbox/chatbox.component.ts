@@ -3,10 +3,10 @@ import { INDEX_REAL_PLAYER } from '@app/classes/constants';
 import { Vec2 } from '@app/classes/vec2';
 import { PassTurnComponent } from '@app/modules/game-view/components/pass-turn/pass-turn.component';
 import { PlaceLetterComponent } from '@app/modules/game-view/components/place-letter/place-letter.component';
+import { SwapLetterComponent } from '@app/modules/game-view/components/swap-letter/swap-letter.component';
 import { PlayerService } from '@app/services/player.service';
 import { TourService } from '@app/services/tour.service';
 import { Subscription } from 'rxjs';
-import { SwapLetterComponent } from '@app/modules/game-view/components/swap-letter/swap-letter.component';
 
 @Component({
     selector: 'app-chatbox',
