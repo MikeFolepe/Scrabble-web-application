@@ -5,7 +5,7 @@ import { PassTurnComponent } from '@app/modules/game-view/components/pass-turn/p
 import { PlaceLetterComponent } from '@app/modules/game-view/components/place-letter/place-letter.component';
 import { SwapLetterComponent } from '@app/modules/game-view/components/swap-letter/swap-letter.component';
 import { PlayerService } from '@app/services/player.service';
-import { TourService } from '@app/services/tour.service';
+import { TurnService } from '@app/services/turn.service';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -18,8 +18,8 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
     @ViewChild(PlaceLetterComponent) placeComponent: PlaceLetterComponent;
     @ViewChild(SwapLetterComponent) swapComponent: SwapLetterComponent;
     @ViewChild('scrollMe') private myScrollContainer: ElementRef;
-    tourSubscription: Subscription = new Subscription();
-    tour: boolean;
+    turnSubscription: Subscription = new Subscription();
+    turn: boolean;
 
     debugOn: boolean = true;
     typeMessage: string = '';
@@ -28,92 +28,61 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
 
     listMessages: string[] = [];
     listTypes: string[] = [];
-    debugMessage: { word: string; nbPt: number }[] = [];
+    debugMessage: { word: string; nbPt: number }[];
+    // Table to stock debug message from IA test avec des strings aléatoires
 
-    constructor(private tourService: TourService, private playerService: PlayerService) {}
+    private readonly debugCommand = 'debug';
+    private readonly passCommand = 'passer';
+    private readonly exchangeCommand = 'echanger';
+    private readonly placeCommand = 'placer';
+
+    constructor(private turnService: TurnService, private playerService: PlayerService) {}
 
     ngOnInit(): void {
-        this.tourSubscription = this.tourService.tourSubject.subscribe((tourSubject: boolean) => {
-            this.tour = tourSubject;
+        this.turnSubscription = this.turnService.turnSubject.subscribe((turnSubject: boolean) => {
+            this.turn = turnSubject;
         });
-        this.tourService.emitTour();
+        this.turnService.emitturn();
     }
-    handleKeyEvent(event: KeyboardEvent) {
+
+    handleKeyEvent(event: KeyboardEvent): void {
         if (event.key === 'Enter') {
             event.preventDefault();
             this.sendPlayerCommand();
             this.message = '';
 
             setTimeout(() => {
-                this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
+                // Timeout is used to update the scroll after the last element added
+                this.scrollToBottom();
             }, 1);
         }
     }
 
     sendPlayerCommand() {
-        if (this.isValid()) {
+        if (!this.isValid()) {
+            this.typeMessage = 'error';
+        } else {
             this.typeMessage = 'player';
             switch (this.command) {
-                case 'debug': {
-                    if (this.debugOn) {
-                        this.sendSystemMessage('affichages de débogage activés');
-                        this.displayDebugMessage();
-                        this.debugOn = false;
-                    } else {
-                        this.sendSystemMessage('affichages de débogage désactivés');
-                        this.debugOn = true;
-                    }
+                case this.debugCommand: {
+                    this.executeDebugCommand();
                     break;
                 }
-                case 'passer': {
-                    this.switchTour();
+                case this.passCommand: {
+                    this.switchturn();
                     break;
                 }
-                case 'echanger': {
-                    if (this.tourService.getTour()) {
-                        const messageSplitted = this.message.split(/\s/);
-
-                        if (this.swapComponent.swap(messageSplitted[1], INDEX_REAL_PLAYER)) {
-                            this.message = this.playerService.getPlayers()[INDEX_REAL_PLAYER].name + ' : ' + this.message;
-                        } else {
-                            this.typeMessage = 'error';
-                            this.message = 'ERREUR : La commande est impossible à réaliser';
-                        }
-                    } else {
-                        this.typeMessage = 'error';
-                        this.message = "ERREUR : Ce n'est pas ton tour";
-                    }
+                case this.exchangeCommand: {
+                    this.executeExchangeCommand();
                     break;
                 }
-                case 'placer': {
-                    if (this.tourService.getTour()) {
-                        const messageSplitted = this.message.split(/\s/);
-
-                        const positionSplitted = messageSplitted[1].split(/([0-9]+)/);
-
-                        const position: Vec2 = {
-                            x: positionSplitted[0].charCodeAt(0) - 'a'.charCodeAt(0),
-                            y: Number(positionSplitted[1]) - 1,
-                        };
-                        const orientation = positionSplitted[2];
-
-                        if (this.placeComponent.place(position, orientation, messageSplitted[2], INDEX_REAL_PLAYER) === false) {
-                            this.typeMessage = 'error';
-                            this.message = 'ERREUR : Le placement est invalide';
-                        }
-                        this.passTurn.toggleTurn();
-                    } else {
-                        this.typeMessage = 'error';
-                        this.message = "ERREUR : Ce n'est pas ton tour";
-                    }
+                case this.placeCommand: {
+                    this.executePlaceCommand();
                     break;
                 }
-                default: {
+                default:
                     break;
-                }
             }
-        } else {
-            this.typeMessage = 'error';
         }
         this.command = '';
         this.listTypes.push(this.typeMessage);
@@ -180,23 +149,23 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
         this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
     }
 
-    switchTour() {
-        this.tour = this.tourService.getTour();
-        if (this.tour) {
+    switchturn() {
+        this.turn = this.turnService.getturn();
+        if (this.turn) {
             this.passTurn.toggleTurn();
             this.sendSystemMessage('!passer');
         } else {
-            this.sendSystemMessage('Commande impossible à realiser !');
+            this.sendSystemMessage('Commande impossible à réaliser!');
         }
     }
 
-    receiveAIdebugMessage(table: { word: string; nbPt: number }[]): void {
+    receiveAImessage(table: { word: string; nbPt: number }[]): void {
         this.debugMessage = table;
     }
 
     displayDebugMessage(): void {
         if (this.debugMessage.length === 0) {
-            this.sendSystemMessage('Aucune alternative de placement trouvé ');
+            this.sendSystemMessage('Aucune alternative de placement trouvées');
         } else {
             for (const alternative of this.debugMessage) {
                 const x: string = alternative.word;
@@ -206,6 +175,59 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.tourSubscription.unsubscribe();
+        this.turnSubscription.unsubscribe();
+    }
+
+    private executeDebugCommand(): void {
+        if (this.debugOn) {
+            this.sendSystemMessage('affichages de débogage activés');
+            this.displayDebugMessage();
+            this.debugOn = false;
+        } else {
+            this.sendSystemMessage('affichages de débogage désactivés');
+            this.debugOn = true;
+        }
+    }
+
+    private executeExchangeCommand(): void {
+        this.turn = this.turnService.getturn();
+        if (this.turn === true) {
+            const messageSplitted = this.message.split(/\s/);
+
+            if (this.swapComponent.swap(messageSplitted[1], INDEX_REAL_PLAYER)) {
+                this.message = this.playerService.getPlayers()[INDEX_REAL_PLAYER].name + ' : ' + this.message;
+            } else {
+                this.typeMessage = 'error';
+                this.message = 'ERREUR : La commande est impossible à réaliser';
+            }
+        } else {
+            this.typeMessage = 'error';
+            this.message = "ERREUR : Ce n'est pas ton turn";
+        }
+    }
+
+    private executePlaceCommand(): void {
+        this.turn = this.turnService.getturn();
+        if (this.turn === true) {
+            const messageSplitted = this.message.split(/\s/);
+
+            const positionSplitted = messageSplitted[1].split(/([0-9]+)/);
+
+            // Vecteur contenant la position de départ du mot qu'on veut placer
+            const position: Vec2 = {
+                x: positionSplitted[0].charCodeAt(0) - 'a'.charCodeAt(0),
+                y: Number(positionSplitted[1]) - 1,
+            };
+            const orientation = positionSplitted[2];
+
+            if (this.placeComponent.place(position, orientation, messageSplitted[2], INDEX_REAL_PLAYER) === false) {
+                this.typeMessage = 'error';
+                this.message = 'ERREUR : Le placement est invalide';
+            }
+            this.passTurn.toggleTurn();
+        } else {
+            this.typeMessage = 'error';
+            this.message = "ERREUR : Ce n'est pas ton turn";
+        }
     }
 }

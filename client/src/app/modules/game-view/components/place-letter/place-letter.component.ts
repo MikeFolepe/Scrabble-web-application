@@ -31,7 +31,7 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
     invalidLetters: boolean[] = []; // Array of the size of the word to place that tells which letter is invalid
 
     letterEmpty: string = '';
-    isFirstRound: boolean = true;
+    isFirstRound: boolean = false;
     isIAPlacementValid: boolean = false;
     message: string;
 
@@ -110,7 +110,7 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
                     this.playerService.removeLetter(word[i], indexPlayer);
                 }
                 // Display the letter on the scrabble board grid
-                const positionGrid = this.playerService.posTabToPosGrid(position.y + y, position.x + x);
+                const positionGrid = this.playerService.convertSizeFormat(position.y + y, position.x + x);
                 this.gridService.drawLetter(this.gridService.gridContextLayer, word[i], positionGrid, this.playerService.fontSize);
             }
             // If there's already a letter at this position, we verify that it's the same as the one we want to place
@@ -139,7 +139,7 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
                 // and add them back to the easel.
                 if (this.invalidLetters[i]) {
                     this.scrabbleBoard[position.x + x][position.y + y] = '';
-                    const positionGrid = this.playerService.posTabToPosGrid(position.y + y, position.x + x);
+                    const positionGrid = this.playerService.convertSizeFormat(position.y + y, position.x + x);
                     this.gridService.eraseLetter(this.gridService.gridContextLayer, positionGrid);
                     this.playerService.addLetterToEasel(word[i], indexPlayer);
                 }

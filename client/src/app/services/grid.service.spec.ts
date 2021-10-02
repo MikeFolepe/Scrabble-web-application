@@ -65,12 +65,17 @@ describe('GridService', () => {
     //     expect(lineToSpy).toHaveBeenCalledTimes(expectedCallTimes);
     // });
 
-    it(' drawGrid should color pixels on the canvas', () => {
+    it('drawGrid should color pixels on the canvas', () => {
         let imageData = service.gridContext.getImageData(0, 0, service.width, service.height).data;
         const beforeSize = imageData.filter((x) => x !== 0).length;
         service.drawGrid();
         imageData = service.gridContext.getImageData(0, 0, service.width, service.height).data;
         const afterSize = imageData.filter((x) => x !== 0).length;
         expect(afterSize).toBeGreaterThan(beforeSize);
+    });
+
+    it('should set grid context with right value when calling setGridContext()', () => {
+        service.setGridContext(ctxStub);
+        expect(service.gridContext).toEqual(ctxStub);
     });
 });

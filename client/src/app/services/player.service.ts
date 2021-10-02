@@ -78,7 +78,7 @@ export class PlayerService {
         for (let i = 0; i < BOARD_ROWS; i++) {
             for (let j = 0; j < BOARD_COLUMNS; j++) {
                 if (this.scrabbleBoard[i][j] !== '') {
-                    const positionGrid = this.posTabToPosGrid(j, i);
+                    const positionGrid = this.convertSizeFormat(j, i);
                     this.gridService.eraseLetter(this.gridService.gridContextLayer, positionGrid);
                     this.gridService.drawLetter(this.gridService.gridContextLayer, this.scrabbleBoard[i][j], positionGrid, this.fontSize);
                 }
@@ -131,12 +131,13 @@ export class PlayerService {
         }
         return INDEX_INVALID;
     }
+
     addScore(score: number, indexPlayer: number): void {
         this.players[indexPlayer].score += score;
     }
 
-    // Transpose the positions from 15x15 array to 750x750 grid
-    posTabToPosGrid(positionTabX: number, positionTabY: number): Vec2 {
+    // Convert the positions from 15x15 array to 750x750 grid
+    convertSizeFormat(positionTabX: number, positionTabY: number): Vec2 {
         return {
             x: positionTabX * CASE_SIZE + CASE_SIZE - DEFAULT_WIDTH / 2,
             y: positionTabY * CASE_SIZE + CASE_SIZE - DEFAULT_HEIGHT / 2,

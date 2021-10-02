@@ -13,29 +13,32 @@ export class PlayerIA extends Player {
     constructor(public id: number, public name: string, public letterTable: Letter[]) {
         super(id, name, letterTable);
         // Initialize the first concrete strategy to be executed later
-        this.setStrategy();
+        this.strategy = new SkipTurn();
     }
 
     play() {
         // Allow the ia to execute the current strategy whoever it is
         this.strategy.execute(this, this.context);
-        // Set the next strategy for next turn
+        // Set the next strategy for next tour
         this.setStrategy();
     }
 
-    setStrategy() {
-        // Number of seconds since 1st January 1970
-        let randomNumber = new Date().getTime();
-        // Random number [0, 10[ which corresponds on the placing strategies defined on the
-        // strategiesBallotBox urn in constants.ts
-        randomNumber = randomNumber % strategyBallotBox.length;
+    setContext(context: PlayerAIComponent) {
+        this.context = context;
+    }
 
+    replaceStrategy(strategy: PlayStrategy) {
+        this.strategy = strategy;
+        this.play();
+    }
+    private setStrategy() {
+        const randomNumber = this.generateRandomNumber(strategyBallotBox.length);
         switch (strategyBallotBox[randomNumber]) {
             case IAStrategy.Skip:
-                this.strategy = new PlaceLetters(this.pointingRange());
+                this.strategy = new SkipTurn();
                 break;
             case IAStrategy.Swap:
-                this.strategy = new PlaceLetters(this.pointingRange());
+                this.strategy = new SwapLetter();
                 break;
             case IAStrategy.Place:
                 // Get a pointing range object which extends PlaceLetters
@@ -47,7 +50,7 @@ export class PlayerIA extends Player {
         }
     }
 
-    pointingRange(): Range {
+    private pointingRange(): Range {
         let pointingRange: Range;
 
         let randomNumber = new Date().getTime();
@@ -69,16 +72,6 @@ export class PlayerIA extends Player {
                 pointingRange = { min: 0, max: 0 };
                 break;
         }
-
         return pointingRange;
-    }
-
-    setContext(context: PlayerAIComponent) {
-        this.context = context;
-    }
-
-    replaceStrategy(strategy: PlayStrategy) {
-        this.strategy = strategy;
-        this.play();
     }
 }

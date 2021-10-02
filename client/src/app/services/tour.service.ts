@@ -11,6 +11,7 @@ export class TourService {
     emitTour() {
         this.tourSubject.next(this.tour);
     }
+
     initializeTour(tour: boolean) {
         this.tour = tour;
         this.emitTour();
