@@ -3,7 +3,6 @@ import { PlayStrategy } from './abstract-strategy.model';
 import { PlayerIA } from './player-ia.model';
 export class SkipTurn extends PlayStrategy {
     execute(player: PlayerIA, context: PlayerAIComponent): void {
-        // do nothing
         // PlayerIAComponent will lunch a event that IA skipped
         context.skip();
     }

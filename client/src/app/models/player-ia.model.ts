@@ -10,11 +10,7 @@ import { SkipTurn } from './skip-turn-strategy.model';
 export class PlayerIA extends Player {
     context: PlayerAIComponent;
     strategy: PlayStrategy;
-    constructor(
-        public id: number,
-        public name: string,
-        public letterTable: Letter[], // public isTour: boolean, // public isIA: boolean
-    ) {
+    constructor(public id: number, public name: string, public letterTable: Letter[]) {
         super(id, name, letterTable);
         // Initialize the first concrete strategy to be executed later
         this.setStrategy();
@@ -46,7 +42,6 @@ export class PlayerIA extends Player {
                 this.strategy = new PlaceLetters(this.pointingRange());
                 break;
             default:
-                // For bug resolution
                 this.strategy = new SkipTurn();
                 break;
         }
@@ -55,7 +50,6 @@ export class PlayerIA extends Player {
     pointingRange(): Range {
         let pointingRange: Range;
 
-        // Number of seconds since 1st January 1970
         let randomNumber = new Date().getTime();
         // Random number [0, 10[ which corresponds on the placing strategies defined on the
         // placingBallotBox urn in constants.ts
@@ -72,7 +66,6 @@ export class PlayerIA extends Player {
                 pointingRange = { min: 13, max: 18 };
                 break;
             default:
-                // For bug resolution
                 pointingRange = { min: 0, max: 0 };
                 break;
         }
@@ -82,5 +75,10 @@ export class PlayerIA extends Player {
 
     setContext(context: PlayerAIComponent) {
         this.context = context;
+    }
+
+    replaceStrategy(strategy: PlayStrategy) {
+        this.strategy = strategy;
+        this.play();
     }
 }
