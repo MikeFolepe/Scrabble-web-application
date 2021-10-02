@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { DEFAULT_FONT_SIZE } from '@app/classes/constants';
+import { DEFAULT_FONT_SIZE, INDEX_REAL_PLAYER } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 // eslint-disable-next-line import/no-deprecated
 import { PlayerService } from '@app/services/player.service';
@@ -22,7 +22,7 @@ export class LetterEaselComponent implements OnInit {
     }
 
     update(): void {
-        this.letterEaselTab = this.playerService.getLettersEasel(0);
+        this.letterEaselTab = this.playerService.getLettersEasel(INDEX_REAL_PLAYER);
     }
 
     handleFontSizeEvent(fontSizeEvent: number) {

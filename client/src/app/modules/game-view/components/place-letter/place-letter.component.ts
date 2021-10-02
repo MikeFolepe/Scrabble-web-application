@@ -46,6 +46,7 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
 
     place(position: Vec2, orientation: string, word: string, indexPlayer = 1): boolean {
         // Remove accents from the word to place
+        let isRow = false;
         const wordNoAccents = word.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
         // If the command is possible according to the parameters
         // debugger;
@@ -64,8 +65,10 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
             let y = 0;
             if (orientation === 'v') {
                 x = i;
+                isRow = false;
             } else if (orientation === 'h') {
                 y = i;
+                isRow = true;
             }
             invalidLetters[i] = false;
 
@@ -88,7 +91,7 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
         }
         this.isIAPlacementValid = true;
 
-        const finalResult: ScoreValidation = this.wordValidator.validateAllWordsOnBoard(this.scrabbleBoard, isEaselSize);
+        const finalResult: ScoreValidation = this.wordValidator.validateAllWordsOnBoard(this.scrabbleBoard, isEaselSize, isRow);
         this.isFirstRound = false;
         if (finalResult.validation === false) {
             setTimeout(() => {
@@ -114,7 +117,6 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
         } else {
             this.playerService.addScore(finalResult.score, indexPlayer);
             this.playerService.updateScrabbleBoard(this.scrabbleBoard);
-            console.log(this.scrabbleBoard);
             this.playerService.refillEasel(indexPlayer); // Fill the easel with new letters from the reserve
             this.letterService.writeMessage('mise a jour');
             this.isFirstRound = false;

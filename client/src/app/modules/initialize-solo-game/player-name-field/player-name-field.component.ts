@@ -1,3 +1,4 @@
+/* eslint-disable no-invalid-this */
 import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { Range } from '@app/classes/range';
