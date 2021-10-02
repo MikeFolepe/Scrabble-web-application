@@ -68,7 +68,6 @@ export class PlayerIAComponent implements OnInit {
 
     play() {
         // debugger;
-        console.log(this.iaPlayer.letterTable);
         if (this.tourService.getTour() === false) {
             setTimeout(() => {
                 this.iaPlayer.play();
@@ -86,8 +85,6 @@ export class PlayerIAComponent implements OnInit {
     }
 
     swap() {
-        console.log('swap');
-        console.log(this.iaPlayer.letterTable);
         this.iaSwapped.emit();
         if (this.tourService.getTour() === false) {
             setTimeout(() => {
@@ -97,7 +94,6 @@ export class PlayerIAComponent implements OnInit {
     }
 
     place(object: { start: Vec2; orientation: string; word: string }, possibility: { word: string; nbPt: number }[]) {
-        console.log(this.iaPlayer.letterTable);
         this.iaPlaced.emit(object);
         this.iaPossibility.emit(possibility);
         setTimeout(() => {

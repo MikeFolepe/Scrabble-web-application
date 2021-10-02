@@ -115,7 +115,6 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
         } else {
             this.playerService.addScore(finalResult.score, indexPlayer);
             this.playerService.updateScrabbleBoard(this.scrabbleBoard);
-            console.log(this.scrabbleBoard);
             this.playerService.refillEasel(indexPlayer); // Fill the easel with new letters from the reserve
             this.letterService.writeMessage('mise a jour');
             this.isFirstRound = false;

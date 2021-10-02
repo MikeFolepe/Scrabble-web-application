@@ -51,7 +51,6 @@ export class InformationPanelComponent implements OnDestroy, OnInit {
         this.playerService.addPlayer(player);
         player = new PlayerIA(2, this.gameSettings.playersName[1], this.letterService.getRandomLetters());
         this.playerService.addPlayer(player);
-        console.log(this.playerService.getPlayers());
     }
 
     // function to initialize the boolean specifying which player will start first
