@@ -4,7 +4,7 @@ import { PlayStrategy } from './abstract-strategy.model';
 import { PlayerIA } from './player-ia.model';
 export class SwapLetter extends PlayStrategy {
     execute(player: PlayerIA, context: PlayerIAComponent): void {
-        const numberOfLetterToChange = new Date().getTime() % EASEL_SIZE;
+        const numberOfLetterToChange = Math.floor(Math.random() * EASEL_SIZE);
 
         // If change not possible skip
         if (numberOfLetterToChange > context.letterService.getReserveSize()) {
@@ -18,8 +18,9 @@ export class SwapLetter extends PlayStrategy {
             indexOfLetterToBeChanged.push(Math.floor(Math.random() * EASEL_SIZE));
         }
 
-        // For each letter choosen to be changed : 1. add it to reserve ; 2.get new letter
+        // For each letter chosen to be changed : 1. add it to reserve ; 2.get new letter
         for (const index of indexOfLetterToBeChanged) {
+            // Potential issue with the use of EASEL_SIZE instead of letterTable.length
             context.letterService.addLetterToReserve(player.letterTable[indexOfLetterToBeChanged[index]].value);
             player.letterTable[indexOfLetterToBeChanged[index]] = context.letterService.getRandomLetter();
         }

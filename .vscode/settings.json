@@ -10,7 +10,7 @@
     "eslint.workingDirectories": ["./client", "./server"],
     "eslint.probe": ["javascript", "typescript", "html", "vue", "markdown"],
     "eslint.validate": ["javascript", "typescript", "html", "vue", "markdown"],
-    "cSpell.words": ["lightyellow"],
+    "cSpell.words": ["chatbox", "lightyellow"],
     "[typescript]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },

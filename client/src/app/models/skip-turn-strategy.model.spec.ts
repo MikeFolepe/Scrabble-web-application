@@ -3,7 +3,7 @@ import { PlayerIAComponent } from '@app/modules/game-view/components/player-ia/p
 import { PlayerIA } from './player-ia.model';
 import { SkipTurn } from './skip-turn-strategy.model';
 
-describe('PlayerIA', () => {
+describe('SkipTurn', () => {
     const id = 0;
     const name = 'Player 1';
     const letterTable = [

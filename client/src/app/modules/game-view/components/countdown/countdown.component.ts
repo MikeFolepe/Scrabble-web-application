@@ -20,14 +20,14 @@ export class CountdownComponent implements OnInit, OnDestroy {
     secondsInt: number;
     message: string;
     passSubscription: Subscription = new Subscription();
-    constructor(private passtourService: PassTourService) {}
+    constructor(private passTourService: PassTourService) {}
 
     ngOnInit(): void {
         setTimeout(() => {
             this.setTimer();
         }, ONESECOND_TIME);
-        this.passSubscription = this.passtourService.currentMessage.subscribe((message) => (this.message = message));
-        this.passtourService.updateTour(this.stopTimer.bind(this));
+        this.passSubscription = this.passTourService.currentMessage.subscribe((message) => (this.message = message));
+        this.passTourService.updateTour(this.stopTimer.bind(this));
     }
 
     // Set time always after a define interval of 1second and repeat it

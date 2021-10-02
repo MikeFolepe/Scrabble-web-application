@@ -32,8 +32,13 @@ export class ChatboxComponent implements OnInit, OnDestroy {
 
     listMessages: string[] = [];
     listTypes: string[] = [];
-    debugmessage: { word: string; nbPt: number }[] = [{ word: 'papier', nbPt: 6 }];
-    // Table to stock debug message from IA test avec des trings aléatoire
+    debugMessage: { word: string; nbPt: number }[];
+    // Table to stock debug message from IA test avec des strings aléatoires
+
+    private readonly debugCommand = 'debug';
+    private readonly passCommand = 'passer';
+    private readonly exchangeCommand = 'echanger';
+    private readonly placeCommand = 'placer';
 
     constructor(private tourService: TourService, private playerService: PlayerService) {}
 
@@ -43,91 +48,46 @@ export class ChatboxComponent implements OnInit, OnDestroy {
         });
         this.tourService.emitTour();
     }
-    handleKeyEvent(event: KeyboardEvent) {
+
+    handleKeyEvent(event: KeyboardEvent): void {
         if (event.key === 'Enter') {
             event.preventDefault();
-            this.sendSystemMessage('Message du système');
-            this.sendOpponentMessage('Le joueur virtuel fait...');
             this.sendPlayerCommand();
             this.message = ''; // Clear l'input
 
             setTimeout(() => {
                 // Timeout is used to update the scroll after the last element added
-                this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
+                this.scrollToBottom();
             }, 1);
         }
     }
 
     sendPlayerCommand() {
-        if (this.isValid()) {
+        if (!this.isValid()) {
+            this.typeMessage = 'error';
+        } else {
             this.typeMessage = 'player';
             // If the command is valid, we call the respective command from here
             switch (this.command) {
-                case 'debug': {
-                    if (this.debugOn) {
-                        this.sendSystemMessage('affichages de débogage activés');
-                        this.displaymessage();
-                        this.debugOn = false;
-                    } else {
-                        this.sendSystemMessage('affichages de débogage désactivés');
-                        this.debugOn = true;
-                    }
+                case this.debugCommand: {
+                    this.executeDebugCommand();
                     break;
                 }
-                case 'passer': {
+                case this.passCommand: {
                     this.switchTour();
                     break;
                 }
-                case 'echanger': {
-                    // this.getTour();
-                    this.tour = this.tourService.getTour();
-                    if (this.tour === true) {
-                        const messageSplitted = this.message.split(/\s/);
-
-                        if (this.swapComponent.swap(messageSplitted[1], INDEX_REAL_PLAYER)) {
-                            this.message = this.playerService.getPlayers()[INDEX_REAL_PLAYER].name + ' : ' + this.message;
-                        } else {
-                            this.typeMessage = 'error';
-                            this.message = 'ERREUR : La commande est impossible à réaliser';
-                        }
-                    } else {
-                        this.typeMessage = 'error';
-                        this.message = "ERREUR : Ce n'est pas ton tour";
-                    }
+                case this.exchangeCommand: {
+                    this.executeExchangeCommand();
                     break;
                 }
-                case 'placer': {
-                    this.tour = this.tourService.getTour();
-                    if (this.tour === true) {
-                        const messageSplitted = this.message.split(/\s/);
-
-                        const positionSplitted = messageSplitted[1].split(/([0-9]+)/);
-
-                        // Vecteur contenant la position de départ du mot qu'on veut placer
-                        const position: Vec2 = {
-                            x: positionSplitted[0].charCodeAt(0) - 'a'.charCodeAt(0),
-                            y: Number(positionSplitted[1]) - 1,
-                        };
-                        const orientation = positionSplitted[2];
-
-                        if (this.placeComponent.place(position, orientation, messageSplitted[2], INDEX_REAL_PLAYER) === false) {
-                            this.typeMessage = 'error';
-                            this.message = 'ERREUR : Le placement est invalide';
-                        }
-                        this.pass.toogleTour();
-                    } else {
-                        this.typeMessage = 'error';
-                        this.message = "ERREUR : Ce n'est pas ton tour";
-                    }
+                case this.placeCommand: {
+                    this.executePlaceCommand();
                     break;
                 }
-                default: {
+                default:
                     break;
-                }
             }
-        } else {
-            // If command is invalid
-            this.typeMessage = 'error';
         }
         this.command = '';
         // Add message and its type to the logs
@@ -178,13 +138,13 @@ export class ChatboxComponent implements OnInit, OnDestroy {
         let valid = true;
 
         if (regexDebug.test(this.message)) {
-            this.command = 'debug';
+            this.command = this.debugCommand;
         } else if (regexPasser.test(this.message)) {
-            this.command = 'passer';
+            this.command = this.passCommand;
         } else if (regexEchanger.test(this.message)) {
-            this.command = 'echanger';
+            this.command = this.exchangeCommand;
         } else if (regexPlacer.test(this.message)) {
-            this.command = 'placer';
+            this.command = this.placeCommand;
         } else {
             valid = false;
             this.message = 'ERREUR : La syntaxe est invalide';
@@ -199,25 +159,82 @@ export class ChatboxComponent implements OnInit, OnDestroy {
     switchTour() {
         this.tour = this.tourService.getTour();
         if (this.tour === true) {
-            this.pass.toogleTour();
+            this.pass.toggleTour();
             this.sendSystemMessage('!passer');
         } else {
-            this.sendSystemMessage('Commande impossible à realiser !');
+            this.sendSystemMessage('Commande impossible à réaliser!');
         }
     }
 
     receiveAImessage(table: { word: string; nbPt: number }[]): void {
-        this.debugmessage = table;
+        this.debugMessage = table;
     }
 
-    displaymessage(): void {
-        for (const alternative of this.debugmessage) {
-            const x: string = alternative.word;
-            this.sendSystemMessage(x + ': -- ' + alternative.nbPt.toString());
+    displayDebugMessage(): void {
+        if (this.debugMessage.length === 0) {
+            this.sendSystemMessage('Aucune alternative de placement trouvées');
+        } else {
+            for (const alternative of this.debugMessage) {
+                const x: string = alternative.word;
+                this.sendSystemMessage(x + ': -- ' + alternative.nbPt.toString());
+            }
         }
     }
 
     ngOnDestroy() {
         this.tourSubscription.unsubscribe();
+    }
+
+    private executeDebugCommand(): void {
+        if (this.debugOn) {
+            this.sendSystemMessage('affichages de débogage activés');
+            this.displayDebugMessage();
+            this.debugOn = false;
+        } else {
+            this.sendSystemMessage('affichages de débogage désactivés');
+            this.debugOn = true;
+        }
+    }
+
+    private executeExchangeCommand(): void {
+        this.tour = this.tourService.getTour();
+        if (this.tour === true) {
+            const messageSplitted = this.message.split(/\s/);
+
+            if (this.swapComponent.swap(messageSplitted[1], INDEX_REAL_PLAYER)) {
+                this.message = this.playerService.getPlayers()[INDEX_REAL_PLAYER].name + ' : ' + this.message;
+            } else {
+                this.typeMessage = 'error';
+                this.message = 'ERREUR : La commande est impossible à réaliser';
+            }
+        } else {
+            this.typeMessage = 'error';
+            this.message = "ERREUR : Ce n'est pas ton tour";
+        }
+    }
+
+    private executePlaceCommand(): void {
+        this.tour = this.tourService.getTour();
+        if (this.tour === true) {
+            const messageSplitted = this.message.split(/\s/);
+
+            const positionSplitted = messageSplitted[1].split(/([0-9]+)/);
+
+            // Vecteur contenant la position de départ du mot qu'on veut placer
+            const position: Vec2 = {
+                x: positionSplitted[0].charCodeAt(0) - 'a'.charCodeAt(0),
+                y: Number(positionSplitted[1]) - 1,
+            };
+            const orientation = positionSplitted[2];
+
+            if (this.placeComponent.place(position, orientation, messageSplitted[2], INDEX_REAL_PLAYER) === false) {
+                this.typeMessage = 'error';
+                this.message = 'ERREUR : Le placement est invalide';
+            }
+            this.pass.toggleTour();
+        } else {
+            this.typeMessage = 'error';
+            this.message = "ERREUR : Ce n'est pas ton tour";
+        }
     }
 }

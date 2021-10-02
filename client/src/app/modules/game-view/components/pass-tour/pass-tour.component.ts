@@ -11,13 +11,13 @@ export class PassTourComponent implements OnInit, OnDestroy {
     message: string;
     passSubscription: Subscription = new Subscription();
 
-    constructor(private passtourService: PassTourService) {}
+    constructor(private passTourService: PassTourService) {}
     ngOnInit(): void {
-        this.passSubscription = this.passtourService.currentMessage.subscribe((message) => (this.message = message));
+        this.passSubscription = this.passTourService.currentMessage.subscribe((message) => (this.message = message));
     }
 
-    toogleTour(): void {
-        this.passtourService.writeMessage('!passer');
+    toggleTour(): void {
+        this.passTourService.writeMessage('!passer');
     }
     ngOnDestroy() {
         this.passSubscription.unsubscribe();

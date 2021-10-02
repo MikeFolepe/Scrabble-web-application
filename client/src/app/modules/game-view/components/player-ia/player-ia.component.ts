@@ -41,7 +41,7 @@ export class PlayerIAComponent implements OnInit {
         public letterService: LetterService,
         public playerService: PlayerService,
         public tourService: TourService,
-        public passtourService: PassTourService,
+        public passTourService: PassTourService,
     ) {}
 
     ngOnInit(): void {
@@ -53,7 +53,7 @@ export class PlayerIAComponent implements OnInit {
         this.playerService.emitPlayers();
         // Set the playerIA context so that the player can lunch event
         this.iaPlayer.setContext(this);
-        // this.passSubscription = this.passtourService.currentMessage.subscribe((message) => (this.message = message));
+        // this.passSubscription = this.passTourService.currentMessage.subscribe((message) => (this.message = message));
         this.tourSubscription = this.tourService.tourSubject.subscribe((tourSubject: boolean) => {
             this.tour = tourSubject;
         });
@@ -80,7 +80,7 @@ export class PlayerIAComponent implements OnInit {
         this.iaSkipped.emit();
         if (this.tourService.getTour() === false) {
             setTimeout(() => {
-                this.passTurn.toogleTour();
+                this.passTurn.toggleTour();
             }, 5000);
         }
     }
@@ -91,7 +91,7 @@ export class PlayerIAComponent implements OnInit {
         this.iaSwapped.emit();
         if (this.tourService.getTour() === false) {
             setTimeout(() => {
-                this.passTurn.toogleTour();
+                this.passTurn.toggleTour();
             }, 5000);
         }
     }
@@ -101,7 +101,7 @@ export class PlayerIAComponent implements OnInit {
         this.iaPlaced.emit(object);
         this.iaPossibility.emit(possibility);
         setTimeout(() => {
-            this.passTurn.toogleTour();
+            this.passTurn.toggleTour();
         }, 5000);
     }
 
