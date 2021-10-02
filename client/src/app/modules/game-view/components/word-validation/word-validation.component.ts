@@ -45,9 +45,7 @@ export class WordValidationComponent {
     addToPlayedWords(word: string, positions: string[], map: Map<string, string[]>): void {
         let mapValues = new Array<string>();
         if (map.has(word)) {
-            if (map.get(word) !== undefined) {
-                mapValues = map.get(word) as string[];
-            }
+            mapValues = map.get(word) as string[];
             for (const position of positions) {
                 mapValues.push(position);
             }
@@ -69,21 +67,15 @@ export class WordValidationComponent {
     checkIfNotPlayed(word: string, positions: string[]): boolean {
         let result = true;
         if (this.playedWords.has(word)) {
-            if (this.playedWords.get(word) !== undefined) {
-                const mapValues = this.playedWords.get(word) as string[];
-                result = this.containsArray(mapValues, positions);
-                return !result;
-            }
-        } else if (this.playedWords.size === 0) {
-            for (const pos of this.newPlayedWords.values()) {
-                result = this.containsArray(pos, positions);
-                return !result;
-            }
+            const mapValues = this.playedWords.get(word) as string[];
+            result = this.containsArray(mapValues, positions);
+            return !result;
         }
+
         return result;
     }
 
-    getWordPositionsHorizontal(word: string, index: number): string[] {
+    getWordHorizontalPositions(word: string, index: number): string[] {
         const positions: string[] = new Array<string>();
         for (const char of word) {
             const indexChar = this.newWords.indexOf(char) + 1;
@@ -122,7 +114,7 @@ export class WordValidationComponent {
 
             for (const word of words) {
                 if (word.length >= 2) {
-                    this.newPositions = isRow ? this.getWordPositionsHorizontal(word, x) : this.getWordPositionsVertical(word, x);
+                    this.newPositions = isRow ? this.getWordHorizontalPositions(word, x) : this.getWordPositionsVertical(word, x);
                     if (this.checkIfNotPlayed(word, this.newPositions)) {
                         this.addToPlayedWords(word, this.newPositions, this.newPlayedWords);
                     }
