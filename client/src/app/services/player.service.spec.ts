@@ -284,10 +284,10 @@ describe('PlayerService', () => {
         playerIA.letterTable = [];
         service['players'].push(playerIA);
 
-        expect(service.easelContainsLetter('A', 0)).toBeTrue();
-        expect(service.easelContainsLetter('B', 0)).toBeTrue();
-        expect(service.easelContainsLetter('C', 0)).toBeFalse();
-        expect(service.easelContainsLetter('A', 1)).toBeFalse();
+        expect(service.easelContainsLetter('A', 0, 0)).toBeTrue();
+        expect(service.easelContainsLetter('B', 0, 0)).toBeTrue();
+        expect(service.easelContainsLetter('C', 0, 0)).toBeFalse();
+        expect(service.easelContainsLetter('A', 0, 1)).toBeFalse();
     });
 
     it('should add score when addScore() is called', () => {

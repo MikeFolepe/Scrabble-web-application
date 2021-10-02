@@ -5,7 +5,7 @@ import { PlayerIA } from '@app/models/player-ia.model';
 import { Player } from '@app/models/player.model';
 import { PassTurnComponent } from '@app/modules/game-view/components/pass-turn/pass-turn.component';
 import { LetterService } from '@app/services/letter.service';
-import { PassTurnService } from '@app/services/pass-turn.service';
+import { PassTourService } from '@app/services/pass-turn.service';
 import { PlayerService } from '@app/services/player.service';
 import { TourService } from '@app/services/tour.service';
 import { Subscription } from 'rxjs';
@@ -36,7 +36,7 @@ export class PlayerAIComponent implements OnInit {
         public letterService: LetterService,
         public playerService: PlayerService,
         public tourService: TourService,
-        public passTurnService: PassTurnService,
+        public passTourService: PassTourService,
     ) {}
 
     ngOnInit(): void {

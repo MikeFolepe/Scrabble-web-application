@@ -6,6 +6,7 @@ import { PlayStrategy } from './abstract-strategy.model';
 import { PlaceLetters } from './place-letter-strategy.model';
 import { Player } from './player.model';
 import { SkipTurn } from './skip-turn-strategy.model';
+import { SwapLetter } from './swap-letter-strategy.model';
 
 export class PlayerIA extends Player {
     context: PlayerAIComponent;
@@ -73,5 +74,9 @@ export class PlayerIA extends Player {
                 break;
         }
         return pointingRange;
+    }
+
+    private generateRandomNumber(maxValue: number): number {
+        return Math.floor(Number(Math.random()) * maxValue);
     }
 }

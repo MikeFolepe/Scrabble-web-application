@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
-import { PassTurnService } from './pass-turn.service';
+import { PassTourService } from './pass-turn.service';
 
-describe('PassTurnService', () => {
-    let service: PassTurnService;
+describe('PassTourService', () => {
+    let service: PassTourService;
 
     beforeEach(() => {
         TestBed.configureTestingModule({});
-        service = TestBed.inject(PassTurnService);
+        service = TestBed.inject(PassTourService);
     });
 
     it('should be created', () => {

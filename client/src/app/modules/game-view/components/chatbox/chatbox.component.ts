@@ -5,7 +5,7 @@ import { PassTurnComponent } from '@app/modules/game-view/components/pass-turn/p
 import { PlaceLetterComponent } from '@app/modules/game-view/components/place-letter/place-letter.component';
 import { SwapLetterComponent } from '@app/modules/game-view/components/swap-letter/swap-letter.component';
 import { PlayerService } from '@app/services/player.service';
-import { TurnService } from '@app/services/turn.service';
+import { TourService } from '@app/services/tour.service';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -36,13 +36,13 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
     private readonly exchangeCommand = 'echanger';
     private readonly placeCommand = 'placer';
 
-    constructor(private turnService: TurnService, private playerService: PlayerService) {}
+    constructor(private tourService: TourService, private playerService: PlayerService) {}
 
     ngOnInit(): void {
-        this.turnSubscription = this.turnService.turnSubject.subscribe((turnSubject: boolean) => {
+        this.turnSubscription = this.tourService.tourSubject.subscribe((turnSubject: boolean) => {
             this.turn = turnSubject;
         });
-        this.turnService.emitturn();
+        this.tourService.emitTour();
     }
 
     handleKeyEvent(event: KeyboardEvent): void {
@@ -69,7 +69,7 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
                     break;
                 }
                 case this.passCommand: {
-                    this.switchturn();
+                    this.switchTurn();
                     break;
                 }
                 case this.exchangeCommand: {
@@ -149,8 +149,8 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
         this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
     }
 
-    switchturn() {
-        this.turn = this.turnService.getturn();
+    switchTurn() {
+        this.turn = this.tourService.getTour();
         if (this.turn) {
             this.passTurn.toggleTurn();
             this.sendSystemMessage('!passer');
@@ -190,7 +190,7 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
     }
 
     private executeExchangeCommand(): void {
-        this.turn = this.turnService.getturn();
+        this.turn = this.tourService.getTour();
         if (this.turn === true) {
             const messageSplitted = this.message.split(/\s/);
 
@@ -207,7 +207,7 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
     }
 
     private executePlaceCommand(): void {
-        this.turn = this.turnService.getturn();
+        this.turn = this.tourService.getTour();
         if (this.turn === true) {
             const messageSplitted = this.message.split(/\s/);
 

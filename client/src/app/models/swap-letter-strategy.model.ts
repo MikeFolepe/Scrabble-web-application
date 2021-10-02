@@ -4,11 +4,7 @@ import { PlayStrategy } from './abstract-strategy.model';
 import { PlayerIA } from './player-ia.model';
 import { SkipTurn } from './skip-turn-strategy.model';
 export class SwapLetter extends PlayStrategy {
-<<<<<<< HEAD
     execute(player: PlayerIA, context: PlayerAIComponent): void {
-=======
-    execute(player: PlayerIA, context: PlayerIAComponent): void {
->>>>>>> 320a7d5b1c801840bbb4d288d77c42c6a1ed3805
         const numberOfLetterToChange = Math.floor(Math.random() * EASEL_SIZE);
 
         // If change not possible skip

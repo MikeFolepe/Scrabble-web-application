@@ -23,11 +23,11 @@
 </div>
 <div>
     <!-- Catch event from player-IA by sending message witch catch by chatbox and add to chatbox -->
-    <app-player-ia (iaPossibility)="receiveAIdebugMessage($event)">
+    <app-player-ia (iaPossibility)="receiveAImessage($event)">
     </app-player-ia>
 </div>
 <div>
-    <button mat-raised-button color="primary" id="Pass-button" [disabled]="!tour" (click)="switchTour()">Passer
+    <button mat-raised-button color="primary" id="Pass-button" [disabled]="!turn" (click)="switchTurn()">Passer
         tour</button>
 </div>
 <app-pass-turn></app-pass-turn>

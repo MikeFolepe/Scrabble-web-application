@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { ONE_SECOND_TIME } from '@app/classes/constants';
-import { PassTurnService } from '@app/services/pass-turn.service';
+import { PassTourService } from '@app/services/pass-turn.service';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -20,14 +20,14 @@ export class CountDownComponent implements OnInit, OnDestroy {
     secondsInt: number;
     message: string;
     passSubscription: Subscription = new Subscription();
-    constructor(private passTurnService: PassTurnService) {}
+    constructor(private passTourService: PassTourService) {}
 
     ngOnInit(): void {
         setTimeout(() => {
             this.setTimer();
         }, ONE_SECOND_TIME);
-        this.passSubscription = this.passTurnService.currentMessage.subscribe((message) => (this.message = message));
-        this.passTurnService.updateTurn(this.stopTimer.bind(this));
+        this.passSubscription = this.passTourService.currentMessage.subscribe((message) => (this.message = message));
+        this.passTourService.updateTurn(this.stopTimer.bind(this));
     }
 
     // Set time always after a define interval of 1second and repeat it
