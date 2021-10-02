@@ -1,4 +1,3 @@
-/* eslint-disable complexity */
 import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSX, CENTRAL_CASE_POSY, dictionary, RESERVE } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { Range } from '@app/classes/range';
