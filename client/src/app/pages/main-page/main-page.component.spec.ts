@@ -33,17 +33,30 @@ describe('MainPageComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it("should have as title 'LOG2990'", () => {
-        expect(component.title).toEqual('LOG2990');
+    it('should be able to reset radio buttons', () => {
+        component.selectedMode = component.games[0];
+        fixture.detectChanges();
+
+        component.resetRadios();
+        fixture.detectChanges();
+
+        expect(component.selectedMode).toBeUndefined();
     });
 
-    it('should call basicGet when calling getMessagesFromServer', () => {
-        component.getMessagesFromServer();
-        expect(communicationServiceSpy.basicGet).toHaveBeenCalled();
-    });
+    it('should disable buttons if nothing is selected', () => {
+        const resetButton = fixture.debugElement.nativeElement.querySelector('#resetButton');
+        const playButton = fixture.debugElement.nativeElement.querySelector('#playButton');
 
-    it('should call basicPost when calling sendTimeToServer', () => {
-        component.sendTimeToServer();
-        expect(communicationServiceSpy.basicPost).toHaveBeenCalled();
+        component.selectedMode = component.modes[0];
+        fixture.detectChanges();
+
+        expect(resetButton.disabled).toBeFalsy();
+        expect(playButton.disabled).toBeFalsy();
+
+        component.resetRadios();
+        fixture.detectChanges();
+
+        expect(resetButton.disabled).toBeTruthy();
+        expect(playButton.disabled).toBeTruthy();
     });
 });

@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { PlayerNameFieldComponent } from './player-name-field.component';
 
 describe('PlayerNameFieldComponent', () => {
@@ -14,10 +15,16 @@ describe('PlayerNameFieldComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(PlayerNameFieldComponent);
         component = fixture.componentInstance;
+        component.parentForm = new FormGroup({
+            playerName: new FormControl('', Validators.required),
+            minuteInput: new FormControl('', Validators.required),
+            secondInput: new FormControl('', Validators.required),
+            levelInput: new FormControl('', Validators.required),
+        });
         fixture.detectChanges();
     });
 
-    it('should create', () => {
+    it('Should create', () => {
         expect(component).toBeTruthy();
     });
 });

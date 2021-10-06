@@ -61,4 +61,5 @@ describe('CommunicationService', () => {
         expect(req.request.method).toBe('GET');
         req.error(new ErrorEvent('Random error occurred'));
     });
+    // });
 });

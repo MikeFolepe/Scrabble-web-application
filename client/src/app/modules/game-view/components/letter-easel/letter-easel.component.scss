@@ -1,26 +1,31 @@
-mat-grid-list{
-    position:absolute;
-    bottom : 30em;
-    left: 83.5em;
-    width: 25em;
-}
-
-mat-grid-tile{
-    border: 1px solid black;
-    background-color: lightgreen;
-}
-
-p{
+p {
+    color: #00856B;
     position: relative;
-    top: 40%;
-    left: 20%;
+    float: right;
 }
 
-h2{
-    font-size: 20px;
-}
-
-h1{
-    text-shadow: 0 0 3px lightyellow;
+h2 {
+    color: #00856B;
+    font-size: 25px;
     text-align: center;
+    margin: 0px 0 0px;
+}
+
+.easel-container {
+    height: 33.75em;
+    width: 5.25em;
+    background-color: teal;
+    border: 1em solid teal;
+    border-radius: 6px;
+}
+
+.letter-container {
+    height: 3.75em;
+    width: 3.75em;
+    background-color: tan;
+    border: 0.25em solid tan;
+    border-radius: 6px;
+    margin: 0.5em 0.5em 0.5em 0.5em;
+    box-shadow: 4px 4px 8px -3px #000000;
+    
 }
