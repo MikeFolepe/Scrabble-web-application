@@ -36,7 +36,8 @@ describe('SwapLetter', () => {
 
     it('should call the right function when execute() is called', () => {
         spyOn(context, 'swap');
-        spyOn(context.letterService, 'addLetterToReserve');
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        spyOn<any>(context.letterService, 'addLetterToReserve');
         swapStrategy.execute(playerIA, context);
         expect(context.swap).toHaveBeenCalledTimes(1);
     });

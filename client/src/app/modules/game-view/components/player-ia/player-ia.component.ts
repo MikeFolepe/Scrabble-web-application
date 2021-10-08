@@ -7,7 +7,7 @@ import { PassTourService } from '@app/services/pass-tour.service';
 import { PlayerService } from '@app/services/player.service';
 import { TourService } from '@app/services/tour.service';
 import { Subscription } from 'rxjs';
-import { PassTourComponent } from '../pass-tour/pass-tour.component';
+import { PassTourComponent } from '@app/modules/game-view/components/pass-tour/pass-tour.component';
 
 const WAITING_TIME = 5000;
 

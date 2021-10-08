@@ -19,7 +19,9 @@
         {{ games[selectedGameIndex] }}<br />
         {{ selectedMode }}
     </p>
-    <button class="button" id="resetButton" mat-raised-button [disabled]="!selectedMode" color="primary" (click)="resetRadios()">Effacer mon choix</button>
+    <button class="button" id="resetButton" mat-raised-button [disabled]="!selectedMode" color="primary" (click)="resetRadios()">
+        Effacer mon choix
+    </button>
     <br />
     <div class="justified">
         <button class="button" mat-raised-button color="primary" routerLink="/material">Meilleurs scores</button>
