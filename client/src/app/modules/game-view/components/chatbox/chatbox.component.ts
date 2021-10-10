@@ -62,7 +62,7 @@ export class ChatboxComponent implements OnInit, OnDestroy {
                 case 'debug': {
                     // this.debugService.debugActivate.push('debug');
                     this.debugService.switchDebugMode();
-                    if (this.debugService.isDebugOn()) {
+                    if (this.debugService.isDebugOn) {
                         this.sendSystemMessage('affichages de débogage activés');
                         this.displayDebugMessage();
                     } else {

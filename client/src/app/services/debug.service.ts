@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 export class DebugService {
     debugServiceMessage: { word: string; nbPt: number }[];
     debugActivate: string[] = [];
-    isDebug: boolean = false;
+    isDebugOn: boolean = false;
 
     receiveAIDebugPossibilities(table: { word: string; nbPt: number }[]): void {
         this.debugServiceMessage = table;
@@ -17,14 +17,10 @@ export class DebugService {
     }
 
     switchDebugMode(): void {
-        if (!this.isDebug) {
-            this.isDebug = true;
+        if (this.isDebugOn) {
+            this.isDebugOn = false;
             return;
         }
-        this.isDebug = false;
-    }
-
-    isDebugOn(): boolean {
-        return this.isDebug;
+        this.isDebugOn = true;
     }
 }

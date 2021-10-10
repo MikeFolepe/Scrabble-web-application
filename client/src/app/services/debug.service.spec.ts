@@ -36,20 +36,19 @@ describe('DebugService', () => {
     });
 
     it('should be switch the debug mode at false', () => {
-        service.isDebug = true;
+        service.isDebugOn = true;
         service.switchDebugMode();
-        expect(service.isDebug).toBeFalsy();
+        expect(service.isDebugOn).toBeFalsy();
     });
 
     it('should be switch the debug mode at true', () => {
-        service.isDebug = false;
+        service.isDebugOn = false;
         service.switchDebugMode();
-        expect(service.isDebug).toBeTruthy();
+        expect(service.isDebugOn).toBeTruthy();
     });
 
     it('should be return the state of debug mode', () => {
-        service.isDebug = true;
-        service.isDebugOn();
-        expect(service.isDebug).toEqual(service.isDebug);
+        service.isDebugOn = true;
+        expect(service.isDebugOn).toEqual(service.isDebugOn);
     });
 });
