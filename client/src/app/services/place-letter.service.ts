@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/prefer-for-of */
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import {
     BOARD_COLUMNS,
     BOARD_ROWS,
@@ -15,17 +14,13 @@ import { Vec2 } from '@app/classes/vec2';
 import { GridService } from '@app/services/grid.service';
 import { LetterService } from '@app/services/letter.service';
 import { PlayerService } from '@app/services/player.service';
+import { WordValidationService } from '@app/services/word-validation.service';
 import { Subscription } from 'rxjs';
-// eslint-disable-next-line no-restricted-imports
-import { WordValidationComponent } from '../word-validation/word-validation.component';
 
-@Component({
-    selector: 'app-place-letter',
-    templateUrl: './place-letter.component.html',
-    styleUrls: ['./place-letter.component.scss'],
+@Injectable({
+    providedIn: 'root',
 })
-export class PlaceLetterComponent implements OnInit, OnDestroy {
-    @ViewChild(WordValidationComponent) wordValidator: WordValidationComponent;
+export class PlaceLetterService implements OnDestroy {
     viewSubscription: Subscription = new Subscription();
 
     scrabbleBoard: string[][]; // 15x15 array
@@ -36,7 +31,12 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
     isIAPlacementValid: boolean = false;
     message: string;
 
-    constructor(private playerService: PlayerService, private gridService: GridService, private letterService: LetterService) {
+    constructor(
+        private playerService: PlayerService,
+        private gridService: GridService,
+        private letterService: LetterService,
+        private wordValidationService: WordValidationService,
+    ) {
         this.scrabbleBoard = []; // Initializes the array with empty letters
         for (let i = 0; i < BOARD_ROWS; i++) {
             this.scrabbleBoard[i] = [];
@@ -44,9 +44,6 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
                 this.scrabbleBoard[i][j] = this.letterEmpty;
             }
         }
-    }
-
-    ngOnInit(): void {
         this.playerService.updateScrabbleBoard(this.scrabbleBoard);
         this.viewSubscription = this.letterService.currentMessage.subscribe((message) => (this.message = message));
     }
@@ -76,7 +73,7 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
         this.isIAPlacementValid = true;
 
         // Validation of the placement
-        const finalResult: ScoreValidation = this.wordValidator.validateAllWordsOnBoard(this.scrabbleBoard, isEaselSize);
+        const finalResult: ScoreValidation = this.wordValidationService.validateAllWordsOnBoard(this.scrabbleBoard, isEaselSize);
         if (finalResult.validation === false) {
             this.placementIsInvalid(position, orientation, wordNoAccents, indexPlayer);
             return false;

@@ -14,7 +14,7 @@ describe('PassTourService', () => {
     });
 
     it('should call updated func when changing message', () => {
-        let number:number = 1;
+        let number: number = 1;
         let message: string = 'test message';
         let fn = () => {
             number = number*=2; 

@@ -24,14 +24,14 @@ export class PlaceLetters extends PlayStrategy {
         let randomX: number = CENTRAL_CASE_POSX;
         let randomY: number = CENTRAL_CASE_POSY;
 
-        if (!context.isFirstRound) {
+        if (!context.placeLetterService.isFirstRound) {
             do {
                 randomX = new Date().getTime() % BOARD_COLUMNS;
                 randomY = new Date().getTime() % BOARD_ROWS;
-            } while (context.scrabbleBoard[randomX][randomY] === '');
+            } while (context.placeLetterService.scrabbleBoard[randomX][randomY] === '');
             // get the player's hand to generate a pattern containing
             // a character already on the scrabbleBoard + player's disponible letters (only)
-            pattern = this.pattern(player.letterTable, context.scrabbleBoard[randomX][randomY]);
+            pattern = this.pattern(player.letterTable, context.placeLetterService.scrabbleBoard[randomX][randomY]);
         }
 
         // debugger;
@@ -104,7 +104,7 @@ export class PlaceLetters extends PlayStrategy {
         // Whitin all the possible words separate those who matches this turn randomPointing
         // from those who doesn't matches the randomPointing but are in range 0 < x < max
         for (const word of possibleWord) {
-            const nbPt = this.calculatePoint(startPos, randomOrientation, word, context.scrabbleBoard);
+            const nbPt = this.calculatePoint(startPos, randomOrientation, word, context.placeLetterService.scrabbleBoard);
             if (nbPt === randomPointing) {
                 randomPointingFound = true;
                 priorityPossibilities.push({ word, nbPt });

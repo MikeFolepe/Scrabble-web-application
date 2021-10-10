@@ -1,6 +1,5 @@
 /* eslint-disable dot-notation */
 import { TestBed } from '@angular/core/testing';
-
 import { Letter } from '@app/classes/letter';
 import { PlayerService } from './player.service';
 import { Player } from '@app/models/player.model';

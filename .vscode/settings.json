@@ -12,7 +12,7 @@
     "eslint.validate": ["javascript", "typescript", "html", "vue", "markdown"],
     "cSpell.words": ["lightyellow"],
     "[typescript]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
+        "editor.defaultFormatter": "vscode.typescript-language-features"
     },
     "[html]": {
         "editor.defaultFormatter": "vscode.html-language-features"
