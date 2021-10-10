@@ -54,10 +54,7 @@ export class PlayerIA extends Player {
     private pointingRange(): Range {
         let pointingRange: Range;
 
-        let randomNumber = new Date().getTime();
-        // Random number [0, 10[ which corresponds on the placing strategies defined on the
-        // placingBallotBox urn in constants.ts
-        randomNumber = randomNumber % placingBallotBox.length;
+        const randomNumber = this.generateRandomNumber(placingBallotBox.length);
 
         switch (placingBallotBox[randomNumber]) {
             case PlacingStrategy.LessSix:

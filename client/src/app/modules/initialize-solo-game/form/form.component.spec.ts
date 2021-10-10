@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormComponent } from './form.component';
 import { IA_NAME_DATABASE } from '@app/classes/constants';
 import { StartingPlayer } from '@app/classes/game-settings';
 import { GameSettingsService } from '@app/services/game-settings.service';
+import { FormComponent } from './form.component';
 
 describe('FormComponent', () => {
     let gameSettingsServiceSpy: jasmine.SpyObj<GameSettingsService>;

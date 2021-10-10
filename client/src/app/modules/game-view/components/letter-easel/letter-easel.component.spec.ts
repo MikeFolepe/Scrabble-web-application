@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { LetterEaselComponent } from './letter-easel.component';
 import { PlayerService } from '@app/services/player.service';
+import { LetterEaselComponent } from './letter-easel.component';
 
 describe('LetterEaselComponent', () => {
     let component: LetterEaselComponent;

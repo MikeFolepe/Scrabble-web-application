@@ -1,20 +1,20 @@
 /* eslint-disable dot-notation */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ChatboxComponent } from './chatbox.component';
+import { ChatBoxComponent } from './chatbox.component';
 
-describe('ChatboxComponent', () => {
-    let component: ChatboxComponent;
-    let fixture: ComponentFixture<ChatboxComponent>;
+describe('ChatBoxComponent', () => {
+    let component: ChatBoxComponent;
+    let fixture: ComponentFixture<ChatBoxComponent>;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [ChatboxComponent],
+            declarations: [ChatBoxComponent],
         }).compileComponents();
     });
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(ChatboxComponent);
+        fixture = TestBed.createComponent(ChatBoxComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });
@@ -49,30 +49,6 @@ describe('ChatboxComponent', () => {
         component.message = '';
         component.sendPlayerCommand();
         expect(component.typeMessage).toEqual('player');
-    });
-
-    it('should call the right function when calling sendPlayerCommand()', () => {
-        spyOn(component, 'isValid').and.returnValue(true);
-
-        spyOn<any>(component, 'executeDebugCommand');
-        component.command = 'debug';
-        component.sendPlayerCommand();
-        expect(component['executeDebugCommand']).toHaveBeenCalledTimes(1);
-
-        spyOn<any>(component, 'switchTour');
-        component.command = 'passer';
-        component.sendPlayerCommand();
-        expect(component['switchTour']).toHaveBeenCalledTimes(1);
-
-        spyOn<any>(component, 'executeExchangeCommand');
-        component.command = 'echanger';
-        component.sendPlayerCommand();
-        expect(component['executeExchangeCommand']).toHaveBeenCalledTimes(1);
-
-        spyOn<any>(component, 'executePlaceCommand');
-        component.command = 'placer';
-        component.sendPlayerCommand();
-        expect(component['executePlaceCommand']).toHaveBeenCalledTimes(1);
     });
 
     it('should have type player if command is valid', () => {
@@ -129,33 +105,4 @@ describe('ChatboxComponent', () => {
         component.message = 'random text';
         expect(component.isValid()).toBeTrue();
     });
-
-    it('should recieve a debug message when receiveAImessage() is called', () => {
-        const message = [{ word: 'papier', nbPt: 6 }];
-        component.receiveAImessage(message);
-        expect(component.debugMessage).toEqual(message);
-    });
-
-    // Need to properly import @ViewChild dependencies to be able to test this
-    /* it('should scroll to bottom when scrollToBottom() is called', () => {
-        jasmine.clock().install();
-        component.scrollToBottom();
-        jasmine.clock().tick(1);
-        expect(component['myScrollContainer'].nativeElement.scrollTop).toEqual(component['myScrollContainer'].nativeElement.scrollHeight);
-        jasmine.clock().uninstall();
-    });*/
-
-    // it('should place letter when executePlaceCommand() is called', () => {
-    //     spyOn(component['tourService'], 'getTour').and.returnValues(false, true, true);
-
-    //     component.message = '!placer h8h test';
-    //     component['executePlaceCommand']();
-    //     expect(component.typeMessage).toEqual('error');
-    //     expect(component.message).toEqual("ERREUR : Ce n'est pas ton tour");
-
-    //     component.message = '!placer h8h test';
-    //     component['executePlaceCommand']();
-    //     expect(component.typeMessage).toEqual('error');
-    //     expect(component.message).toEqual('ERREUR : Le placement est invalide');
-    // });
 });

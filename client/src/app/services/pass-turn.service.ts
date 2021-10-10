@@ -4,7 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 @Injectable({
     providedIn: 'root',
 })
-export class PassTourService {
+export class PassTurnService {
     messageSource = new BehaviorSubject('default message');
     currentMessage = this.messageSource.asObservable();
     tour: boolean;

@@ -85,7 +85,7 @@ export class WordValidationComponent {
         return positions;
     }
 
-    getWordPositionsVertical(word: string, index: number): string[] {
+    getWordVerticalPositions(word: string, index: number): string[] {
         const positions: string[] = new Array<string>();
         for (const char of word) {
             const indexChar = this.newWords.indexOf(char);
@@ -95,7 +95,7 @@ export class WordValidationComponent {
         return positions;
     }
 
-    passTroughAllRowsOrColumns(scrabbleBoard: string[][], isRow: boolean) {
+    passThroughAllRowsOrColumns(scrabbleBoard: string[][], isRow: boolean) {
         let x = 0;
         let y = 0;
         for (let i = 0; i < BOARD_ROWS; i++) {
@@ -114,7 +114,7 @@ export class WordValidationComponent {
 
             for (const word of words) {
                 if (word.length >= 2) {
-                    this.newPositions = isRow ? this.getWordHorizontalPositions(word, x) : this.getWordPositionsVertical(word, x);
+                    this.newPositions = isRow ? this.getWordHorizontalPositions(word, x) : this.getWordVerticalPositions(word, x);
                     if (this.checkIfNotPlayed(word, this.newPositions)) {
                         this.addToPlayedWords(word, this.newPositions, this.newPlayedWords);
                     }
@@ -134,8 +134,8 @@ export class WordValidationComponent {
     calculateTotalScore(score: number, words: Map<string, string[]>): number {
         let scoreWord = 0;
         for (const word of words.keys()) {
-            const scoreLetter = this.calculateLettersScore(score, word, words.get(word) as string[]);
-            scoreWord += this.applyBonusesWord(scoreLetter, words.get(word) as string[]);
+            const scoreLetter = this.calculateLettersScore(score, word, words.get(word));
+            scoreWord += this.applyBonusesWord(scoreLetter, words.get(word));
         }
         return scoreWord;
     }
@@ -148,7 +148,7 @@ export class WordValidationComponent {
             }
             for (const letter of RESERVE) {
                 if (char.toUpperCase() === letter.value) {
-                    switch (this.bonusesPositions.get(positions[i]) as string) {
+                    switch (this.bonusesPositions.get(positions[i])) {
                         case 'doubleletter': {
                             score += letter.points * 2;
                             break;
@@ -180,7 +180,7 @@ export class WordValidationComponent {
 
     applyBonusesWord(score: number, positions: string[]): number {
         for (const position of positions) {
-            switch (this.bonusesPositions.get(position) as string) {
+            switch (this.bonusesPositions.get(position)) {
                 case 'doubleword': {
                     score = score * 2;
                     break;
@@ -199,9 +199,8 @@ export class WordValidationComponent {
 
     validateAllWordsOnBoard(scrabbleBoard: string[][], isEaselSize: boolean, isRow: boolean): ScoreValidation {
         let scoreTotal = 0;
-        this.passTroughAllRowsOrColumns(scrabbleBoard, isRow);
-        this.passTroughAllRowsOrColumns(scrabbleBoard, !isRow);
-
+        this.passThroughAllRowsOrColumns(scrabbleBoard, isRow);
+        this.passThroughAllRowsOrColumns(scrabbleBoard, !isRow);
         for (const word of this.newPlayedWords.keys()) {
             const lowerCaseWord = word.toLowerCase();
             if (!this.isValidInDictionary(lowerCaseWord)) {

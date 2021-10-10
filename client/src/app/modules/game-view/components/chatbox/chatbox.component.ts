@@ -28,7 +28,7 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
 
     listMessages: string[] = [];
     listTypes: string[] = [];
-    debugMessage: { word: string; nbPt: number }[];
+    debugMessage: { word: string; nbPt: number }[] = [];
     // Table to stock debug message from IA test avec des strings aléatoires
 
     private readonly debugCommand = 'debug';

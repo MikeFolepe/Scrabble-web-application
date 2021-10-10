@@ -11,33 +11,30 @@
     "eslint.probe": ["javascript", "typescript", "html", "vue", "markdown"],
     "eslint.validate": ["javascript", "typescript", "html", "vue", "markdown"],
     "cSpell.words": [
-        "actif",
-        "activés",
-        "Aucune",
-        "chatbox",
-        "Commande",
+        "affichages",
+        "Chatbox",
         "débogage",
-        "désactivés",
+        "debugMessage",
+        "dictionnary",
+        "displaymessage",
         "doubleletter",
         "doubleword",
-        "echanger",
         "échanger",
         "ERREUR",
         "invalide",
-        "Joueur",
         "lightyellow",
-        "realiser",
-        "réaliser",
-        "restant",
+        "mais",
+        "notok",
+        "nrteu",
+        "ONESECOND",
+        "POSX",
         "syntaxe",
-        "système",
         "tripleletter",
         "tripleword",
-        "trouvé",
-        "virtuel"
+        "vrai"
     ],
     "[typescript]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
+        "editor.defaultFormatter": "vscode.typescript-language-features"
     },
     "[html]": {
         "editor.defaultFormatter": "vscode.html-language-features"
