@@ -134,7 +134,7 @@ export class ChatboxService implements OnDestroy {
             this.displayDebugMessage();
             this.debugOn = false;
         } else {
-            this.typeMessage = 'error';
+            this.typeMessage = 'system';
             this.message = 'affichages de débogage désactivés';
             this.displayMessage();
             this.debugOn = true;
@@ -146,7 +146,7 @@ export class ChatboxService implements OnDestroy {
             this.passTourService.writeMessage('!passer');
         } else {
             this.typeMessage = 'error';
-            this.message = 'ERREUR : La commande est impossible à réaliser';
+            this.message = "ERREUR : Ce n'est pas ton tour";
         }
     }
     commandSwap() {
@@ -160,6 +160,7 @@ export class ChatboxService implements OnDestroy {
                 this.typeMessage = 'error';
                 this.message = 'ERREUR : La commande est impossible à réaliser';
             }
+            this.passTourService.writeMessage();
         } else {
             this.typeMessage = 'error';
             this.message = "ERREUR : Ce n'est pas ton tour";
