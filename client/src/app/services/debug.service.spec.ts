@@ -3,6 +3,7 @@ import { DebugService } from './debug.service';
 
 describe('DebugService', () => {
     let service: DebugService;
+    // Fichier de test
 
     beforeEach(() => {
         TestBed.configureTestingModule({});

@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
     providedIn: 'root',
 })
 export class DebugService {
+    // Pour le service debug
     debugServiceMessage: { word: string; nbPt: number }[];
     debugActivate: string[] = [];
     isDebugOn: boolean = false;
