@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { PlayerService } from './player.service';
 
 @Injectable({
     providedIn: 'root',
@@ -7,9 +6,9 @@ import { PlayerService } from './player.service';
 export class DebugService {
     debugServiceMessage: { word: string; nbPt: number }[];
     debugActivate: string[] = [];
+    isDebug: boolean = false;
 
-    constructor(public playerService: PlayerService) {}
-    receiveAIDebugmessage(table: { word: string; nbPt: number }[]): void {
+    receiveAIDebugPossibilities(table: { word: string; nbPt: number }[]): void {
         this.debugServiceMessage = table;
     }
 
@@ -17,11 +16,15 @@ export class DebugService {
         this.debugServiceMessage = [];
     }
 
-    isDebugOn(): boolean {
-        if (this.debugActivate.length % 2 === 0) {
-            return false;
-        } else {
-            return true;
+    switchDebugMode(): void {
+        if (!this.isDebug) {
+            this.isDebug = true;
+            return;
         }
+        this.isDebug = false;
+    }
+
+    isDebugOn(): boolean {
+        return this.isDebug;
     }
 }

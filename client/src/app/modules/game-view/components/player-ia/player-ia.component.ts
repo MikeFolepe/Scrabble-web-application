@@ -93,7 +93,7 @@ export class PlayerIAComponent implements OnInit {
         // console.log(this.iaPlayer.letterTable);
         // console.log('placer');
         this.iaPlaced.emit(object);
-        this.debugService.receiveAIDebugmessage(possibility);
+        this.debugService.receiveAIDebugPossibilities(possibility);
         //  this.endGameService.playerServiceActions.push('placer par IA');
         setTimeout(() => {
             this.passTurn.toogleTour();
