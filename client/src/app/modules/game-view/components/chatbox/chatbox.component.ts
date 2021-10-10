@@ -1,14 +1,13 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { INDEX_REAL_PLAYER } from '@app/classes/constants';
+import { INDEX_REAL_PLAYER, MAX_NUMBER_OF_POSSIBILITY, ONE_POSSIBILITY, TWO_POSSIBILITY } from '@app/classes/constants';
 import { Vec2 } from '@app/classes/vec2';
 import { PassTourComponent } from '@app/modules/game-view/components/pass-tour/pass-tour.component';
-// eslint-disable-next-line no-restricted-imports
 import { PlaceLetterComponent } from '@app/modules/game-view/components/place-letter/place-letter.component';
+import { SwapLetterComponent } from '@app/modules/game-view/components/swap-letter/swap-letter.component';
+import { DebugService } from '@app/services/debug.service';
 import { PlayerService } from '@app/services/player.service';
 import { TourService } from '@app/services/tour.service';
 import { Subscription } from 'rxjs';
-// eslint-disable-next-line no-restricted-imports
-import { SwapLetterComponent } from '../swap-letter/swap-letter.component';
 
 @Component({
     selector: 'app-chatbox',
@@ -34,7 +33,7 @@ export class ChatboxComponent implements OnInit, OnDestroy {
     listTypes: string[] = [];
     debugMessage: { word: string; nbPt: number }[] = [];
 
-    constructor(private tourService: TourService, private playerService: PlayerService) {}
+    constructor(private tourService: TourService, private playerService: PlayerService, public debugService: DebugService) {}
 
     ngOnInit(): void {
         this.tourSubscription = this.tourService.tourSubject.subscribe((tourSubject: boolean) => {
@@ -61,13 +60,13 @@ export class ChatboxComponent implements OnInit, OnDestroy {
             // If the command is valid, we call the respective command from here
             switch (this.command) {
                 case 'debug': {
-                    if (this.debugOn) {
+                    this.debugService.debugActivate.push('debug');
+
+                    if (this.debugService.isDebugOn()) {
                         this.sendSystemMessage('affichages de débogage activés');
-                        this.displaymessage();
-                        this.debugOn = false;
+                        this.displayDebugMessage();
                     } else {
                         this.sendSystemMessage('affichages de débogage désactivés');
-                        this.debugOn = true;
                     }
                     break;
                 }
@@ -130,6 +129,42 @@ export class ChatboxComponent implements OnInit, OnDestroy {
         // Add message and its type to the logs
         this.listTypes.push(this.typeMessage);
         this.listMessages.push(this.message);
+    }
+
+    // method which check the différents size of table of possibilty for the debug
+    displayDebugMessage(): void {
+        switch (this.debugService.debugServiceMessage.length) {
+            case 0: {
+                this.sendSystemMessage('Aucune possibilité de placement trouvés!');
+                break;
+            }
+            case 1: {
+                for (let i = 0; i < ONE_POSSIBILITY; i++) {
+                    this.sendSystemMessage(
+                        this.debugService.debugServiceMessage[i].word + ': -- ' + this.debugService.debugServiceMessage[i].nbPt.toString(),
+                    );
+                }
+                break;
+            }
+            case 2: {
+                for (let i = 0; i < TWO_POSSIBILITY; i++) {
+                    this.sendSystemMessage(
+                        this.debugService.debugServiceMessage[i].word + ': -- ' + this.debugService.debugServiceMessage[i].nbPt.toString(),
+                    );
+                }
+
+                break;
+            }
+            default: {
+                for (let i = 0; i < MAX_NUMBER_OF_POSSIBILITY; i++) {
+                    this.sendSystemMessage(
+                        this.debugService.debugServiceMessage[i].word + ': -- ' + this.debugService.debugServiceMessage[i].nbPt.toString(),
+                    );
+                }
+                break;
+            }
+        }
+        this.debugService.clearDebugMessage();
     }
 
     sendSystemMessage(systemMessage: string) {
