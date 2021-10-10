@@ -32,32 +32,9 @@ describe('ChatboxComponent', () => {
             view: window,
             bubbles: true,
         });
-        spyOn(component, 'sendPlayerCommand');
+        spyOn(component['chatBoxService'], 'sendPlayerMessage');
         component.handleKeyEvent(keyboardEvent);
-        expect(component.sendPlayerCommand).toHaveBeenCalledTimes(1);
-    });
-
-    it('should have type error if command is not valid', () => {
-        spyOn(component, 'isValid').and.returnValue(false);
-        component.message = '';
-        component.sendPlayerCommand();
-        expect(component.typeMessage).toEqual('error');
-    });
-
-    it('should have type player if command is valid', () => {
-        spyOn(component, 'isValid').and.returnValue(true);
-        component.message = '';
-        component.sendPlayerCommand();
-        expect(component.typeMessage).toEqual('player');
-    });
-
-    it('should have type player if command is valid', () => {
-        spyOn(component, 'isValid').and.returnValue(true);
-        component.sendPlayerCommand();
-        expect(component.typeMessage).toEqual('player');
-        expect(component.command).toEqual('');
-        expect(component.listMessages).toHaveSize(1);
-        expect(component.listMessages).toHaveSize(1);
+        expect(component['chatBoxService'].sendPlayerMessage).toHaveBeenCalledTimes(1);
     });
 
     it('should send message as System when sendSystemMessage() is called', () => {
@@ -74,35 +51,5 @@ describe('ChatboxComponent', () => {
         expect(component.listTypes).toHaveSize(2);
         expect(component.listMessages).toHaveSize(2);
         expect(component.listTypes[0]).toEqual('opponent');
-    });
-
-    it('should know if input is valid', () => {
-        component.message = '!debug';
-        expect(component.isValid()).toBeTrue();
-
-        component.message = '!passer';
-        expect(component.isValid()).toBeTrue();
-
-        component.message = '!échanger *s';
-        expect(component.isValid()).toBeTrue();
-
-        component.message = '!échanger';
-        expect(component.isValid()).toBeFalse();
-        expect(component.message).toEqual('ERREUR : La syntaxe est invalide');
-
-        component.message = '!placer h8h test';
-        expect(component.isValid()).toBeTrue();
-
-        component.message = '!placer 333';
-        expect(component.isValid()).toBeFalse();
-
-        component.message = '!placer';
-        expect(component.isValid()).toBeFalse();
-
-        component.message = '!notok';
-        expect(component.isValid()).toBeFalse();
-
-        component.message = 'random text';
-        expect(component.isValid()).toBeTrue();
     });
 });

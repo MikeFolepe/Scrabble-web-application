@@ -31,16 +31,22 @@ describe('PlayerIA', () => {
         expect(playerIA).toBeTruthy();
     });
 
-    it('should set a strategy', () => {
-        spyOn<any>(playerIA, 'generateRandomNumber').and.returnValues(0, 3, 5, 22);
+    it('should set the respective strategy based on random numbers', () => {
         spyOn<any>(playerIA, 'pointingRange').and.returnValue({ min: 0, max: 6 });
 
+        spyOn<any>(playerIA, 'generateRandomNumber').and.returnValue(0);
         playerIA['setStrategy']();
         expect(playerIA.strategy).toBeInstanceOf(PlaceLetters);
+
+        playerIA['generateRandomNumber'] = jasmine.createSpy().and.returnValue(3);
         playerIA['setStrategy']();
         expect(playerIA.strategy).toBeInstanceOf(SkipTurn);
+
+        playerIA['generateRandomNumber'] = jasmine.createSpy().and.returnValue(5);
         playerIA['setStrategy']();
         expect(playerIA.strategy).toBeInstanceOf(SwapLetter);
+
+        playerIA['generateRandomNumber'] = jasmine.createSpy().and.returnValue(22);
         playerIA['setStrategy']();
         expect(playerIA.strategy).toBeInstanceOf(SkipTurn);
     });

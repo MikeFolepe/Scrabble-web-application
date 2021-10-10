@@ -1,6 +1,16 @@
 /* eslint-disable dot-notation */
 import { TestBed } from '@angular/core/testing';
-import { BOARD_COLUMNS, BOARD_ROWS, CASE_SIZE, DEFAULT_HEIGHT, DEFAULT_WIDTH, FONT_SIZE_MAX, FONT_SIZE_MIN, RESERVE } from '@app/classes/constants';
+import {
+    BOARD_COLUMNS,
+    BOARD_ROWS,
+    CASE_SIZE,
+    DEFAULT_HEIGHT,
+    DEFAULT_WIDTH,
+    FONT_SIZE_MAX,
+    FONT_SIZE_MIN,
+    INDEX_INVALID,
+    RESERVE,
+} from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { PlayerIA } from '@app/models/player-ia.model';
 import { Player } from '@app/models/player.model';
@@ -169,7 +179,6 @@ describe('PlayerService', () => {
         const playerEasel = [letterA, letterB, letterC, letterD];
         player.letterTable = playerEasel;
         service['players'].push(player);
-
         let number = 1;
         service['myFunc'] = () => {
             number = number *= 2;
@@ -189,7 +198,6 @@ describe('PlayerService', () => {
         const playerEasel = [letterA, letterA, letterB, letterB, letterC, letterC, letterD];
         player.letterTable = playerEasel;
         service['players'].push(player);
-
         let number = 1;
         service['myFunc'] = () => {
             number = number *= 2;
@@ -215,7 +223,6 @@ describe('PlayerService', () => {
             number = number *= 2;
             return;
         };
-
         service.removeLetter('B', 0);
         playerEasel.splice(1, 1);
         expect(service['players'][0].letterTable).toEqual(playerEasel);
@@ -245,7 +252,6 @@ describe('PlayerService', () => {
         const emptyLetter: Letter = { value: '', quantity: 0, points: 0 };
         service['players'].push(player);
         const expectedEasel = [letterA, letterB, letterD, letterC, letterA, emptyLetter, letterD];
-
         spyOn(service['letterService'], 'getRandomLetter').and.returnValues(letterA, letterB, letterD, letterC, letterA, emptyLetter, letterD);
         service.refillEasel(0);
         expectedEasel.pop();
@@ -262,7 +268,6 @@ describe('PlayerService', () => {
         const expectedEasel = [letterA, letterB, letterD, letterC, letterD, letterA, letterA];
         player.letterTable = expectedEasel;
         service['players'].push(player);
-
         spyOn(service['letterService'], 'getRandomLetter').and.returnValue(letterC);
         expectedEasel.push(letterC);
         service.refillEasel(0);
@@ -271,7 +276,6 @@ describe('PlayerService', () => {
 
     it('should add letters when addLetterToEasel() is called', () => {
         service['players'].push(player);
-
         const expectedEasel = [letterA, letterB, letterD];
         service.addLetterToEasel('B', 0);
         service.addLetterToEasel('D', 0);
@@ -284,10 +288,10 @@ describe('PlayerService', () => {
         playerIA.letterTable = [];
         service['players'].push(playerIA);
 
-        expect(service.easelContainsLetter('A', 0, 0)).toBeTrue();
-        expect(service.easelContainsLetter('B', 0, 0)).toBeTrue();
-        expect(service.easelContainsLetter('C', 0, 0)).toBeFalse();
-        expect(service.easelContainsLetter('A', 0, 1)).toBeFalse();
+        expect(service.easelContainsLetter('a', 0, 0)).toEqual(0);
+        expect(service.easelContainsLetter('b', 0, 0)).toEqual(1);
+        expect(service.easelContainsLetter('c', 0, 0)).toEqual(INDEX_INVALID);
+        expect(service.easelContainsLetter('a', 0, 1)).toEqual(INDEX_INVALID);
     });
 
     it('should add score when addScore() is called', () => {
@@ -303,7 +307,6 @@ describe('PlayerService', () => {
         const INITIAL_X = 100;
         const INITIAL_Y = 300;
         const result = service.posTabToPosGrid(INITIAL_X, INITIAL_Y);
-
         const expectedOutput = {
             x: INITIAL_X * CASE_SIZE + CASE_SIZE - DEFAULT_WIDTH / 2,
             y: INITIAL_Y * CASE_SIZE + CASE_SIZE - DEFAULT_HEIGHT / 2,
@@ -319,7 +322,6 @@ describe('PlayerService', () => {
         const playerIaScore = 60;
         playerIA.score = playerIaScore;
         service['players'].push(playerIA);
-
         expect(service.getScore(0)).toEqual(playerScore);
         expect(service.getScore(1)).toEqual(playerIaScore);
     });
@@ -328,20 +330,17 @@ describe('PlayerService', () => {
         spyOn(service, 'removeLetter');
         spyOn(service['letterService'], 'addLetterToReserve');
         spyOn(service['letterService'], 'getRandomLetter').and.returnValue(letterC);
-
         let number = 1;
         service['myFunc'] = () => {
             number = number *= 2;
             return;
         };
-
         const easel = [letterA, letterB, letterD, letterC, letterD, letterA, letterA];
         player.letterTable = easel;
         service['players'].push(player);
         const easelIA = [letterC, letterD];
         playerIA.letterTable = easelIA;
         service['players'].push(playerIA);
-
         service.swap('D', 0);
         easel[2] = letterC;
         expect(service['players'][0].letterTable).toEqual(easel);
