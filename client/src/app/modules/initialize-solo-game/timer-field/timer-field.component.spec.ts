@@ -5,8 +5,8 @@ import { TimerFieldComponent } from './timer-field.component';
 describe('TimerFieldComponent', () => {
     let component: TimerFieldComponent;
     let fixture: ComponentFixture<TimerFieldComponent>;
-    let minuteInput:string;
-    let secondInput:string;
+    let minuteInput: string;
+    let secondInput: string;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
@@ -74,7 +74,5 @@ describe('TimerFieldComponent', () => {
         component.setTimeValidity();
         expect(component.parentForm.controls.minuteInput.errors).toBeNull();
         expect(component.parentForm.controls.secondInput.errors).toBeNull();
-    })
-
-
+    });
 });

@@ -136,6 +136,7 @@ export class PlayerService {
         }
         return INDEX_INVALID;
     }
+
     addScore(score: number, indexPlayer: number): void {
         this.players[indexPlayer].score += score;
     }

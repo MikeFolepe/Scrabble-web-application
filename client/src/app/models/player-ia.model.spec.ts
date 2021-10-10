@@ -3,10 +3,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { TestBed } from '@angular/core/testing';
 import { PlayerIAComponent } from '@app/modules/game-view/components/player-ia/player-ia.component';
-import { PlaceLetters } from '@app/models/place-letter-strategy.model';
-import { PlayerIA } from '@app/models/player-ia.model';
-import { SkipTurn } from '@app/models/skip-turn-strategy.model';
-import { SwapLetter } from '@app/models/swap-letter-strategy.model';
+import { PlaceLetters } from './place-letter-strategy.model';
+import { PlayerIA } from './player-ia.model';
+import { SkipTurn } from './skip-turn-strategy.model';
+import { SwapLetter } from './swap-letter-strategy.model';
 
 describe('PlayerIA', () => {
     const id = 0;

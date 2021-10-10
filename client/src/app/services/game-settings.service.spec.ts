@@ -15,29 +15,13 @@ describe('GameSettingsService', () => {
     });
 
     it('settings initialization should emit game settings', () => {
-        let settings: GameSettings = new GameSettings(
-            ['player1','player2'],
-            StartingPlayer.Player1,
-            '00',
-            '30',
-            'facile',
-            false,
-            'français',
-        )  
+        const settings: GameSettings = new GameSettings(['player1', 'player2'], StartingPlayer.Player1, '00', '30', 'facile', false, 'français');
         service.initializeSettings(settings);
         expect(service.gameSettings).toEqual(settings);
     });
 
     it('settings getter should return right game settings', () => {
-        service.gameSettings = new GameSettings(
-            ['player1','player2'],
-            StartingPlayer.Player1,
-            '02',
-            '30',
-            'difficile',
-            false,
-            'français',
-        )  
+        service.gameSettings = new GameSettings(['player1', 'player2'], StartingPlayer.Player1, '02', '30', 'difficile', false, 'français');
         expect(service.getSettings()).toEqual(service.gameSettings);
     });
 });

@@ -5,11 +5,12 @@ import { Player } from '@app/models/player.model';
 import { LetterService } from '@app/services/letter.service';
 import { PassTourService } from '@app/services/pass-tour.service';
 import { PlaceLetterService } from '@app/services/place-letter.service';
-// eslint-disable-next-line import/no-deprecated
 import { PlayerService } from '@app/services/player.service';
 import { TourService } from '@app/services/tour.service';
 import { Subscription } from 'rxjs';
 import { ChatboxService } from '@app/services/chatbox.service';
+
+const WAITING_TIME = 5000;
 
 @Component({
     selector: 'app-player-ia',
@@ -19,8 +20,6 @@ import { ChatboxService } from '@app/services/chatbox.service';
 export class PlayerIAComponent implements OnInit {
     // Pour dire à la boite que j'ai passé mon tour.
     @Output() iaSkipped = new EventEmitter();
-    // Pour dire à la boite que j'ai echanger des lettres ( je sais pas si c'est une information
-    // requise dans le flux de la BC ??).
     @Output() iaSwappedr = new EventEmitter();
     // Pour le mode debug
     @Output() iaPossibility = new EventEmitter();
@@ -30,6 +29,7 @@ export class PlayerIAComponent implements OnInit {
     iaPlayer: PlayerIA;
     tourSubscription: Subscription = new Subscription();
     tour: boolean;
+
     constructor(
         public letterService: LetterService,
         public playerService: PlayerService,
@@ -42,7 +42,6 @@ export class PlayerIAComponent implements OnInit {
     ngOnInit(): void {
         // Subscribe to get access to IA Player
         this.playerService.playerSubject.subscribe((playersFromSubject: Player[]) => {
-            // Downcasting forcé par Mike
             this.iaPlayer = playersFromSubject[1] as PlayerIA;
         });
         this.playerService.emitPlayers();
@@ -57,17 +56,15 @@ export class PlayerIAComponent implements OnInit {
         if (this.tour === false) {
             setTimeout(() => {
                 this.play();
-            }, 5000);
+            }, WAITING_TIME);
         }
     }
 
     play() {
-        // debugger;
-        console.log(this.iaPlayer.letterTable);
         if (this.tourService.getTour() === false) {
             setTimeout(() => {
                 this.iaPlayer.play();
-            }, 5000);
+            }, WAITING_TIME);
         }
     }
 
@@ -76,28 +73,25 @@ export class PlayerIAComponent implements OnInit {
         if (this.tourService.getTour() === false) {
             setTimeout(() => {
                 this.passtourService.writeMessage();
-            }, 5000);
+            }, WAITING_TIME);
         }
     }
 
     swap() {
-        console.log('swap');
-        console.log(this.iaPlayer.letterTable);
         this.iaSwappedr.emit();
         if (this.tourService.getTour() === false) {
             setTimeout(() => {
                 this.passtourService.writeMessage();
-            }, 5000);
+            }, WAITING_TIME);
         }
     }
 
     place(object: { start: Vec2; orientation: string; word: string }, possibility: { word: string; nbPt: number }[]) {
-        console.log(this.iaPlayer.letterTable);
         this.placeLetterService.placeMethodAdapter(object);
         this.chatBoxService.addMessageToDebug(possibility);
         setTimeout(() => {
             this.passtourService.writeMessage();
-        }, 5000);
+        }, WAITING_TIME);
     }
 
     ngOndestroy() {

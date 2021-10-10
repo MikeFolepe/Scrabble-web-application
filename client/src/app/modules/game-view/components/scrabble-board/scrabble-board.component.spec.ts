@@ -10,7 +10,7 @@ describe('ScrabbleBoardComponent', () => {
     let mouseServiceSpy: jasmine.SpyObj<MouseHandlerService>;
 
     beforeEach(() => {
-        gridServiceSpy = jasmine.createSpyObj('gridService', ['drawGrid']);
+        gridServiceSpy = jasmine.createSpyObj('GridService', ['drawGrid'], ['setGridContext']);
         mouseServiceSpy = jasmine.createSpyObj('MouseHandlerService', ['mouseHitDetect']);
     });
 
@@ -44,6 +44,9 @@ describe('ScrabbleBoardComponent', () => {
     });
 
     it('mouse hit detect should call mouse hit detect from gridService', () => {
+        gridServiceSpy.setGridContext.and.callFake(() => {
+            return;
+        });
         const mouseEvent = {
             offsetX: 10,
             offsetY: 1,

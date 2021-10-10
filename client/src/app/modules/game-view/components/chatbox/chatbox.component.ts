@@ -19,7 +19,7 @@ export class ChatboxComponent implements OnInit, OnDestroy {
 
     listMessages: string[] = [];
     listTypes: string[] = [];
-    debugmessage: { word: string; nbPt: number }[] = [{ word: 'papier', nbPt: 6 }];
+    debugMessage: { word: string; nbPt: number }[] = [];
 
     constructor(private chatBoxService: ChatboxService, private tourService: TourService) {}
 

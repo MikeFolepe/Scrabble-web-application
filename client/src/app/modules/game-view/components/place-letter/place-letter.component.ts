@@ -66,6 +66,7 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
         if (word.length === EASEL_SIZE) {
             isEaselSize = true;
         }
+        const isRow = false;
         this.invalidLetters = []; // Reset the array containing the invalid letters
 
         // Placing all letters of the word
@@ -76,7 +77,7 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
         this.isIAPlacementValid = true;
 
         // Validation of the placement
-        const finalResult: ScoreValidation = this.wordValidator.validateAllWordsOnBoard(this.scrabbleBoard, isEaselSize);
+        const finalResult: ScoreValidation = this.wordValidator.validateAllWordsOnBoard(this.scrabbleBoard, isEaselSize, isRow);
         if (finalResult.validation === false) {
             this.placementIsInvalid(position, orientation, wordNoAccents, indexPlayer);
             return false;

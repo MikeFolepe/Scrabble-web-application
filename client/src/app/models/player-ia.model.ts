@@ -10,11 +10,7 @@ import { SkipTurn } from './skip-turn-strategy.model';
 export class PlayerIA extends Player {
     context: PlayerIAComponent;
     strategy: PlayStrategy;
-    constructor(
-        public id: number,
-        public name: string,
-        public letterTable: Letter[], // public isTour: boolean, // public isIA: boolean
-    ) {
+    constructor(public id: number, public name: string, public letterTable: Letter[]) {
         super(id, name, letterTable);
         // Initialize the first concrete strategy to be executed later
         this.setStrategy();
@@ -28,11 +24,7 @@ export class PlayerIA extends Player {
     }
 
     setStrategy() {
-        // Number of seconds since 1st January 1970
-        let randomNumber = new Date().getTime();
-        // Random number [0, 10[ which corresponds on the placing strategies defined on the
-        // strategiesBallotBox urn in constants.ts
-        randomNumber = randomNumber % strategyBallotBox.length;
+        const randomNumber = this.generateRandomNumber(strategyBallotBox.length);
 
         switch (strategyBallotBox[randomNumber]) {
             case IAStrategy.Skip:
@@ -46,7 +38,6 @@ export class PlayerIA extends Player {
                 this.strategy = new PlaceLetters(this.pointingRange());
                 break;
             default:
-                // For bug resolution
                 this.strategy = new SkipTurn();
                 break;
         }
@@ -55,11 +46,7 @@ export class PlayerIA extends Player {
     pointingRange(): Range {
         let pointingRange: Range;
 
-        // Number of seconds since 1st January 1970
-        let randomNumber = new Date().getTime();
-        // Random number [0, 10[ which corresponds on the placing strategies defined on the
-        // placingBallotBox urn in constants.ts
-        randomNumber = randomNumber % placingBallotBox.length;
+        const randomNumber = this.generateRandomNumber(placingBallotBox.length);
 
         switch (placingBallotBox[randomNumber]) {
             case PlacingStrategy.LessSix:
@@ -72,7 +59,6 @@ export class PlayerIA extends Player {
                 pointingRange = { min: 13, max: 18 };
                 break;
             default:
-                // For bug resolution
                 pointingRange = { min: 0, max: 0 };
                 break;
         }
@@ -82,5 +68,14 @@ export class PlayerIA extends Player {
 
     setContext(context: PlayerIAComponent) {
         this.context = context;
+    }
+
+    replaceStrategy(strategy: PlayStrategy) {
+        this.strategy = strategy;
+        this.play();
+    }
+
+    private generateRandomNumber(maxValue: number): number {
+        return Math.floor(Number(Math.random()) * maxValue);
     }
 }
