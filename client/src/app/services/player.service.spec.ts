@@ -1,14 +1,23 @@
+/* eslint-disable max-lines */
 /* eslint-disable dot-notation */
 import { TestBed } from '@angular/core/testing';
-import { BOARD_COLUMNS, BOARD_ROWS, CASE_SIZE, DEFAULT_HEIGHT, DEFAULT_WIDTH, FONT_SIZE_MAX, FONT_SIZE_MIN, RESERVE } from '@app/classes/constants';
+import {
+    BOARD_COLUMNS,
+    BOARD_ROWS,
+    CASE_SIZE,
+    DEFAULT_HEIGHT,
+    DEFAULT_WIDTH,
+    FONT_SIZE_MAX,
+    FONT_SIZE_MIN,
+    INDEX_INVALID,
+    RESERVE
+} from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { PlayerIA } from '@app/models/player-ia.model';
 import { Player } from '@app/models/player.model';
 import { PlayerService } from './player.service';
 
 describe('PlayerService', () => {
-    let service: PlayerService;
-
     let letterA: Letter;
     let letterB: Letter;
     let letterC: Letter;
@@ -16,6 +25,7 @@ describe('PlayerService', () => {
 
     let player: Player;
     let playerIA: PlayerIA;
+    let service: PlayerService;
 
     beforeEach(() => {
         TestBed.configureTestingModule({});
@@ -284,10 +294,23 @@ describe('PlayerService', () => {
         playerIA.letterTable = [];
         service['players'].push(playerIA);
 
-        expect(service.easelContainsLetter('A', 0, 0)).toBeTrue();
-        expect(service.easelContainsLetter('B', 0, 0)).toBeTrue();
-        expect(service.easelContainsLetter('C', 0, 0)).toBeFalse();
-        expect(service.easelContainsLetter('A', 0, 1)).toBeFalse();
+        expect(service.easelContainsLetter('A', 0, 0)).not.toEqual(INDEX_INVALID);
+        expect(service.easelContainsLetter('B', 0, 0)).not.toEqual(INDEX_INVALID);
+        expect(service.easelContainsLetter('C', 0, 0)).toEqual(INDEX_INVALID);
+        expect(service.easelContainsLetter('A', 0, 1)).toEqual(INDEX_INVALID);
+    });
+
+    it("should know letter's index in easel", () => {
+        player.letterTable = [letterA, letterB];
+        service['players'].push(player);
+        playerIA.letterTable = [letterC];
+        service['players'].push(playerIA);
+
+        expect(service.easelContainsLetter('A', 0, 0)).toEqual(0);
+        expect(service.easelContainsLetter('B', 1, 0)).toEqual(1);
+        expect(service.easelContainsLetter('B', 0, 0)).toEqual(1);
+        expect(service.easelContainsLetter('C', 0, 1)).toEqual(0);
+        expect(service.easelContainsLetter('D', 0, 0)).toEqual(INDEX_INVALID);
     });
 
     it('should add score when addScore() is called', () => {
