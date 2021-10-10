@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { BOARD_COLUMNS, BOARD_ROWS } from '@app/classes/constants';
+import { ALL_EASEL_BONUS, BOARD_COLUMNS, BOARD_ROWS } from '@app/classes/constants';
 import { ScoreValidation } from '@app/classes/validation-score';
 import { WordValidationComponent } from './word-validation.component';
 
@@ -24,7 +25,6 @@ describe('WordValidationComponent', () => {
             scrabbleBoard[i] = [];
             for (let j = 0; j < BOARD_COLUMNS; j++) {
                 // To generate a grid with some letters anywhere on it
-                // eslint-disable-next-line @typescript-eslint/no-magic-numbers
                 if ((i + j) % 11 === 0) {
                     scrabbleBoard[i][j] = 'X';
                 } else {
@@ -45,10 +45,8 @@ describe('WordValidationComponent', () => {
         const isEaselSize = true;
         const isRow = true;
         const passThroughAllRowsOrColumnsSpy = spyOn<any>(component, 'passThroughAllRowsOrColumns').and.callThrough();
-        const calculateLettersScoreSpy = spyOn<any>(component, 'calculateLettersScore').and.callThrough();
         component.validateAllWordsOnBoard(scrabbleBoard, isEaselSize, isRow);
         expect(passThroughAllRowsOrColumnsSpy).toHaveBeenCalledTimes(2);
-        expect(calculateLettersScoreSpy).toHaveBeenCalled();
     });
 
     it('should calculateLetterScore and calculate word bonuses if the word touch a wordBonuses position', () => {
@@ -58,13 +56,50 @@ describe('WordValidationComponent', () => {
         const isEaselSize = false;
         const isRow = true;
         const passThroughAllRowsOrColumnsSpy = spyOn<any>(component, 'passThroughAllRowsOrColumns').and.callThrough();
-        const calculateLettersScoreSpy = spyOn<any>(component, 'calculateLettersScore').and.callThrough();
+        const calculateTotalScoreSpy = spyOn<any>(component, 'calculateTotalScore').and.callThrough();
         const applyBonusesWordSpy = spyOn<any>(component, 'applyBonusesWord').and.callThrough();
         component.validateAllWordsOnBoard(scrabbleBoard, isEaselSize, isRow);
         expect(passThroughAllRowsOrColumnsSpy).toHaveBeenCalledTimes(2);
-        expect(calculateLettersScoreSpy).toHaveBeenCalled();
+        expect(calculateTotalScoreSpy).toHaveBeenCalled();
         expect(applyBonusesWordSpy).toHaveBeenCalled();
         // m has 2 points and a has 1 point
+    });
+
+    it('should double word score if word is placed on a double word case', () => {
+        spyOn(component.bonusesPositions, 'get').and.returnValue('doubleword');
+        const initialScore = 10;
+        const score = component.applyBonusesWord(initialScore, 'a');
+        expect(score).toEqual(initialScore * 2);
+    });
+
+    it('should triple letter score if word is placed on a triple letter case', () => {
+        spyOn(component.bonusesPositions, 'get').and.returnValue('tripleletter');
+        const initialScore = 10;
+        const score = component.calculateLettersScore(initialScore, 'a', 'a');
+        expect(score).toEqual(initialScore + 3);
+    });
+
+    it('should add easel bonus when condition encountered and validateAllWordsOnBoard() is called', () => {
+        const initialScore = 100;
+        spyOn(component, 'calculateTotalScore').and.returnValue(initialScore);
+        const result = component.validateAllWordsOnBoard(scrabbleBoard, true, true);
+        expect(result.score).toEqual(initialScore + ALL_EASEL_BONUS);
+    });
+
+    it('should call the right functions in case word is greater than two letters in passThroughAllRowsOrColumns()', () => {
+        const spyOnHorizontal = spyOn(component, 'getWordHorizontalPositions');
+        const spyOnVertical = spyOn(component, 'getWordVerticalPositions');
+        const spyOnCheck = spyOn(component, 'checkIfNotPlayed');
+
+        component.newWords = ['test'];
+        component.passThroughAllRowsOrColumns(scrabbleBoard, true);
+
+        component.newWords = ['test'];
+        component.passThroughAllRowsOrColumns(scrabbleBoard, false);
+
+        expect(spyOnHorizontal).toHaveBeenCalledTimes(1);
+        expect(spyOnVertical).toHaveBeenCalledTimes(1);
+        expect(spyOnCheck).toHaveBeenCalledTimes(2);
     });
 
     it('validate all words should be false once one word is not valid in dictionnary', () => {

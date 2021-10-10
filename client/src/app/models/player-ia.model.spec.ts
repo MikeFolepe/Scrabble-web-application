@@ -36,13 +36,16 @@ describe('PlayerIA', () => {
         spyOn<any>(playerIA, 'pointingRange').and.returnValue({ min: 0, max: 6 });
 
         playerIA['setStrategy']();
-        expect(playerIA.strategy).toBeInstanceOf(PlaceLetters);
+        const placeStrategy = new PlaceLetters({ min: 0, max: 6 });
+        expect(playerIA.strategy).toEqual(placeStrategy);
         playerIA['setStrategy']();
-        expect(playerIA.strategy).toBeInstanceOf(SkipTurn);
+        const skipStrategy = new SkipTurn();
+        expect(playerIA.strategy).toEqual(skipStrategy);
         playerIA['setStrategy']();
-        expect(playerIA.strategy).toBeInstanceOf(SwapLetter);
+        const swapStrategy = new SwapLetter();
+        expect(playerIA.strategy).toEqual(swapStrategy);
         playerIA['setStrategy']();
-        expect(playerIA.strategy).toBeInstanceOf(SkipTurn);
+        expect(playerIA.strategy).toEqual(skipStrategy);
     });
 
     it('should have a scoring range', () => {
@@ -84,5 +87,14 @@ describe('PlayerIA', () => {
         const context: PlayerIAComponent = TestBed.createComponent(PlayerIAComponent).componentInstance;
         playerIA.setContext(context);
         expect(playerIA.context).toEqual(context);
+    });
+
+    it('should set a new strategy when replaceStrategy() is called', () => {
+        spyOn(playerIA, 'play');
+        playerIA.strategy = new SkipTurn();
+
+        const expectedStrategy = new SwapLetter();
+        playerIA.replaceStrategy(expectedStrategy);
+        expect(playerIA.strategy).toBe(expectedStrategy);
     });
 });

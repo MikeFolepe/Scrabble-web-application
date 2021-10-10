@@ -1,10 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
-// import { TestBed } from '@angular/core/testing';
-// import { PlayerIAComponent } from '@app/modules/game-view/components/player-ia/player-ia.component';
-// import { PlayerIA } from './player-ia.model';
 import { TestBed } from '@angular/core/testing';
 import { PlayerIAComponent } from '@app/modules/game-view/components/player-ia/player-ia.component';
 import { PlayerIA } from './player-ia.model';
+import { SkipTurn } from './skip-turn-strategy.model';
 import { SwapLetter } from './swap-letter-strategy.model';
 
 describe('SwapLetter', () => {
@@ -42,14 +41,15 @@ describe('SwapLetter', () => {
         expect(context.swap).toHaveBeenCalledTimes(1);
     });
 
-    it('should call skip() if there is not enough letters in the reserve to change', () => {
-        spyOn(Math, 'random').and.returnValue(6);
-        spyOn(context, 'skip');
+    it('should be SkipTurn if there is not enough letters in the reserve to change', () => {
+        spyOn(playerIA, 'play').and.returnValue();
+        spyOn(Math, 'floor').and.returnValue(6);
 
         context.letterService.reserve = [];
-
+        playerIA.strategy = swapStrategy;
         swapStrategy.execute(playerIA, context);
+        const expectedStrategy = new SkipTurn();
 
-        expect(context.skip).toHaveBeenCalledTimes(1);
+        expect(playerIA.strategy).toEqual(expectedStrategy);
     });
 });

@@ -6,6 +6,7 @@ import { PlayStrategy } from './abstract-strategy.model';
 import { PlaceLetters } from './place-letter-strategy.model';
 import { Player } from './player.model';
 import { SkipTurn } from './skip-turn-strategy.model';
+import { SwapLetter } from './swap-letter-strategy.model';
 
 export class PlayerIA extends Player {
     context: PlayerIAComponent;
@@ -28,10 +29,10 @@ export class PlayerIA extends Player {
 
         switch (strategyBallotBox[randomNumber]) {
             case IAStrategy.Skip:
-                this.strategy = new PlaceLetters(this.pointingRange());
+                this.strategy = new SkipTurn();
                 break;
             case IAStrategy.Swap:
-                this.strategy = new PlaceLetters(this.pointingRange());
+                this.strategy = new SwapLetter();
                 break;
             case IAStrategy.Place:
                 // Get a pointing range object which extends PlaceLetters
