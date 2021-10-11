@@ -5,7 +5,7 @@ import { MouseHandlerService } from '@app/services/mouse-handler.service';
 import { ScrabbleBoardComponent } from './scrabble-board.component';
 
 describe('ScrabbleBoardComponent', () => {
-    let component: ScrabbleBoardComponent;
+    //let component: ScrabbleBoardComponent;
     let fixture: ComponentFixture<ScrabbleBoardComponent>;
     let mouseServiceSpy: jasmine.SpyObj<MouseHandlerService>;
 
@@ -22,7 +22,7 @@ describe('ScrabbleBoardComponent', () => {
 
     beforeEach(() => {
         fixture = TestBed.createComponent(ScrabbleBoardComponent);
-        component = fixture.componentInstance;
+        //component = fixture.componentInstance;
         fixture.detectChanges();
     });
 
@@ -50,4 +50,27 @@ describe('ScrabbleBoardComponent', () => {
         component.mouseHitDetect(mouseEvent);
         expect(mouseServiceSpy.mouseHitDetect).toHaveBeenCalledWith(mouseEvent);
     });
+
+    // it('should create', () => {
+    //     expect(component).toBeTruthy();
+    // });
+
+    // it('buttonDetect should modify the buttonPressed variable', () => {
+    //     const expectedKey = 'a';
+    //     const buttonEvent = {
+    //         key: expectedKey,
+    //     } as KeyboardEvent;
+    //     component.buttonDetect(buttonEvent);
+    //     expect(component.buttonPressed).toEqual(expectedKey);
+    // });
+
+    // it('mouse hit detect should call mouse hit detect from gridService', () => {
+    //     const mouseEvent = {
+    //         offsetX: 10,
+    //         offsetY: 1,
+    //         button: 0,
+    //     } as MouseEvent;
+    //     component.mouseHitDetect(mouseEvent);
+    //     expect(mouseServiceSpy.mouseHitDetect).toHaveBeenCalledWith(mouseEvent);
+    // });
 });
