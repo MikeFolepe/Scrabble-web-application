@@ -7,7 +7,7 @@ import {
     CENTRAL_CASE_POSY,
     EASEL_SIZE,
     INDEX_PLAYER_IA,
-    THREE_SECONDS_DELAY
+    THREE_SECONDS_DELAY,
 } from '@app/classes/constants';
 import { ScoreValidation } from '@app/classes/validation-score';
 import { Vec2 } from '@app/classes/vec2';

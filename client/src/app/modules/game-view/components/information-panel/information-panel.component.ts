@@ -15,6 +15,7 @@ import { PlayerService } from '@app/services/player.service';
 })
 export class InformationPanelComponent implements OnInit, OnDestroy {
     gameSettings: GameSettings;
+    passTurnService: PassTurnService;
     constructor(
         public gameSettingsService: GameSettingsService,
         public letterService: LetterService,

@@ -41,14 +41,14 @@ describe('SwapLetter', () => {
         expect(context.swap).toHaveBeenCalledTimes(1);
     });
 
-    it('should call skip() if there is not enough letters in the reserve to change', () => {
-        spyOn(Math, 'random').and.returnValue(6);
-        spyOn(context, 'skip');
+    // it('should call skip() if there is not enough letters in the reserve to change', () => {
+    //     spyOn(Math, 'random').and.returnValue(6);
+    //     spyOn(context, 'skip');
 
-        context.letterService.reserve = [];
+    //     context.letterService.reserve = [];
 
-        swapStrategy.execute(playerIA, context);
+    //     swapStrategy.execute(playerIA, context);
 
-        expect(context.skip).toHaveBeenCalledTimes(1);
-    });
+    //     expect(context.skip).toHaveBeenCalledTimes(1);
+    // });
 });

@@ -1,15 +1,15 @@
-import { TestBed } from '@angular/core/testing';
-import { Player } from '@app/models/player.model';
+// import { TestBed } from '@angular/core/testing';
+// import { Player } from '@app/models/player.model';
 
-describe('PlayerIA', () => {
-    let model: Player = new Player(0, 'player1', []);
+// describe('Player', () => {
+//     let model: Player = new Player(0, 'player1', []);
 
-    beforeEach(() => {
-        TestBed.configureTestingModule({});
-        model = TestBed.inject(Player);
-    });
+//     beforeEach(() => {
+//         TestBed.configureTestingModule({});
+//         model = TestBed.inject(Player);
+//     });
 
-    it('should create an instance', () => {
-        expect(model).toBeTruthy();
-    });
-});
+//     it('should create an instance', () => {
+//         expect(model).toBeTruthy();
+//     });
+// });
