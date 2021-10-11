@@ -1,5 +1,6 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ChatboxService } from '@app/services/chatbox.service';
+import { DebugService } from '@app/services/debug.service';
 import { TourService } from '@app/services/tour.service';
 import { Subscription } from 'rxjs';
 
@@ -21,7 +22,7 @@ export class ChatboxComponent implements OnInit, OnDestroy {
     listTypes: string[] = [];
     debugMessage: { word: string; nbPt: number }[] = [];
 
-    constructor(private chatBoxService: ChatboxService, private tourService: TourService) {}
+    constructor(private chatBoxService: ChatboxService, private tourService: TourService, public debugService: DebugService) {}
 
     ngOnInit(): void {
         this.tourSubscription = this.tourService.tourSubject.subscribe((tourSubject: boolean) => {

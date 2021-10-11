@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable dot-notation */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { TestBed } from '@angular/core/testing';
 import { PlayerIAComponent } from '@app/modules/game-view/components/player-ia/player-ia.component';
 import { PlaceLetters } from './place-letter-strategy.model';
@@ -32,27 +30,35 @@ describe('PlayerIA', () => {
     });
 
     it('should set the respective strategy based on random numbers', () => {
-        spyOn<any>(playerIA, 'pointingRange').and.returnValue({ min: 0, max: 6 });
+        const RANDOM_NUMBER_1 = 0;
+        const RANDOM_NUMBER_2 = 3;
+        const RANDOM_NUMBER_3 = 5;
+        const RANDOM_NUMBER_4 = 22;
+        spyOn(playerIA, 'pointingRange').and.returnValue({ min: 0, max: 6 });
 
-        spyOn<any>(playerIA, 'generateRandomNumber').and.returnValue(0);
+        spyOn(playerIA, 'generateRandomNumber').and.returnValue(RANDOM_NUMBER_1);
         playerIA['setStrategy']();
         expect(playerIA.strategy).toBeInstanceOf(PlaceLetters);
 
-        playerIA['generateRandomNumber'] = jasmine.createSpy().and.returnValue(3);
+        playerIA.generateRandomNumber = jasmine.createSpy().and.returnValue(RANDOM_NUMBER_2);
         playerIA['setStrategy']();
         expect(playerIA.strategy).toBeInstanceOf(SkipTurn);
 
-        playerIA['generateRandomNumber'] = jasmine.createSpy().and.returnValue(5);
+        playerIA.generateRandomNumber = jasmine.createSpy().and.returnValue(RANDOM_NUMBER_3);
         playerIA['setStrategy']();
         expect(playerIA.strategy).toBeInstanceOf(SwapLetter);
 
-        playerIA['generateRandomNumber'] = jasmine.createSpy().and.returnValue(22);
+        playerIA.generateRandomNumber = jasmine.createSpy().and.returnValue(RANDOM_NUMBER_4);
         playerIA['setStrategy']();
         expect(playerIA.strategy).toBeInstanceOf(SkipTurn);
     });
 
     it('should have a scoring range', () => {
-        spyOn<any>(playerIA, 'generateRandomNumber').and.returnValues(0, 1, 4, 22);
+        const RANDOM_NUMBER_1 = 0;
+        const RANDOM_NUMBER_2 = 1;
+        const RANDOM_NUMBER_3 = 4;
+        const RANDOM_NUMBER_4 = 22;
+        spyOn(playerIA, 'generateRandomNumber').and.returnValues(RANDOM_NUMBER_1, RANDOM_NUMBER_2, RANDOM_NUMBER_3, RANDOM_NUMBER_4);
 
         expect(playerIA['pointingRange']()).toEqual({ min: 0, max: 6 });
         expect(playerIA['pointingRange']()).toEqual({ min: 7, max: 12 });
@@ -61,24 +67,25 @@ describe('PlayerIA', () => {
     });
 
     it('should return a random number between 0 and a give number', () => {
-        let MAX_VALUE = 3;
-        for (let i = 0; i < 10; i++) {
-            const result = playerIA['generateRandomNumber'](MAX_VALUE);
+        const MAX_VALUE_1 = 3;
+        const MAX_VALUE_2 = 10;
+        const MAX_INDEX = 10;
+        for (let i = 0; i < MAX_INDEX; i++) {
+            const result = playerIA['generateRandomNumber'](MAX_VALUE_1);
             expect(result).toBeGreaterThanOrEqual(0);
-            expect(result).toBeLessThan(MAX_VALUE);
+            expect(result).toBeLessThan(MAX_VALUE_1);
         }
 
-        MAX_VALUE = 10;
-        for (let i = 0; i < 10; i++) {
-            const result = playerIA['generateRandomNumber'](MAX_VALUE);
+        for (let i = 0; i < MAX_INDEX; i++) {
+            const result = playerIA['generateRandomNumber'](MAX_VALUE_2);
             expect(result).toBeGreaterThanOrEqual(0);
-            expect(result).toBeLessThan(MAX_VALUE);
+            expect(result).toBeLessThan(MAX_VALUE_2);
         }
     });
 
     it('should call the right functions when calling play()', () => {
-        spyOn<any>(playerIA.strategy, 'execute');
-        spyOn<any>(playerIA, 'setStrategy');
+        spyOn(playerIA.strategy, 'execute');
+        spyOn(playerIA, 'setStrategy');
 
         playerIA.play();
 

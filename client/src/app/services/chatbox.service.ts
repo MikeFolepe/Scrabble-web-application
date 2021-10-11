@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { INDEX_REAL_PLAYER } from '@app/classes/constants';
+import { INDEX_REAL_PLAYER, MAX_NUMBER_OF_POSSIBILITY, ONE_POSSIBILITY, TWO_POSSIBILITY } from '@app/classes/constants';
 import { Vec2 } from '@app/classes/vec2';
 import { PassTourService } from '@app/services/pass-tour.service';
 import { PlaceLetterService } from '@app/services/place-letter.service';
@@ -7,6 +7,7 @@ import { PlayerService } from '@app/services/player.service';
 import { SwapLetterService } from '@app/services/swap-letter.service';
 import { TourService } from '@app/services/tour.service';
 import { Subscription } from 'rxjs';
+import { DebugService } from './debug.service';
 
 @Injectable({
     providedIn: 'root',
@@ -19,7 +20,6 @@ export class ChatboxService implements OnDestroy {
     typeMessage: string = '';
     command: string = '';
 
-    debugOn: boolean = true;
     debugMessage: { word: string; nbPt: number }[] = [{ word: 'papier', nbPt: 6 }];
 
     private displayMessage: () => void;
@@ -29,6 +29,7 @@ export class ChatboxService implements OnDestroy {
         private playerService: PlayerService,
         private swapLetterService: SwapLetterService,
         private placeLetterService: PlaceLetterService,
+        private debugService: DebugService,
     ) {
         this.initializeTourSubcribtion();
     }
@@ -127,17 +128,15 @@ export class ChatboxService implements OnDestroy {
     }
 
     commandDebug() {
-        if (this.debugOn) {
+        this.debugService.switchDebugMode();
+        if (this.debugService.isDebugOn) {
             this.typeMessage = 'system';
             this.message = 'affichages de débogage activés';
             this.displayMessage();
             this.displayDebugMessage();
-            this.debugOn = false;
         } else {
             this.typeMessage = 'system';
             this.message = 'affichages de débogage désactivés';
-            this.displayMessage();
-            this.debugOn = true;
         }
     }
     commandPassTurn() {
@@ -190,17 +189,38 @@ export class ChatboxService implements OnDestroy {
         }
     }
 
-    addMessageToDebug(message: { word: string; nbPt: number }[]) {
-        this.debugMessage = message;
-    }
-
+    // method which check the différents size of table of possibilty for the debug
     displayDebugMessage(): void {
-        for (const alternative of this.debugMessage) {
-            const x: string = alternative.word;
-            this.typeMessage = 'system';
-            this.message = x + ': -- ' + alternative.nbPt.toString();
-            this.displayMessage();
+        switch (this.debugService.debugServiceMessage.length) {
+            case 0: {
+                this.typeMessage = 'system';
+                this.message = 'Aucune possibilité de placement trouvés!';
+                break;
+            }
+            case 1: {
+                for (let i = 0; i < ONE_POSSIBILITY; i++) {
+                    this.typeMessage = 'system';
+                    this.message = this.debugService.debugServiceMessage[i].word + ': -- ' + this.debugService.debugServiceMessage[i].nbPt.toString();
+                }
+                break;
+            }
+            case 2: {
+                for (let i = 0; i < TWO_POSSIBILITY; i++) {
+                    this.typeMessage = 'system';
+                    this.message = this.debugService.debugServiceMessage[i].word + ': -- ' + this.debugService.debugServiceMessage[i].nbPt.toString();
+                }
+
+                break;
+            }
+            default: {
+                for (let i = 0; i < MAX_NUMBER_OF_POSSIBILITY; i++) {
+                    this.typeMessage = 'system';
+                    this.message = this.debugService.debugServiceMessage[i].word + ': -- ' + this.debugService.debugServiceMessage[i].nbPt.toString();
+                }
+                break;
+            }
         }
+        this.debugService.clearDebugMessage();
     }
 
     ngOnDestroy() {

@@ -76,7 +76,7 @@ export class PlayerIA extends Player {
         this.play();
     }
 
-    private generateRandomNumber(maxValue: number): number {
+    generateRandomNumber(maxValue: number): number {
         return Math.floor(Number(Math.random()) * maxValue);
     }
 }

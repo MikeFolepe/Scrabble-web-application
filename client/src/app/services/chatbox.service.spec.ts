@@ -98,6 +98,12 @@ describe('ChatboxService', () => {
     it('using command !debug should call commandDebug()', () => {
         const spy = spyOn(service, 'commandDebug').and.callThrough();
         service.command = 'debug';
+        const word = 'message de debug';
+        const nbPt = 1;
+        const table: { word: string; nbPt: number }[] = [];
+        table.push({ word, nbPt });
+
+        service['debugService'].receiveAIDebugPossibilities(table);
         service.sendPlayerMessage('!debug');
         expect(spy).toHaveBeenCalled();
     });
@@ -130,7 +136,13 @@ describe('ChatboxService', () => {
 
     it('desactivating debug should display the respective message', () => {
         service.command = 'debug';
-        service.debugOn = false;
+        const word = 'message de debug';
+        const nbPt = 1;
+        const table: { word: string; nbPt: number }[] = [];
+        table.push({ word, nbPt });
+
+        service['debugService'].receiveAIDebugPossibilities(table);
+        service.sendPlayerMessage('!debug');
         service.sendPlayerMessage('!debug');
         expect(service.message).toEqual('affichages de débogage désactivés');
     });

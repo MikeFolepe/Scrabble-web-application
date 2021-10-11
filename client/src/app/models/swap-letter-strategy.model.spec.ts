@@ -1,11 +1,7 @@
-/* eslint-disable @typescript-eslint/no-magic-numbers */
-// import { TestBed } from '@angular/core/testing';
-// import { PlayerIAComponent } from '@app/modules/game-view/components/player-ia/player-ia.component';
-// import { PlayerIA } from './player-ia.model';
 import { TestBed } from '@angular/core/testing';
 import { PlayerIAComponent } from '@app/modules/game-view/components/player-ia/player-ia.component';
-import { PlayerIA } from './player-ia.model';
-import { SwapLetter } from './swap-letter-strategy.model';
+import { PlayerIA } from '@app/models/player-ia.model';
+import { SwapLetter } from '@app/models/swap-letter-strategy.model';
 
 describe('SwapLetter', () => {
     const id = 0;
@@ -47,7 +43,7 @@ describe('SwapLetter', () => {
         const spy = spyOn(context, 'skip').and.callThrough();
         context.letterService.reserve = [];
 
-        swapStrategy.execute(playerIA, context);
+    //     swapStrategy.execute(playerIA, context);
 
         expect(spy).toHaveBeenCalledTimes(1);
     });
