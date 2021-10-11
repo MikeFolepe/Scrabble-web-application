@@ -2,7 +2,7 @@
 /* eslint-disable dot-notation */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { TestBed } from '@angular/core/testing';
-import { PlayerIAComponent } from '@app/modules/game-view/components/player-ia/player-ia.component';
+import { PlayerAIComponent } from '@app/modules/game-view/components/player-ia/player-ia.component';
 import { PlaceLetters } from './place-letter-strategy.model';
 import { PlayerIA } from './player-ia.model';
 import { SkipTurn } from './skip-turn-strategy.model';
@@ -81,7 +81,7 @@ describe('PlayerIA', () => {
     });
 
     it('should set the right context when setContext() is called', () => {
-        const context: PlayerIAComponent = TestBed.createComponent(PlayerIAComponent).componentInstance;
+        const context: PlayerAIComponent = TestBed.createComponent(PlayerAIComponent).componentInstance;
         playerIA.setContext(context);
         expect(playerIA.context).toEqual(context);
     });

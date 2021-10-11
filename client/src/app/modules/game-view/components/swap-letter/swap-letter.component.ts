@@ -52,7 +52,7 @@ export class SwapLetterComponent {
 
     // Reserve needs to have at least 7 letters to perform a swap
     reserveHasEnoughLetters(): boolean {
-        if (this.letterService.getReserveSize() >= MIN_RESERVE_SIZE_TOSWAP) {
+        if (this.letterService.reserveSize >= MIN_RESERVE_SIZE_TOSWAP) {
             return true;
         }
         return false;

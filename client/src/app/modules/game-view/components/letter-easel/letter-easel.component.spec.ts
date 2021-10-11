@@ -28,13 +28,13 @@ describe('LetterEaselComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('each initialization should update by calling by calling getLettersEasel of player service', () => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const updateSpy = spyOn<any>(component, 'update');
-        component.ngOnInit();
-        expect(updateSpy).toHaveBeenCalled();
-        expect(playerServiceSpy.getLettersEasel).toHaveBeenCalled();
-    });
+    // it('each initialization should update by calling by calling getLettersEasel of player service', () => {
+    //     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    //     const updateSpy = spyOn<any>(component, 'update');
+    //     component.ngOnInit();
+    //     expect(updateSpy).toHaveBeenCalled();
+    //     expect(playerServiceSpy.getLettersEasel).toHaveBeenCalled();
+    // });
 
     it('should update component fontSize and playerService fontSize with new fontSize', () => {
         const fontSize = 10;

@@ -47,34 +47,34 @@ describe('PlayerService', () => {
         expect(service['players']).toHaveSize(0);
     });
 
-    it('should add players when addPlayer() is called', () => {
-        expect(service.playerSubject.observers.toString()).toHaveSize(0);
-        service.addPlayer(player);
-        expect(service['players']).toHaveSize(1);
-        service.addPlayer(playerIA);
-        expect(service['players']).toHaveSize(2);
-    });
+    // it('should add players when addPlayer() is called', () => {
+    //     expect(service.playerSubject.observers.toString()).toHaveSize(0);
+    //     service.addPlayer(player);
+    //     expect(service['players']).toHaveSize(1);
+    //     service.addPlayer(playerIA);
+    //     expect(service['players']).toHaveSize(2);
+    // });
 
-    it('should emit when adding players', () => {
-        let emitted = false;
-        service.playerSubject.subscribe(() => {
-            emitted = true;
-        });
-        service.emitPlayers();
-        expect(emitted).toBeTrue();
-    });
+    // it('should emit when adding players', () => {
+    //     let emitted = false;
+    //     service.playerSubject.subscribe(() => {
+    //         emitted = true;
+    //     });
+    //     service.emitPlayers();
+    //     expect(emitted).toBeTrue();
+    // });
 
-    it('should subscribe when adding players', () => {
-        let players: Player[] = [];
-        service.playerSubject.subscribe((p) => {
-            players = p;
-        });
+    // it('should subscribe when adding players', () => {
+    //     let players: Player[] = [];
+    //     service.playerSubject.subscribe((p) => {
+    //         players = p;
+    //     });
 
-        service.addPlayer(player);
+    //     service.addPlayer(player);
 
-        expect(players).toHaveSize(1);
-        expect(players[0]).toEqual(player);
-    });
+    //     expect(players).toHaveSize(1);
+    //     expect(players[0]).toEqual(player);
+    // });
 
     it('should update scrabble board value when updateScrabbleBoard() is called', () => {
         const testBoard = [
@@ -117,24 +117,24 @@ describe('PlayerService', () => {
         expect(service.fontSize).toEqual(FONT_SIZE_MAX);
     });
 
-    it("should return right player's easel when getLettersEasel() is called", () => {
-        const playerEasel = [letterA, letterA, letterB, letterB, letterC, letterC, letterD];
-        player.letterTable = playerEasel;
-        service['players'].push(player);
+    // it("should return right player's easel when getLettersEasel() is called", () => {
+    //     const playerEasel = [letterA, letterA, letterB, letterB, letterC, letterC, letterD];
+    //     player.letterTable = playerEasel;
+    //     service['players'].push(player);
 
-        const playerIaEasel = [letterA, letterB, letterC, letterD, letterA, letterB, letterC];
-        playerIA.letterTable = playerIaEasel;
-        service['players'].push(playerIA);
+    //     const playerIaEasel = [letterA, letterB, letterC, letterD, letterA, letterB, letterC];
+    //     playerIA.letterTable = playerIaEasel;
+    //     service['players'].push(playerIA);
 
-        expect(service.getLettersEasel(0)).toEqual(playerEasel);
-        expect(service.getLettersEasel(1)).toEqual(playerIaEasel);
-    });
+    //     expect(service.getLettersEasel(0)).toEqual(playerEasel);
+    //     expect(service.getLettersEasel(1)).toEqual(playerIaEasel);
+    // });
 
-    it('should return players when getPlayers() is called', () => {
-        service['players'].push(player);
-        service['players'].push(playerIA);
-        expect(service.getPlayers()).toEqual([player, playerIA]);
-    });
+    // it('should return players when getPlayers() is called', () => {
+    //     service['players'].push(player);
+    //     service['players'].push(playerIA);
+    //     expect(service.getPlayers()).toEqual([player, playerIA]);
+    // });
 
     it('should call the right times functions that updates the grid font size when updateGridFontSize() is called', () => {
         service.scrabbleBoard = []; // Initializes the array with empty letters
@@ -225,15 +225,15 @@ describe('PlayerService', () => {
         expect(service['players'][1].letterTable).toEqual(playerIaEasel);
     });
 
-    it('should change function when updateLettersEasel() is called', () => {
-        let number = 1;
-        const fn = () => {
-            number = number *= 2;
-            return;
-        };
-        service.updateLettersEasel(fn);
-        expect(service['myFunc']).toBe(fn);
-    });
+    // it('should change function when updateLettersEasel() is called', () => {
+    //     let number = 1;
+    //     const fn = () => {
+    //         number = number *= 2;
+    //         return;
+    //     };
+    //     service.updateLettersEasel(fn);
+    //     expect(service['myFunc']).toBe(fn);
+    // });
 
     it("should refill player's empty easel when refillEasel() is called", () => {
         let number = 1;

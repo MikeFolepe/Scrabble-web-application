@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { PassTurnService } from '@app/services/pass-turn.service';
 
 @Component({
     selector: 'app-play-area',
@@ -8,4 +9,5 @@ import { Component } from '@angular/core';
 export class PlayAreaComponent {
     // isTour: boolean = true;
     // timechoise: number = 60000;
+    constructor(public passTurn: PassTurnService) {}
 }

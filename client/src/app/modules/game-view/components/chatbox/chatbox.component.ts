@@ -1,25 +1,24 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { INDEX_REAL_PLAYER } from '@app/classes/constants';
 import { Vec2 } from '@app/classes/vec2';
-import { PassTurnComponent } from '@app/modules/game-view/components/pass-turn/pass-turn.component';
 import { PlaceLetterComponent } from '@app/modules/game-view/components/place-letter/place-letter.component';
 import { SwapLetterComponent } from '@app/modules/game-view/components/swap-letter/swap-letter.component';
+import { PassTurnService } from '@app/services/pass-turn.service';
 import { PlayerService } from '@app/services/player.service';
-import { TourService } from '@app/services/tour.service';
-import { Subscription } from 'rxjs';
+// import { TourService } from '@app/services/tour.service';
+// import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-chatbox',
     templateUrl: './chatbox.component.html',
     styleUrls: ['./chatbox.component.scss'],
 })
-export class ChatBoxComponent implements OnInit, OnDestroy {
-    @ViewChild(PassTurnComponent) passTurn: PassTurnComponent;
+export class ChatBoxComponent {
     @ViewChild(PlaceLetterComponent) placeComponent: PlaceLetterComponent;
     @ViewChild(SwapLetterComponent) swapComponent: SwapLetterComponent;
     @ViewChild('scrollMe') private myScrollContainer: ElementRef;
-    turnSubscription: Subscription = new Subscription();
-    turn: boolean;
+    // turnSubscription: Subscription = new Subscription();
+    // turn: boolean;
 
     debugOn: boolean = true;
     typeMessage: string = '';
@@ -36,14 +35,14 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
     private readonly exchangeCommand = 'echanger';
     private readonly placeCommand = 'placer';
 
-    constructor(private tourService: TourService, private playerService: PlayerService) {}
+    constructor(public passTurn: PassTurnService, private playerService: PlayerService) {}
 
-    ngOnInit(): void {
-        this.turnSubscription = this.tourService.tourSubject.subscribe((turnSubject: boolean) => {
-            this.turn = turnSubject;
-        });
-        this.tourService.emitTour();
-    }
+    // ngOnInit(): void {
+    //     // this.turnSubscription = this.tourService.tourSubject.subscribe((turnSubject: boolean) => {
+    //     //     this.turn = turnSubject;
+    //     // });
+    //     // this.tourService.emitTour();
+    // }
 
     handleKeyEvent(event: KeyboardEvent): void {
         if (event.key === 'Enter') {
@@ -150,9 +149,8 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
     }
 
     switchTurn() {
-        this.turn = this.tourService.getTour();
-        if (this.turn) {
-            this.passTurn.toggleTurn();
+        if (this.passTurn.isTurn) {
+            this.passTurn.switchTurn();
             this.sendSystemMessage('!passer');
         } else {
             this.sendSystemMessage('Commande impossible à réaliser!');
@@ -174,9 +172,9 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
         }
     }
 
-    ngOnDestroy() {
-        this.turnSubscription.unsubscribe();
-    }
+    // ngOnDestroy() {
+    //     this.turnSubscription.unsubscribe();
+    // }
 
     private executeDebugCommand(): void {
         if (this.debugOn) {
@@ -190,25 +188,24 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
     }
 
     private executeExchangeCommand(): void {
-        this.turn = this.tourService.getTour();
-        if (this.turn === true) {
+        if (this.passTurn.isTurn) {
             const messageSplitted = this.message.split(/\s/);
 
             if (this.swapComponent.swap(messageSplitted[1], INDEX_REAL_PLAYER)) {
-                this.message = this.playerService.getPlayers()[INDEX_REAL_PLAYER].name + ' : ' + this.message;
+                this.message = this.playerService.players[INDEX_REAL_PLAYER].name + ' : ' + this.message;
             } else {
                 this.typeMessage = 'error';
                 this.message = 'ERREUR : La commande est impossible à réaliser';
             }
+            this.passTurn.switchTurn();
         } else {
             this.typeMessage = 'error';
-            this.message = "ERREUR : Ce n'est pas ton turn";
+            this.message = "ERREUR : Ce n'est pas ton tour";
         }
     }
 
     private executePlaceCommand(): void {
-        this.turn = this.tourService.getTour();
-        if (this.turn === true) {
+        if (this.passTurn.isTurn) {
             const messageSplitted = this.message.split(/\s/);
 
             const positionSplitted = messageSplitted[1].split(/([0-9]+)/);
@@ -224,10 +221,10 @@ export class ChatBoxComponent implements OnInit, OnDestroy {
                 this.typeMessage = 'error';
                 this.message = 'ERREUR : Le placement est invalide';
             }
-            this.passTurn.toggleTurn();
+            this.passTurn.switchTurn();
         } else {
             this.typeMessage = 'error';
-            this.message = "ERREUR : Ce n'est pas ton turn";
+            this.message = "ERREUR : Ce n'est pas ton tour";
         }
     }
 }

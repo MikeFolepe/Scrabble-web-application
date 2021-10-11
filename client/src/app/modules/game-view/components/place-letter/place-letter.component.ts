@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/prefer-for-of */
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
     BOARD_COLUMNS,
     BOARD_ROWS,
@@ -7,35 +7,29 @@ import {
     CENTRAL_CASE_POSY,
     EASEL_SIZE,
     INDEX_PLAYER_IA,
-    THREE_SECONDS_DELAY,
+    THREE_SECONDS_DELAY
 } from '@app/classes/constants';
 import { ScoreValidation } from '@app/classes/validation-score';
 import { Vec2 } from '@app/classes/vec2';
 import { GridService } from '@app/services/grid.service';
-import { LetterService } from '@app/services/letter.service';
 import { PlayerService } from '@app/services/player.service';
-import { Subscription } from 'rxjs';
+import { WordValidationService } from '@app/services/word-validation.service';
 // eslint-disable-next-line no-restricted-imports
-import { WordValidationComponent } from '../word-validation/word-validation.component';
-
 @Component({
     selector: 'app-place-letter',
     templateUrl: './place-letter.component.html',
     styleUrls: ['./place-letter.component.scss'],
 })
-export class PlaceLetterComponent implements OnInit, OnDestroy {
-    @ViewChild(WordValidationComponent) wordValidator: WordValidationComponent;
-    viewSubscription: Subscription = new Subscription();
-
+export class PlaceLetterComponent implements OnInit {
     scrabbleBoard: string[][]; // 15x15 array
     invalidLetters: boolean[] = []; // Array of the size of the word to place that tells which letter is invalid
 
     letterEmpty: string = '';
-    isFirstRound: boolean = false;
+    isFirstRound: boolean = true;
     isIAPlacementValid: boolean = false;
     message: string;
 
-    constructor(private playerService: PlayerService, private gridService: GridService, private letterService: LetterService) {
+    constructor(private playerService: PlayerService, private gridService: GridService, public wordValidator: WordValidationService) {
         this.scrabbleBoard = []; // Initializes the array with empty letters
         for (let i = 0; i < BOARD_ROWS; i++) {
             this.scrabbleBoard[i] = [];
@@ -47,7 +41,6 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.playerService.updateScrabbleBoard(this.scrabbleBoard);
-        this.viewSubscription = this.letterService.currentMessage.subscribe((message) => (this.message = message));
     }
 
     placeMethodAdapter(object: { start: Vec2; orientation: string; word: string; indexPlayer: number }) {
@@ -56,7 +49,6 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
 
     place(position: Vec2, orientation: string, word: string, indexPlayer = INDEX_PLAYER_IA): boolean {
         // Remove accents from the word to place
-        const isRow = false;
         const wordNoAccents = word.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
         // If the command is possible according to the parameters
         if (!this.isPossible(position, orientation, wordNoAccents, indexPlayer)) {
@@ -66,6 +58,7 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
         if (word.length === EASEL_SIZE) {
             isEaselSize = true;
         }
+        const isRow = false;
         this.invalidLetters = []; // Reset the array containing the invalid letters
 
         // Placing all letters of the word
@@ -151,7 +144,6 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
         this.playerService.addScore(finalResult.score, indexPlayer);
         this.playerService.updateScrabbleBoard(this.scrabbleBoard);
         this.playerService.refillEasel(indexPlayer); // Fill the easel with new letters from the reserve
-        this.letterService.writeMessage('mise a jour');
         this.isFirstRound = false;
     }
 
@@ -196,7 +188,7 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
             let isLetterExisting = false;
 
             // Search the letter in the easel
-            for (const letterEasel of this.playerService.getLettersEasel(indexPlayer)) {
+            for (const letterEasel of this.playerService.players[indexPlayer].letterTable) {
                 if (word[i] === letterEasel.value.toLowerCase()) {
                     isLetterExisting = true;
                 }
@@ -280,9 +272,5 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
             return true;
         }
         return false;
-    }
-
-    ngOnDestroy() {
-        this.viewSubscription.unsubscribe();
     }
 }

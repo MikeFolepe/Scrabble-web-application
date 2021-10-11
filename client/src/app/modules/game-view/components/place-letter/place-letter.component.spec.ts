@@ -6,7 +6,6 @@ import { Vec2 } from '@app/classes/vec2';
 import { Player } from '@app/models/player.model';
 import { GridService } from '@app/services/grid.service';
 // eslint-disable-next-line no-restricted-imports
-import { WordValidationComponent } from '../word-validation/word-validation.component';
 import { PlaceLetterComponent } from './place-letter.component';
 
 describe('PlaceLetterComponent', () => {
@@ -20,7 +19,7 @@ describe('PlaceLetterComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [PlaceLetterComponent, WordValidationComponent],
+            declarations: [PlaceLetterComponent],
             providers: [{ provide: GridService, useValue: gridServiceSpy }],
         }).compileComponents();
     });
@@ -103,7 +102,7 @@ describe('PlaceLetterComponent', () => {
         // Fake these methods to be able to call place()
         spyOn(component['playerService'], 'removeLetter');
         spyOn(component['playerService'], 'refillEasel');
-        spyOn(component['letterService'], 'writeMessage');
+        // spyOn(component['letterService'], 'writeMessage');
         spyOn(component.wordValidator, 'validateAllWordsOnBoard').and.returnValue({ validation: true, score: 0 });
         // Place first word
         let position: Vec2 = { x: 7, y: 7 };
@@ -127,7 +126,7 @@ describe('PlaceLetterComponent', () => {
         // Fake these methods to be able to call place()
         spyOn(component['playerService'], 'removeLetter');
         spyOn(component['playerService'], 'refillEasel');
-        spyOn(component['letterService'], 'writeMessage');
+        // spyOn(component['letterService'], 'writeMessage');
         spyOn(component.wordValidator, 'validateAllWordsOnBoard').and.returnValue({ validation: true, score: 0 });
         // Place first word
         let position: Vec2 = { x: 7, y: 7 };
@@ -145,7 +144,7 @@ describe('PlaceLetterComponent', () => {
         // Fake these methods to be able to call place()
         spyOn(component['playerService'], 'removeLetter');
         spyOn(component['playerService'], 'refillEasel');
-        spyOn(component['letterService'], 'writeMessage');
+        // spyOn(component['letterService'], 'writeMessage');
         spyOn(component.wordValidator, 'validateAllWordsOnBoard').and.returnValue({ validation: true, score: 0 });
         const position: Vec2 = { x: 7, y: 7 };
         const orientation = 'h';
@@ -156,7 +155,7 @@ describe('PlaceLetterComponent', () => {
         // Fake these methods to be able to call place()
         spyOn(component['playerService'], 'removeLetter');
         spyOn(component['playerService'], 'refillEasel');
-        spyOn(component['letterService'], 'writeMessage');
+        // spyOn(component['letterService'], 'writeMessage');
         spyOn(component.wordValidator, 'validateAllWordsOnBoard').and.returnValue({ validation: true, score: 0 });
         // Player 1 places the first word
         let position: Vec2 = { x: 7, y: 7 };
@@ -185,7 +184,7 @@ describe('PlaceLetterComponent', () => {
         // Fake these methods to be able to call place()
         spyOn(component['playerService'], 'removeLetter');
         spyOn(component['playerService'], 'refillEasel');
-        spyOn(component['letterService'], 'writeMessage');
+        // spyOn(component['letterService'], 'writeMessage');
         spyOn(component.wordValidator, 'validateAllWordsOnBoard').and.returnValue({ validation: false, score: 0 });
         // Player 1 places an invalid word
         const position: Vec2 = { x: 7, y: 7 };
@@ -197,7 +196,7 @@ describe('PlaceLetterComponent', () => {
         // Fake these methods to be able to call place()
         spyOn(component['playerService'], 'removeLetter');
         spyOn(component['playerService'], 'refillEasel');
-        spyOn(component['letterService'], 'writeMessage');
+        // spyOn(component['letterService'], 'writeMessage');
         spyOn(component.wordValidator, 'validateAllWordsOnBoard').and.returnValue({ validation: true, score: 0 });
         // Player 1 places the 1st word
         let position: Vec2 = { x: 7, y: 7 };
@@ -228,7 +227,7 @@ describe('PlaceLetterComponent', () => {
         // Fake these methods to be able to call place()
         spyOn(component['playerService'], 'removeLetter');
         spyOn(component['playerService'], 'refillEasel');
-        spyOn(component['letterService'], 'writeMessage');
+        // spyOn(component['letterService'], 'writeMessage');
         spyOn(component.wordValidator, 'validateAllWordsOnBoard').and.returnValue({ validation: false, score: 0 });
         // Player 1 places the 1st word
         const position: Vec2 = { x: 7, y: 7 };
@@ -243,7 +242,7 @@ describe('PlaceLetterComponent', () => {
         // Fake these methods to be able to call place()
         spyOn(component['playerService'], 'removeLetter');
         spyOn(component['playerService'], 'refillEasel');
-        spyOn(component['letterService'], 'writeMessage');
+        // spyOn(component['letterService'], 'writeMessage');
         spyOn(component.wordValidator, 'validateAllWordsOnBoard').and.returnValue({ validation: false, score: 0 });
         const spy = spyOn(component, 'place').and.callThrough();
         const start: Vec2 = { x: 7, y: 7 };

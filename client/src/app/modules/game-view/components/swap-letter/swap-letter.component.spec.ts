@@ -65,7 +65,7 @@ describe('SwapLetterComponent', () => {
         expect(component.reserveHasEnoughLetters()).toEqual(true);
     });
     it('an empty reserve should not have enough letters to swap', () => {
-        const initReserveSize: number = component['letterService'].getReserveSize();
+        const initReserveSize: number = component['letterService'].reserveSize;
         // Emptying the reserve
         for (let i = 0; i < initReserveSize; i++) {
             component['letterService'].getRandomLetter();

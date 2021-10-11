@@ -8,7 +8,7 @@ export class SwapLetter extends PlayStrategy {
         const numberOfLetterToChange = Math.floor(Math.random() * EASEL_SIZE);
 
         // If change not possible skip
-        if (numberOfLetterToChange > context.letterService.getReserveSize()) {
+        if (numberOfLetterToChange > context.letterService.reserveSize) {
             player.replaceStrategy(new SkipTurn());
             return;
         }

@@ -1,6 +1,7 @@
 <div class="container">
     <app-scrabble-board></app-scrabble-board>
-    <div style="display: flex; width: 15vw; height: 85vh; justify-content: flex-start; flex-direction: column; flex-wrap: wrap; gap: 5vh">
+    <div
+        style="display: flex; width: 15vw; height: 85vh; justify-content: flex-start; flex-direction: column; flex-wrap: wrap; gap: 5vh">
         <div style="
             display: flex;
             width: 15vw;
@@ -12,7 +13,8 @@
             ">
             <app-letter-easel></app-letter-easel>
             <button mat-raised-button color="primary" routerLink="/home">Abandonner</button>
-            <!-- <button mat-raised-button color="primary" id="Pass-button" [disabled]="false">Passer tour</button> -->
+            <button mat-raised-button color="primary" (click)="this.passTurn.switchTurn()"
+                [disabled]=!this.passTurn.isTurn>Passer son tour</button>
         </div>
     </div>
 </div>

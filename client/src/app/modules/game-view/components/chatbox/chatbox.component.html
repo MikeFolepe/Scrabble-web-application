@@ -26,10 +26,5 @@
     <app-player-ia (iaPossibility)="receiveAImessage($event)">
     </app-player-ia>
 </div>
-<div>
-    <button mat-raised-button color="primary" id="Pass-button" [disabled]="!turn" (click)="switchTurn()">Passer
-        tour</button>
-</div>
-<app-pass-turn></app-pass-turn>
 <app-place-letter></app-place-letter>
 <app-swap-letter></app-swap-letter>

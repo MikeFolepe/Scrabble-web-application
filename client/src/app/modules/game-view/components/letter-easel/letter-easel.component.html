@@ -1,5 +1,5 @@
 <div class="easel-container">
-    <div class="letter-container" *ngFor="let letter of letterEaselTab">
+    <div class="letter-container" *ngFor="let letter of this.playerService.players[0].letterTable">
         <h2 [style.font-size.px]="fontSize*2">{{ letter.value }}</h2>
         <p [style.font-size.px]="fontSize">{{ letter.points }}</p>
     </div>

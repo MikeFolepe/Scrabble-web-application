@@ -1,14 +1,13 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { DELAY_TO_PLAY } from '@app/classes/constants';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { DELAY_TO_PLAY, INDEX_PLAYER_IA } from '@app/classes/constants';
 import { Vec2 } from '@app/classes/vec2';
 import { PlayerIA } from '@app/models/player-ia.model';
-import { Player } from '@app/models/player.model';
-import { PassTurnComponent } from '@app/modules/game-view/components/pass-turn/pass-turn.component';
+// import { Player } from '@app/models/player.model';
 import { LetterService } from '@app/services/letter.service';
-import { PassTourService } from '@app/services/pass-turn.service';
+import { PassTurnService } from '@app/services/pass-turn.service';
 import { PlayerService } from '@app/services/player.service';
-import { TourService } from '@app/services/tour.service';
-import { Subscription } from 'rxjs';
+// import { TourService } from '@app/services/tour.service';
+// import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-player-ia',
@@ -16,7 +15,6 @@ import { Subscription } from 'rxjs';
     styleUrls: ['./player-ia.component.scss'],
 })
 export class PlayerAIComponent implements OnInit {
-    @ViewChild(PassTurnComponent) passTurn: PassTurnComponent;
     @Output() iaSkipped = new EventEmitter();
     @Output() iaSwapped = new EventEmitter();
     @Output() iaPlaced = new EventEmitter();
@@ -27,55 +25,49 @@ export class PlayerAIComponent implements OnInit {
     @Input() isFirstRound: boolean;
 
     message: string;
-    passSubscription: Subscription = new Subscription();
+    // passSubscription: Subscription = new Subscription();
     iaPlayer: PlayerIA;
-    tourSubscription: Subscription = new Subscription();
+    // tourSubscription: Subscription = new Subscription();
     tour: boolean;
 
-    constructor(
-        public letterService: LetterService,
-        public playerService: PlayerService,
-        public tourService: TourService,
-        public passTourService: PassTourService,
-    ) {}
+    constructor(public letterService: LetterService, public playerService: PlayerService, public passTurn: PassTurnService) {}
 
     ngOnInit(): void {
         // Subscribe to get access to IA Player
-        this.playerService.playerSubject.subscribe((playersFromSubject: Player[]) => {
-            this.iaPlayer = playersFromSubject[1] as PlayerIA;
-        });
-        this.playerService.emitPlayers();
+        this.iaPlayer = this.playerService.players[INDEX_PLAYER_IA] as PlayerIA;
+
         // Set the playerIA context so that the player can lunch event
         this.iaPlayer.setContext(this);
-        if (!this.tourService.getTour()) {
+
+        if (!this.passTurn.isTurn) {
             setTimeout(() => {
                 this.iaPlayer.play();
             }, DELAY_TO_PLAY);
         }
     }
 
-    play() {
-        if (!this.tourService.getTour()) {
-            setTimeout(() => {
-                this.iaPlayer.play();
-            }, DELAY_TO_PLAY);
-        }
-    }
+    // play() {
+    //     if (!this.passTurn.isTurn) {
+    //         setTimeout(() => {
+    //             this.iaPlayer.play();
+    //         }, DELAY_TO_PLAY);
+    //     }
+    // }
 
     skip() {
         this.iaSkipped.emit();
-        if (!this.tourService.getTour()) {
+        if (!this.passTurn.isTurn) {
             setTimeout(() => {
-                this.passTurn.toggleTurn();
+                this.passTurn.switchTurn();
             }, DELAY_TO_PLAY);
         }
     }
 
     swap() {
         this.iaSwapped.emit();
-        if (!this.tourService.getTour()) {
+        if (!this.passTurn.isTurn) {
             setTimeout(() => {
-                this.passTurn.toggleTurn();
+                this.passTurn.switchTurn();
             }, DELAY_TO_PLAY);
         }
     }
@@ -83,8 +75,10 @@ export class PlayerAIComponent implements OnInit {
     place(object: { start: Vec2; orientation: string; word: string }, possibility: { word: string; nbPt: number }[]) {
         this.iaPlaced.emit(object);
         this.iaPossibility.emit(possibility);
-        setTimeout(() => {
-            this.passTurn.toggleTurn();
-        }, DELAY_TO_PLAY);
+        if (!this.passTurn.isTurn) {
+            setTimeout(() => {
+                this.passTurn.switchTurn();
+            }, DELAY_TO_PLAY);
+        }
     }
 }

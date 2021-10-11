@@ -1,13 +1,10 @@
-import { Component } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { ALL_EASEL_BONUS, BOARD_COLUMNS, BOARD_ROWS, BONUSES_POSITIONS, DICTIONARY, RESERVE } from '@app/classes/constants';
 import { ScoreValidation } from '@app/classes/validation-score';
-
-@Component({
-    selector: 'app-word-validation',
-    templateUrl: './word-validation.component.html',
-    styleUrls: ['./word-validation.component.scss'],
+@Injectable({
+    providedIn: 'root',
 })
-export class WordValidationComponent {
+export class WordValidationService {
     newWords: string[];
     playedWords: Map<string, string[]>;
     newPlayedWords: Map<string, string[]>;
@@ -134,8 +131,8 @@ export class WordValidationComponent {
     calculateTotalScore(score: number, words: Map<string, string[]>): number {
         let scoreWord = 0;
         for (const word of words.keys()) {
-            const scoreLetter = this.calculateLettersScore(score, word, words.get(word));
-            scoreWord += this.applyBonusesWord(scoreLetter, words.get(word));
+            const scoreLetter = this.calculateLettersScore(score, word, words.get(word) as string[]);
+            scoreWord += this.applyBonusesWord(scoreLetter, words.get(word) as string[]);
         }
         return scoreWord;
     }

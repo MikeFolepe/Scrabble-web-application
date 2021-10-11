@@ -8,22 +8,26 @@
     <h2 class="header-item">Panneau d'information</h2>
     <ul id="playersList">
         <!-- Give reserve number -->
-        <p>Nombres de lettres dans la Reserve: {{reserveSize }}</p>
-        <li *ngFor="let player of players">
+        <p>Nombres de lettres dans la Reserve: {{letterService.reserveSize }}</p>
+        <li *ngFor="let player of playerService.players">
             <p>Nom : {{ player.name }}</p>
             <p>Score : {{ player.score }}</p>
             <div *ngIf="player.letterTable.length !== 7 ">
                 Nombre de lettres sur le chevalet: {{player.letterTable.length}}
             </div>
-            <div *ngIf="tour === true && player.id === 1">
-                <app-countdown [minutes]="this.gameSettings.timeMinute" [seconds]="this.gameSettings.timeSecond"
-                    (checkTime)="switchTour($event)"></app-countdown>
+            <div *ngIf="passTurn.isTurn && player.id === 1">
+                <div id="info-timer">
+                    <p>Joueur actif</p>
+                    <p>Temps restant au tour: {{ passTurn.minutes }}:{{ passTurn.seconds }}</p>
+                </div>
             </div>
-            <div *ngIf="tour === false && player.id === 2">
-                <app-countdown [minutes]="this.gameSettings.timeMinute" [seconds]="this.gameSettings.timeSecond"
-                    (checkTime)="switchTour($event)"></app-countdown>
+
+            <div *ngIf="!passTurn.isTurn && player.id === 2">
+                <div id="info-timer">
+                    <p>Joueur actif</p>
+                    <p>Temps restant au tour: {{ passTurn.minutes }}:{{ passTurn.seconds }}</p>
+                </div>
             </div>
         </li>
     </ul>
 </div>
-<app-player-ia></app-player-ia>
