@@ -20,12 +20,7 @@ export class ScrabbleBoardComponent implements /* OnInit,*/ AfterViewInit {
     buttonDetect(event: KeyboardEvent) {
         this.buttonPressed = event.key;
     }
-    // ngOnInit(): void {
-    //     this.gridService.gridContext = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-    //     this.gridService.drawGrid();
-    //     this.gridCanvas.nativeElement.focus();
-    // }
-
+   
     ngAfterViewInit(): void {
         this.gridService.gridContextLayer = this.gridCanvasLayer.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.gridService.gridContext = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;

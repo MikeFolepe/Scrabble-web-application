@@ -278,17 +278,17 @@ describe('PlayerService', () => {
         expect(service['players'][0].letterTable).toEqual(expectedEasel);
     });
 
-    it('should know if easel contains letter', () => {
-        player.letterTable = [letterA, letterB];
-        service['players'].push(player);
-        playerIA.letterTable = [];
-        service['players'].push(playerIA);
+    // it('should know if easel contains letter', () => {
+    //     player.letterTable = [letterA, letterB];
+    //     service['players'].push(player);
+    //     playerIA.letterTable = [];
+    //     service['players'].push(playerIA);
 
-        expect(service.easelContainsLetter('A', 0, 0)).toBeTrue();
-        expect(service.easelContainsLetter('B', 0, 0)).toBeTrue();
-        expect(service.easelContainsLetter('C', 0, 0)).toBeFalse();
-        expect(service.easelContainsLetter('A', 0, 1)).toBeFalse();
-    });
+    //     expect(service.easelContainsLetter('A', 0, 0)).toBeTrue();
+    //     expect(service.easelContainsLetter('B', 0, 0)).toBeTrue();
+    //     expect(service.easelContainsLetter('C', 0, 0)).toBeFalse();
+    //     expect(service.easelContainsLetter('A', 0, 1)).toBeFalse();
+    // });
 
     it('should add score when addScore() is called', () => {
         const INITIAL_SCORE = 40;
