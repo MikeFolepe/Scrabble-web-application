@@ -42,14 +42,9 @@ describe('DebugService', () => {
         expect(service.isDebugOn).toBeFalsy();
     });
 
-    it('should be switch the debug mode at true', () => {
+    it('should switch the debug mode at true', () => {
         service.isDebugOn = false;
         service.switchDebugMode();
         expect(service.isDebugOn).toBeTruthy();
-    });
-
-    it('should be return the state of debug mode', () => {
-        service.isDebugOn = true;
-        expect(service.isDebugOn).toEqual(service.isDebugOn);
     });
 });
