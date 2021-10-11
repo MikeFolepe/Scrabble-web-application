@@ -29,6 +29,8 @@ export class PlaceLetterService implements OnDestroy {
     letterEmpty: string = '';
     isFirstRound: boolean = true;
     isIAPlacementValid: boolean = false;
+    numLettersUsedFromEasel: number = 0; // Number of letters used from the easel to from 1 word
+    isEaselSize: boolean = false; // If the bonus to form a word with all the letters from the easel applies
     message: string;
 
     constructor(
@@ -59,11 +61,8 @@ export class PlaceLetterService implements OnDestroy {
         if (!this.isPossible(position, orientation, wordNoAccents, indexPlayer)) {
             return false;
         }
-        let isEaselSize = false;
-        if (word.length === EASEL_SIZE) {
-            isEaselSize = true;
-        }
         this.invalidLetters = []; // Reset the array containing the invalid letters
+        this.numLettersUsedFromEasel = 0; // Reset the number of letters used from the easel for next placement
 
         // Placing all letters of the word
         if (!this.placeAllLetters(position, orientation, wordNoAccents, indexPlayer)) {
@@ -71,9 +70,10 @@ export class PlaceLetterService implements OnDestroy {
             return false;
         }
         this.isIAPlacementValid = true;
+        if (this.numLettersUsedFromEasel === EASEL_SIZE) this.isEaselSize = true;
 
         // Validation of the placement
-        const finalResult: ScoreValidation = this.wordValidationService.validateAllWordsOnBoard(this.scrabbleBoard, isEaselSize);
+        const finalResult: ScoreValidation = this.wordValidationService.validateAllWordsOnBoard(this.scrabbleBoard, this.isEaselSize);
         if (finalResult.validation === false) {
             this.placementIsInvalid(position, orientation, wordNoAccents, indexPlayer);
             return false;
@@ -99,7 +99,10 @@ export class PlaceLetterService implements OnDestroy {
             // If the position is empty, we use a letter from the reserve
             if (this.scrabbleBoard[position.x + x][position.y + y] === '') {
                 this.scrabbleBoard[position.x + x][position.y + y] = word[i];
+
                 this.invalidLetters[i] = true;
+                this.numLettersUsedFromEasel++;
+
                 if (word[i] === word[i].toUpperCase()) {
                     // If we put a capital letter (white letter), we remove a '*' from the easel
                     this.playerService.removeLetter('*', indexPlayer);

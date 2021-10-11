@@ -52,4 +52,12 @@ describe('ChatboxComponent', () => {
         expect(component.listMessages).toHaveSize(2);
         expect(component.listTypes[0]).toEqual('opponent');
     });
+
+    it('should use the message and the type from chatBoxService when we display a message', () => {
+        component['chatBoxService'].message = 'Service message';
+        component['chatBoxService'].typeMessage = 'system';
+        component.displayAnyMessageByType();
+        expect(component.listMessages.pop()).toEqual(component['chatBoxService'].message);
+        expect(component.listTypes.pop()).toEqual(component['chatBoxService'].typeMessage);
+    });
 });

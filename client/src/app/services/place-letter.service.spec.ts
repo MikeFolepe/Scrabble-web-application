@@ -182,29 +182,32 @@ describe('PlaceLetterService', () => {
         // Horizontally
         position = { x: 7, y: 7 };
         orientation = 'h';
-        word = 'bacbhhV';
+        word = 'bacchaV';
         let lettersRemoved = service.place(position, orientation, word, INDEX_PLAYER_IA);
         jasmine.clock().tick(THREE_SECONDS_DELAY + 1);
         expect(lettersRemoved).toEqual(false);
         // Vertically
         position = { x: 7, y: 7 };
         orientation = 'v';
-        word = 'bEcchhL';
+        word = 'bEcchaa';
         lettersRemoved = service.place(position, orientation, word, INDEX_PLAYER_IA);
         jasmine.clock().tick(THREE_SECONDS_DELAY + 1);
         expect(lettersRemoved).toEqual(false);
         jasmine.clock().uninstall();
     });
     it('placing a word on top of a different existing word should be invalid', () => {
-        service['wordValidationService'].validateAllWordsOnBoard = jasmine.createSpy().and.returnValue({ validation: false, score: 0 });
+        service['wordValidationService'].validateAllWordsOnBoard = jasmine.createSpy().and.returnValue({ validation: true, score: 0 });
+        jasmine.clock().install();
         // Player 1 places the 1st word
         const position: Vec2 = { x: 7, y: 7 };
         const orientation = 'h';
-        let word = 'aaaa';
+        let word = 'aabb';
         service.place(position, orientation, word, INDEX_REAL_PLAYER);
-        // Player 1 places a second word on top of the 1st word that has different letters
-        word = 'baaa';
+        // Player 1 horizontally places a second word on top of the 1st word that has different letters
+        word = 'ccaa';
+        jasmine.clock().tick(THREE_SECONDS_DELAY + 1);
         expect(service.place(position, orientation, word, INDEX_REAL_PLAYER)).toEqual(false);
+        jasmine.clock().uninstall();
     });
     it('calling placeMethodAdapter() should call place()', () => {
         service['wordValidationService'].validateAllWordsOnBoard = jasmine.createSpy().and.returnValue({ validation: false, score: 0 });
@@ -215,5 +218,19 @@ describe('PlaceLetterService', () => {
         const object = { start, orientation, word };
         service.placeMethodAdapter(object);
         expect(spy).toHaveBeenCalled();
+    });
+    it('placing all the letters from the easel to form a valid word should give a bonus', () => {
+        service['wordValidationService'].validateAllWordsOnBoard = jasmine.createSpy().and.returnValue({ validation: true, score: 0 });
+        const position: Vec2 = { x: 7, y: 7 };
+        const orientation = 'h';
+        const word = 'abah*cc';
+        service.place(position, orientation, word, INDEX_PLAYER_IA);
+        expect(service.isEaselSize).toEqual(true);
+    });
+    it('placing a word containing the same letter multiple times that is only present once in the easel should be invalid', () => {
+        const position: Vec2 = { x: 7, y: 7 };
+        const orientation = 'h';
+        const word = 'dad';
+        expect(service.isWordValid(position, orientation, word, INDEX_REAL_PLAYER)).toEqual(false);
     });
 });
