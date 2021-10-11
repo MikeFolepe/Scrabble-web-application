@@ -1,6 +1,17 @@
+/* eslint-disable max-lines */
 /* eslint-disable dot-notation */
 import { TestBed } from '@angular/core/testing';
-import { BOARD_COLUMNS, BOARD_ROWS, CASE_SIZE, DEFAULT_HEIGHT, DEFAULT_WIDTH, FONT_SIZE_MAX, FONT_SIZE_MIN, RESERVE } from '@app/classes/constants';
+import {
+    BOARD_COLUMNS,
+    BOARD_ROWS,
+    CASE_SIZE,
+    DEFAULT_HEIGHT,
+    DEFAULT_WIDTH,
+    FONT_SIZE_MAX,
+    FONT_SIZE_MIN,
+    INDEX_INVALID,
+    RESERVE,
+} from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { PlayerIA } from '@app/models/player-ia.model';
 import { Player } from '@app/models/player.model';
@@ -278,17 +289,17 @@ describe('PlayerService', () => {
         expect(service['players'][0].letterTable).toEqual(expectedEasel);
     });
 
-    // it('should know if easel contains letter', () => {
-    //     player.letterTable = [letterA, letterB];
-    //     service['players'].push(player);
-    //     playerIA.letterTable = [];
-    //     service['players'].push(playerIA);
+    it('should know if easel contains letter', () => {
+        player.letterTable = [letterA, letterB];
+        service['players'].push(player);
+        playerIA.letterTable = [];
+        service['players'].push(playerIA);
 
-    //     expect(service.easelContainsLetter('A', 0, 0)).toBeTrue();
-    //     expect(service.easelContainsLetter('B', 0, 0)).toBeTrue();
-    //     expect(service.easelContainsLetter('C', 0, 0)).toBeFalse();
-    //     expect(service.easelContainsLetter('A', 0, 1)).toBeFalse();
-    // });
+        expect(service.easelContainsLetter('a', 0, 0)).toEqual(0);
+        expect(service.easelContainsLetter('b', 0, 0)).toEqual(1);
+        expect(service.easelContainsLetter('c', 0, 0)).toEqual(INDEX_INVALID);
+        expect(service.easelContainsLetter('a', 0, 1)).toEqual(INDEX_INVALID);
+    });
 
     it('should add score when addScore() is called', () => {
         const INITIAL_SCORE = 40;
