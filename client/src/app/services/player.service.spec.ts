@@ -289,7 +289,7 @@ describe('PlayerService', () => {
     //     expect(service.easelContainsLetter('C', 0, 0)).toBeFalse();
     //     expect(service.easelContainsLetter('A', 0, 1)).toBeFalse();
     // });
-
+    // to complete
     it('should add score when addScore() is called', () => {
         const INITIAL_SCORE = 40;
         player.score = INITIAL_SCORE;
