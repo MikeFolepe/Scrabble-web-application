@@ -7,7 +7,7 @@ export class DebugService {
     // Pour le service debug
     debugServiceMessage: { word: string; nbPt: number }[];
     debugActivate: string[] = [];
-    isDebugOn: boolean = false;
+    isDebugActive: boolean = false;
 
     receiveAIDebugPossibilities(table: { word: string; nbPt: number }[]): void {
         this.debugServiceMessage = table;
@@ -18,10 +18,10 @@ export class DebugService {
     }
 
     switchDebugMode(): void {
-        if (this.isDebugOn) {
-            this.isDebugOn = false;
+        if (this.isDebugActive) {
+            this.isDebugActive = false;
             return;
         }
-        this.isDebugOn = true;
+        this.isDebugActive = true;
     }
 }

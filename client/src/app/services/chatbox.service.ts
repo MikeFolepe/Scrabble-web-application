@@ -59,19 +59,19 @@ export class ChatboxService implements OnDestroy {
         }
         switch (this.command) {
             case 'debug': {
-                this.commandDebug();
+                this.executeDebug();
                 break;
             }
             case 'passer': {
-                this.commandPassTurn();
+                this.executeSkipTurn();
                 break;
             }
             case 'echanger': {
-                this.commandSwap();
+                this.executeSwap();
                 break;
             }
             case 'placer': {
-                this.commandPlace();
+                this.executePlace();
                 break;
             }
             default: {
@@ -110,7 +110,7 @@ export class ChatboxService implements OnDestroy {
         const regexEchanger = /^!échanger\s([a-z]|[*]){1,7}$/g;
         const regexPlacer = /^!placer\s([a-o]([1-9]|1[0-5])[hv])\s([a-zA-Z\u00C0-\u00FF]|[*])+/g;
 
-        let valid = true;
+        let isSyntaxValid = true;
 
         if (regexDebug.test(this.message)) {
             this.command = 'debug';
@@ -121,15 +121,15 @@ export class ChatboxService implements OnDestroy {
         } else if (regexPlacer.test(this.message)) {
             this.command = 'placer';
         } else {
-            valid = false;
+            isSyntaxValid = false;
             this.message = 'ERREUR : La syntaxe est invalide';
         }
-        return valid;
+        return isSyntaxValid;
     }
 
-    commandDebug() {
+    executeDebug() {
         this.debugService.switchDebugMode();
-        if (this.debugService.isDebugOn) {
+        if (this.debugService.isDebugActive) {
             this.typeMessage = 'system';
             this.message = 'affichages de débogage activés';
             this.displayMessage();
@@ -139,7 +139,7 @@ export class ChatboxService implements OnDestroy {
             this.message = 'affichages de débogage désactivés';
         }
     }
-    commandPassTurn() {
+    executeSkipTurn() {
         this.tour = this.tourService.getTour();
         if (this.tour) {
             this.passTourService.writeMessage('!passer');
@@ -148,7 +148,7 @@ export class ChatboxService implements OnDestroy {
             this.message = "ERREUR : Ce n'est pas ton tour";
         }
     }
-    commandSwap() {
+    executeSwap() {
         this.tour = this.tourService.getTour();
         if (this.tour) {
             const messageSplitted = this.message.split(/\s/);
@@ -165,7 +165,7 @@ export class ChatboxService implements OnDestroy {
             this.message = "ERREUR : Ce n'est pas ton tour";
         }
     }
-    commandPlace() {
+    executePlace() {
         this.tour = this.tourService.getTour();
         if (this.tour) {
             const messageSplitted = this.message.split(/\s/);

@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { Player } from '@app/models/player.model';
 
-describe('PlayerIA', () => {
+describe('PlayerAI', () => {
     let model: Player;
 
     beforeEach(async () => {

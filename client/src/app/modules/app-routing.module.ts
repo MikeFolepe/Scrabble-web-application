@@ -9,7 +9,7 @@ import { GameViewComponent } from './game-view/components/game-view/game-view.co
 const routes: Routes = [
     { path: '', redirectTo: '/home', pathMatch: 'full' },
     { path: 'home', component: MainPageComponent },
-    { path: 'solo-game-ia', component: FormComponent },
+    { path: 'solo-game-ai', component: FormComponent },
     { path: 'game', component: GameViewComponent },
     { path: 'material', component: MaterialPageComponent },
     { path: 'page-not-found', component: PageNotFoundComponent },

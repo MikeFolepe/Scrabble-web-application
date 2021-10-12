@@ -13,7 +13,7 @@ import {
     RESERVE,
 } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
-import { PlayerIA } from '@app/models/player-ia.model';
+import { PlayerAI } from '@app/models/player-ai.model';
 import { Player } from '@app/models/player.model';
 import { PlayerService } from './player.service';
 
@@ -26,7 +26,7 @@ describe('PlayerService', () => {
     let letterD: Letter;
 
     let player: Player;
-    let playerIA: PlayerIA;
+    let playerAI: PlayerAI;
 
     beforeEach(() => {
         TestBed.configureTestingModule({});
@@ -38,7 +38,7 @@ describe('PlayerService', () => {
         letterD = RESERVE[3];
 
         player = new Player(1, 'Player 1', [letterA]);
-        playerIA = new PlayerIA(2, 'Player IA', [letterB]);
+        playerAI = new PlayerAI(2, 'Player AI', [letterB]);
     });
 
     it('should be created', () => {
@@ -53,7 +53,7 @@ describe('PlayerService', () => {
 
     it('should clear players when clearPlayers() is called', () => {
         service['players'].push(player);
-        service['players'].push(playerIA);
+        service['players'].push(playerAI);
         service.clearPlayers();
         expect(service['players']).toHaveSize(0);
     });
@@ -62,7 +62,7 @@ describe('PlayerService', () => {
         expect(service.playerSubject.observers.toString()).toHaveSize(0);
         service.addPlayer(player);
         expect(service['players']).toHaveSize(1);
-        service.addPlayer(playerIA);
+        service.addPlayer(playerAI);
         expect(service['players']).toHaveSize(2);
     });
 
@@ -133,18 +133,18 @@ describe('PlayerService', () => {
         player.letterTable = playerEasel;
         service['players'].push(player);
 
-        const playerIaEasel = [letterA, letterB, letterC, letterD, letterA, letterB, letterC];
-        playerIA.letterTable = playerIaEasel;
-        service['players'].push(playerIA);
+        const playerAIEasel = [letterA, letterB, letterC, letterD, letterA, letterB, letterC];
+        playerAI.letterTable = playerAIEasel;
+        service['players'].push(playerAI);
 
         expect(service.getLettersEasel(0)).toEqual(playerEasel);
-        expect(service.getLettersEasel(1)).toEqual(playerIaEasel);
+        expect(service.getLettersEasel(1)).toEqual(playerAIEasel);
     });
 
     it('should return players when getPlayers() is called', () => {
         service['players'].push(player);
-        service['players'].push(playerIA);
-        expect(service.getPlayers()).toEqual([player, playerIA]);
+        service['players'].push(playerAI);
+        expect(service.getPlayers()).toEqual([player, playerAI]);
     });
 
     it('should call the right times functions that updates the grid font size when updateGridFontSize() is called', () => {
@@ -215,9 +215,9 @@ describe('PlayerService', () => {
         const playerEasel = [letterA, letterB];
         player.letterTable = playerEasel;
         service['players'].push(player);
-        const playerIaEasel = [letterC, letterD];
-        playerIA.letterTable = playerIaEasel;
-        service['players'].push(playerIA);
+        const playerAIEasel = [letterC, letterD];
+        playerAI.letterTable = playerAIEasel;
+        service['players'].push(playerAI);
 
         let number = 1;
         service['myFunc'] = () => {
@@ -229,8 +229,8 @@ describe('PlayerService', () => {
         expect(service['players'][0].letterTable).toEqual(playerEasel);
 
         service.removeLetter('C', 1);
-        playerIaEasel.splice(0, 1);
-        expect(service['players'][1].letterTable).toEqual(playerIaEasel);
+        playerAIEasel.splice(0, 1);
+        expect(service['players'][1].letterTable).toEqual(playerAIEasel);
     });
 
     it('should change function when updateLettersEasel() is called', () => {
@@ -286,8 +286,8 @@ describe('PlayerService', () => {
     it('should know if easel contains letter', () => {
         player.letterTable = [letterA, letterB];
         service['players'].push(player);
-        playerIA.letterTable = [];
-        service['players'].push(playerIA);
+        playerAI.letterTable = [];
+        service['players'].push(playerAI);
 
         expect(service.easelContainsLetter('a', 0, 0)).toEqual(0);
         expect(service.easelContainsLetter('b', 0, 0)).toEqual(1);
@@ -320,11 +320,11 @@ describe('PlayerService', () => {
         const playerScore = 40;
         player.score = playerScore;
         service['players'].push(player);
-        const playerIaScore = 60;
-        playerIA.score = playerIaScore;
-        service['players'].push(playerIA);
+        const playerAIScore = 60;
+        playerAI.score = playerAIScore;
+        service['players'].push(playerAI);
         expect(service.getScore(0)).toEqual(playerScore);
-        expect(service.getScore(1)).toEqual(playerIaScore);
+        expect(service.getScore(1)).toEqual(playerAIScore);
     });
 
     it('should replace a letter from player easel when swap() is called', () => {
@@ -339,9 +339,9 @@ describe('PlayerService', () => {
         const easel = [letterA, letterB, letterD, letterC, letterD, letterA, letterA];
         player.letterTable = easel;
         service['players'].push(player);
-        const easelIA = [letterC, letterD];
-        playerIA.letterTable = easelIA;
-        service['players'].push(playerIA);
+        const easelAI = [letterC, letterD];
+        playerAI.letterTable = easelAI;
+        service['players'].push(playerAI);
         service.swap('D', 0);
         easel[2] = letterC;
         expect(service['players'][0].letterTable).toEqual(easel);

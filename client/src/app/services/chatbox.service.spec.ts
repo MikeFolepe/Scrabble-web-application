@@ -95,8 +95,8 @@ describe('ChatboxService', () => {
         expect(service.isValid()).toBeTrue();
     });
 
-    it('using command !debug should call commandDebug()', () => {
-        const spy = spyOn(service, 'commandDebug').and.callThrough();
+    it('using command !debug should call executeDebug()', () => {
+        const spy = spyOn(service, 'executeDebug').and.callThrough();
         service.command = 'debug';
         const word = 'message de debug';
         const nbPt = 1;

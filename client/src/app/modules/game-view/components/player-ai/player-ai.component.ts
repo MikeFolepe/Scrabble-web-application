@@ -1,6 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Vec2 } from '@app/classes/vec2';
-import { PlayerIA } from '@app/models/player-ia.model';
+import { PlayerAI } from '@app/models/player-ai.model';
 import { Player } from '@app/models/player.model';
 import { ChatboxService } from '@app/services/chatbox.service';
 import { DELAY_TO_PLAY } from '@app/classes/constants';
@@ -13,20 +13,20 @@ import { TourService } from '@app/services/tour.service';
 import { Subscription } from 'rxjs';
 
 @Component({
-    selector: 'app-player-ia',
-    templateUrl: './player-ia.component.html',
-    styleUrls: ['./player-ia.component.scss'],
+    selector: 'app-player-ai',
+    templateUrl: './player-ai.component.html',
+    styleUrls: ['./player-ai.component.scss'],
 })
-export class PlayerIAComponent implements OnInit {
+export class PlayerAIComponent implements OnInit {
     // Pour dire à la boite que j'ai passé mon tour.
-    @Output() iaSkipped = new EventEmitter();
-    @Output() iaSwappedr = new EventEmitter();
+    @Output() aiSkipped = new EventEmitter();
+    @Output() aiSwapped = new EventEmitter();
     // Pour le mode debug
-    @Output() iaPossibility = new EventEmitter();
+    @Output() aiPossibility = new EventEmitter();
 
     message: string;
     passSubscription: Subscription = new Subscription();
-    iaPlayer: PlayerIA;
+    aiPlayer: PlayerAI;
     tourSubscription: Subscription = new Subscription();
     tour: boolean;
 
@@ -41,13 +41,13 @@ export class PlayerIAComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
-        // Subscribe to get access to IA Player
+        // Subscribe to get access to AI Player
         this.playerService.playerSubject.subscribe((playersFromSubject: Player[]) => {
-            this.iaPlayer = playersFromSubject[1] as PlayerIA;
+            this.aiPlayer = playersFromSubject[1] as PlayerAI;
         });
         this.playerService.emitPlayers();
-        // Set the playerIA context so that the player can lunch event
-        this.iaPlayer.setContext(this);
+        // Set the playerAI context so that the player can lunch event
+        this.aiPlayer.setContext(this);
         // this.passSubscription = this.passtourService.currentMessage.subscribe((message) => (this.message = message));
         this.tourSubscription = this.tourService.tourSubject.subscribe((tourSubject: boolean) => {
             this.tour = tourSubject;
@@ -64,13 +64,13 @@ export class PlayerIAComponent implements OnInit {
     play() {
         if (this.tourService.getTour() === false) {
             setTimeout(() => {
-                this.iaPlayer.play();
+                this.aiPlayer.play();
             }, DELAY_TO_PLAY);
         }
     }
 
     skip() {
-        this.iaSkipped.emit();
+        this.aiSkipped.emit();
         if (this.tourService.getTour() === false) {
             setTimeout(() => {
                 this.passtourService.writeMessage();
@@ -79,7 +79,7 @@ export class PlayerIAComponent implements OnInit {
     }
 
     swap() {
-        this.iaSwappedr.emit();
+        this.aiSwapped.emit();
         if (this.tourService.getTour() === false) {
             setTimeout(() => {
                 this.passtourService.writeMessage();
@@ -90,7 +90,7 @@ export class PlayerIAComponent implements OnInit {
     place(object: { start: Vec2; orientation: string; word: string }, possibility: { word: string; nbPt: number }[]) {
         this.placeLetterService.placeMethodAdapter(object);
         this.debugService.receiveAIDebugPossibilities(possibility);
-        //  this.endGameService.playerServiceActions.push('placer par IA');
+        //  this.endGameService.playerServiceActions.push('placer par AI');
         setTimeout(() => {
             this.passtourService.writeMessage();
         }, DELAY_TO_PLAY);
