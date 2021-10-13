@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DEFAULT_FONT_SIZE } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
-// eslint-disable-next-line import/no-deprecated
 import { PlayerService } from '@app/services/player.service';
 
 @Component({

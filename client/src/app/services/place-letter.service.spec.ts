@@ -1,6 +1,6 @@
 /* eslint-disable dot-notation */
 import { TestBed } from '@angular/core/testing';
-import { INDEX_PLAYER_IA, INDEX_REAL_PLAYER, THREE_SECONDS_DELAY } from '@app/classes/constants';
+import { INDEX_PLAYER_AI, INDEX_REAL_PLAYER, THREE_SECONDS_DELAY } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
 import { Player } from '@app/models/player.model';
@@ -147,19 +147,19 @@ describe('PlaceLetterService', () => {
         position = { x: 6, y: 10 };
         orientation = 'v';
         word = 'adbcc';
-        let isWordValid = service.isWordValid(position, orientation, word, INDEX_PLAYER_IA);
+        let isWordValid = service.isWordValid(position, orientation, word, INDEX_PLAYER_AI);
         // Player 2 tries to horizontally place a word while using letters already on the scrabbleBoard
         position = { x: 7, y: 10 };
         orientation = 'h';
         word = 'daah';
-        isWordValid = service.isWordValid(position, orientation, word, INDEX_PLAYER_IA);
+        isWordValid = service.isWordValid(position, orientation, word, INDEX_PLAYER_AI);
         expect(isWordValid).toEqual(true);
     });
     it('placing a word containing a white letter (*) which is present in the easel should be valid', () => {
         const position: Vec2 = { x: 7, y: 7 };
         const orientation = 'h';
         const word = 'bOa'; // white letter is used as 'O'
-        expect(service.isWordValid(position, orientation, word, INDEX_PLAYER_IA)).toEqual(true);
+        expect(service.isWordValid(position, orientation, word, INDEX_PLAYER_AI)).toEqual(true);
     });
     it("placing letters that doesn't form a valid word should be removed from scrabbleBoard", () => {
         service['wordValidationService'].validateAllWordsOnBoard = jasmine.createSpy().and.returnValue({ validation: false, score: 0 });
@@ -183,14 +183,14 @@ describe('PlaceLetterService', () => {
         position = { x: 7, y: 7 };
         orientation = 'h';
         word = 'bacchaV';
-        let lettersRemoved = service.place(position, orientation, word, INDEX_PLAYER_IA);
+        let lettersRemoved = service.place(position, orientation, word, INDEX_PLAYER_AI);
         jasmine.clock().tick(THREE_SECONDS_DELAY + 1);
         expect(lettersRemoved).toEqual(false);
         // Vertically
         position = { x: 7, y: 7 };
         orientation = 'v';
         word = 'bEcchaa';
-        lettersRemoved = service.place(position, orientation, word, INDEX_PLAYER_IA);
+        lettersRemoved = service.place(position, orientation, word, INDEX_PLAYER_AI);
         jasmine.clock().tick(THREE_SECONDS_DELAY + 1);
         expect(lettersRemoved).toEqual(false);
         jasmine.clock().uninstall();
@@ -224,7 +224,7 @@ describe('PlaceLetterService', () => {
         const position: Vec2 = { x: 7, y: 7 };
         const orientation = 'h';
         const word = 'abah*cc';
-        service.place(position, orientation, word, INDEX_PLAYER_IA);
+        service.place(position, orientation, word, INDEX_PLAYER_AI);
         expect(service.isEaselSize).toEqual(true);
     });
     it('placing a word containing the same letter multiple times that is only present once in the easel should be invalid', () => {

@@ -77,7 +77,7 @@ export class PlayerIAComponent implements OnInit {
                 this.passtourService.writeMessage();
             }, DELAY_TO_PLAY);
         }
-        this.endGameService.aiServiceActions.push('passer');
+        this.endGameService.actionsLog.push('passer');
         this.chatBoxService.displayMessageByType('passer', 'opponent');
     }
 
@@ -88,21 +88,19 @@ export class PlayerIAComponent implements OnInit {
                 this.passtourService.writeMessage();
             }, DELAY_TO_PLAY);
         }
-        this.endGameService.aiServiceActions.push('echanger');
+        this.endGameService.actionsLog.push('echanger');
     }
 
     place(object: { start: Vec2; orientation: string; word: string }, possibility: { word: string; nbPt: number }[]) {
         this.placeLetterService.placeMethodAdapter(object);
         this.debugService.receiveAIDebugPossibilities(possibility);
-        //  this.endGameService.playerServiceActions.push('placer par IA');
         setTimeout(() => {
             this.passtourService.writeMessage();
         }, DELAY_TO_PLAY);
-        this.endGameService.aiServiceActions.push('placer');
+        this.endGameService.actionsLog.push('placer');
     }
 
     ngOndestroy() {
         this.tourSubscription.unsubscribe();
-        // this.passSubscription.unsubscribe();
     }
 }

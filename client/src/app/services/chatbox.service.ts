@@ -149,7 +149,7 @@ export class ChatboxService implements OnDestroy {
         }
     }
     commandPassTurn() {
-        this.endGameService.playerServiceActions.push('passer');
+        this.endGameService.actionsLog.push('passer');
         this.tour = this.tourService.getTour();
         if (this.tour) {
             this.passTourService.writeMessage('!passer');
@@ -160,7 +160,7 @@ export class ChatboxService implements OnDestroy {
     }
     commandSwap() {
         this.tour = this.tourService.getTour();
-        this.endGameService.playerServiceActions.push('echanger');
+        this.endGameService.actionsLog.push('echanger');
 
         if (this.tour) {
             const messageSplitted = this.message.split(/\s/);
@@ -179,7 +179,7 @@ export class ChatboxService implements OnDestroy {
     }
     commandPlace() {
         this.tour = this.tourService.getTour();
-        this.endGameService.playerServiceActions.push('placer');
+        this.endGameService.actionsLog.push('placer');
         if (this.tour) {
             const messageSplitted = this.message.split(/\s/);
             const positionSplitted = messageSplitted[1].split(/([0-9]+)/);
