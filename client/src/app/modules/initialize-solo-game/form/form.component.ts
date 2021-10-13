@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { IA_NAME_DATABASE } from '@app/classes/constants';
-import { GameSettings, StartingPlayer } from '@app/classes/game-settings';
 import { GameSettingsService } from '@app/services/game-settings.service';
+import { AI_NAME_DATABASE } from '@app/classes/constants';
+import { GameSettings, StartingPlayer } from '@app/classes/game-settings';
 
 @Component({
     selector: 'app-form',
@@ -27,8 +27,8 @@ export class FormComponent {
             let randomNumber = new Date().getTime();
             // Multiplication by a random number [0,1[, which we get the floor
             randomNumber = Math.floor(Math.random() * randomNumber);
-            // Random value [0, iaNameDatabase.length[
-            randomName = IA_NAME_DATABASE[randomNumber % IA_NAME_DATABASE.length];
+            // Random value [0, aiNameDatabase.length[
+            randomName = AI_NAME_DATABASE[randomNumber % AI_NAME_DATABASE.length];
         } while (randomName === this.form.controls.playerName.value);
         return randomName;
     }

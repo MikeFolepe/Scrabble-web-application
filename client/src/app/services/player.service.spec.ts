@@ -1,349 +1,423 @@
-/* eslint-disable dot-notation */
-import { TestBed } from '@angular/core/testing';
-import { BOARD_COLUMNS, BOARD_ROWS, CASE_SIZE, DEFAULT_HEIGHT, DEFAULT_WIDTH, FONT_SIZE_MAX, FONT_SIZE_MIN, RESERVE } from '@app/classes/constants';
-import { Letter } from '@app/classes/letter';
-import { PlayerIA } from '@app/models/player-ia.model';
-import { Player } from '@app/models/player.model';
-import { PlayerService } from './player.service';
+// // /* eslint-disable max-lines */
+// // /* eslint-disable dot-notation */
+// // import { TestBed } from '@angular/core/testing';
+// // import {
+// //     BOARD_COLUMNS,
+// //     BOARD_ROWS,
+// //     CASE_SIZE,
+// //     DEFAULT_HEIGHT,
+// //     DEFAULT_WIDTH,
+// //     FONT_SIZE_MAX,
+// //     FONT_SIZE_MIN,
+// //     INDEX_INVALID,
+// //     RESERVE,
+// // } from '@app/classes/constants';
+// // import { Letter } from '@app/classes/letter';
+// // import { PlayerAI } from '@app/models/player-ai.model';
+// // import { Player } from '@app/models/player.model';
+// // import { PlayerService } from './player.service';
 
-describe('PlayerService', () => {
-    let service: PlayerService;
+// // describe('PlayerService', () => {
+// //     let service: PlayerService;
 
-    let letterA: Letter;
-    let letterB: Letter;
-    let letterC: Letter;
-    let letterD: Letter;
+// //     let letterA: Letter;
+// //     let letterB: Letter;
+// //     let letterC: Letter;
+// //     let letterD: Letter;
 
-    let player: Player;
-    let playerIA: PlayerIA;
+// //     let player: Player;
+// //     let playerAI: PlayerAI;
 
-    beforeEach(() => {
-        TestBed.configureTestingModule({});
-        service = TestBed.inject(PlayerService);
+// //     beforeEach(() => {
+// //         TestBed.configureTestingModule({});
+// //         service = TestBed.inject(PlayerService);
 
-        letterA = RESERVE[0];
-        letterB = RESERVE[1];
-        letterC = RESERVE[2];
-        letterD = RESERVE[3];
+// //         letterA = RESERVE[0];
+// //         letterB = RESERVE[1];
+// //         letterC = RESERVE[2];
+// //         letterD = RESERVE[3];
 
-        player = new Player(1, 'Player 1', [letterA]);
-        playerIA = new PlayerIA(2, 'Player IA', [letterB]);
-    });
+// //         player = new Player(1, 'Player 1', [letterA]);
+// //         playerAI = new PlayerAI(2, 'Player AI', [letterB]);
+// //     });
 
-    it('should be created', () => {
-        expect(service).toBeTruthy();
-    });
+// //     it('should be created', () => {
+// //         expect(service).toBeTruthy();
+// //     });
 
-    it('should do nothing when clearPlayers() is called and players list is empty', () => {
-        const emptyPlayers = service['players'];
-        service.clearPlayers();
-        expect(service['players']).toEqual(emptyPlayers);
-    });
+// //     it('should do nothing when clearPlayers() is called and players list is empty', () => {
+// //         const emptyPlayers = service['players'];
+// //         service.clearPlayers();
+// //         expect(service['players']).toEqual(emptyPlayers);
+// //     });
 
-    it('should clear players when clearPlayers() is called', () => {
-        service['players'].push(player);
-        service['players'].push(playerIA);
-        service.clearPlayers();
-        expect(service['players']).toHaveSize(0);
-    });
+// //     it('should clear players when clearPlayers() is called', () => {
+// //         service['players'].push(player);
+// //         service['players'].push(playerAI);
+// //         service.clearPlayers();
+// //         expect(service['players']).toHaveSize(0);
+// //     });
 
-    // it('should add players when addPlayer() is called', () => {
-    //     expect(service.playerSubject.observers.toString()).toHaveSize(0);
-    //     service.addPlayer(player);
-    //     expect(service['players']).toHaveSize(1);
-    //     service.addPlayer(playerIA);
-    //     expect(service['players']).toHaveSize(2);
-    // });
+// //     it('should add players when addPlayer() is called', () => {
+// //         expect(service.playerSubject.observers.toString()).toHaveSize(0);
+// //         service.addPlayer(player);
+// //         expect(service['players']).toHaveSize(1);
+// //         service.addPlayer(playerAI);
+// //         expect(service['players']).toHaveSize(2);
+// //     });
 
-    // it('should emit when adding players', () => {
-    //     let emitted = false;
-    //     service.playerSubject.subscribe(() => {
-    //         emitted = true;
-    //     });
-    //     service.emitPlayers();
-    //     expect(emitted).toBeTrue();
-    // });
+// //     it('should emit when adding players', () => {
+// //         let emitted = false;
+// //         service.playerSubject.subscribe(() => {
+// //             emitted = true;
+// //         });
+// //         service.emitPlayers();
+// //         expect(emitted).toBeTrue();
+// //     });
 
-    // it('should subscribe when adding players', () => {
-    //     let players: Player[] = [];
-    //     service.playerSubject.subscribe((p) => {
-    //         players = p;
-    //     });
+// //     it('should subscribe when adding players', () => {
+// //         let players: Player[] = [];
+// //         service.playerSubject.subscribe((p) => {
+// //             players = p;
+// //         });
 
-    //     service.addPlayer(player);
+// //         service.addPlayer(player);
 
-    //     expect(players).toHaveSize(1);
-    //     expect(players[0]).toEqual(player);
-    // });
+// //         expect(players).toHaveSize(1);
+// //         expect(players[0]).toEqual(player);
+// //     });
+// // >>>>>>> 613b34083bc1832f3ae4fdaa11004c8f2d2bf594
 
-    it('should update scrabble board value when updateScrabbleBoard() is called', () => {
-        const testBoard = [
-            ['', '', '', ''],
-            ['A', 'B', 'C', 'D'],
-            ['', '', '', ''],
-            ['A', 'B', 'C', 'D'],
-        ];
-        service.updateScrabbleBoard(testBoard);
-        expect(service.scrabbleBoard).toEqual(testBoard);
-    });
+// //     it('should update scrabble board value when updateScrabbleBoard() is called', () => {
+// //         const testBoard = [
+// //             ['', '', '', ''],
+// //             ['A', 'B', 'C', 'D'],
+// //             ['', '', '', ''],
+// //             ['A', 'B', 'C', 'D'],
+// //         ];
+// //         service.updateScrabbleBoard(testBoard);
+// //         expect(service.scrabbleBoard).toEqual(testBoard);
+// //     });
 
-    it('should change font size when updateFontSize() is called', () => {
-        service.scrabbleBoard = []; // Initializes the array with empty letters
-        for (let i = 0; i < BOARD_ROWS; i++) {
-            service.scrabbleBoard[i] = [];
-            for (let j = 0; j < BOARD_COLUMNS; j++) {
-                service.scrabbleBoard[i][j] = '';
-            }
-        }
-        const newFontSize = 18;
-        service.updateFontSize(newFontSize);
-        expect(service.fontSize).toEqual(newFontSize);
-    });
+// //     it('should change font size when updateFontSize() is called', () => {
+// //         service.scrabbleBoard = []; // Initializes the array with empty letters
+// //         for (let i = 0; i < BOARD_ROWS; i++) {
+// //             service.scrabbleBoard[i] = [];
+// //             for (let j = 0; j < BOARD_COLUMNS; j++) {
+// //                 service.scrabbleBoard[i][j] = '';
+// //             }
+// //         }
+// //         const newFontSize = 18;
+// //         service.updateFontSize(newFontSize);
+// //         expect(service.fontSize).toEqual(newFontSize);
+// //     });
 
-    it('should give font size a valid value', () => {
-        service.scrabbleBoard = []; // Initializes the array with empty letters
-        for (let i = 0; i < BOARD_ROWS; i++) {
-            service.scrabbleBoard[i] = [];
-            for (let j = 0; j < BOARD_COLUMNS; j++) {
-                service.scrabbleBoard[i][j] = '';
-            }
-        }
-        const tooSmallValue = -2;
-        service.updateFontSize(tooSmallValue);
-        expect(service.fontSize).toEqual(FONT_SIZE_MIN);
+// //     it('should give font size a valid value', () => {
+// //         service.scrabbleBoard = []; // Initializes the array with empty letters
+// //         for (let i = 0; i < BOARD_ROWS; i++) {
+// //             service.scrabbleBoard[i] = [];
+// //             for (let j = 0; j < BOARD_COLUMNS; j++) {
+// //                 service.scrabbleBoard[i][j] = '';
+// //             }
+// //         }
+// //         const tooSmallValue = -2;
+// //         service.updateFontSize(tooSmallValue);
+// //         expect(service.fontSize).toEqual(FONT_SIZE_MIN);
 
-        const tooBigValue = 300;
-        service.updateFontSize(tooBigValue);
-        expect(service.fontSize).toEqual(FONT_SIZE_MAX);
-    });
+// //         const tooBigValue = 300;
+// //         service.updateFontSize(tooBigValue);
+// //         expect(service.fontSize).toEqual(FONT_SIZE_MAX);
+// //     });
 
-    // it("should return right player's easel when getLettersEasel() is called", () => {
-    //     const playerEasel = [letterA, letterA, letterB, letterB, letterC, letterC, letterD];
-    //     player.letterTable = playerEasel;
-    //     service['players'].push(player);
+// //     // it("should return right player's easel when getLettersEasel() is called", () => {
+// //     //     const playerEasel = [letterA, letterA, letterB, letterB, letterC, letterC, letterD];
+// //     //     player.letterTable = playerEasel;
+// //     //     service['players'].push(player);
 
-    //     const playerIaEasel = [letterA, letterB, letterC, letterD, letterA, letterB, letterC];
-    //     playerIA.letterTable = playerIaEasel;
-    //     service['players'].push(playerIA);
+// // <<<<<<< HEAD
+// //     //     const playerIaEasel = [letterA, letterB, letterC, letterD, letterA, letterB, letterC];
+// //     //     playerIA.letterTable = playerIaEasel;
+// //     //     service['players'].push(playerIA);
 
-    //     expect(service.getLettersEasel(0)).toEqual(playerEasel);
-    //     expect(service.getLettersEasel(1)).toEqual(playerIaEasel);
-    // });
+// //     //     expect(service.getLettersEasel(0)).toEqual(playerEasel);
+// //     //     expect(service.getLettersEasel(1)).toEqual(playerIaEasel);
+// //     // });
 
-    // it('should return players when getPlayers() is called', () => {
-    //     service['players'].push(player);
-    //     service['players'].push(playerIA);
-    //     expect(service.getPlayers()).toEqual([player, playerIA]);
-    // });
+// //     // it('should return players when getPlayers() is called', () => {
+// //     //     service['players'].push(player);
+// //     //     service['players'].push(playerIA);
+// //     //     expect(service.getPlayers()).toEqual([player, playerIA]);
+// //     // });
+// // =======
+// //         const playerAIEasel = [letterA, letterB, letterC, letterD, letterA, letterB, letterC];
+// //         playerAI.letterTable = playerAIEasel;
+// //         service['players'].push(playerAI);
 
-    it('should call the right times functions that updates the grid font size when updateGridFontSize() is called', () => {
-        service.scrabbleBoard = []; // Initializes the array with empty letters
-        let numberLettersOnGrid = 0;
-        for (let i = 0; i < BOARD_ROWS; i++) {
-            service.scrabbleBoard[i] = [];
-            for (let j = 0; j < BOARD_COLUMNS; j++) {
-                // To generate a grid with some letters anywhere on it
-                // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-                if ((i + j) % 11 === 0) {
-                    service.scrabbleBoard[i][j] = 'X';
-                } else {
-                    service.scrabbleBoard[i][j] = '';
-                }
-            }
-            numberLettersOnGrid += service.scrabbleBoard[i].filter(Boolean).length;
-        }
-        // Return value is meaningless because it's only used to be called as a parameter
-        // for the two following functions. And the results of these functions are meaningless regarding this test
-        spyOn(service, 'convertSizeFormat');
-        spyOn(service['gridService'], 'eraseLetter').and.returnValue();
-        spyOn(service['gridService'], 'drawLetter').and.returnValue();
+// //         expect(service.getLettersEasel(0)).toEqual(playerEasel);
+// //         expect(service.getLettersEasel(1)).toEqual(playerAIEasel);
+// //     });
 
-        service.updateGridFontSize();
+// //     it('should return players when getPlayers() is called', () => {
+// //         service['players'].push(player);
+// //         service['players'].push(playerAI);
+// //         expect(service.getPlayers()).toEqual([player, playerAI]);
+// //     });
+// // >>>>>>> 613b34083bc1832f3ae4fdaa11004c8f2d2bf594
 
-        expect(service.convertSizeFormat).toHaveBeenCalledTimes(numberLettersOnGrid);
-        expect(service['gridService'].eraseLetter).toHaveBeenCalledTimes(numberLettersOnGrid);
-        expect(service['gridService'].drawLetter).toHaveBeenCalledTimes(numberLettersOnGrid);
-    });
+// //     it('should call the right times functions that updates the grid font size when updateGridFontSize() is called', () => {
+// //         service.scrabbleBoard = []; // Initializes the array with empty letters
+// //         let numberLettersOnGrid = 0;
+// //         for (let i = 0; i < BOARD_ROWS; i++) {
+// //             service.scrabbleBoard[i] = [];
+// //             for (let j = 0; j < BOARD_COLUMNS; j++) {
+// //                 // To generate a grid with some letters anywhere on it
+// //                 // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+// //                 if ((i + j) % 11 === 0) {
+// //                     service.scrabbleBoard[i][j] = 'X';
+// //                 } else {
+// //                     service.scrabbleBoard[i][j] = '';
+// //                 }
+// //             }
+// //             numberLettersOnGrid += service.scrabbleBoard[i].filter(Boolean).length;
+// //         }
+// //         // Return value is meaningless because it's only used to be called as a parameter
+// //         // for the two following functions. And the results of these functions are meaningless regarding this test
+// //         spyOn(service, 'convertSizeFormat');
+// //         spyOn(service['gridService'], 'eraseLetter').and.returnValue();
+// //         spyOn(service['gridService'], 'drawLetter').and.returnValue();
 
-    it('should remove a letter when removeLetter() is called', () => {
-        const playerEasel = [letterA, letterB, letterC, letterD];
-        player.letterTable = playerEasel;
-        service['players'].push(player);
+// //         service.updateGridFontSize();
 
-        // let number = 1;
-        // service['myFunc'] = () => {
-        //     number = number *= 2;
-        //     return;
-        // };
+// //         expect(service.convertSizeFormat).toHaveBeenCalledTimes(numberLettersOnGrid);
+// //         expect(service['gridService'].eraseLetter).toHaveBeenCalledTimes(numberLettersOnGrid);
+// //         expect(service['gridService'].drawLetter).toHaveBeenCalledTimes(numberLettersOnGrid);
+// //     });
 
-        service.removeLetter('A', 0);
-        playerEasel.slice(0, 1);
-        expect(service['players'][0].letterTable).toEqual(playerEasel);
+// //     it('should remove a letter when removeLetter() is called', () => {
+// //         const playerEasel = [letterA, letterB, letterC, letterD];
+// //         player.letterTable = playerEasel;
+// //         service['players'].push(player);
+// // <<<<<<< HEAD
 
-        service.removeLetter('D', 0);
-        playerEasel.pop();
-        expect(service['players'][0].letterTable).toEqual(playerEasel);
-    });
+// //         // let number = 1;
+// //         // service['myFunc'] = () => {
+// //         //     number = number *= 2;
+// //         //     return;
+// //         // };
+// // =======
+// //         let number = 1;
+// //         service['myFunc'] = () => {
+// //             number = number *= 2;
+// //             return;
+// //         };
+// // >>>>>>> 613b34083bc1832f3ae4fdaa11004c8f2d2bf594
 
-    it('should remove only one letter if two letters have the same value than the letter to delete', () => {
-        const playerEasel = [letterA, letterA, letterB, letterB, letterC, letterC, letterD];
-        player.letterTable = playerEasel;
-        service['players'].push(player);
+// //         service.removeLetter('A', 0);
+// //         playerEasel.slice(0, 1);
+// //         expect(service['players'][0].letterTable).toEqual(playerEasel);
 
-        // let number = 1;
-        // service['myFunc'] = () => {
-        //     number = number *= 2;
-        //     return;
-        // };
+// //         service.removeLetter('D', 0);
+// //         playerEasel.pop();
+// //         expect(service['players'][0].letterTable).toEqual(playerEasel);
+// //     });
 
-        service.removeLetter('B', 0);
-        playerEasel.slice(2, 1);
+// //     it('should remove only one letter if two letters have the same value than the letter to delete', () => {
+// //         const playerEasel = [letterA, letterA, letterB, letterB, letterC, letterC, letterD];
+// //         player.letterTable = playerEasel;
+// //         service['players'].push(player);
+// // <<<<<<< HEAD
 
-        expect(service['players'][0].letterTable).toEqual(playerEasel);
-    });
+// //         // let number = 1;
+// //         // service['myFunc'] = () => {
+// //         //     number = number *= 2;
+// //         //     return;
+// //         // };
+// // =======
+// //         let number = 1;
+// //         service['myFunc'] = () => {
+// //             number = number *= 2;
+// //             return;
+// //         };
+// // >>>>>>> 613b34083bc1832f3ae4fdaa11004c8f2d2bf594
 
-    it('should remove the letter for the right player', () => {
-        const playerEasel = [letterA, letterB];
-        player.letterTable = playerEasel;
-        service['players'].push(player);
-        const playerIaEasel = [letterC, letterD];
-        playerIA.letterTable = playerIaEasel;
-        service['players'].push(playerIA);
+// //         service.removeLetter('B', 0);
+// //         playerEasel.slice(2, 1);
 
-        // let number = 1;
-        // service['myFunc'] = () => {
-        //     number = number *= 2;
-        //     return;
-        // };
+// //         expect(service['players'][0].letterTable).toEqual(playerEasel);
+// //     });
 
-        service.removeLetter('B', 0);
-        playerEasel.splice(1, 1);
-        expect(service['players'][0].letterTable).toEqual(playerEasel);
+// //     it('should remove the letter for the right player', () => {
+// //         const playerEasel = [letterA, letterB];
+// //         player.letterTable = playerEasel;
+// //         service['players'].push(player);
+// //         const playerAIEasel = [letterC, letterD];
+// //         playerAI.letterTable = playerAIEasel;
+// //         service['players'].push(playerAI);
 
-        service.removeLetter('C', 1);
-        playerIaEasel.splice(0, 1);
-        expect(service['players'][1].letterTable).toEqual(playerIaEasel);
-    });
+// // <<<<<<< HEAD
+// //         // let number = 1;
+// //         // service['myFunc'] = () => {
+// //         //     number = number *= 2;
+// //         //     return;
+// //         // };
 
-    // it('should change function when updateLettersEasel() is called', () => {
-    //     let number = 1;
-    //     const fn = () => {
-    //         number = number *= 2;
-    //         return;
-    //     };
-    //     service.updateLettersEasel(fn);
-    //     expect(service['myFunc']).toBe(fn);
-    // });
+// // =======
+// //         let number = 1;
+// //         service['myFunc'] = () => {
+// //             number = number *= 2;
+// //             return;
+// //         };
+// // >>>>>>> 613b34083bc1832f3ae4fdaa11004c8f2d2bf594
+// //         service.removeLetter('B', 0);
+// //         playerEasel.splice(1, 1);
+// //         expect(service['players'][0].letterTable).toEqual(playerEasel);
 
-    it("should refill player's empty easel when refillEasel() is called", () => {
-        // let number = 1;
-        // // service['myFunc'] = () => {
-        // //     number = number *= 2;
-        // //     return;
-        // // };
-        player.letterTable = [];
-        const emptyLetter: Letter = { value: '', quantity: 0, points: 0 };
-        service['players'].push(player);
-        const expectedEasel = [letterA, letterB, letterD, letterC, letterA, emptyLetter, letterD];
+// //         service.removeLetter('C', 1);
+// //         playerAIEasel.splice(0, 1);
+// //         expect(service['players'][1].letterTable).toEqual(playerAIEasel);
+// //     });
 
-        spyOn(service['letterService'], 'getRandomLetter').and.returnValues(letterA, letterB, letterD, letterC, letterA, emptyLetter, letterD);
-        service.refillEasel(0);
-        expectedEasel.pop();
-        expectedEasel.pop();
-        expect(service['players'][0].letterTable).toEqual(expectedEasel);
-    });
+// //     // it('should change function when updateLettersEasel() is called', () => {
+// //     //     let number = 1;
+// //     //     const fn = () => {
+// //     //         number = number *= 2;
+// //     //         return;
+// //     //     };
+// //     //     service.updateLettersEasel(fn);
+// //     //     expect(service['myFunc']).toBe(fn);
+// //     // });
 
-    it("should refill player's easel that already has values when refillEasel() is called", () => {
-        // let number = 1;
-        // service['myFunc'] = () => {
-        //     number = number *= 2;
-        //     return;
-        // };
-        const expectedEasel = [letterA, letterB, letterD, letterC, letterD, letterA, letterA];
-        player.letterTable = expectedEasel;
-        service['players'].push(player);
+// //     it("should refill player's empty easel when refillEasel() is called", () => {
+// //         // let number = 1;
+// //         // // service['myFunc'] = () => {
+// //         // //     number = number *= 2;
+// //         // //     return;
+// //         // // };
+// //         player.letterTable = [];
+// //         const emptyLetter: Letter = { value: '', quantity: 0, points: 0 };
+// //         service['players'].push(player);
+// //         const expectedEasel = [letterA, letterB, letterD, letterC, letterA, emptyLetter, letterD];
+// //         spyOn(service['letterService'], 'getRandomLetter').and.returnValues(letterA, letterB, letterD, letterC, letterA, emptyLetter, letterD);
+// //         service.refillEasel(0);
+// //         expectedEasel.pop();
+// //         expectedEasel.pop();
+// //         expect(service['players'][0].letterTable).toEqual(expectedEasel);
+// //     });
 
-        spyOn(service['letterService'], 'getRandomLetter').and.returnValue(letterC);
-        expectedEasel.push(letterC);
-        service.refillEasel(0);
-        expect(service['players'][0].letterTable).toEqual(expectedEasel);
-    });
+// //     it("should refill player's easel that already has values when refillEasel() is called", () => {
+// //         // let number = 1;
+// //         // service['myFunc'] = () => {
+// //         //     number = number *= 2;
+// //         //     return;
+// //         // };
+// //         const expectedEasel = [letterA, letterB, letterD, letterC, letterD, letterA, letterA];
+// //         player.letterTable = expectedEasel;
+// //         service['players'].push(player);
+// //         spyOn(service['letterService'], 'getRandomLetter').and.returnValue(letterC);
+// //         expectedEasel.push(letterC);
+// //         service.refillEasel(0);
+// //         expect(service['players'][0].letterTable).toEqual(expectedEasel);
+// //     });
 
-    it('should add letters when addLetterToEasel() is called', () => {
-        service['players'].push(player);
+// //     it('should add letters when addLetterToEasel() is called', () => {
+// //         service['players'].push(player);
+// //         const expectedEasel = [letterA, letterB, letterD];
+// //         service.addLetterToEasel('B', 0);
+// //         service.addLetterToEasel('D', 0);
+// //         expect(service['players'][0].letterTable).toEqual(expectedEasel);
+// //     });
 
-        const expectedEasel = [letterA, letterB, letterD];
-        service.addLetterToEasel('B', 0);
-        service.addLetterToEasel('D', 0);
-        expect(service['players'][0].letterTable).toEqual(expectedEasel);
-    });
+// // <<<<<<< HEAD
+// //     // it('should know if easel contains letter', () => {
+// //     //     player.letterTable = [letterA, letterB];
+// //     //     service['players'].push(player);
+// //     //     playerIA.letterTable = [];
+// //     //     service['players'].push(playerIA);
 
-    // it('should know if easel contains letter', () => {
-    //     player.letterTable = [letterA, letterB];
-    //     service['players'].push(player);
-    //     playerIA.letterTable = [];
-    //     service['players'].push(playerIA);
+// //     //     expect(service.easelContainsLetter('A', 0, 0)).toBeTrue();
+// //     //     expect(service.easelContainsLetter('B', 0, 0)).toBeTrue();
+// //     //     expect(service.easelContainsLetter('C', 0, 0)).toBeFalse();
+// //     //     expect(service.easelContainsLetter('A', 0, 1)).toBeFalse();
+// //     // });
+// //     // to complete
+// // =======
+// //     it('should know if easel contains letter', () => {
+// //         player.letterTable = [letterA, letterB];
+// //         service['players'].push(player);
+// //         playerAI.letterTable = [];
+// //         service['players'].push(playerAI);
 
-    //     expect(service.easelContainsLetter('A', 0, 0)).toBeTrue();
-    //     expect(service.easelContainsLetter('B', 0, 0)).toBeTrue();
-    //     expect(service.easelContainsLetter('C', 0, 0)).toBeFalse();
-    //     expect(service.easelContainsLetter('A', 0, 1)).toBeFalse();
-    // });
-    // to complete
-    it('should add score when addScore() is called', () => {
-        const INITIAL_SCORE = 40;
-        player.score = INITIAL_SCORE;
-        service['players'].push(player);
-        const ADDED_SCORE = 10;
-        service.addScore(ADDED_SCORE, 0);
-        expect(service['players'][0].score).toEqual(INITIAL_SCORE + ADDED_SCORE);
-    });
+// //         expect(service.easelContainsLetter('a', 0, 0)).toEqual(0);
+// //         expect(service.easelContainsLetter('b', 0, 0)).toEqual(1);
+// //         expect(service.easelContainsLetter('c', 0, 0)).toEqual(INDEX_INVALID);
+// //         expect(service.easelContainsLetter('a', 0, 1)).toEqual(INDEX_INVALID);
+// //     });
 
-    it('should convert the position format', () => {
-        const INITIAL_X = 100;
-        const INITIAL_Y = 300;
-        const result = service.convertSizeFormat(INITIAL_X, INITIAL_Y);
+// // >>>>>>> 613b34083bc1832f3ae4fdaa11004c8f2d2bf594
+// //     it('should add score when addScore() is called', () => {
+// //         const INITIAL_SCORE = 40;
+// //         player.score = INITIAL_SCORE;
+// //         service['players'].push(player);
+// //         const ADDED_SCORE = 10;
+// //         service.addScore(ADDED_SCORE, 0);
+// //         expect(service['players'][0].score).toEqual(INITIAL_SCORE + ADDED_SCORE);
+// //     });
 
-        const expectedOutput = {
-            x: INITIAL_X * CASE_SIZE + CASE_SIZE - DEFAULT_WIDTH / 2,
-            y: INITIAL_Y * CASE_SIZE + CASE_SIZE - DEFAULT_HEIGHT / 2,
-        };
+// //     it('should convert the position format', () => {
+// //         const INITIAL_X = 100;
+// //         const INITIAL_Y = 300;
+// // <<<<<<< HEAD
+// //         const result = service.convertSizeFormat(INITIAL_X, INITIAL_Y);
 
-        expect(result).toEqual(expectedOutput);
-    });
+// // =======
+// //         const result = service.posTabToPosGrid(INITIAL_X, INITIAL_Y);
+// // >>>>>>> 613b34083bc1832f3ae4fdaa11004c8f2d2bf594
+// //         const expectedOutput = {
+// //             x: INITIAL_X * CASE_SIZE + CASE_SIZE - DEFAULT_WIDTH / 2,
+// //             y: INITIAL_Y * CASE_SIZE + CASE_SIZE - DEFAULT_HEIGHT / 2,
+// //         };
 
-    it("should return player's score", () => {
-        const playerScore = 40;
-        player.score = playerScore;
-        service['players'].push(player);
-        const playerIaScore = 60;
-        playerIA.score = playerIaScore;
-        service['players'].push(playerIA);
+// //         expect(result).toEqual(expectedOutput);
+// //     });
 
-        expect(service.getScore(0)).toEqual(playerScore);
-        expect(service.getScore(1)).toEqual(playerIaScore);
-    });
+// //     it("should return player's score", () => {
+// //         const playerScore = 40;
+// //         player.score = playerScore;
+// //         service['players'].push(player);
+// //         const playerAIScore = 60;
+// //         playerAI.score = playerAIScore;
+// //         service['players'].push(playerAI);
+// //         expect(service.getScore(0)).toEqual(playerScore);
+// //         expect(service.getScore(1)).toEqual(playerAIScore);
+// //     });
 
-    it('should replace a letter from player easel when swap() is called', () => {
-        spyOn(service, 'removeLetter');
-        spyOn(service['letterService'], 'addLetterToReserve');
-        spyOn(service['letterService'], 'getRandomLetter').and.returnValue(letterC);
+// //     it('should replace a letter from player easel when swap() is called', () => {
+// //         spyOn(service, 'removeLetter');
+// //         spyOn(service['letterService'], 'addLetterToReserve');
+// //         spyOn(service['letterService'], 'getRandomLetter').and.returnValue(letterC);
+// // <<<<<<< HEAD
 
-        // let number = 1;
-        // // // // // // // // // service['myFunc'] = () => {
-        // // // // // // // // //     number = number *= 2;
-        // // // // // // // // //     return;
-        // // // // // // // // // };
+// //         // let number = 1;
+// //         // // // // // // // // // service['myFunc'] = () => {
+// //         // // // // // // // // //     number = number *= 2;
+// //         // // // // // // // // //     return;
+// //         // // // // // // // // // };
 
-        const easel = [letterA, letterB, letterD, letterC, letterD, letterA, letterA];
-        player.letterTable = easel;
-        service['players'].push(player);
-        const easelIA = [letterC, letterD];
-        playerIA.letterTable = easelIA;
-        service['players'].push(playerIA);
-
-        service.swap('D', 0);
-        easel[2] = letterC;
-        expect(service['players'][0].letterTable).toEqual(easel);
-    });
-});
+// // =======
+// //         let number = 1;
+// //         service['myFunc'] = () => {
+// //             number = number *= 2;
+// //             return;
+// //         };
+// // >>>>>>> 613b34083bc1832f3ae4fdaa11004c8f2d2bf594
+// //         const easel = [letterA, letterB, letterD, letterC, letterD, letterA, letterA];
+// //         player.letterTable = easel;
+// //         service['players'].push(player);
+// //         const easelAI = [letterC, letterD];
+// //         playerAI.letterTable = easelAI;
+// //         service['players'].push(playerAI);
+// //         service.swap('D', 0);
+// //         easel[2] = letterC;
+// //         expect(service['players'][0].letterTable).toEqual(easel);
+// //     });
+// // });

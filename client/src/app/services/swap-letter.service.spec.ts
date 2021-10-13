@@ -1,24 +1,16 @@
 /* eslint-disable dot-notation */
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { INDEX_REAL_PLAYER, RESERVE } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { Player } from '@app/models/player.model';
-import { SwapLetterComponent } from './swap-letter.component';
+import { SwapLetterService } from './swap-letter.service';
 
-describe('SwapLetterComponent', () => {
-    let component: SwapLetterComponent;
-    let fixture: ComponentFixture<SwapLetterComponent>;
-
-    beforeEach(async () => {
-        await TestBed.configureTestingModule({
-            declarations: [SwapLetterComponent],
-        }).compileComponents();
-    });
+describe('SwapLetterService', () => {
+    let service: SwapLetterService;
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(SwapLetterComponent);
-        component = fixture.componentInstance;
-        fixture.detectChanges();
+        TestBed.configureTestingModule({});
+        service = TestBed.inject(SwapLetterService);
 
         const letterA: Letter = {
             value: 'A',
@@ -53,43 +45,40 @@ describe('SwapLetterComponent', () => {
 
         const playerEasel = [letterA, letterA, letterB, letterC, letterD, letterE, letterWhite];
         const player = new Player(1, 'Player 1', playerEasel);
-        component['playerService'].addPlayer(player);
+        service['playerService'].addPlayer(player);
+        service['letterService'].reserve = JSON.parse(JSON.stringify(RESERVE));
 
-        component['letterService'].reserve = JSON.parse(JSON.stringify(RESERVE));
+        spyOn(service['playerService'], 'swap');
     });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
+    it('should be created', () => {
+        expect(service).toBeTruthy();
     });
     it('reserve should have enough letters to swap', () => {
-        expect(component.reserveHasEnoughLetters()).toEqual(true);
+        expect(service.reserveHasEnoughLetters()).toEqual(true);
     });
     it('an empty reserve should not have enough letters to swap', () => {
-        const initReserveSize: number = component['letterService'].reserveSize;
+        const initReserveSize: number = service['letterService'].reserveSize;
         // Emptying the reserve
         for (let i = 0; i < initReserveSize; i++) {
-            component['letterService'].getRandomLetter();
+            service['letterService'].getRandomLetter();
         }
-        expect(component.reserveHasEnoughLetters()).toEqual(false);
+        expect(service.reserveHasEnoughLetters()).toEqual(false);
     });
     it('swapping letters present in the easel should be valid', () => {
-        spyOn(component['playerService'], 'swap');
         const lettersToSwap = 'abcde';
-        expect(component.swap(lettersToSwap, INDEX_REAL_PLAYER)).toEqual(true);
+        expect(service.swap(lettersToSwap, INDEX_REAL_PLAYER)).toEqual(true);
     });
     it('swapping letters that are not present in the easel should be invalid', () => {
-        spyOn(component['playerService'], 'swap');
         const letterToSwap = 'zzzzzzz';
-        expect(component.swap(letterToSwap, INDEX_REAL_PLAYER)).toEqual(false);
+        expect(service.swap(letterToSwap, INDEX_REAL_PLAYER)).toEqual(false);
     });
     it('swapping two elements of the easel that are the same letter should be valid', () => {
-        spyOn(component['playerService'], 'swap');
         const letterToSwap = 'aa';
-        expect(component.swap(letterToSwap, INDEX_REAL_PLAYER)).toEqual(true);
+        expect(service.swap(letterToSwap, INDEX_REAL_PLAYER)).toEqual(true);
     });
     it('swapping the same letter more times than it is present in the easel should be invalid', () => {
-        spyOn(component['playerService'], 'swap');
         const letterToSwap = 'aaa';
-        expect(component.swap(letterToSwap, INDEX_REAL_PLAYER)).toEqual(false);
+        expect(service.swap(letterToSwap, INDEX_REAL_PLAYER)).toEqual(false);
     });
 });

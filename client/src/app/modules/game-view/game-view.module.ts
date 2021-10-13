@@ -11,10 +11,10 @@ import { FontSizeComponent } from './components/font-size/font-size.component';
 import { GameViewComponent } from './components/game-view/game-view.component';
 import { InformationPanelComponent } from './components/information-panel/information-panel.component';
 import { LetterEaselComponent } from './components/letter-easel/letter-easel.component';
-import { PlaceLetterComponent } from './components/place-letter/place-letter.component';
-import { PlayerAIComponent } from './components/player-ia/player-ia.component';
 import { ScrabbleBoardComponent } from './components/scrabble-board/scrabble-board.component';
-import { SwapLetterComponent } from './components/swap-letter/swap-letter.component';
+// eslint-disable-next-line no-restricted-imports
+import { PlayerAIComponent } from './components/player-ai/player-ai.component';
+
 @NgModule({
     declarations: [
         GameViewComponent,
@@ -24,10 +24,8 @@ import { SwapLetterComponent } from './components/swap-letter/swap-letter.compon
         PlayAreaComponent,
         SidebarComponent,
         ChatBoxComponent,
-        PlaceLetterComponent,
-        FontSizeComponent,
         PlayerAIComponent,
-        SwapLetterComponent,
+        FontSizeComponent,
     ],
     imports: [CommonModule, AppMaterialModule, AppRoutingModule, FormsModule, SharedModule],
     exports: [GameViewComponent],

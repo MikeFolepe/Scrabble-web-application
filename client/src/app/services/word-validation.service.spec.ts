@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { TestBed } from '@angular/core/testing';
 import { BOARD_COLUMNS, BOARD_ROWS } from '@app/classes/constants';
 import { ScoreValidation } from '@app/classes/validation-score';
@@ -35,7 +34,7 @@ describe('WordValidationService', () => {
         service.playedWords.set('ma', ['C1', 'C2']);
         const isEaselSize = true;
         const isRow = true;
-        const passThroughAllRowsOrColumnsSpy = spyOn<any>(service, 'passThroughAllRowsOrColumns').and.callThrough();
+        const passThroughAllRowsOrColumnsSpy = spyOn(service, 'passThroughAllRowsOrColumns').and.callThrough();
         // const calculateLettersScoreSpy = spyOn<any>(service, 'calculateLettersScore').and.callThrough();
         service.validateAllWordsOnBoard(scrabbleBoard, isEaselSize, isRow);
         expect(passThroughAllRowsOrColumnsSpy).toHaveBeenCalledTimes(2);
@@ -48,9 +47,9 @@ describe('WordValidationService', () => {
         service.playedWords.set('mAsse', ['A1', 'A2', 'A3', 'A4', 'A5']);
         const isEaselSize = false;
         const isRow = true;
-        const passThroughAllRowsOrColumnsSpy = spyOn<any>(service, 'passThroughAllRowsOrColumns').and.callThrough();
-        const calculateLettersScoreSpy = spyOn<any>(service, 'calculateLettersScore').and.callThrough();
-        const applyBonusesWordSpy = spyOn<any>(service, 'applyBonusesWord').and.callThrough();
+        const passThroughAllRowsOrColumnsSpy = spyOn(service, 'passThroughAllRowsOrColumns').and.callThrough();
+        const calculateLettersScoreSpy = spyOn(service, 'calculateLettersScore').and.callThrough();
+        const applyBonusesWordSpy = spyOn(service, 'applyBonusesWord').and.callThrough();
         service.validateAllWordsOnBoard(scrabbleBoard, isEaselSize, isRow);
         expect(passThroughAllRowsOrColumnsSpy).toHaveBeenCalledTimes(2);
         expect(calculateLettersScoreSpy).toHaveBeenCalled();
@@ -118,3 +117,4 @@ describe('WordValidationService', () => {
         expect(returnedPositions).toEqual(expectedPositions);
     });
 });
+

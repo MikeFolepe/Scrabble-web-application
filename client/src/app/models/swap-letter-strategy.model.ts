@@ -1,10 +1,11 @@
 import { EASEL_SIZE } from '@app/classes/constants';
-import { PlayerAIComponent } from '@app/modules/game-view/components/player-ia/player-ia.component';
+import { PlayerAIComponent } from '@app/modules/game-view/components/player-ai/player-ai.component';
 import { PlayStrategy } from './abstract-strategy.model';
-import { PlayerIA } from './player-ia.model';
+import { PlayerAI } from './player-ai.model';
 import { SkipTurn } from './skip-turn-strategy.model';
+
 export class SwapLetter extends PlayStrategy {
-    execute(player: PlayerIA, context: PlayerAIComponent): void {
+    execute(player: PlayerAI, context: PlayerAIComponent): void {
         const numberOfLetterToChange = Math.floor(Math.random() * EASEL_SIZE);
 
         // If change not possible skip

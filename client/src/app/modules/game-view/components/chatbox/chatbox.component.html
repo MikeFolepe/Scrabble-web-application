@@ -22,9 +22,3 @@
         (keypress)="handleKeyEvent($event)" onblur="this.focus()" autofocus />
 </div>
 <div>
-    <!-- Catch event from player-IA by sending message witch catch by chatbox and add to chatbox -->
-    <app-player-ia (iaPossibility)="receiveAImessage($event)">
-    </app-player-ia>
-</div>
-<app-place-letter></app-place-letter>
-<app-swap-letter></app-swap-letter>
