@@ -16,31 +16,43 @@ describe('SwapLetterService', () => {
             value: 'A',
             quantity: 0,
             points: 0,
+            isSelectedForSwap: false,
+            isSelectedForManipulation: false,
         };
         const letterB: Letter = {
             value: 'B',
             quantity: 0,
             points: 0,
+            isSelectedForSwap: false,
+            isSelectedForManipulation: false,
         };
         const letterC: Letter = {
             value: 'C',
             quantity: 0,
             points: 0,
+            isSelectedForSwap: false,
+            isSelectedForManipulation: false,
         };
         const letterD: Letter = {
             value: 'D',
             quantity: 0,
             points: 0,
+            isSelectedForSwap: false,
+            isSelectedForManipulation: false,
         };
         const letterE: Letter = {
             value: 'E',
             quantity: 0,
             points: 0,
+            isSelectedForSwap: false,
+            isSelectedForManipulation: false,
         };
         const letterWhite: Letter = {
             value: '*',
             quantity: 0,
             points: 0,
+            isSelectedForSwap: false,
+            isSelectedForManipulation: false,
         };
 
         const playerEasel = [letterA, letterA, letterB, letterC, letterD, letterE, letterWhite];
@@ -48,7 +60,10 @@ describe('SwapLetterService', () => {
         service['playerService'].addPlayer(player);
         service['letterService'].reserve = JSON.parse(JSON.stringify(RESERVE));
 
-        spyOn(service['playerService'], 'swap');
+        spyOn(service['playerService'], 'removeLetter');
+        spyOn(service['playerService'], 'addEaselLetterToReserve');
+        spyOn(service['playerService'], 'refillEasel');
+        spyOn(service, 'lettersToSwapIntoIndexes');
     });
 
     it('should be created', () => {
@@ -67,18 +82,18 @@ describe('SwapLetterService', () => {
     });
     it('swapping letters present in the easel should be valid', () => {
         const lettersToSwap = 'abcde';
-        expect(service.swap(lettersToSwap, INDEX_REAL_PLAYER)).toEqual(true);
+        expect(service.swapCommand(lettersToSwap, INDEX_REAL_PLAYER)).toEqual(true);
     });
     it('swapping letters that are not present in the easel should be invalid', () => {
-        const letterToSwap = 'zzzzzzz';
-        expect(service.swap(letterToSwap, INDEX_REAL_PLAYER)).toEqual(false);
+        const lettersToSwap = 'zzzzzzz';
+        expect(service.swapCommand(lettersToSwap, INDEX_REAL_PLAYER)).toEqual(false);
     });
     it('swapping two elements of the easel that are the same letter should be valid', () => {
-        const letterToSwap = 'aa';
-        expect(service.swap(letterToSwap, INDEX_REAL_PLAYER)).toEqual(true);
+        const lettersToSwap = 'aa';
+        expect(service.swapCommand(lettersToSwap, INDEX_REAL_PLAYER)).toEqual(true);
     });
     it('swapping the same letter more times than it is present in the easel should be invalid', () => {
-        const letterToSwap = 'aaa';
-        expect(service.swap(letterToSwap, INDEX_REAL_PLAYER)).toEqual(false);
+        const lettersToSwap = 'aaa';
+        expect(service.swapCommand(lettersToSwap, INDEX_REAL_PLAYER)).toEqual(false);
     });
 });

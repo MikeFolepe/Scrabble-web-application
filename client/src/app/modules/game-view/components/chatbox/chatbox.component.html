@@ -8,7 +8,7 @@
     <h3 class="header-item">Boite de communication</h3>
 
     <div class="display" #scrollMe>
-        <p id="listDisplay" *ngFor="let message of listMessages; let i = index; let last = last" [ngClass]="{
+        <p id="listDisplay" *ngFor="let message of listMessages; let i = index" [ngClass]="{
                 playerStyle: listTypes[i] === 'player',
                 opponentStyle: listTypes[i] === 'opponent',
                 systemStyle: listTypes[i] === 'system',

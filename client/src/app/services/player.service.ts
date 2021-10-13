@@ -87,14 +87,9 @@ export class PlayerService {
     }
 
     // Remove one letter from easel
-    removeLetter(letterToRemove: string, indexPlayer: number): void {
-        for (let i = 0; i < this.players[indexPlayer].letterTable.length; i++) {
-            if (this.players[indexPlayer].letterTable[i].value === letterToRemove.toUpperCase()) {
-                this.players[indexPlayer].letterTable.splice(i, 1);
-                this.myFunc();
-                break;
-            }
-        }
+    removeLetter(indexToRemove: number, indexPlayer: number): void {
+        this.players[indexPlayer].letterTable.splice(indexToRemove, 1);
+        this.myFunc();
     }
 
     addLetterToEasel(letterToAdd: string, indexPlayer: number): void {
@@ -105,6 +100,10 @@ export class PlayerService {
         }
     }
 
+    addEaselLetterToReserve(indexInEasel: number, indexPlayer: number) {
+        this.letterService.addLetterToReserve(this.getLettersEasel(indexPlayer)[indexInEasel].value);
+    }
+
     refillEasel(indexPlayer: number): void {
         let letterToInsert: Letter;
         for (let i = this.players[indexPlayer].letterTable.length; i < EASEL_SIZE; i++) {
@@ -112,18 +111,20 @@ export class PlayerService {
             if (letterToInsert.value === '') {
                 break;
             }
-            this.players[indexPlayer].letterTable[i] = letterToInsert;
+            // Add a copy of the letter found
+            this.players[indexPlayer].letterTable[i] = {
+                value: letterToInsert.value,
+                quantity: letterToInsert.quantity,
+                points: letterToInsert.points,
+                isSelectedForSwap: letterToInsert.isSelectedForSwap,
+                isSelectedForManipulation: letterToInsert.isSelectedForManipulation,
+            };
         }
         this.myFunc();
     }
 
-    swap(letter: string, indexPlayer: number): void {
-        this.removeLetter(letter, indexPlayer);
-        this.letterService.addLetterToReserve(letter);
-        this.refillEasel(indexPlayer);
-    }
-
-    easelContainsLetter(letter: string, startIndex: number, indexPlayer: number): number {
+    // Return the index of the letter found in the easel
+    indexLetterInEasel(letter: string, startIndex: number, indexPlayer: number): number {
         for (let i = startIndex; i < this.players[indexPlayer].letterTable.length; i++) {
             if (letter === this.players[indexPlayer].letterTable[i].value.toLowerCase()) {
                 return i;

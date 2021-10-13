@@ -10,15 +10,39 @@ export class SwapLetterService {
     constructor(private playerService: PlayerService, private letterService: LetterService) {}
 
     // Swap all the letters selected from the easel with new ones from the reserve
-    swap(lettersToSwap: string, indexPlayer: number): boolean {
+    swapCommand(lettersToSwap: string, indexPlayer: number): boolean {
         if (!this.isPossible(lettersToSwap, indexPlayer)) {
             return false;
         }
 
-        for (const letterToSwap of lettersToSwap) {
-            this.playerService.swap(letterToSwap, indexPlayer);
+        const lettersToSwapIndexes: number[] = this.lettersToSwapIntoIndexes(lettersToSwap, indexPlayer);
+        for (let i = 0; i < lettersToSwapIndexes.length; i++) {
+            if (i > 0) lettersToSwapIndexes[i]--; // TODO Update the indexes if we previously swapped a letter
+            this.swap(lettersToSwapIndexes[i], indexPlayer);
         }
         return true;
+    }
+
+    swap(indexLetter: number, indexPlayer: number) {
+        this.playerService.addEaselLetterToReserve(indexLetter, indexPlayer);
+        this.playerService.removeLetter(indexLetter, indexPlayer);
+        this.playerService.refillEasel(indexPlayer);
+    }
+
+    lettersToSwapIntoIndexes(lettersToSwap: string, indexPlayer: number): number[] {
+        const usedLetterIndexes: number[] = [];
+        let indexCurrentLetter = 0;
+        for (const letterToSwap of lettersToSwap) {
+            indexCurrentLetter = this.playerService.indexLetterInEasel(letterToSwap, 0, indexPlayer);
+            // If we swap multiple times the same letter, we verify that we're not using the same index in the easel
+            for (const index of usedLetterIndexes) {
+                while (indexCurrentLetter === index) {
+                    indexCurrentLetter = this.playerService.indexLetterInEasel(letterToSwap, indexCurrentLetter + 1, indexPlayer);
+                }
+            }
+            usedLetterIndexes.push(indexCurrentLetter);
+        }
+        return usedLetterIndexes;
     }
 
     isPossible(lettersToSwap: string, indexPlayer: number): boolean {
@@ -26,23 +50,11 @@ export class SwapLetterService {
     }
 
     areLettersInEasel(lettersToSwap: string, indexPlayer: number): boolean {
-        const indexLetters: number[] = [];
-        let currentLetterIndex = 0;
-        for (const letterToSwap of lettersToSwap) {
-            // If the letter isn't in the easel, return false
-            currentLetterIndex = this.playerService.easelContainsLetter(letterToSwap, 0, indexPlayer);
-            if (currentLetterIndex === INDEX_INVALID) {
+        const lettersToSwapIndexes: number[] = this.lettersToSwapIntoIndexes(lettersToSwap, indexPlayer);
+        for (const indexLetter of lettersToSwapIndexes) {
+            if (indexLetter === INDEX_INVALID) {
                 return false;
             }
-            for (const index of indexLetters) {
-                while (currentLetterIndex === index) {
-                    currentLetterIndex = this.playerService.easelContainsLetter(letterToSwap, currentLetterIndex + 1, indexPlayer);
-                    if (currentLetterIndex === INDEX_INVALID) {
-                        return false;
-                    }
-                }
-            }
-            indexLetters.push(currentLetterIndex);
         }
         return true;
     }

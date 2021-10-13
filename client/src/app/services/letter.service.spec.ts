@@ -1,6 +1,6 @@
 /* eslint-disable dot-notation */
 import { TestBed } from '@angular/core/testing';
-import { EASEL_SIZE, RESERVE } from '@app/classes/constants';
+import { EASEL_SIZE } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { LetterService } from './letter.service';
 
@@ -23,16 +23,10 @@ describe('LetterService', () => {
     });
 
     it('should add a letter to the reserve', () => {
-        const letterTest = service.reserve[0].value;
+        const letterToAdd = service.reserve[0].value;
         const initialQuantity = service.reserve[0].quantity;
-        service.addLetterToReserve(letterTest);
+        service.addLetterToReserve(letterToAdd);
         expect(service.reserve[0].quantity).toEqual(initialQuantity + 1);
-    });
-
-    it('should not add a letter to the reserve if this one does not exists', () => {
-        const letterTest = '-';
-        service.addLetterToReserve(letterTest);
-        expect(service.reserve).toEqual(RESERVE);
     });
 
     it('should return an empty letter if reserve is empty', () => {
@@ -42,6 +36,8 @@ describe('LetterService', () => {
             value: '',
             quantity: 0,
             points: 0,
+            isSelectedForSwap: false,
+            isSelectedForManipulation: false,
         };
         expect(service.getRandomLetter()).toEqual(letterEmpty);
     });

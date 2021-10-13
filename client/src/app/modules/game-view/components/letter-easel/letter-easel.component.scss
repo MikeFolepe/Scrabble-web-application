@@ -12,8 +12,8 @@ h2 {
 }
 
 .easel-container {
-    height: 33.75em;
-    width: 5.25em;
+    height: 38em;
+    width: 6em;
     background-color: teal;
     border: 1em solid teal;
     border-radius: 6px;
@@ -25,7 +25,26 @@ h2 {
     background-color: tan;
     border: 0.25em solid tan;
     border-radius: 6px;
-    margin: 0.5em 0.5em 0.5em 0.5em;
+    margin: 1em;
     box-shadow: 4px 4px 8px -3px #000000;
     
+}
+
+.borderSwap {
+    z-index: 1;
+    outline: 5px solid rgba(225, 140, 0, 0.884);
+    border-radius: 6px;
+}
+
+.borderManipulation {
+    z-index: 1;
+    outline: 5px solid rgba(98, 199, 233, 0.911);
+    border-radius: 6px;
+}
+
+button {
+    height: 3em;
+    width: 8em;
+    margin-top: 1.5em;
+    margin-right: 1em;
 }

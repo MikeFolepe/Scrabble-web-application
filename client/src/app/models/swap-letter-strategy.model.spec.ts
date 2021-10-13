@@ -7,13 +7,13 @@ describe('SwapLetter', () => {
     const id = 0;
     const name = 'Player 1';
     const letterTable = [
-        { value: 'A', quantity: 0, points: 0 },
-        { value: 'B', quantity: 0, points: 0 },
-        { value: 'C', quantity: 0, points: 0 },
-        { value: 'D', quantity: 0, points: 0 },
-        { value: 'E', quantity: 0, points: 0 },
-        { value: 'F', quantity: 0, points: 0 },
-        { value: 'G', quantity: 0, points: 0 },
+        { value: 'A', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
+        { value: 'B', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
+        { value: 'C', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
+        { value: 'D', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
+        { value: 'E', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
+        { value: 'F', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
+        { value: 'G', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
     ];
 
     let playerAI: PlayerAI;

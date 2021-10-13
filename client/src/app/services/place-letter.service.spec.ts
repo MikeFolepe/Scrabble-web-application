@@ -26,31 +26,43 @@ describe('PlaceLetterService', () => {
             value: 'A',
             quantity: 0,
             points: 0,
+            isSelectedForSwap: false,
+            isSelectedForManipulation: false,
         };
         const letterB: Letter = {
             value: 'B',
             quantity: 0,
             points: 0,
+            isSelectedForSwap: false,
+            isSelectedForManipulation: false,
         };
         const letterC: Letter = {
             value: 'C',
             quantity: 0,
             points: 0,
+            isSelectedForSwap: false,
+            isSelectedForManipulation: false,
         };
         const letterD: Letter = {
             value: 'D',
             quantity: 0,
             points: 0,
+            isSelectedForSwap: false,
+            isSelectedForManipulation: false,
         };
         const letterH: Letter = {
             value: 'H',
             quantity: 0,
             points: 0,
+            isSelectedForSwap: false,
+            isSelectedForManipulation: false,
         };
         const letterWhite: Letter = {
             value: '*',
             quantity: 0,
             points: 0,
+            isSelectedForSwap: false,
+            isSelectedForManipulation: false,
         };
 
         const firstPlayerEasel = [letterA, letterA, letterB, letterB, letterC, letterC, letterD];

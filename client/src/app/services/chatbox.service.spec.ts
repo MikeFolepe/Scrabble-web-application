@@ -21,16 +21,22 @@ describe('ChatboxService', () => {
             value: 'A',
             quantity: 0,
             points: 0,
+            isSelectedForSwap: false,
+            isSelectedForManipulation: false,
         };
         const letterB: Letter = {
             value: 'B',
             quantity: 0,
             points: 0,
+            isSelectedForSwap: false,
+            isSelectedForManipulation: false,
         };
         const letterC: Letter = {
             value: 'C',
             quantity: 0,
             points: 0,
+            isSelectedForSwap: false,
+            isSelectedForManipulation: false,
         };
         const firstPlayerEasel = [letterA, letterA, letterB, letterB, letterC, letterC, letterA];
         const firstPlayer = new Player(1, 'Player 1', firstPlayerEasel);
@@ -128,7 +134,7 @@ describe('ChatboxService', () => {
     it('using a valid command !échanger should display the respective message', () => {
         spyOn(service['passTourService'], 'writeMessage');
         spyOn(service['tourService'], 'getTour').and.returnValue(true);
-        spyOn(service['swapLetterService'], 'swap').and.returnValue(true);
+        spyOn(service['swapLetterService'], 'swapCommand').and.returnValue(true);
         service.command = 'echanger';
         service.sendPlayerMessage('!échanger abc');
         expect(service.message).toEqual('Player 1 : !échanger abc');
@@ -170,7 +176,7 @@ describe('ChatboxService', () => {
 
     it('using an unvalid command !échanger should display an error', () => {
         spyOn(service['tourService'], 'getTour').and.returnValue(true);
-        spyOn(service['swapLetterService'], 'swap').and.returnValue(false);
+        spyOn(service['swapLetterService'], 'swapCommand').and.returnValue(false);
         spyOn(service['passTourService'], 'writeMessage');
         service.command = 'echanger';
         service.sendPlayerMessage('!échanger xyz');

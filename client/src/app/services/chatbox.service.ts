@@ -153,7 +153,7 @@ export class ChatboxService implements OnDestroy {
         if (this.tour) {
             const messageSplitted = this.message.split(/\s/);
 
-            if (this.swapLetterService.swap(messageSplitted[1], INDEX_REAL_PLAYER)) {
+            if (this.swapLetterService.swapCommand(messageSplitted[1], INDEX_REAL_PLAYER)) {
                 this.message = this.playerService.getPlayers()[INDEX_REAL_PLAYER].name + ' : ' + this.message;
             } else {
                 this.typeMessage = 'error';

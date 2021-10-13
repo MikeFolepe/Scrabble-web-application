@@ -29,7 +29,7 @@ export class PlaceLetterService implements OnDestroy {
     emptyTile: string = '';
     isFirstRound: boolean = true;
     isAIPlacementValid: boolean = false;
-    numLettersUsedFromEasel: number = 0; // Number of letters used from the easel to from 1 word
+    numLettersUsedFromEasel: number = 0; // Number of letters used from the easel to form the word
     isEaselSize: boolean = false; // If the bonus to form a word with all the letters from the easel applies
     message: string;
 
@@ -103,11 +103,11 @@ export class PlaceLetterService implements OnDestroy {
                 this.numLettersUsedFromEasel++;
 
                 if (word[i] === word[i].toUpperCase()) {
-                    // If we put a capital letter (white letter), we remove a '*' from the easel
-                    this.playerService.removeLetter('*', indexPlayer);
+                    // If we put an upper-case letter (white letter), we remove a '*' from the easel
+                    this.playerService.removeLetter(this.playerService.indexLetterInEasel('*', 0, indexPlayer), indexPlayer);
                 } else {
                     // Otherwise we remove the respective letter from the easel
-                    this.playerService.removeLetter(word[i], indexPlayer);
+                    this.playerService.removeLetter(this.playerService.indexLetterInEasel(word[i], 0, indexPlayer), indexPlayer);
                 }
                 // Display the letter on the scrabble board grid
                 const positionGrid = this.playerService.posTabToPosGrid(position.y + y, position.x + x);
@@ -201,13 +201,13 @@ export class PlaceLetterService implements OnDestroy {
             }
             // If the letter isn't on the board, we look into the easel
             if (!isLetterExisting) {
-                currentLetterIndex = this.playerService.easelContainsLetter(word[i], 0, indexPlayer);
+                currentLetterIndex = this.playerService.indexLetterInEasel(word[i], 0, indexPlayer);
                 if (currentLetterIndex !== INDEX_INVALID) {
                     isLetterExisting = true;
                 }
                 for (const index of indexLetters) {
                     while (currentLetterIndex === index) {
-                        currentLetterIndex = this.playerService.easelContainsLetter(word[i], currentLetterIndex + 1, indexPlayer);
+                        currentLetterIndex = this.playerService.indexLetterInEasel(word[i], currentLetterIndex + 1, indexPlayer);
                         if (currentLetterIndex === INDEX_INVALID) {
                             isLetterExisting = false;
                         }
@@ -263,10 +263,10 @@ export class PlaceLetterService implements OnDestroy {
                 if (this.scrabbleBoard[position.x + x - 1][position.y + y] !== '') isWordTouching = true;
             }
             if (this.isPositionInBounds(position.y + y + 1)) {
-                if (this.scrabbleBoard[position.x + x][position.y + y + 1]) isWordTouching = true;
+                if (this.scrabbleBoard[position.x + x][position.y + y + 1] !== '') isWordTouching = true;
             }
             if (this.isPositionInBounds(position.y + y - 1)) {
-                if (this.scrabbleBoard[position.x + x][position.y + y - 1]) isWordTouching = true;
+                if (this.scrabbleBoard[position.x + x][position.y + y - 1] !== '') isWordTouching = true;
             }
         }
         return isWordTouching;
