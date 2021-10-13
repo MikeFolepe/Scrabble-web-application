@@ -125,8 +125,13 @@ export class PlayerService {
 
     easelContainsLetter(letter: string, startIndex: number, indexPlayer: number): number {
         for (let i = startIndex; i < this.players[indexPlayer].letterTable.length; i++) {
-            if (letter.toUpperCase() === this.players[indexPlayer].letterTable[i].value) {
+            if (letter === this.players[indexPlayer].letterTable[i].value.toLowerCase()) {
                 return i;
+            } else if (letter === letter.toUpperCase()) {
+                // White letter
+                if (this.players[indexPlayer].letterTable[i].value === '*') {
+                    return i;
+                }
             }
         }
         return INDEX_INVALID;

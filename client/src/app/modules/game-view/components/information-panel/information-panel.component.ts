@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { INDEX_PLAYER_IA, INDEX_REAL_PLAYER } from '@app/classes/constants';
+import { INDEX_PLAYER_AI, INDEX_REAL_PLAYER } from '@app/classes/constants';
 import { GameSettings } from '@app/classes/game-settings';
-import { PlayerIA } from '@app/models/player-ia.model';
+import { PlayerAI } from '@app/models/player-ai.model';
 import { Player } from '@app/models/player.model';
 import { CountdownComponent } from '@app/modules/game-view/components/countdown/countdown.component';
 import { GameSettingsService } from '@app/services/game-settings.service';
@@ -11,7 +11,7 @@ import { PlayerService } from '@app/services/player.service';
 import { TourService } from '@app/services/tour.service';
 import { Subscription } from 'rxjs';
 // eslint-disable-next-line no-restricted-imports
-import { PlayerIAComponent } from '../player-ia/player-ia.component';
+import { PlayerAIComponent } from '../player-ai/player-ai.component';
 
 @Component({
     selector: 'app-information-panel',
@@ -20,7 +20,7 @@ import { PlayerIAComponent } from '../player-ia/player-ia.component';
 })
 export class InformationPanelComponent implements OnDestroy, OnInit {
     @ViewChild(CountdownComponent) countDown: CountdownComponent;
-    @ViewChild(PlayerIAComponent) playerIA: PlayerIAComponent;
+    @ViewChild(PlayerAIComponent) playerAI: PlayerAIComponent;
     players: Player[] = new Array<Player>();
     gameSettings: GameSettings;
     tour: boolean;
@@ -48,7 +48,7 @@ export class InformationPanelComponent implements OnDestroy, OnInit {
     initializePlayers() {
         let player = new Player(1, this.gameSettings.playersName[0], this.letterService.getRandomLetters());
         this.playerService.addPlayer(player);
-        player = new PlayerIA(2, this.gameSettings.playersName[1], this.letterService.getRandomLetters());
+        player = new PlayerAI(2, this.gameSettings.playersName[1], this.letterService.getRandomLetters());
         this.playerService.addPlayer(player);
     }
 
@@ -72,7 +72,7 @@ export class InformationPanelComponent implements OnDestroy, OnInit {
                 this.tour = false;
                 this.reAssignTour(this.tour);
                 this.countDown.setTimer();
-                this.playerIA.play();
+                this.playerAI.play();
             }
         }
     }
@@ -81,9 +81,9 @@ export class InformationPanelComponent implements OnDestroy, OnInit {
         if (this.message === 'mise a jour') {
             this.reserveState = this.letterService.getReserveSize();
             this.players[INDEX_REAL_PLAYER].letterTable = this.playerService.getLettersEasel(INDEX_REAL_PLAYER);
-            this.players[INDEX_PLAYER_IA].letterTable = this.playerService.getLettersEasel(INDEX_PLAYER_IA);
+            this.players[INDEX_PLAYER_AI].letterTable = this.playerService.getLettersEasel(INDEX_PLAYER_AI);
             this.players[INDEX_REAL_PLAYER].score = this.playerService.getScore(INDEX_REAL_PLAYER);
-            this.players[INDEX_PLAYER_IA].score = this.playerService.getScore(INDEX_PLAYER_IA);
+            this.players[INDEX_PLAYER_AI].score = this.playerService.getScore(INDEX_PLAYER_AI);
         }
     }
     ngOnDestroy(): void {
