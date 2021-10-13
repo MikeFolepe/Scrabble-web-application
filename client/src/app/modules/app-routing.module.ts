@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { PageNotFoundComponent } from '@app/components/page-not-found/page-not-found.component';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
-import { MaterialPageComponent } from '@app/pages/material-page/material-page.component';
 import { GameViewComponent } from './game-view/components/game-view/game-view.component';
 
 const routes: Routes = [
@@ -11,7 +10,6 @@ const routes: Routes = [
     { path: 'home', component: MainPageComponent },
     { path: 'solo-game-ia', component: FormComponent },
     { path: 'game', component: GameViewComponent },
-    { path: 'material', component: MaterialPageComponent },
     { path: 'page-not-found', component: PageNotFoundComponent },
     { path: '**', redirectTo: '/page-not-found', pathMatch: 'full' },
 ];
