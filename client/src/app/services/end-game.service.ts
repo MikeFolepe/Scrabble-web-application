@@ -28,15 +28,11 @@ export class EndGameService {
     }
 
     getFinalScore(index: number): void {
-        if (!this.isEndGame) {
+        if (!this.isEndGame || this.playerService.players[index].score === 0) {
             return;
         }
-        for (const easel of this.playerService.getLettersEasel(index)) {
-            // If the player never plays and pass 3 fois
-            if (this.playerService.players[index].score === 0) {
-                return;
-            }
-            this.playerService.players[index].score = this.playerService.players[index].score - easel.points;
+        for (const letter of this.playerService.getLettersEasel(index)) {
+            this.playerService.players[index].score -= letter.points;
             // Check if score decrease under 0 after soustraction
             if (this.playerService.players[index].score < 0) {
                 this.playerService.players[index].score = 0;

@@ -8,7 +8,9 @@ export class DebugService {
     debugServiceMessage: { word: string; nbPt: number }[];
     debugActivate: string[] = [];
     isDebugActive: boolean = false;
-
+    constructor() {
+        this.debugServiceMessage = new Array(0);
+    }
     receiveAIDebugPossibilities(table: { word: string; nbPt: number }[]): void {
         this.debugServiceMessage = table;
     }
