@@ -1,19 +1,19 @@
 import { TestBed } from '@angular/core/testing';
 // import { ONE_SECOND_TIME } from '@app/classes/constants';
 // import { GameSettingsService } from './game-settings.service';
-import { PassTurnService } from './pass-turn.service';
+import { SkipTurnService } from './skip-turn.service';
 
-describe('PassTurnService', () => {
-    let service: PassTurnService;
+describe('SkipTurnService', () => {
+    let service: SkipTurnService;
     // let clearInterval: jasmine.Spy<jasmine.Func>;
     // let gameSettingsService: GameSettingsService;
     beforeEach(() => {
         TestBed.configureTestingModule({});
-        service = TestBed.inject(PassTurnService);
+        service = TestBed.inject(SkipTurnService);
         // clearInterval = jasmine.createSpy('clearInterval');
     });
     // beforeEach(() => {
-    //     passTurnSpy = jasmine.createSpyObj('PassTurnService', ['startTimer']);
+    //     skipTurnSpy = jasmine.createSpyObj('SkipTurnService', ['startTimer']);
     // });
     beforeEach(() => {
         jasmine.clock().install();

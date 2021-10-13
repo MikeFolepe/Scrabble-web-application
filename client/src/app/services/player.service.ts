@@ -28,7 +28,7 @@ export class PlayerService {
     fontSize = DEFAULT_FONT_SIZE;
 
     players: Player[] = new Array<Player>();
-    private myFunc: () => void;
+    // private myFunc: () => void;
     constructor(private letterService: LetterService, private gridService: GridService) {
         this.fontSize = DEFAULT_FONT_SIZE;
     }
@@ -91,7 +91,7 @@ export class PlayerService {
         for (let i = 0; i < this.players[indexPlayer].letterTable.length; i++) {
             if (this.players[indexPlayer].letterTable[i].value === letterToRemove.toUpperCase()) {
                 this.players[indexPlayer].letterTable.splice(i, 1);
-                this.myFunc();
+                // this.myFunc();
                 break;
             }
         }
@@ -114,7 +114,7 @@ export class PlayerService {
             }
             this.players[indexPlayer].letterTable[i] = letterToInsert;
         }
-        this.myFunc();
+        // this.myFunc();
     }
 
     swap(letter: string, indexPlayer: number): void {

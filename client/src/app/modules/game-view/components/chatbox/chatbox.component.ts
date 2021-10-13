@@ -3,8 +3,8 @@ import { INDEX_REAL_PLAYER } from '@app/classes/constants';
 import { Vec2 } from '@app/classes/vec2';
 import { PlaceLetterComponent } from '@app/modules/game-view/components/place-letter/place-letter.component';
 import { SwapLetterComponent } from '@app/modules/game-view/components/swap-letter/swap-letter.component';
-import { PassTurnService } from '@app/services/pass-turn.service';
 import { PlayerService } from '@app/services/player.service';
+import { SkipTurnService } from '@app/services/skip-turn.service';
 // import { TourService } from '@app/services/tour.service';
 // import { Subscription } from 'rxjs';
 
@@ -35,7 +35,7 @@ export class ChatBoxComponent {
     private readonly exchangeCommand = 'echanger';
     private readonly placeCommand = 'placer';
 
-    constructor(public passTurn: PassTurnService, private playerService: PlayerService) {}
+    constructor(public skipTurn: SkipTurnService, private playerService: PlayerService) {}
 
     // ngOnInit(): void {
     //     // this.turnSubscription = this.tourService.tourSubject.subscribe((turnSubject: boolean) => {
@@ -149,8 +149,8 @@ export class ChatBoxComponent {
     }
 
     switchTurn() {
-        if (this.passTurn.isTurn) {
-            this.passTurn.switchTurn();
+        if (this.skipTurn.isTurn) {
+            this.skipTurn.switchTurn();
             this.sendSystemMessage('!passer');
         } else {
             this.sendSystemMessage('Commande impossible à réaliser!');
@@ -188,7 +188,7 @@ export class ChatBoxComponent {
     }
 
     private executeExchangeCommand(): void {
-        if (this.passTurn.isTurn) {
+        if (this.skipTurn.isTurn) {
             const messageSplitted = this.message.split(/\s/);
 
             if (this.swapComponent.swap(messageSplitted[1], INDEX_REAL_PLAYER)) {
@@ -197,7 +197,7 @@ export class ChatBoxComponent {
                 this.typeMessage = 'error';
                 this.message = 'ERREUR : La commande est impossible à réaliser';
             }
-            this.passTurn.switchTurn();
+            this.skipTurn.switchTurn();
         } else {
             this.typeMessage = 'error';
             this.message = "ERREUR : Ce n'est pas ton tour";
@@ -205,7 +205,7 @@ export class ChatBoxComponent {
     }
 
     private executePlaceCommand(): void {
-        if (this.passTurn.isTurn) {
+        if (this.skipTurn.isTurn) {
             const messageSplitted = this.message.split(/\s/);
 
             const positionSplitted = messageSplitted[1].split(/([0-9]+)/);
@@ -221,7 +221,7 @@ export class ChatBoxComponent {
                 this.typeMessage = 'error';
                 this.message = 'ERREUR : Le placement est invalide';
             }
-            this.passTurn.switchTurn();
+            this.skipTurn.switchTurn();
         } else {
             this.typeMessage = 'error';
             this.message = "ERREUR : Ce n'est pas ton tour";

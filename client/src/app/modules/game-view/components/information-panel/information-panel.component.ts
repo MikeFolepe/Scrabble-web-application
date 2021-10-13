@@ -5,8 +5,8 @@ import { PlayerIA } from '@app/models/player-ia.model';
 import { Player } from '@app/models/player.model';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { LetterService } from '@app/services/letter.service';
-import { PassTurnService } from '@app/services/pass-turn.service';
 import { PlayerService } from '@app/services/player.service';
+import { SkipTurnService } from '@app/services/skip-turn.service';
 
 @Component({
     selector: 'app-information-panel',
@@ -15,12 +15,12 @@ import { PlayerService } from '@app/services/player.service';
 })
 export class InformationPanelComponent implements OnInit, OnDestroy {
     gameSettings: GameSettings;
-    passTurnService: PassTurnService;
+    skipTurnService: SkipTurnService;
     constructor(
         public gameSettingsService: GameSettingsService,
         public letterService: LetterService,
         public playerService: PlayerService,
-        public passTurn: PassTurnService,
+        public skipTurn: SkipTurnService,
     ) {
         this.gameSettings = gameSettingsService.gameSettings;
     }
@@ -28,7 +28,7 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         this.initializePlayers();
         this.initializeFirstTurn();
-        this.passTurn.startTimer();
+        this.skipTurn.startTimer();
     }
 
     initializePlayers(): void {
@@ -39,7 +39,7 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
     }
 
     initializeFirstTurn(): void {
-        this.passTurn.isTurn = Boolean(this.gameSettings.startingPlayer.valueOf());
+        this.skipTurn.isTurn = Boolean(this.gameSettings.startingPlayer.valueOf());
     }
 
     ngOnDestroy(): void {

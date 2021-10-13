@@ -13,8 +13,8 @@
             ">
             <app-letter-easel></app-letter-easel>
             <button mat-raised-button color="primary" routerLink="/home">Abandonner</button>
-            <button mat-raised-button color="primary" (click)="this.passTurn.switchTurn()"
-                [disabled]=!this.passTurn.isTurn>Passer son tour</button>
+            <button mat-raised-button color="primary" (click)="this.skipTurn.switchTurn()"
+                [disabled]=!this.skipTurn.isTurn>Passer son tour</button>
         </div>
     </div>
 </div>

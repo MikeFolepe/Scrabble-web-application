@@ -8,7 +8,7 @@ import { PlayerService } from './player.service';
 @Injectable({
     providedIn: 'root',
 })
-export class PassTurnService {
+export class SkipTurnService {
     isTurn: boolean;
     minutes: number;
     seconds: number;

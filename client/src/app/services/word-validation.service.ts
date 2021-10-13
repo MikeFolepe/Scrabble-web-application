@@ -97,13 +97,8 @@ export class WordValidationService {
         let y = 0;
         for (let i = 0; i < BOARD_ROWS; i++) {
             for (let j = 0; j < BOARD_COLUMNS; j++) {
-                if (isRow) {
-                    x = i;
-                    y = j;
-                } else {
-                    x = j;
-                    y = i;
-                }
+                x = isRow ? i : j;
+                y = isRow ? j : i;
                 this.newWords.push(scrabbleBoard[x][y]);
             }
             const words = this.findWords(this.newWords);

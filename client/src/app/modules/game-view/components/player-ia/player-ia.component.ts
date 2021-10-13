@@ -4,8 +4,8 @@ import { Vec2 } from '@app/classes/vec2';
 import { PlayerIA } from '@app/models/player-ia.model';
 // import { Player } from '@app/models/player.model';
 import { LetterService } from '@app/services/letter.service';
-import { PassTurnService } from '@app/services/pass-turn.service';
 import { PlayerService } from '@app/services/player.service';
+import { SkipTurnService } from '@app/services/skip-turn.service';
 // import { TourService } from '@app/services/tour.service';
 // import { Subscription } from 'rxjs';
 
@@ -30,7 +30,7 @@ export class PlayerAIComponent implements OnInit {
     // tourSubscription: Subscription = new Subscription();
     tour: boolean;
 
-    constructor(public letterService: LetterService, public playerService: PlayerService, public passTurn: PassTurnService) {}
+    constructor(public letterService: LetterService, public playerService: PlayerService, public skipTurn: SkipTurnService) {}
 
     ngOnInit(): void {
         // Subscribe to get access to IA Player
@@ -39,7 +39,7 @@ export class PlayerAIComponent implements OnInit {
         // Set the playerIA context so that the player can lunch event
         this.iaPlayer.setContext(this);
 
-        if (!this.passTurn.isTurn) {
+        if (!this.skipTurn.isTurn) {
             setTimeout(() => {
                 this.iaPlayer.play();
             }, DELAY_TO_PLAY);
@@ -47,7 +47,7 @@ export class PlayerAIComponent implements OnInit {
     }
 
     // play() {
-    //     if (!this.passTurn.isTurn) {
+    //     if (!this.skipTurn.isTurn) {
     //         setTimeout(() => {
     //             this.iaPlayer.play();
     //         }, DELAY_TO_PLAY);
@@ -56,18 +56,18 @@ export class PlayerAIComponent implements OnInit {
 
     skip() {
         this.iaSkipped.emit();
-        if (!this.passTurn.isTurn) {
+        if (!this.skipTurn.isTurn) {
             setTimeout(() => {
-                this.passTurn.switchTurn();
+                this.skipTurn.switchTurn();
             }, DELAY_TO_PLAY);
         }
     }
 
     swap() {
         this.iaSwapped.emit();
-        if (!this.passTurn.isTurn) {
+        if (!this.skipTurn.isTurn) {
             setTimeout(() => {
-                this.passTurn.switchTurn();
+                this.skipTurn.switchTurn();
             }, DELAY_TO_PLAY);
         }
     }
@@ -75,9 +75,9 @@ export class PlayerAIComponent implements OnInit {
     place(object: { start: Vec2; orientation: string; word: string }, possibility: { word: string; nbPt: number }[]) {
         this.iaPlaced.emit(object);
         this.iaPossibility.emit(possibility);
-        if (!this.passTurn.isTurn) {
+        if (!this.skipTurn.isTurn) {
             setTimeout(() => {
-                this.passTurn.switchTurn();
+                this.skipTurn.switchTurn();
             }, DELAY_TO_PLAY);
         }
     }

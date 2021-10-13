@@ -1,21 +1,21 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { GameSettings, StartingPlayer } from '@app/classes/game-settings';
-import { PassTurnService } from '@app/services/pass-turn.service';
+import { SkipTurnService } from '@app/services/skip-turn.service';
 import { InformationPanelComponent } from './information-panel.component';
 
 describe('InformationPanelComponent', () => {
     let component: InformationPanelComponent;
     let fixture: ComponentFixture<InformationPanelComponent>;
-    let passTurnSpy: unknown;
+    let skipTurnSpy: unknown;
 
     beforeEach(() => {
-        passTurnSpy = jasmine.createSpyObj('PassTurnService', ['startTimer']);
+        skipTurnSpy = jasmine.createSpyObj('SkipTurnService', ['startTimer']);
     });
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [InformationPanelComponent],
-            providers: [{ provide: PassTurnService, useValue: passTurnSpy }],
+            providers: [{ provide: SkipTurnService, useValue: skipTurnSpy }],
         }).compileComponents();
     });
 

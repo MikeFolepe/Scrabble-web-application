@@ -170,11 +170,11 @@ describe('PlayerService', () => {
         player.letterTable = playerEasel;
         service['players'].push(player);
 
-        let number = 1;
-        service['myFunc'] = () => {
-            number = number *= 2;
-            return;
-        };
+        // let number = 1;
+        // service['myFunc'] = () => {
+        //     number = number *= 2;
+        //     return;
+        // };
 
         service.removeLetter('A', 0);
         playerEasel.slice(0, 1);
@@ -190,11 +190,11 @@ describe('PlayerService', () => {
         player.letterTable = playerEasel;
         service['players'].push(player);
 
-        let number = 1;
-        service['myFunc'] = () => {
-            number = number *= 2;
-            return;
-        };
+        // let number = 1;
+        // service['myFunc'] = () => {
+        //     number = number *= 2;
+        //     return;
+        // };
 
         service.removeLetter('B', 0);
         playerEasel.slice(2, 1);
@@ -210,11 +210,11 @@ describe('PlayerService', () => {
         playerIA.letterTable = playerIaEasel;
         service['players'].push(playerIA);
 
-        let number = 1;
-        service['myFunc'] = () => {
-            number = number *= 2;
-            return;
-        };
+        // let number = 1;
+        // service['myFunc'] = () => {
+        //     number = number *= 2;
+        //     return;
+        // };
 
         service.removeLetter('B', 0);
         playerEasel.splice(1, 1);
@@ -236,11 +236,11 @@ describe('PlayerService', () => {
     // });
 
     it("should refill player's empty easel when refillEasel() is called", () => {
-        let number = 1;
-        service['myFunc'] = () => {
-            number = number *= 2;
-            return;
-        };
+        // let number = 1;
+        // // service['myFunc'] = () => {
+        // //     number = number *= 2;
+        // //     return;
+        // // };
         player.letterTable = [];
         const emptyLetter: Letter = { value: '', quantity: 0, points: 0 };
         service['players'].push(player);
@@ -254,11 +254,11 @@ describe('PlayerService', () => {
     });
 
     it("should refill player's easel that already has values when refillEasel() is called", () => {
-        let number = 1;
-        service['myFunc'] = () => {
-            number = number *= 2;
-            return;
-        };
+        // let number = 1;
+        // service['myFunc'] = () => {
+        //     number = number *= 2;
+        //     return;
+        // };
         const expectedEasel = [letterA, letterB, letterD, letterC, letterD, letterA, letterA];
         player.letterTable = expectedEasel;
         service['players'].push(player);
@@ -329,11 +329,11 @@ describe('PlayerService', () => {
         spyOn(service['letterService'], 'addLetterToReserve');
         spyOn(service['letterService'], 'getRandomLetter').and.returnValue(letterC);
 
-        let number = 1;
-        service['myFunc'] = () => {
-            number = number *= 2;
-            return;
-        };
+        // let number = 1;
+        // // // // // // // // // service['myFunc'] = () => {
+        // // // // // // // // //     number = number *= 2;
+        // // // // // // // // //     return;
+        // // // // // // // // // };
 
         const easel = [letterA, letterB, letterD, letterC, letterD, letterA, letterA];
         player.letterTable = easel;
