@@ -138,7 +138,7 @@ export class ChatboxService implements OnDestroy {
 
     commandDebug() {
         this.debugService.switchDebugMode();
-        if (this.debugService.isDebugOn) {
+        if (this.debugService.isDebugActive) {
             this.typeMessage = 'system';
             this.message = 'affichages de débogage activés';
             this.displayMessage();

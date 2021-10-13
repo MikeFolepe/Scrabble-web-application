@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { INDEX_PLAYER_IA, INDEX_REAL_PLAYER } from '@app/classes/constants';
+import { INDEX_PLAYER_AI, INDEX_REAL_PLAYER } from '@app/classes/constants';
 import { GameSettings } from '@app/classes/game-settings';
 import { PlayerIA } from '@app/models/player-ia.model';
 import { Player } from '@app/models/player.model';
@@ -86,9 +86,9 @@ export class InformationPanelComponent implements OnDestroy, OnInit {
         if (this.message === 'mise a jour') {
             this.reserveState = this.letterService.getReserveSize();
             this.players[INDEX_REAL_PLAYER].letterTable = this.playerService.getLettersEasel(INDEX_REAL_PLAYER);
-            this.players[INDEX_PLAYER_IA].letterTable = this.playerService.getLettersEasel(INDEX_PLAYER_IA);
+            this.players[INDEX_PLAYER_AI].letterTable = this.playerService.getLettersEasel(INDEX_PLAYER_AI);
             this.players[INDEX_REAL_PLAYER].score = this.playerService.getScore(INDEX_REAL_PLAYER);
-            this.players[INDEX_PLAYER_IA].score = this.playerService.getScore(INDEX_PLAYER_IA);
+            this.players[INDEX_PLAYER_AI].score = this.playerService.getScore(INDEX_PLAYER_AI);
         }
     }
     ngOnDestroy(): void {

@@ -78,6 +78,7 @@ export class PlayerIAComponent implements OnInit {
             }, DELAY_TO_PLAY);
         }
         this.endGameService.aiServiceActions.push('passer');
+        this.chatBoxService.displayMessageByType('passer', 'opponent');
     }
 
     swap() {

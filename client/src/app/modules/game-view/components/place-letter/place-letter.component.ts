@@ -7,7 +7,7 @@ import {
     CENTRAL_CASE_POSY,
     EASEL_SIZE,
     INDEX_INVALID,
-    INDEX_PLAYER_IA,
+    INDEX_PLAYER_AI,
     THREE_SECONDS_DELAY,
 } from '@app/classes/constants';
 import { ScoreValidation } from '@app/classes/validation-score';
@@ -52,10 +52,10 @@ export class PlaceLetterComponent implements OnInit, OnDestroy {
     }
 
     placeMethodAdapter(object: { start: Vec2; orientation: string; word: string }) {
-        this.place(object.start, object.orientation, object.word, INDEX_PLAYER_IA);
+        this.place(object.start, object.orientation, object.word, INDEX_PLAYER_AI);
     }
 
-    place(position: Vec2, orientation: string, word: string, indexPlayer = INDEX_PLAYER_IA): boolean {
+    place(position: Vec2, orientation: string, word: string, indexPlayer = INDEX_PLAYER_AI): boolean {
         // Remove accents from the word to place
         const wordNoAccents = word.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
         // If the command is possible according to the parameters
