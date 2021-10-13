@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { IA_NAME_DATABASE } from '@app/classes/constants';
+import { AI_NAME_DATABASE } from '@app/classes/constants';
 import { StartingPlayer } from '@app/classes/game-settings';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { FormComponent } from './form.component';
@@ -32,7 +32,7 @@ describe('FormComponent', () => {
 
     it('should have a predefined name for AI', () => {
         const result = component.chooseRandomAIName();
-        expect(IA_NAME_DATABASE).toContain(result);
+        expect(AI_NAME_DATABASE).toContain(result);
     });
 
     it('should have a different name from the player', () => {

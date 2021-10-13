@@ -1,15 +1,12 @@
-import { Component } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { INDEX_INVALID, MIN_RESERVE_SIZE_TOSWAP } from '@app/classes/constants';
 import { LetterService } from '@app/services/letter.service';
-// eslint-disable-next-line import/no-deprecated
 import { PlayerService } from '@app/services/player.service';
 
-@Component({
-    selector: 'app-swap-letter',
-    templateUrl: './swap-letter.component.html',
-    styleUrls: ['./swap-letter.component.scss'],
+@Injectable({
+    providedIn: 'root',
 })
-export class SwapLetterComponent {
+export class SwapLetterService {
     constructor(private playerService: PlayerService, private letterService: LetterService) {}
 
     // Swap all the letters selected from the easel with new ones from the reserve

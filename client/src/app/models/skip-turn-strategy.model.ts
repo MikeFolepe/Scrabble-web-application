@@ -1,9 +1,9 @@
-import { PlayerIAComponent } from '@app/modules/game-view/components/player-ia/player-ia.component';
+import { PlayerAIComponent } from '@app/modules/game-view/components/player-ai/player-ai.component';
 import { PlayStrategy } from './abstract-strategy.model';
-import { PlayerIA } from './player-ia.model';
+import { PlayerAI } from './player-ai.model';
 export class SkipTurn extends PlayStrategy {
-    execute(player: PlayerIA, context: PlayerIAComponent): void {
-        // PlayerIAComponent will lunch a event that IA skipped
+    execute(player: PlayerAI, context: PlayerAIComponent): void {
+        // PlayerAIComponent will lunch a event that AI skipped
         context.skip();
     }
 }

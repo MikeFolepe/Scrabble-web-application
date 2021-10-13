@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
-import { PlayerIAComponent } from '@app/modules/game-view/components/player-ia/player-ia.component';
-import { PlayerIA } from '@app/models/player-ia.model';
+import { PlayerAIComponent } from '@app/modules/game-view/components/player-ai/player-ai.component';
+import { PlayerAI } from '@app/models/player-ai.model';
 import { SwapLetter } from '@app/models/swap-letter-strategy.model';
 
 describe('SwapLetter', () => {
@@ -16,14 +16,14 @@ describe('SwapLetter', () => {
         { value: 'G', quantity: 0, points: 0 },
     ];
 
-    let playerIA: PlayerIA;
+    let playerAI: PlayerAI;
     let swapStrategy: SwapLetter;
-    let context: PlayerIAComponent;
+    let context: PlayerAIComponent;
 
     beforeEach(() => {
-        playerIA = new PlayerIA(id, name, letterTable);
+        playerAI = new PlayerAI(id, name, letterTable);
         swapStrategy = new SwapLetter();
-        context = TestBed.createComponent(PlayerIAComponent).componentInstance;
+        context = TestBed.createComponent(PlayerAIComponent).componentInstance;
     });
 
     it('should create', () => {
@@ -33,18 +33,19 @@ describe('SwapLetter', () => {
     it('should call the right function when execute() is called', () => {
         spyOn(context, 'swap');
         spyOn(context.letterService, 'addLetterToReserve');
-        swapStrategy.execute(playerIA, context);
+        swapStrategy.execute(playerAI, context);
         expect(context.swap).toHaveBeenCalledTimes(1);
     });
 
-    // it('should call skip() if there is not enough letters in the reserve to change', () => {
-    //     spyOn(Math, 'random').and.returnValue(6);
-    //     spyOn(context, 'skip');
+    /*
+    it('should call skip() if there is not enough letters in the reserve to change', () => {
+        spyOn(Math, 'random').and.returnValue(6);
+        const spy = spyOn(context, 'skip').and.callThrough();
+        context.letterService.reserve = [];
 
-    //     context.letterService.reserve = [];
+    //     swapStrategy.execute(playerAI, context);
 
-    //     swapStrategy.execute(playerIA, context);
-
-    //     expect(context.skip).toHaveBeenCalledTimes(1);
-    // });
+        expect(spy).toHaveBeenCalledTimes(1);
+    });
+    */
 });
