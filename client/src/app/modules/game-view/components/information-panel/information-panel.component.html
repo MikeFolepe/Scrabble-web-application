@@ -24,6 +24,11 @@
                     (checkTime)="switchTour($event)"></app-countdown>
             </div>
         </li>
+        <div *ngIf="this.endGameService.isEndGame">
+            Ceci est une fin de partie
+            Félicitations à: {{this.endGameService.getWinnerName()}} qui est le vainqueur!!
+        </div>
+
     </ul>
 </div>
 <app-player-ai></app-player-ai>

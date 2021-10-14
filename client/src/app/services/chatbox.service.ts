@@ -1,6 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { INDEX_REAL_PLAYER, MAX_NUMBER_OF_POSSIBILITY, ONE_POSSIBILITY, TWO_POSSIBILITY } from '@app/classes/constants';
 import { Vec2 } from '@app/classes/vec2';
+import { EndGameService } from '@app/services/end-game.service';
 import { PassTourService } from '@app/services/pass-tour.service';
 import { PlaceLetterService } from '@app/services/place-letter.service';
 import { PlayerService } from '@app/services/player.service';
@@ -19,6 +20,7 @@ export class ChatboxService implements OnDestroy {
     message: string = '';
     typeMessage: string = '';
     command: string = '';
+    endGameEasel: string = '';
 
     debugMessage: { word: string; nbPt: number }[] = [{ word: 'papier', nbPt: 6 }];
 
@@ -30,6 +32,7 @@ export class ChatboxService implements OnDestroy {
         private swapLetterService: SwapLetterService,
         private placeLetterService: PlaceLetterService,
         private debugService: DebugService,
+        public endGameService: EndGameService,
     ) {
         this.initializeTourSubcribtion();
     }
@@ -140,6 +143,7 @@ export class ChatboxService implements OnDestroy {
         }
     }
     executeSkipTurn() {
+        this.endGameService.actionsLog.push('passer');
         this.tour = this.tourService.getTour();
         if (this.tour) {
             this.passTourService.writeMessage('!passer');
@@ -149,6 +153,7 @@ export class ChatboxService implements OnDestroy {
         }
     }
     executeSwap() {
+        this.endGameService.actionsLog.push('echanger');
         this.tour = this.tourService.getTour();
         if (this.tour) {
             const messageSplitted = this.message.split(/\s/);
@@ -166,6 +171,7 @@ export class ChatboxService implements OnDestroy {
         }
     }
     executePlace() {
+        this.endGameService.actionsLog.push('placer');
         this.tour = this.tourService.getTour();
         if (this.tour) {
             const messageSplitted = this.message.split(/\s/);
@@ -221,6 +227,17 @@ export class ChatboxService implements OnDestroy {
             }
         }
         this.debugService.clearDebugMessage();
+    }
+
+    displayFinalMessage(indexPlayer: number): void {
+        if (!this.endGameService.isEndGame) return;
+        this.displayMessageByType('Fin de partie - lettres restantes', 'system');
+        for (const letter of this.playerService.getLettersEasel(indexPlayer)) {
+            this.endGameEasel += letter.value;
+        }
+        this.displayMessageByType(this.playerService.players[indexPlayer].name + ':' + this.endGameEasel, 'system');
+        // Vider la string
+        this.endGameEasel = '';
     }
 
     ngOnDestroy() {

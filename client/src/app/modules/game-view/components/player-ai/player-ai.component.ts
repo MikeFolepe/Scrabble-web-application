@@ -1,17 +1,17 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { DELAY_TO_PLAY } from '@app/classes/constants';
 import { Vec2 } from '@app/classes/vec2';
 import { PlayerAI } from '@app/models/player-ai.model';
 import { Player } from '@app/models/player.model';
 import { ChatboxService } from '@app/services/chatbox.service';
-import { DELAY_TO_PLAY } from '@app/classes/constants';
 import { DebugService } from '@app/services/debug.service';
+import { EndGameService } from '@app/services/end-game.service';
 import { LetterService } from '@app/services/letter.service';
 import { PassTourService } from '@app/services/pass-tour.service';
 import { PlaceLetterService } from '@app/services/place-letter.service';
 import { PlayerService } from '@app/services/player.service';
 import { TourService } from '@app/services/tour.service';
 import { Subscription } from 'rxjs';
-
 @Component({
     selector: 'app-player-ai',
     templateUrl: './player-ai.component.html',
@@ -38,6 +38,7 @@ export class PlayerAIComponent implements OnInit {
         public placeLetterService: PlaceLetterService,
         public chatBoxService: ChatboxService,
         public debugService: DebugService,
+        public endGameService: EndGameService,
     ) {}
 
     ngOnInit(): void {
@@ -76,6 +77,8 @@ export class PlayerAIComponent implements OnInit {
                 this.passtourService.writeMessage();
             }, DELAY_TO_PLAY);
         }
+        this.endGameService.actionsLog.push('passer');
+        this.chatBoxService.displayMessageByType('passer', 'opponent');
     }
 
     swap() {
@@ -85,19 +88,19 @@ export class PlayerAIComponent implements OnInit {
                 this.passtourService.writeMessage();
             }, DELAY_TO_PLAY);
         }
+        this.endGameService.actionsLog.push('echanger');
     }
 
     place(object: { start: Vec2; orientation: string; word: string }, possibility: { word: string; nbPt: number }[]) {
         this.placeLetterService.placeMethodAdapter(object);
         this.debugService.receiveAIDebugPossibilities(possibility);
-        //  this.endGameService.playerServiceActions.push('placer par AI');
         setTimeout(() => {
             this.passtourService.writeMessage();
         }, DELAY_TO_PLAY);
+        this.endGameService.actionsLog.push('placer');
     }
 
     ngOndestroy() {
         this.tourSubscription.unsubscribe();
-        // this.passSubscription.unsubscribe();
     }
 }
