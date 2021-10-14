@@ -20,7 +20,7 @@ export class ChatboxService implements OnDestroy {
     message: string = '';
     typeMessage: string = '';
     command: string = '';
-    easelResume: string = '';
+    endGameEasel: string = '';
 
     debugMessage: { word: string; nbPt: number }[] = [{ word: 'papier', nbPt: 6 }];
 
@@ -229,15 +229,15 @@ export class ChatboxService implements OnDestroy {
         this.debugService.clearDebugMessage();
     }
 
-    displayFinalMessage(index: number): void {
+    displayFinalMessage(indexPlayer: number): void {
         if (!this.endGameService.isEndGame) return;
         this.displayMessageByType('Fin de partie - lettres restantes', 'system');
-        for (const easel of this.playerService.getLettersEasel(index)) {
-            this.easelResume += easel.value;
+        for (const letter of this.playerService.getLettersEasel(indexPlayer)) {
+            this.endGameEasel += letter.value;
         }
-        this.displayMessageByType(this.playerService.players[index].name + ':' + this.easelResume, 'system');
+        this.displayMessageByType(this.playerService.players[indexPlayer].name + ':' + this.endGameEasel, 'system');
         // Vider la string
-        this.easelResume = '';
+        this.endGameEasel = '';
     }
 
     ngOnDestroy() {

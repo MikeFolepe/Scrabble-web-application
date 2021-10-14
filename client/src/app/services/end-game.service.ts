@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { RESERVE } from '@app/classes/constants';
+import { NUMBER_OF_SKIP, RESERVE } from '@app/classes/constants';
 import { DebugService } from './debug.service';
 import { LetterService } from './letter.service';
 import { PlayerService } from './player.service';
@@ -27,15 +27,15 @@ export class EndGameService {
         this.isEndGame = this.isEndGameByActions() || this.isEndGameByEasel();
     }
 
-    getFinalScore(index: number): void {
-        if (!this.isEndGame || this.playerService.players[index].score === 0) {
+    getFinalScore(indexPlayer: number): void {
+        if (!this.isEndGame || this.playerService.players[indexPlayer].score === 0) {
             return;
         }
-        for (const letter of this.playerService.getLettersEasel(index)) {
-            this.playerService.players[index].score -= letter.points;
+        for (const letter of this.playerService.getLettersEasel(indexPlayer)) {
+            this.playerService.players[indexPlayer].score -= letter.points;
             // Check if score decrease under 0 after soustraction
-            if (this.playerService.players[index].score < 0) {
-                this.playerService.players[index].score = 0;
+            if (this.playerService.players[indexPlayer].score < 0) {
+                this.playerService.players[indexPlayer].score = 0;
                 return;
             }
         }
@@ -48,14 +48,12 @@ export class EndGameService {
         this.actionsLog = [];
         this.debugService.debugServiceMessage = [];
     }
-
     private isEndGameByActions(): boolean {
-        const lastActions = 6;
-        if (this.actionsLog.length < lastActions) {
+        if (this.actionsLog.length < NUMBER_OF_SKIP) {
             return false;
         }
         const lastIndex = this.actionsLog.length - 1;
-        for (let i = lastIndex; i > lastIndex - lastActions; i--) {
+        for (let i = lastIndex; i > lastIndex - NUMBER_OF_SKIP; i--) {
             if (this.actionsLog[i] !== 'passer') {
                 return false;
             }
