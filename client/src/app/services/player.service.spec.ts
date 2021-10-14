@@ -18,14 +18,13 @@ import { Player } from '@app/models/player.model';
 import { PlayerService } from './player.service';
 
 describe('PlayerService', () => {
-    let service: PlayerService;
-
     let letterA: Letter;
     let letterB: Letter;
     let letterC: Letter;
     let letterD: Letter;
 
     let player: Player;
+    let service: PlayerService;
     let playerAI: PlayerAI;
 
     beforeEach(() => {
@@ -289,10 +288,23 @@ describe('PlayerService', () => {
         playerAI.letterTable = [];
         service['players'].push(playerAI);
 
-        expect(service.easelContainsLetter('a', 0, 0)).toEqual(0);
-        expect(service.easelContainsLetter('b', 0, 0)).toEqual(1);
+        expect(service.easelContainsLetter('a', 0, 0)).not.toEqual(INDEX_INVALID);
+        expect(service.easelContainsLetter('b', 0, 0)).not.toEqual(INDEX_INVALID);
         expect(service.easelContainsLetter('c', 0, 0)).toEqual(INDEX_INVALID);
         expect(service.easelContainsLetter('a', 0, 1)).toEqual(INDEX_INVALID);
+    });
+
+    it("should know letter's index in easel", () => {
+        player.letterTable = [letterA, letterB];
+        service['players'].push(player);
+        playerAI.letterTable = [letterC];
+        service['players'].push(playerAI);
+
+        expect(service.easelContainsLetter('a', 0, 0)).toEqual(0);
+        expect(service.easelContainsLetter('b', 1, 0)).toEqual(1);
+        expect(service.easelContainsLetter('b', 0, 0)).toEqual(1);
+        expect(service.easelContainsLetter('c', 0, 1)).toEqual(0);
+        expect(service.easelContainsLetter('d', 0, 0)).toEqual(INDEX_INVALID);
     });
 
     it('should add score when addScore() is called', () => {

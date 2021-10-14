@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-export interface ScoreValidation{
+export interface ScoreValidation {
     validation: boolean;
     score: number;
 }
