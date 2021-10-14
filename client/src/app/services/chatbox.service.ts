@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { INDEX_REAL_PLAYER, MAX_NUMBER_OF_POSSIBILITY, ONE_POSSIBILITY, TWO_POSSIBILITY } from '@app/classes/constants';
+import { INDEX_REAL_PLAYER, MAX_NUMBER_OF_POSSIBILITY } from '@app/classes/constants';
 import { Vec2 } from '@app/classes/vec2';
 import { EndGameService } from '@app/services/end-game.service';
 import { PassTourService } from '@app/services/pass-tour.service';
@@ -34,17 +34,17 @@ export class ChatboxService implements OnDestroy {
         private debugService: DebugService,
         public endGameService: EndGameService,
     ) {
-        this.initializeTourSubcribtion();
+        this.initializeTourSubscription();
     }
 
-    initializeTourSubcribtion() {
+    initializeTourSubscription() {
         this.tourSubscription = this.tourService.tourSubject.subscribe((tourSubject: boolean) => {
             this.tour = tourSubject;
         });
         this.tourService.emitTour();
     }
 
-    displayBinded(fn: () => void) {
+    displayBound(fn: () => void) {
         this.displayMessage = fn;
     }
 
@@ -81,7 +81,7 @@ export class ChatboxService implements OnDestroy {
                 break;
             }
         }
-        this.command = ''; // reset value for next message
+        this.command = ''; // Reset value for next message
         this.displayMessage();
     }
 
@@ -142,6 +142,7 @@ export class ChatboxService implements OnDestroy {
             this.message = 'affichages de débogage désactivés';
         }
     }
+
     executeSkipTurn() {
         this.endGameService.actionsLog.push('passer');
         this.tour = this.tourService.getTour();
@@ -152,6 +153,7 @@ export class ChatboxService implements OnDestroy {
             this.message = "ERREUR : Ce n'est pas ton tour";
         }
     }
+
     executeSwap() {
         this.endGameService.actionsLog.push('echanger');
         this.tour = this.tourService.getTour();
@@ -170,6 +172,7 @@ export class ChatboxService implements OnDestroy {
             this.message = "ERREUR : Ce n'est pas ton tour";
         }
     }
+
     executePlace() {
         this.endGameService.actionsLog.push('placer');
         this.tour = this.tourService.getTour();
@@ -195,35 +198,16 @@ export class ChatboxService implements OnDestroy {
         }
     }
 
-    // method which check the différents size of table of possibilty for the debug
+    // Method which check the different size of table of possibility for the debug
     displayDebugMessage(): void {
-        switch (this.debugService.debugServiceMessage.length) {
-            case 0: {
+        const nbPossibilities = this.debugService.debugServiceMessage.length;
+        if (nbPossibilities === 0) {
+            this.typeMessage = 'system';
+            this.message = 'Aucune possibilité de placement trouvée!';
+        } else {
+            for (let i = 0; i < Math.min(MAX_NUMBER_OF_POSSIBILITY, nbPossibilities); i++) {
                 this.typeMessage = 'system';
-                this.message = 'Aucune possibilité de placement trouvés!';
-                break;
-            }
-            case 1: {
-                for (let i = 0; i < ONE_POSSIBILITY; i++) {
-                    this.typeMessage = 'system';
-                    this.message = this.debugService.debugServiceMessage[i].word + ': -- ' + this.debugService.debugServiceMessage[i].nbPt.toString();
-                }
-                break;
-            }
-            case 2: {
-                for (let i = 0; i < TWO_POSSIBILITY; i++) {
-                    this.typeMessage = 'system';
-                    this.message = this.debugService.debugServiceMessage[i].word + ': -- ' + this.debugService.debugServiceMessage[i].nbPt.toString();
-                }
-
-                break;
-            }
-            default: {
-                for (let i = 0; i < MAX_NUMBER_OF_POSSIBILITY; i++) {
-                    this.typeMessage = 'system';
-                    this.message = this.debugService.debugServiceMessage[i].word + ': -- ' + this.debugService.debugServiceMessage[i].nbPt.toString();
-                }
-                break;
+                this.message = this.debugService.debugServiceMessage[i].word + ': -- ' + this.debugService.debugServiceMessage[i].nbPt.toString();
             }
         }
         this.debugService.clearDebugMessage();
@@ -236,7 +220,7 @@ export class ChatboxService implements OnDestroy {
             this.endGameEasel += letter.value;
         }
         this.displayMessageByType(this.playerService.players[indexPlayer].name + ':' + this.endGameEasel, 'system');
-        // Vider la string
+        // Clear the string
         this.endGameEasel = '';
     }
 

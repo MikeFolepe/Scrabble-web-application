@@ -36,14 +36,14 @@ export class ChatboxComponent implements OnInit, OnDestroy, AfterViewInit {
             this.tour = tourSubject;
         });
         this.tourService.emitTour();
-        this.chatBoxService.displayBinded(this.displayAnyMessageByType.bind(this));
+        this.chatBoxService.displayBound(this.displayAnyMessageByType.bind(this));
     }
 
     handleKeyEvent(event: KeyboardEvent) {
         if (event.key === 'Enter') {
             event.preventDefault();
             this.chatBoxService.sendPlayerMessage(this.message);
-            this.message = ''; // Clear l'input
+            this.message = ''; // Clear input
 
             setTimeout(() => {
                 // Timeout is used to update the scroll after the last element added

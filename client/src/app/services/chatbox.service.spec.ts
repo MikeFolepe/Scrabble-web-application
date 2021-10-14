@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
 import { TestBed } from '@angular/core/testing';
 import { Letter } from '@app/classes/letter';
@@ -95,17 +96,16 @@ describe('ChatboxService', () => {
         expect(service.isValid()).toBeTrue();
     });
 
-    it('using command !debug should call commandDebug()', () => {
-        const spy = spyOn(service, 'executeDebug').and.callThrough();
+    it('using command !debug should call executeDebug()', () => {
+        spyOn(service, 'executeDebug');
         service.command = 'debug';
         const word = 'message de debug';
         const nbPt = 1;
         const table: { word: string; nbPt: number }[] = [];
         table.push({ word, nbPt });
 
-        service['debugService'].receiveAIDebugPossibilities(table);
         service.sendPlayerMessage('!debug');
-        expect(spy).toHaveBeenCalled();
+        expect(service.executeDebug).toHaveBeenCalled();
     });
 
     it('using command !passer should display the respective message', () => {
@@ -134,16 +134,20 @@ describe('ChatboxService', () => {
         expect(service.message).toEqual('Player 1 : !échanger abc');
     });
 
-    it('desactivating debug should display the respective message', () => {
+    it('deactivating debug should display the respective message', () => {
+        spyOn<any>(service, 'displayMessage');
+        spyOn<any>(service, 'displayDebugMessage');
+
         service.command = 'debug';
         const word = 'message de debug';
         const nbPt = 1;
-        const table: { word: string; nbPt: number }[] = [];
-        table.push({ word, nbPt });
+        const table: { word: string; nbPt: number }[] = [{ word, nbPt }];
 
-        service['debugService'].receiveAIDebugPossibilities(table);
+        service['debugService'].debugServiceMessage = table;
+        service['debugService'].isDebugActive = true;
+
         service.sendPlayerMessage('!debug');
-        service.sendPlayerMessage('!debug');
+
         expect(service.message).toEqual('affichages de débogage désactivés');
     });
 
@@ -190,5 +194,21 @@ describe('ChatboxService', () => {
         service.displayMessageByType('I am the player', 'player');
         expect(service.message).toEqual('I am the player');
         expect(service.typeMessage).toEqual('player');
+    });
+
+    it('should display the right debug message if no possibility has been found', () => {
+        service['debugService'].debugServiceMessage = [];
+        service.displayDebugMessage();
+
+        expect(service.typeMessage).toEqual('system');
+        expect(service.message).toEqual('Aucune possibilité de placement trouvée!');
+    });
+
+    it('should display the right debug message if at least one possibility has been found', () => {
+        service['debugService'].debugServiceMessage = [{ word: 'test', nbPt: 3 }];
+        service.displayDebugMessage();
+
+        expect(service.typeMessage).toEqual('system');
+        expect(service.message).toEqual('test: -- 3');
     });
 });
