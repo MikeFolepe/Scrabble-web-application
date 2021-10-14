@@ -13,11 +13,9 @@ import { InformationPanelComponent } from '@app/modules/game-view/components/inf
 import { LetterEaselComponent } from './components/letter-easel/letter-easel.component';
 import { PassTourComponent } from './components/pass-tour/pass-tour.component';
 import { ScrabbleBoardComponent } from './components/scrabble-board/scrabble-board.component';
-import { PlaceLetterComponent } from './components/place-letter/place-letter.component';
 // eslint-disable-next-line no-restricted-imports
 import { SharedModule } from '../shared/shared/shared.module';
-import { PlayerIAComponent } from './components/player-ia/player-ia.component';
-import { SwapLetterComponent } from './components/swap-letter/swap-letter.component';
+import { PlayerAIComponent } from './components/player-ai/player-ai.component';
 import { WordValidationComponent } from './components/word-validation/word-validation.component';
 
 @NgModule({
@@ -29,13 +27,11 @@ import { WordValidationComponent } from './components/word-validation/word-valid
         PlayAreaComponent,
         SidebarComponent,
         ChatboxComponent,
-        PlaceLetterComponent,
         FontSizeComponent,
         CountdownComponent,
         PassTourComponent,
         WordValidationComponent,
-        PlayerIAComponent,
-        SwapLetterComponent,
+        PlayerAIComponent,
     ],
     imports: [CommonModule, AppMaterialModule, AppRoutingModule, FormsModule, SharedModule],
     exports: [GameViewComponent],

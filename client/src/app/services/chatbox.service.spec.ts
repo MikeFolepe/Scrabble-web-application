@@ -96,7 +96,7 @@ describe('ChatboxService', () => {
     });
 
     it('using command !debug should call commandDebug()', () => {
-        const spy = spyOn(service, 'commandDebug').and.callThrough();
+        const spy = spyOn(service, 'executeDebug').and.callThrough();
         service.command = 'debug';
         const word = 'message de debug';
         const nbPt = 1;

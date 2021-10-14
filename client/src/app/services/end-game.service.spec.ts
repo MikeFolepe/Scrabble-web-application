@@ -4,7 +4,7 @@
 import { TestBed } from '@angular/core/testing';
 import { RESERVE } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
-import { PlayerIA } from '@app/models/player-ia.model';
+import { PlayerAI } from '@app/models/player-ai.model';
 import { Player } from '@app/models/player.model';
 import { EndGameService } from './end-game.service';
 
@@ -15,7 +15,7 @@ describe('EndGameService', () => {
     let letterB: Letter;
 
     let player: Player;
-    let playerIA: PlayerIA;
+    let playerIA: PlayerAI;
 
     beforeEach(() => {
         TestBed.configureTestingModule({});
@@ -25,7 +25,7 @@ describe('EndGameService', () => {
         letterB = RESERVE[1];
 
         player = new Player(1, 'Player 1', [letterA]);
-        playerIA = new PlayerIA(2, 'Player IA', [letterB]);
+        playerIA = new PlayerAI(2, 'Player IA', [letterB]);
     });
 
     it('should be created', () => {
@@ -87,12 +87,6 @@ describe('EndGameService', () => {
     });
 
     it('should know whether it is the end of the game or not', () => {
-        // getReserveSize getLettersEasel[0] getLettersEasel[1]> expected
-        //        0            EMPTY           EMPTY      =>   true
-        //        0            EASEL           EMPTY      =>   true
-        //        0            EASEL           EASEL      =>   true
-        //        3            EMPTY           EMPTY      =>   false
-        //        3            EASEL           EASEL      =>   false
         spyOn(service.letterService, 'getReserveSize').and.returnValues(0, 0, 0, 3, 3);
         const testEasel = [letterA, letterA];
         const testEmptyEasel: Letter[] = [];

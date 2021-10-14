@@ -21,6 +21,7 @@ export class ChatboxService implements OnDestroy {
     typeMessage: string = '';
     command: string = '';
     easelResume: string = '';
+
     debugMessage: { word: string; nbPt: number }[] = [{ word: 'papier', nbPt: 6 }];
 
     private displayMessage: () => void;
@@ -47,7 +48,6 @@ export class ChatboxService implements OnDestroy {
         this.displayMessage = fn;
     }
 
-    // Methode qu'il faut appeler pour afficher les affaires dans la chatbox
     displayMessageByType(message: string, typeMessage: string) {
         this.message = message;
         this.typeMessage = typeMessage;
@@ -60,27 +60,21 @@ export class ChatboxService implements OnDestroy {
         if (!this.isValid()) {
             this.typeMessage = 'error';
         }
-        // IF the party is finish return;
-        if (this.endGameService.isEndGame) {
-            this.command = ''; // reset value for next message
-            this.displayMessage();
-            return;
-        }
         switch (this.command) {
             case 'debug': {
-                this.commandDebug();
+                this.executeDebug();
                 break;
             }
             case 'passer': {
-                this.commandPassTurn();
+                this.executeSkipTurn();
                 break;
             }
             case 'echanger': {
-                this.commandSwap();
+                this.executeSwap();
                 break;
             }
             case 'placer': {
-                this.commandPlace();
+                this.executePlace();
                 break;
             }
             default: {
@@ -119,7 +113,7 @@ export class ChatboxService implements OnDestroy {
         const regexEchanger = /^!échanger\s([a-z]|[*]){1,7}$/g;
         const regexPlacer = /^!placer\s([a-o]([1-9]|1[0-5])[hv])\s([a-zA-Z\u00C0-\u00FF]|[*])+/g;
 
-        let valid = true;
+        let isSyntaxValid = true;
 
         if (regexDebug.test(this.message)) {
             this.command = 'debug';
@@ -130,13 +124,13 @@ export class ChatboxService implements OnDestroy {
         } else if (regexPlacer.test(this.message)) {
             this.command = 'placer';
         } else {
-            valid = false;
+            isSyntaxValid = false;
             this.message = 'ERREUR : La syntaxe est invalide';
         }
-        return valid;
+        return isSyntaxValid;
     }
 
-    commandDebug() {
+    executeDebug() {
         this.debugService.switchDebugMode();
         if (this.debugService.isDebugActive) {
             this.typeMessage = 'system';
@@ -148,7 +142,7 @@ export class ChatboxService implements OnDestroy {
             this.message = 'affichages de débogage désactivés';
         }
     }
-    commandPassTurn() {
+    executeSkipTurn() {
         this.endGameService.actionsLog.push('passer');
         this.tour = this.tourService.getTour();
         if (this.tour) {
@@ -158,10 +152,9 @@ export class ChatboxService implements OnDestroy {
             this.message = "ERREUR : Ce n'est pas ton tour";
         }
     }
-    commandSwap() {
-        this.tour = this.tourService.getTour();
+    executeSwap() {
         this.endGameService.actionsLog.push('echanger');
-
+        this.tour = this.tourService.getTour();
         if (this.tour) {
             const messageSplitted = this.message.split(/\s/);
 
@@ -177,9 +170,9 @@ export class ChatboxService implements OnDestroy {
             this.message = "ERREUR : Ce n'est pas ton tour";
         }
     }
-    commandPlace() {
-        this.tour = this.tourService.getTour();
+    executePlace() {
         this.endGameService.actionsLog.push('placer');
+        this.tour = this.tourService.getTour();
         if (this.tour) {
             const messageSplitted = this.message.split(/\s/);
             const positionSplitted = messageSplitted[1].split(/([0-9]+)/);

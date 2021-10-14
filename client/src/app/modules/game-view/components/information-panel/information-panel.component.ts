@@ -1,17 +1,16 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { INDEX_PLAYER_AI, INDEX_REAL_PLAYER } from '@app/classes/constants';
 import { GameSettings } from '@app/classes/game-settings';
-import { PlayerIA } from '@app/models/player-ia.model';
+import { PlayerAI } from '@app/models/player-ai.model';
 import { Player } from '@app/models/player.model';
 import { CountdownComponent } from '@app/modules/game-view/components/countdown/countdown.component';
+import { PlayerAIComponent } from '@app/modules/game-view/components/player-ai/player-ai.component';
 import { EndGameService } from '@app/services/end-game.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { LetterService } from '@app/services/letter.service';
 import { PlayerService } from '@app/services/player.service';
 import { TourService } from '@app/services/tour.service';
 import { Subscription } from 'rxjs';
-// eslint-disable-next-line no-restricted-imports
-import { PlayerIAComponent } from '../player-ia/player-ia.component';
 
 @Component({
     selector: 'app-information-panel',
@@ -20,7 +19,7 @@ import { PlayerIAComponent } from '../player-ia/player-ia.component';
 })
 export class InformationPanelComponent implements OnDestroy, OnInit {
     @ViewChild(CountdownComponent) countDown: CountdownComponent;
-    @ViewChild(PlayerIAComponent) playerIA: PlayerIAComponent;
+    @ViewChild(PlayerAIComponent) playerAI: PlayerAIComponent;
     players: Player[] = new Array<Player>();
     gameSettings: GameSettings;
     tour: boolean;
@@ -49,7 +48,7 @@ export class InformationPanelComponent implements OnDestroy, OnInit {
     initializePlayers() {
         let player = new Player(1, this.gameSettings.playersName[0], this.letterService.getRandomLetters());
         this.playerService.addPlayer(player);
-        player = new PlayerIA(2, this.gameSettings.playersName[1], this.letterService.getRandomLetters());
+        player = new PlayerAI(2, this.gameSettings.playersName[1], this.letterService.getRandomLetters());
         this.playerService.addPlayer(player);
     }
 
@@ -74,10 +73,7 @@ export class InformationPanelComponent implements OnDestroy, OnInit {
                 this.tour = false;
                 this.reAssignTour(this.tour);
                 this.countDown.setTimer();
-                // AI won't play when the game is finish.
-                // if (!this.endGameService.isEndGame) {
-                this.playerIA.play();
-                // }
+                this.playerAI.play();
             }
         }
     }
