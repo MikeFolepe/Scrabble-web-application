@@ -1,4 +1,3 @@
-
 // /* eslint-disable dot-notation */
 // import { ComponentFixture, TestBed } from '@angular/core/testing';
 // import { MouseHandlerService } from '@app/services/mouse-handler.service';
@@ -29,8 +28,6 @@
 // //     it('should create', () => {
 // //         expect(component).toBeTruthy();
 // //     });
-
-
 //     it('buttonDetect should modify the buttonPressed variable', () => {
 //         spyOn(component['gridService'], 'setGridContext');
 //         const expectedKey = 'a';

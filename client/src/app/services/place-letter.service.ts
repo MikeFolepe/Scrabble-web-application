@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable } from '@angular/core';
 import {
     BOARD_COLUMNS,
     BOARD_ROWS,
@@ -18,8 +18,7 @@ import { WordValidationService } from '@app/services/word-validation.service';
 @Injectable({
     providedIn: 'root',
 })
-export class PlaceLetterService implements OnDestroy {
-
+export class PlaceLetterService {
     scrabbleBoard: string[][]; // 15x15 array
     invalidLetters: boolean[] = []; // Array of the size of the word to place that tells which letter is invalid
 
@@ -30,11 +29,7 @@ export class PlaceLetterService implements OnDestroy {
     isEaselSize: boolean = false; // If the bonus to form a word with all the letters from the easel applies
     message: string;
 
-    constructor(
-        private playerService: PlayerService,
-        private gridService: GridService,
-        private wordValidationService: WordValidationService,
-    ) {
+    constructor(private playerService: PlayerService, private gridService: GridService, private wordValidationService: WordValidationService) {
         this.scrabbleBoard = []; // Initializes the array with empty letters
         for (let i = 0; i < BOARD_ROWS; i++) {
             this.scrabbleBoard[i] = [];
@@ -51,11 +46,11 @@ export class PlaceLetterService implements OnDestroy {
 
     place(position: Vec2, orientation: string, word: string, indexPlayer = INDEX_PLAYER_AI): boolean {
         // Remove accents from the word to place
-        let isRow: boolean = false;
+        let isRow = false;
         if (orientation === 'v') {
-            isRow = true;
-        } else if (orientation === 'h') {
             isRow = false;
+        } else if (orientation === 'h') {
+            isRow = true;
         }
         const wordNoAccents = word.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
         // If the command is possible according to the parameters

@@ -95,7 +95,7 @@ export class WordValidationService {
     passThroughAllRowsOrColumns(scrabbleBoard: string[][], isRow: boolean) {
         let x = 0;
         let y = 0;
-        for (let i = 0; i < BOARD_ROWS; i++) {
+        for (let i = 7; i < BOARD_ROWS; i++) {
             for (let j = 0; j < BOARD_COLUMNS; j++) {
                 x = isRow ? i : j;
                 y = isRow ? j : i;
@@ -106,7 +106,7 @@ export class WordValidationService {
 
             for (const word of words) {
                 if (word.length >= 2) {
-                    this.newPositions = isRow ? this.getWordHorizontalPositions(word, x) : this.getWordVerticalPositions(word, x);
+                    this.newPositions = isRow ? this.getWordHorizontalPositions(word, x) : this.getWordVerticalPositions(word, y);
                     if (this.checkIfNotPlayed(word, this.newPositions)) {
                         this.addToPlayedWords(word, this.newPositions, this.newPlayedWords);
                     }

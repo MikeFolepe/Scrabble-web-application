@@ -1,9 +1,7 @@
 /* eslint-disable no-invalid-this */
 import { Injectable } from '@angular/core';
-import { INDEX_PLAYER_IA, ONE_SECOND_TIME } from '@app/classes/constants';
-import { PlayerIA } from '@app/models/player-ia.model';
+import { ONE_SECOND_TIME } from '@app/classes/constants';
 import { GameSettingsService } from './game-settings.service';
-import { PlayerService } from './player.service';
 
 @Injectable({
     providedIn: 'root',
@@ -14,8 +12,13 @@ export class SkipTurnService {
     seconds: number;
     // eslint-disable-next-line no-undef
     intervalID: NodeJS.Timeout;
+    private playAiTurn: () => void;
 
-    constructor(public gameSettingsService: GameSettingsService, private playerService: PlayerService) {}
+    constructor(public gameSettingsService: GameSettingsService) {}
+
+    bindAiTurn(fn: () => void) {
+        this.playAiTurn = fn;
+    }
 
     switchTurn(): void {
         this.stopTimer();
@@ -23,8 +26,9 @@ export class SkipTurnService {
             if (this.isTurn) {
                 this.isTurn = false;
                 this.startTimer();
-                const aiPLayer = this.playerService.players[INDEX_PLAYER_IA] as PlayerIA;
-                aiPLayer.play();
+                // const aiPLayer = this.playerService.players[INDEX_PLAYER_AI] as PlayerAI;
+                // aiPLayer.play();
+                this.playAiTurn();
             } else {
                 this.isTurn = true;
                 this.startTimer();

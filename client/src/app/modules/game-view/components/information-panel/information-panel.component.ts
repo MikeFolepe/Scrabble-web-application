@@ -29,6 +29,7 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
         this.initializePlayers();
         this.initializeFirstTurn();
         this.skipTurn.startTimer();
+        console.log('info');
     }
 
     initializePlayers(): void {

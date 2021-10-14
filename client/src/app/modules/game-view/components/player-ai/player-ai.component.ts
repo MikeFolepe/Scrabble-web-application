@@ -1,13 +1,13 @@
-import { LetterService } from '@app/services/letter.service';
-import { PlayerService } from '@app/services/player.service';
-import { SkipTurnService } from '@app/services/skip-turn.service';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { DELAY_TO_PLAY, INDEX_PLAYER_AI } from '@app/classes/constants';
 import { Vec2 } from '@app/classes/vec2';
 import { PlayerAI } from '@app/models/player-ai.model';
 import { ChatboxService } from '@app/services/chatbox.service';
-import { DELAY_TO_PLAY, INDEX_PLAYER_AI } from '@app/classes/constants';
 import { DebugService } from '@app/services/debug.service';
+import { LetterService } from '@app/services/letter.service';
 import { PlaceLetterService } from '@app/services/place-letter.service';
+import { PlayerService } from '@app/services/player.service';
+import { SkipTurnService } from '@app/services/skip-turn.service';
 
 @Component({
     selector: 'app-player-ai',
@@ -19,7 +19,6 @@ export class PlayerAIComponent implements OnInit {
     @Output() aiSwapped = new EventEmitter();
     // Pour le mode debug
     @Output() aiPossibility = new EventEmitter();
-    iaPlayer: PlayerAI;
     // Pour dire à la boite que j'ai passé mon tour.
     aiPlayer: PlayerAI;
 
@@ -34,18 +33,15 @@ export class PlayerAIComponent implements OnInit {
 
     ngOnInit(): void {
         // Subscribe to get access to AI Player
-        this.iaPlayer = this.playerService.players[INDEX_PLAYER_AI] as PlayerIA;
-
+        this.aiPlayer = this.playerService.players[INDEX_PLAYER_AI] as PlayerAI;
         // Set the playerIA context so that the player can lunch event
-        this.iaPlayer.setContext(this);
+        this.aiPlayer.setContext(this);
         // this.passSubscription = this.passtourService.currentMessage.subscribe((message) => (this.message = message));
-
-        if (!this.skipTurn.isTurn) {
-            setTimeout(() => {
-                this.play();
-            }, DELAY_TO_PLAY);
-        }
+        this.play();
+        this.skipTurn.bindAiTurn(this.play.bind(this));
+        console.log('done');
     }
+
     play() {
         if (!this.skipTurn.isTurn) {
             setTimeout(() => {
