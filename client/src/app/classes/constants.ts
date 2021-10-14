@@ -12,13 +12,19 @@ export const EASEL_SIZE = 7;
 export const ALL_EASEL_BONUS = 50;
 export const BOARD_ROWS = 15;
 export const BOARD_COLUMNS = 15;
+export const MAX_NUMBER_OF_POSSIBILITY = 3;
+export const ONE_POSSIBILITY = 1;
+export const TWO_POSSIBILITY = 2;
+export const DELAY_TO_PLAY = 5000;
+export const NUMBER_OF_SKIP = 6;
 
-export const CENTRAL_CASE_POSX = 7;
-export const CENTRAL_CASE_POSY = 7;
+export const CENTRAL_CASE_POSITION_X = 7;
+export const CENTRAL_CASE_POSITION_Y = 7;
 
 export const PLAYERS_NUMBER = 2;
+export const INDEX_INVALID = -1;
 export const INDEX_REAL_PLAYER = 0;
-export const INDEX_PLAYER_IA = 1;
+export const INDEX_PLAYER_AI = 1;
 
 export const FONT_SIZE_MAX = 20;
 export const FONT_SIZE_MIN = 10;
@@ -32,7 +38,6 @@ export const DOUBLE_LETTER = 2;
 export const MIN_RESERVE_SIZE_TOSWAP = 7;
 
 export const THREE_SECONDS_DELAY = 3000;
-export const INDEX_INVALID = -1;
 
 export enum MouseButton {
     Left = 0,
@@ -42,23 +47,23 @@ export enum MouseButton {
     Forward = 4,
 }
 
-export enum IAStrategy {
+export enum AIStrategy {
     Skip,
     Swap,
     Place,
 }
 
-export const strategyBallotBox: IAStrategy[] = [
-    IAStrategy.Place,
-    IAStrategy.Place,
-    IAStrategy.Place,
-    IAStrategy.Skip,
-    IAStrategy.Place,
-    IAStrategy.Swap,
-    IAStrategy.Place,
-    IAStrategy.Place,
-    IAStrategy.Place,
-    IAStrategy.Place,
+export const strategyBallotBox: AIStrategy[] = [
+    AIStrategy.Place,
+    AIStrategy.Place,
+    AIStrategy.Place,
+    AIStrategy.Skip,
+    AIStrategy.Place,
+    AIStrategy.Swap,
+    AIStrategy.Place,
+    AIStrategy.Place,
+    AIStrategy.Place,
+    AIStrategy.Place,
 ];
 
 export enum PlacingStrategy {
@@ -80,7 +85,7 @@ export const placingBallotBox: PlacingStrategy[] = [
     PlacingStrategy.LessSix,
 ];
 
-export const IA_NAME_DATABASE: string[] = ['Mister_Bucky', 'Mister_Samy', 'Miss_Betty'];
+export const AI_NAME_DATABASE: string[] = ['Mister_Bucky', 'Mister_Samy', 'Miss_Betty'];
 
 export const MAX_SOLUTION = 3;
 

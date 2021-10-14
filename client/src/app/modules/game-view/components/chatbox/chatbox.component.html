@@ -33,12 +33,5 @@
     />
 </div>
 <div>
-    <!-- Catch event from player-IA by sending message witch catch by chatbox and add to chatbox -->
-    <app-player-ia (iaPossibility)="receiveAImessage($event)"> </app-player-ia>
+    <button mat-raised-button color="primary" id="Pass-button" [disabled]="!tour" (click)="passButton()">Passer tour</button>
 </div>
-<div>
-    <button mat-raised-button color="primary" id="Pass-button" [disabled]="!tour" (click)="switchTour()">Passer tour</button>
-</div>
-<app-pass-tour></app-pass-tour>
-<app-place-letter></app-place-letter>
-<app-swap-letter></app-swap-letter>

@@ -1,12 +1,14 @@
 import { TestBed } from '@angular/core/testing';
 import { Player } from '@app/models/player.model';
 
-describe('PlayerIA', () => {
-    let model: Player = new Player(0, 'player1', []);
+describe('PlayerAI', () => {
+    let model: Player;
 
-    beforeEach(() => {
-        TestBed.configureTestingModule({});
-        model = TestBed.inject(Player);
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            declarations: [Player],
+        }).compileComponents();
+        model = new Player(0, 'player1', []);
     });
 
     it('should create an instance', () => {

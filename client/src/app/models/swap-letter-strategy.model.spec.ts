@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 import { TestBed } from '@angular/core/testing';
-import { PlayerIAComponent } from '@app/modules/game-view/components/player-ia/player-ia.component';
-import { PlayerIA } from './player-ia.model';
-import { SkipTurn } from './skip-turn-strategy.model';
-import { SwapLetter } from './swap-letter-strategy.model';
+import { SkipTurn } from '@app/models/skip-turn-strategy.model';
+import { PlayerAIComponent } from '@app/modules/game-view/components/player-ai/player-ai.component';
+import { PlayerAI } from '@app/models/player-ai.model';
+import { SwapLetter } from '@app/models/swap-letter-strategy.model';
 
 describe('SwapLetter', () => {
     const id = 0;
@@ -19,14 +19,14 @@ describe('SwapLetter', () => {
         { value: 'G', quantity: 0, points: 0 },
     ];
 
-    let playerIA: PlayerIA;
+    let playerAI: PlayerAI;
     let swapStrategy: SwapLetter;
-    let context: PlayerIAComponent;
+    let context: PlayerAIComponent;
 
     beforeEach(() => {
-        playerIA = new PlayerIA(id, name, letterTable);
+        playerAI = new PlayerAI(id, name, letterTable);
         swapStrategy = new SwapLetter();
-        context = TestBed.createComponent(PlayerIAComponent).componentInstance;
+        context = TestBed.createComponent(PlayerAIComponent).componentInstance;
     });
 
     it('should create', () => {
@@ -35,21 +35,19 @@ describe('SwapLetter', () => {
 
     it('should call the right function when execute() is called', () => {
         spyOn(context, 'swap');
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         spyOn<any>(context.letterService, 'addLetterToReserve');
-        swapStrategy.execute(playerIA, context);
+        swapStrategy.execute(playerAI, context);
         expect(context.swap).toHaveBeenCalledTimes(1);
     });
 
     it('should be SkipTurn if there is not enough letters in the reserve to change', () => {
-        spyOn(playerIA, 'play').and.returnValue();
-        spyOn(Math, 'floor').and.returnValue(6);
+        spyOn(playerAI, 'play');
 
         context.letterService.reserve = [];
-        playerIA.strategy = swapStrategy;
-        swapStrategy.execute(playerIA, context);
+        playerAI.strategy = swapStrategy;
+        swapStrategy.execute(playerAI, context);
         const expectedStrategy = new SkipTurn();
 
-        expect(playerIA.strategy).toEqual(expectedStrategy);
+        expect(playerAI.strategy).toEqual(expectedStrategy);
     });
 });

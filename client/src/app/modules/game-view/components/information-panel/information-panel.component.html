@@ -28,6 +28,9 @@
                 ></app-countdown>
             </div>
         </li>
+        <div *ngIf="this.endGameService.isEndGame">
+            Ceci est une fin de partie Félicitations à: {{ this.endGameService.getWinnerName() }} qui est le vainqueur!!
+        </div>
     </ul>
 </div>
-<app-player-ia></app-player-ia>
+<app-player-ai></app-player-ai>

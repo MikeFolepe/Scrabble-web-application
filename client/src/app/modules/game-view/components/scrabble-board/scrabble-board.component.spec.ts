@@ -1,3 +1,4 @@
+/* eslint-disable dot-notation */
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MouseHandlerService } from '@app/services/mouse-handler.service';
 import { ScrabbleBoardComponent } from './scrabble-board.component';
@@ -29,6 +30,7 @@ describe('ScrabbleBoardComponent', () => {
     });
 
     it('buttonDetect should modify the buttonPressed variable', () => {
+        spyOn(component['gridService'], 'setGridContext');
         const expectedKey = 'a';
         const buttonEvent = {
             key: expectedKey,
@@ -37,7 +39,8 @@ describe('ScrabbleBoardComponent', () => {
         expect(component.buttonPressed).toEqual(expectedKey);
     });
 
-    it('mouse hit detect should call mouse hit detect from mouse service', () => {
+    it('mouse hit detect should call mouse hit detect from gridService', () => {
+        spyOn(component['gridService'], 'setGridContext');
         const mouseEvent = {
             offsetX: 10,
             offsetY: 1,

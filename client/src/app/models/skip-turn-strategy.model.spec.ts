@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
-import { PlayerIAComponent } from '@app/modules/game-view/components/player-ia/player-ia.component';
-import { PlayerIA } from './player-ia.model';
+import { PlayerAIComponent } from '@app/modules/game-view/components/player-ai/player-ai.component';
+import { PlayerAI } from './player-ai.model';
 import { SkipTurn } from './skip-turn-strategy.model';
 
 describe('SkipTurn', () => {
@@ -16,11 +16,11 @@ describe('SkipTurn', () => {
         { value: 'G', quantity: 0, points: 0 },
     ];
 
-    let playerIA: PlayerIA;
+    let playerAI: PlayerAI;
     let skipStrategy: SkipTurn;
 
     beforeEach(() => {
-        playerIA = new PlayerIA(id, name, letterTable);
+        playerAI = new PlayerAI(id, name, letterTable);
         skipStrategy = new SkipTurn();
     });
 
@@ -29,9 +29,9 @@ describe('SkipTurn', () => {
     });
 
     it('should call the right function when execute() is called', () => {
-        const context: PlayerIAComponent = TestBed.createComponent(PlayerIAComponent).componentInstance;
+        const context: PlayerAIComponent = TestBed.createComponent(PlayerAIComponent).componentInstance;
         spyOn(context, 'skip');
-        skipStrategy.execute(playerIA, context);
+        skipStrategy.execute(playerAI, context);
         expect(context.skip).toHaveBeenCalledTimes(1);
     });
 });

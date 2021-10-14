@@ -40,8 +40,8 @@ describe('WordValidationComponent', () => {
 
     it('should pass through all rows and columns', () => {
         component.newWords = ['', 'mais', ''];
-        component.newPlayedWords.set('tumour', ['B2', 'B3', 'B4', 'B5', 'B6', 'B7']);
-        component.playedWords.set('ma', ['C1', 'C2']);
+        component.newPlayedWords.set('mAsse', ['A1', 'A2', 'A3', 'A4', 'A5']);
+        component.playedWords.set('mAsse', ['A1', 'A2', 'A3', 'A4', 'A5']);
         const isEaselSize = true;
         const isRow = true;
         const passThroughAllRowsOrColumnsSpy = spyOn<any>(component, 'passThroughAllRowsOrColumns').and.callThrough();
