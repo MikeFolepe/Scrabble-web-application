@@ -16,17 +16,15 @@ export class SwapLetterService {
         }
 
         const lettersToSwapIndexes: number[] = this.lettersToSwapIntoIndexes(lettersToSwap, indexPlayer);
-        for (let i = 0; i < lettersToSwapIndexes.length; i++) {
-            if (i > 0) lettersToSwapIndexes[i]--; // TODO Update the indexes if we previously swapped a letter
-            this.swap(lettersToSwapIndexes[i], indexPlayer);
+        for (const indexLetter of lettersToSwapIndexes) {
+            this.swap(indexLetter, indexPlayer);
         }
         return true;
     }
 
     swap(indexLetter: number, indexPlayer: number) {
         this.playerService.addEaselLetterToReserve(indexLetter, indexPlayer);
-        this.playerService.removeLetter(indexLetter, indexPlayer);
-        this.playerService.refillEasel(indexPlayer);
+        this.playerService.swap(indexLetter, indexPlayer);
     }
 
     lettersToSwapIntoIndexes(lettersToSwap: string, indexPlayer: number): number[] {

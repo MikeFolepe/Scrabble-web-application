@@ -86,6 +86,20 @@ export class PlayerService {
         }
     }
 
+    swap(indexToSwap: number, indexPlayer: number) {
+        const letterFromReserve = this.letterService.getRandomLetter();
+        // Add a copy of the random letter from the reserve
+        const letterToAdd = {
+            value: letterFromReserve.value,
+            quantity: letterFromReserve.quantity,
+            points: letterFromReserve.points,
+            isSelectedForSwap: letterFromReserve.isSelectedForSwap,
+            isSelectedForManipulation: letterFromReserve.isSelectedForManipulation,
+        };
+        this.players[indexPlayer].letterTable.splice(indexToSwap, 1, letterToAdd);
+        this.myFunc();
+    }
+
     // Remove one letter from easel
     removeLetter(indexToRemove: number, indexPlayer: number): void {
         this.players[indexPlayer].letterTable.splice(indexToRemove, 1);
@@ -105,19 +119,19 @@ export class PlayerService {
     }
 
     refillEasel(indexPlayer: number): void {
-        let letterToInsert: Letter;
+        let letterToAdd: Letter;
         for (let i = this.players[indexPlayer].letterTable.length; i < EASEL_SIZE; i++) {
-            letterToInsert = this.letterService.getRandomLetter();
-            if (letterToInsert.value === '') {
+            letterToAdd = this.letterService.getRandomLetter();
+            if (letterToAdd.value === '') {
                 break;
             }
             // Add a copy of the letter found
             this.players[indexPlayer].letterTable[i] = {
-                value: letterToInsert.value,
-                quantity: letterToInsert.quantity,
-                points: letterToInsert.points,
-                isSelectedForSwap: letterToInsert.isSelectedForSwap,
-                isSelectedForManipulation: letterToInsert.isSelectedForManipulation,
+                value: letterToAdd.value,
+                quantity: letterToAdd.quantity,
+                points: letterToAdd.points,
+                isSelectedForSwap: letterToAdd.isSelectedForSwap,
+                isSelectedForManipulation: letterToAdd.isSelectedForManipulation,
             };
         }
         this.myFunc();

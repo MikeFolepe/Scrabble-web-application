@@ -88,7 +88,7 @@ export class LetterEaselComponent implements OnInit {
             if (this.letterEaselTab[i].isSelectedForSwap) {
                 lettersToSwap += this.letterEaselTab[i].value.toLowerCase();
                 this.swapLetterService.swap(i, INDEX_REAL_PLAYER);
-                i--; // Update the current index after a swap because we removed a letter from easel
+                // i--; // Update the current index after a swap because we removed a letter from easel
                 // this.letterEaselTab[i].isSelectedForSwap = false; BUUUUUUG
             }
         }
