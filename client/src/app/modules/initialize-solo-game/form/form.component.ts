@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { GameSettingsService } from '@app/services/game-settings.service';
 import { AI_NAME_DATABASE } from '@app/classes/constants';
 import { GameSettings, StartingPlayer } from '@app/classes/game-settings';
+import { GameSettingsService } from '@app/services/game-settings.service';
 
 @Component({
     selector: 'app-form',
@@ -15,9 +15,10 @@ export class FormComponent {
         minuteInput: new FormControl('01'),
         secondInput: new FormControl('00'),
         levelInput: new FormControl('Facile'),
+        randomBonus: new FormControl('Non'),
     });
 
-    constructor(private gameSettingsService: GameSettingsService) {}
+    constructor(public gameSettingsService: GameSettingsService) {}
 
     // Generates a random name for the AI
     chooseRandomAIName(): string {
@@ -57,5 +58,11 @@ export class FormComponent {
             'dictionary.json',
         );
         this.gameSettingsService.initializeSettings(settings);
+
+        if (this.form.controls.randomBonus.value === 'Oui') {
+            this.gameSettingsService.isRandomMode = true;
+            return;
+        }
+        this.gameSettingsService.isRandomMode = false;
     }
 }

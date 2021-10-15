@@ -6,6 +6,8 @@ import { GameSettings } from '@app/classes/game-settings';
 })
 export class GameSettingsService {
     gameSettings: GameSettings;
+    isSoloMode: boolean;
+    isRandomMode: boolean;
 
     initializeSettings(settings: GameSettings) {
         this.gameSettings = settings;
