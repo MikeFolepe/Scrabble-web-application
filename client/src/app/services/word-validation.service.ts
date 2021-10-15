@@ -61,15 +61,12 @@ export class WordValidationService {
         );
     }
 
-    checkIfNotPlayed(word: string, positions: string[]): boolean {
-        let result = true;
+    checkIfPlayed(word: string, positions: string[]): boolean {
         if (this.playedWords.has(word)) {
             const mapValues = this.playedWords.get(word) as string[];
-            result = this.containsArray(mapValues, positions);
-            return !result;
+            return this.containsArray(mapValues, positions);
         }
-
-        return result;
+        return false;
     }
 
     getWordHorizontalPositions(word: string, index: number): string[] {
@@ -107,7 +104,7 @@ export class WordValidationService {
             for (const word of words) {
                 if (word.length >= 2) {
                     this.newPositions = isRow ? this.getWordHorizontalPositions(word, x) : this.getWordVerticalPositions(word, y);
-                    if (this.checkIfNotPlayed(word, this.newPositions)) {
+                    if (!this.checkIfPlayed(word, this.newPositions)) {
                         this.addToPlayedWords(word, this.newPositions, this.newPlayedWords);
                     }
                 }

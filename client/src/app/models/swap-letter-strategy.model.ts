@@ -6,7 +6,7 @@ import { SkipTurn } from './skip-turn-strategy.model';
 
 export class SwapLetter extends PlayStrategy {
     execute(player: PlayerAI, context: PlayerAIComponent): void {
-        const numberOfLetterToChange = Math.floor(Math.random() * EASEL_SIZE);
+        const numberOfLetterToChange = Math.floor(Math.random() * (EASEL_SIZE - 1)) + 1;
 
         // If change not possible skip
         if (numberOfLetterToChange > context.letterService.reserveSize) {

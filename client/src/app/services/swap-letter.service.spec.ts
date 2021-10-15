@@ -54,31 +54,37 @@ describe('SwapLetterService', () => {
     it('should be created', () => {
         expect(service).toBeTruthy();
     });
+
     it('reserve should have enough letters to swap', () => {
-        expect(service.reserveHasEnoughLetters()).toEqual(true);
+        expect(service.reserveHasEnoughLetters()).toBeTrue();
     });
+
     it('an empty reserve should not have enough letters to swap', () => {
         const initReserveSize: number = service['letterService'].reserveSize;
         // Emptying the reserve
         for (let i = 0; i < initReserveSize; i++) {
             service['letterService'].getRandomLetter();
         }
-        expect(service.reserveHasEnoughLetters()).toEqual(false);
+        expect(service.reserveHasEnoughLetters()).toBeFalse();
     });
+
     it('swapping letters present in the easel should be valid', () => {
         const lettersToSwap = 'abcde';
-        expect(service.swap(lettersToSwap, INDEX_REAL_PLAYER)).toEqual(true);
+        expect(service.swap(lettersToSwap, INDEX_REAL_PLAYER)).toBeTrue();
     });
+
     it('swapping letters that are not present in the easel should be invalid', () => {
         const letterToSwap = 'zzzzzzz';
-        expect(service.swap(letterToSwap, INDEX_REAL_PLAYER)).toEqual(false);
+        expect(service.swap(letterToSwap, INDEX_REAL_PLAYER)).toBeFalse();
     });
+
     it('swapping two elements of the easel that are the same letter should be valid', () => {
         const letterToSwap = 'aa';
-        expect(service.swap(letterToSwap, INDEX_REAL_PLAYER)).toEqual(true);
+        expect(service.swap(letterToSwap, INDEX_REAL_PLAYER)).toBeTrue();
     });
+
     it('swapping the same letter more times than it is present in the easel should be invalid', () => {
         const letterToSwap = 'aaa';
-        expect(service.swap(letterToSwap, INDEX_REAL_PLAYER)).toEqual(false);
+        expect(service.swap(letterToSwap, INDEX_REAL_PLAYER)).toBeFalse();
     });
 });

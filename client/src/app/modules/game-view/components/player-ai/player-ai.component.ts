@@ -8,6 +8,7 @@ import { LetterService } from '@app/services/letter.service';
 import { PlaceLetterService } from '@app/services/place-letter.service';
 import { PlayerService } from '@app/services/player.service';
 import { SkipTurnService } from '@app/services/skip-turn.service';
+import { EndGameService } from '@app/services/end-game.service';
 
 @Component({
     selector: 'app-player-ai',
@@ -15,6 +16,7 @@ import { SkipTurnService } from '@app/services/skip-turn.service';
     styleUrls: ['./player-ai.component.scss'],
 })
 export class PlayerAIComponent implements OnInit {
+    // Pour dire à la boite que j'ai passé mon tour.
     @Output() aiSkipped = new EventEmitter();
     @Output() aiSwapped = new EventEmitter();
     // Pour le mode debug
@@ -29,6 +31,7 @@ export class PlayerAIComponent implements OnInit {
         public chatBoxService: ChatboxService,
         public debugService: DebugService,
         public skipTurn: SkipTurnService,
+        public endGameService: EndGameService,
     ) {}
 
     ngOnInit(): void {
@@ -56,6 +59,8 @@ export class PlayerAIComponent implements OnInit {
             setTimeout(() => {
                 this.skipTurn.switchTurn();
             }, DELAY_TO_PLAY);
+            this.endGameService.actionsLog.push('passer');
+            this.chatBoxService.displayMessageByType('passer', 'opponent');
         }
     }
 
@@ -65,6 +70,7 @@ export class PlayerAIComponent implements OnInit {
             setTimeout(() => {
                 this.skipTurn.switchTurn();
             }, DELAY_TO_PLAY);
+            this.endGameService.actionsLog.push('echanger');
         }
     }
 
@@ -75,5 +81,6 @@ export class PlayerAIComponent implements OnInit {
                 this.skipTurn.switchTurn();
             }, DELAY_TO_PLAY);
         }
+        this.endGameService.actionsLog.push('placer');
     }
 }

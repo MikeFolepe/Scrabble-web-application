@@ -1,5 +1,4 @@
 /* eslint-disable dot-notation */
-
 import { TestBed } from '@angular/core/testing';
 import { INDEX_PLAYER_AI, INDEX_REAL_PLAYER, THREE_SECONDS_DELAY } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
@@ -224,7 +223,6 @@ describe('PlaceLetterService', () => {
     });
 
     it('calling placeMethodAdapter() should call place()', () => {
-
         service['wordValidationService'].validateAllWordsOnBoard = jasmine.createSpy().and.returnValue({ validation: false, score: 0 });
         const spy = spyOn(service, 'place').and.callThrough();
         const start: Vec2 = { x: 7, y: 7 };
@@ -250,4 +248,10 @@ describe('PlaceLetterService', () => {
         const word = 'dad';
         expect(service.isWordValid(position, orientation, word, INDEX_REAL_PLAYER)).toEqual(false);
     });
+
+    // it('should unsubscribe on destroy', () => {
+    //     spyOn(service.viewSubscription, 'unsubscribe');
+    //     service.ngOnDestroy();
+    //     expect(service.viewSubscription.unsubscribe).toHaveBeenCalled();
+    // });
 });

@@ -5,6 +5,7 @@ import { Vec2 } from '@app/classes/vec2';
 import { PlaceLetterService } from '@app/services/place-letter.service';
 import { PlayerService } from '@app/services/player.service';
 import { SwapLetterService } from '@app/services/swap-letter.service';
+import { EndGameService } from '@app/services/end-game.service';
 import { Subscription } from 'rxjs';
 import { DebugService } from './debug.service';
 
@@ -18,6 +19,7 @@ export class ChatboxService {
     message: string = '';
     typeMessage: string = '';
     command: string = '';
+    endGameEasel: string = '';
 
     debugMessage: { word: string; nbPt: number }[] = [{ word: 'papier', nbPt: 6 }];
 
@@ -27,6 +29,7 @@ export class ChatboxService {
         private swapLetterService: SwapLetterService,
         private placeLetterService: PlaceLetterService,
         private debugService: DebugService,
+        public endGameService: EndGameService,
         public skipTurn: SkipTurnService,
     ) {}
 
@@ -130,6 +133,7 @@ export class ChatboxService {
     }
     executeSkipTurn() {
         if (this.skipTurn.isTurn) {
+            this.endGameService.actionsLog.push('passer');
             this.skipTurn.switchTurn();
         } else {
             this.typeMessage = 'error';
@@ -138,6 +142,7 @@ export class ChatboxService {
     }
     executeSwap() {
         if (this.skipTurn.isTurn) {
+            this.endGameService.actionsLog.push('echanger');
             const messageSplitted = this.message.split(/\s/);
 
             if (this.swapLetterService.swap(messageSplitted[1], INDEX_REAL_PLAYER)) {
@@ -154,6 +159,7 @@ export class ChatboxService {
     }
     executePlace() {
         if (this.skipTurn.isTurn) {
+            this.endGameService.actionsLog.push('placer');
             const messageSplitted = this.message.split(/\s/);
             const positionSplitted = messageSplitted[1].split(/([0-9]+)/);
 
@@ -207,5 +213,16 @@ export class ChatboxService {
             }
         }
         this.debugService.clearDebugMessage();
+    }
+
+    displayFinalMessage(indexPlayer: number): void {
+        if (!this.endGameService.isEndGame) return;
+        this.displayMessageByType('Fin de partie - lettres restantes', 'system');
+        for (const letter of this.playerService.players[indexPlayer].letterTable) {
+            this.endGameEasel += letter.value;
+        }
+        this.displayMessageByType(this.playerService.players[indexPlayer].name + ':' + this.endGameEasel, 'system');
+        // Clear the string
+        this.endGameEasel = '';
     }
 }

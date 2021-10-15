@@ -16,15 +16,6 @@ export class LetterEaselComponent {
 
     constructor(public playerService: PlayerService) {}
 
-    // ngOnInit(): void {
-    //     this.playerService.updateLettersEasel(this.update.bind(this));
-    //     this.update();
-    // }
-
-    // update(): void {
-    //     this.letterEaselTab = this.playerService.getLettersEasel(INDEX_REAL_PLAYER);
-    // }
-
     handleFontSizeEvent(fontSizeEvent: number) {
         this.fontSize = fontSizeEvent;
         this.playerService.updateFontSize(this.fontSize);

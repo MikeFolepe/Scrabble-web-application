@@ -1,15 +1,17 @@
 // import { PlayerService } from '@app/services/player.service';
 // import { SkipTurnService } from '@app/services/skip-turn.service';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ChatboxService } from '@app/services/chatbox.service';
 import { DebugService } from '@app/services/debug.service';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { INDEX_PLAYER_AI, INDEX_REAL_PLAYER, ONE_SECOND_TIME } from '@app/classes/constants';
+import { EndGameService } from '@app/services/end-game.service';
 
 @Component({
     selector: 'app-chatbox',
     templateUrl: './chatbox.component.html',
     styleUrls: ['./chatbox.component.scss'],
 })
-export class ChatboxComponent implements OnInit {
+export class ChatboxComponent implements OnInit, AfterViewInit {
     @ViewChild('scrollMe') private myScrollContainer: ElementRef;
     // turnSubscription: Subscription = new Subscription();
     // turn: boolean;
@@ -22,13 +24,9 @@ export class ChatboxComponent implements OnInit {
     debugMessage: { word: string; nbPt: number }[] = [];
     // Table to stock debug message from IA test avec des strings aléatoires
 
-    constructor(private chatBoxService: ChatboxService, public debugService: DebugService) {}
+    constructor(private chatBoxService: ChatboxService, public debugService: DebugService, public endGameService: EndGameService) {}
 
     ngOnInit(): void {
-        //     this.tourSubscription = this.tourService.tourSubject.subscribe((tourSubject: boolean) => {
-        //         this.tour = tourSubject;
-        //     });
-        //     this.tourService.emitTour();
         this.chatBoxService.bindDisplay(this.displayAnyMessageByType.bind(this));
     }
 
@@ -70,5 +68,18 @@ export class ChatboxComponent implements OnInit {
 
     scrollToBottom(): void {
         this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
+    }
+
+    ngAfterViewInit() {
+        const findEnd = setInterval(() => {
+            this.endGameService.checkEndGame();
+            this.chatBoxService.displayFinalMessage(INDEX_REAL_PLAYER);
+            this.chatBoxService.displayFinalMessage(INDEX_PLAYER_AI);
+            this.endGameService.getFinalScore(INDEX_REAL_PLAYER);
+            this.endGameService.getFinalScore(INDEX_PLAYER_AI);
+            if (this.endGameService.isEndGame) {
+                clearInterval(findEnd);
+            }
+        }, ONE_SECOND_TIME);
     }
 }

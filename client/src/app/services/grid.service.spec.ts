@@ -74,8 +74,8 @@ describe('GridService', () => {
         expect(afterSize).toBeGreaterThan(beforeSize);
     });
 
-    it('should set grid context with right value when calling setGridContext()', () => {
+    it('should set grid context', () => {
         service.setGridContext(ctxStub);
-        expect(service.gridContext).toEqual(ctxStub);
+        expect(service.gridContext).toBe(ctxStub);
     });
 });
