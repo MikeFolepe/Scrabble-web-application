@@ -59,7 +59,7 @@ export class PlayerAIComponent implements OnInit {
             setTimeout(() => {
                 this.skipTurn.switchTurn();
             }, DELAY_TO_PLAY);
-            this.endGameService.actionsLog.push('passer');
+            //this.endGameService.actionsLog.push('passer');
             this.chatBoxService.displayMessageByType('passer', 'opponent');
         }
     }
@@ -70,7 +70,7 @@ export class PlayerAIComponent implements OnInit {
             setTimeout(() => {
                 this.skipTurn.switchTurn();
             }, DELAY_TO_PLAY);
-            this.endGameService.actionsLog.push('echanger');
+            //this.endGameService.actionsLog.push('echanger');
         }
     }
 
@@ -81,6 +81,6 @@ export class PlayerAIComponent implements OnInit {
                 this.skipTurn.switchTurn();
             }, DELAY_TO_PLAY);
         }
-        this.endGameService.actionsLog.push('placer');
+        //this.endGameService.actionsLog.push('placer');
     }
 }

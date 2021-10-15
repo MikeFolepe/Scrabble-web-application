@@ -1,6 +1,7 @@
 /* eslint-disable no-invalid-this */
 import { Injectable } from '@angular/core';
 import { ONE_SECOND_TIME } from '@app/classes/constants';
+import { EndGameService } from '@app/services/end-game.service';
 import { GameSettingsService } from './game-settings.service';
 
 @Injectable({
@@ -14,20 +15,21 @@ export class SkipTurnService {
     intervalID: NodeJS.Timeout;
     private playAiTurn: () => void;
 
-    constructor(public gameSettingsService: GameSettingsService) {}
+    constructor(public gameSettingsService: GameSettingsService, public endGameService: EndGameService) {}
 
     bindAiTurn(fn: () => void) {
         this.playAiTurn = fn;
     }
 
     switchTurn(): void {
+        if (this.endGameService.isEndGame) {
+            return;
+        }
         this.stopTimer();
         setTimeout(() => {
             if (this.isTurn) {
                 this.isTurn = false;
                 this.startTimer();
-                // const aiPLayer = this.playerService.players[INDEX_PLAYER_AI] as PlayerAI;
-                // aiPLayer.play();
                 this.playAiTurn();
             } else {
                 this.isTurn = true;
@@ -37,6 +39,10 @@ export class SkipTurnService {
     }
 
     startTimer(): void {
+        if (this.endGameService.isEndGame) {
+            this.stopTimer();
+            return;
+        }
         this.minutes = parseInt(this.gameSettingsService.gameSettings.timeMinute, 10);
         this.seconds = parseInt(this.gameSettingsService.gameSettings.timeSecond, 10);
         this.intervalID = setInterval(() => {
@@ -57,5 +63,7 @@ export class SkipTurnService {
 
     stopTimer(): void {
         clearInterval(this.intervalID);
+        this.minutes = 0;
+        this.seconds = 0;
     }
 }
