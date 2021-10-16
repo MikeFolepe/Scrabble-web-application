@@ -1,17 +1,7 @@
 /* eslint-disable max-lines */
 /* eslint-disable dot-notation */
 import { TestBed } from '@angular/core/testing';
-import {
-    BOARD_COLUMNS,
-    BOARD_ROWS,
-    CASE_SIZE,
-    DEFAULT_HEIGHT,
-    DEFAULT_WIDTH,
-    FONT_SIZE_MAX,
-    FONT_SIZE_MIN,
-    INDEX_INVALID,
-    RESERVE,
-} from '@app/classes/constants';
+import { BOARD_COLUMNS, BOARD_ROWS, FONT_SIZE_MAX, FONT_SIZE_MIN, INDEX_INVALID, RESERVE } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { PlayerAI } from '@app/models/player-ai.model';
 import { Player } from '@app/models/player.model';
@@ -165,13 +155,11 @@ describe('PlayerService', () => {
         }
         // Return value is meaningless because it's only used to be called as a parameter
         // for the two following functions. And the results of these functions are meaningless regarding this test
-        spyOn(service, 'posTabToPosGrid');
         spyOn(service['gridService'], 'eraseLetter').and.returnValue();
         spyOn(service['gridService'], 'drawLetter').and.returnValue();
 
         service.updateGridFontSize();
 
-        expect(service.posTabToPosGrid).toHaveBeenCalledTimes(numberLettersOnGrid);
         expect(service['gridService'].eraseLetter).toHaveBeenCalledTimes(numberLettersOnGrid);
         expect(service['gridService'].drawLetter).toHaveBeenCalledTimes(numberLettersOnGrid);
     });
@@ -302,18 +290,6 @@ describe('PlayerService', () => {
         const ADDED_SCORE = 10;
         service.addScore(ADDED_SCORE, 0);
         expect(service['players'][0].score).toEqual(INITIAL_SCORE + ADDED_SCORE);
-    });
-
-    it('should convert the position format', () => {
-        const INITIAL_X = 100;
-        const INITIAL_Y = 300;
-        const result = service.posTabToPosGrid(INITIAL_X, INITIAL_Y);
-        const expectedOutput = {
-            x: INITIAL_X * CASE_SIZE + CASE_SIZE - DEFAULT_WIDTH / 2,
-            y: INITIAL_Y * CASE_SIZE + CASE_SIZE - DEFAULT_HEIGHT / 2,
-        };
-
-        expect(result).toEqual(expectedOutput);
     });
 
     it("should return player's score", () => {

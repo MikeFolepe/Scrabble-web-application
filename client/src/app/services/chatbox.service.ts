@@ -75,10 +75,76 @@ export class ChatboxService implements OnDestroy {
                 break;
             }
             default: {
+                this.displayMessage();
                 break;
             }
         }
         this.command = ''; // reset value for next message
+    }
+
+    executeDebug() {
+        this.debugService.switchDebugMode();
+        if (this.debugService.isDebugActive) {
+            this.typeMessage = 'system';
+            this.message = 'affichages de débogage activés';
+            this.displayMessage();
+            this.displayDebugMessage();
+        } else {
+            this.typeMessage = 'system';
+            this.message = 'affichages de débogage désactivés';
+            this.displayMessage();
+        }
+    }
+    executeSkipTurn() {
+        this.tour = this.tourService.getTour();
+        if (this.tour) {
+            this.passTourService.writeMessage('!passer');
+        } else {
+            this.typeMessage = 'error';
+            this.message = "ERREUR : Ce n'est pas ton tour";
+        }
+        this.displayMessage();
+    }
+    executeSwap() {
+        this.tour = this.tourService.getTour();
+        if (this.tour) {
+            const messageSplitted = this.message.split(/\s/);
+
+            if (this.swapLetterService.swapCommand(messageSplitted[1], INDEX_REAL_PLAYER)) {
+                this.message = this.playerService.getPlayers()[INDEX_REAL_PLAYER].name + ' : ' + this.message;
+            } else {
+                this.typeMessage = 'error';
+                this.message = 'ERREUR : La commande est impossible à réaliser';
+            }
+            this.passTourService.writeMessage();
+        } else {
+            this.typeMessage = 'error';
+            this.message = "ERREUR : Ce n'est pas ton tour";
+        }
+        this.displayMessage();
+    }
+    executePlace() {
+        this.tour = this.tourService.getTour();
+        if (this.tour) {
+            const messageSplitted = this.message.split(/\s/);
+            const positionSplitted = messageSplitted[1].split(/([0-9]+)/);
+
+            // Vector containing start position of the word to place
+            const position: Vec2 = {
+                x: Number(positionSplitted[1]) - 1,
+                y: positionSplitted[0].charCodeAt(0) - 'a'.charCodeAt(0),
+            };
+            const orientation = positionSplitted[2];
+
+            if (this.placeLetterService.placeCommand(position, orientation, messageSplitted[2], INDEX_REAL_PLAYER) === false) {
+                this.typeMessage = 'error';
+                this.message = 'ERREUR : Le placement est invalide';
+            }
+            this.passTourService.writeMessage();
+        } else {
+            this.typeMessage = 'error';
+            this.message = "ERREUR : Ce n'est pas ton tour";
+        }
         this.displayMessage();
     }
 
@@ -108,7 +174,7 @@ export class ChatboxService implements OnDestroy {
         const regexDebug = /^!debug$/g;
         const regexPasser = /^!passer$/g;
         const regexEchanger = /^!échanger\s([a-z]|[*]){1,7}$/g;
-        const regexPlacer = /^!placer\s([a-o]([1-9]|1[0-5])[hv])\s([a-zA-Z\u00C0-\u00FF]|[*])+/g;
+        const regexPlacer = /^!placer\s([a-o]([1-9]|1[0-5])[hv])\s([a-zA-Z\u00C0-\u00FF])+/g;
 
         let isSyntaxValid = true;
 
@@ -127,68 +193,6 @@ export class ChatboxService implements OnDestroy {
         return isSyntaxValid;
     }
 
-    executeDebug() {
-        this.debugService.switchDebugMode();
-        if (this.debugService.isDebugActive) {
-            this.typeMessage = 'system';
-            this.message = 'affichages de débogage activés';
-            this.displayMessage();
-            this.displayDebugMessage();
-        } else {
-            this.typeMessage = 'system';
-            this.message = 'affichages de débogage désactivés';
-        }
-    }
-    executeSkipTurn() {
-        this.tour = this.tourService.getTour();
-        if (this.tour) {
-            this.passTourService.writeMessage('!passer');
-        } else {
-            this.typeMessage = 'error';
-            this.message = "ERREUR : Ce n'est pas ton tour";
-        }
-    }
-    executeSwap() {
-        this.tour = this.tourService.getTour();
-        if (this.tour) {
-            const messageSplitted = this.message.split(/\s/);
-
-            if (this.swapLetterService.swapCommand(messageSplitted[1], INDEX_REAL_PLAYER)) {
-                this.message = this.playerService.getPlayers()[INDEX_REAL_PLAYER].name + ' : ' + this.message;
-            } else {
-                this.typeMessage = 'error';
-                this.message = 'ERREUR : La commande est impossible à réaliser';
-            }
-            this.passTourService.writeMessage();
-        } else {
-            this.typeMessage = 'error';
-            this.message = "ERREUR : Ce n'est pas ton tour";
-        }
-    }
-    executePlace() {
-        this.tour = this.tourService.getTour();
-        if (this.tour) {
-            const messageSplitted = this.message.split(/\s/);
-            const positionSplitted = messageSplitted[1].split(/([0-9]+)/);
-
-            // Vector containing start position of the word to place
-            const position: Vec2 = {
-                x: positionSplitted[0].charCodeAt(0) - 'a'.charCodeAt(0),
-                y: Number(positionSplitted[1]) - 1,
-            };
-            const orientation = positionSplitted[2];
-
-            if (this.placeLetterService.place(position, orientation, messageSplitted[2], INDEX_REAL_PLAYER) === false) {
-                this.typeMessage = 'error';
-                this.message = 'ERREUR : Le placement est invalide';
-            }
-            this.passTourService.writeMessage();
-        } else {
-            this.typeMessage = 'error';
-            this.message = "ERREUR : Ce n'est pas ton tour";
-        }
-    }
-
     // method which check the différents size of table of possibilty for the debug
     displayDebugMessage(): void {
         switch (this.debugService.debugServiceMessage.length) {
@@ -201,6 +205,7 @@ export class ChatboxService implements OnDestroy {
                 for (let i = 0; i < ONE_POSSIBILITY; i++) {
                     this.typeMessage = 'system';
                     this.message = this.debugService.debugServiceMessage[i].word + ': -- ' + this.debugService.debugServiceMessage[i].nbPt.toString();
+                    this.displayMessage();
                 }
                 break;
             }
@@ -208,6 +213,7 @@ export class ChatboxService implements OnDestroy {
                 for (let i = 0; i < TWO_POSSIBILITY; i++) {
                     this.typeMessage = 'system';
                     this.message = this.debugService.debugServiceMessage[i].word + ': -- ' + this.debugService.debugServiceMessage[i].nbPt.toString();
+                    this.displayMessage();
                 }
 
                 break;
@@ -216,6 +222,7 @@ export class ChatboxService implements OnDestroy {
                 for (let i = 0; i < MAX_NUMBER_OF_POSSIBILITY; i++) {
                     this.typeMessage = 'system';
                     this.message = this.debugService.debugServiceMessage[i].word + ': -- ' + this.debugService.debugServiceMessage[i].nbPt.toString();
+                    this.displayMessage();
                 }
                 break;
             }

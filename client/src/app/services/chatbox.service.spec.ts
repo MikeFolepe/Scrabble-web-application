@@ -125,7 +125,7 @@ describe('ChatboxService', () => {
     it('using a valid command !placer should display the respective message', () => {
         spyOn(service['passTourService'], 'writeMessage');
         spyOn(service['tourService'], 'getTour').and.returnValue(true);
-        spyOn(service['placeLetterService'], 'place').and.returnValue(true);
+        spyOn(service['placeLetterService'], 'placeCommand').and.returnValue(true);
         service.command = 'placer';
         service.sendPlayerMessage('!placer h8h hello');
         expect(service.message).toEqual('!placer h8h hello');
@@ -185,7 +185,7 @@ describe('ChatboxService', () => {
 
     it('using an unvalid command !placer should display an error', () => {
         spyOn(service['tourService'], 'getTour').and.returnValue(true);
-        spyOn(service['placeLetterService'], 'place').and.returnValue(false);
+        spyOn(service['placeLetterService'], 'placeCommand').and.returnValue(false);
         spyOn(service['passTourService'], 'writeMessage');
         service.command = 'placer';
         service.sendPlayerMessage('!placer h10v top');

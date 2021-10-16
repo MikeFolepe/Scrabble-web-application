@@ -1,8 +1,8 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ChatboxService } from '@app/services/chatbox.service';
-import { DebugService } from '@app/services/debug.service';
 import { TourService } from '@app/services/tour.service';
 import { Subscription } from 'rxjs';
+import { BoardHandlerService } from '@app/services/board-handler.service';
 
 @Component({
     selector: 'app-chatbox',
@@ -11,6 +11,7 @@ import { Subscription } from 'rxjs';
 })
 export class ChatboxComponent implements OnInit, OnDestroy {
     @ViewChild('scrollMe') private myScrollContainer: ElementRef;
+    @ViewChild('chatBox') private chatBox: ElementRef;
 
     tourSubscription: Subscription = new Subscription();
     tour: boolean;
@@ -22,7 +23,15 @@ export class ChatboxComponent implements OnInit, OnDestroy {
     listTypes: string[] = [];
     debugMessage: { word: string; nbPt: number }[] = [];
 
-    constructor(private chatBoxService: ChatboxService, private tourService: TourService, public debugService: DebugService) {}
+    constructor(private chatBoxService: ChatboxService, private tourService: TourService, private boardHandlerService: BoardHandlerService) {}
+
+    // Disable the current placement on the board when a click occurs in the chatbox
+    @HostListener('document:click', ['$event'])
+    clickInChatBox(event: MouseEvent) {
+        if (this.chatBox.nativeElement.contains(event.target)) {
+            this.boardHandlerService.cancelPlacement();
+        }
+    }
 
     ngOnInit(): void {
         this.tourSubscription = this.tourService.tourSubject.subscribe((tourSubject: boolean) => {

@@ -6,6 +6,7 @@ import { PlayerService } from '@app/services/player.service';
 import { SwapLetterService } from '@app/services/swap-letter.service';
 import { TourService } from '@app/services/tour.service';
 import { ChatboxService } from '@app/services/chatbox.service';
+import { BoardHandlerService } from '@app/services/board-handler.service';
 
 @Component({
     selector: 'app-letter-easel',
@@ -13,7 +14,7 @@ import { ChatboxService } from '@app/services/chatbox.service';
     styleUrls: ['./letter-easel.component.scss'],
 })
 export class LetterEaselComponent implements OnInit {
-    @ViewChild('easelContainer') easelContainer: ElementRef;
+    @ViewChild('easel') easel: ElementRef;
 
     letterEaselTab: Letter[] = [];
     fontSize: number = DEFAULT_FONT_SIZE;
@@ -24,17 +25,22 @@ export class LetterEaselComponent implements OnInit {
         private letterService: LetterService,
         private swapLetterService: SwapLetterService,
         private chatBoxService: ChatboxService,
+        private boardHandlerService: BoardHandlerService,
     ) {}
 
-    // Disable all selections made when a click occurs outside the easel
     // TODO Changer le font size ne deselect pas ?
+    // TODO Right click cancel aussi
     @HostListener('document:click', ['$event'])
-    clickOut(event: MouseEvent) {
-        if (!this.easelContainer.nativeElement.contains(event.target)) {
-            for (let i = 0; i < EASEL_SIZE; i++) {
-                this.letterEaselTab[i].isSelectedForSwap = false;
-                this.letterEaselTab[i].isSelectedForManipulation = false;
+    clickEvent(event: MouseEvent) {
+        // Disable all easel selections made when a click occurs outside the easel
+        if (!this.easel.nativeElement.contains(event.target)) {
+            for (const letterEasel of this.letterEaselTab) {
+                letterEasel.isSelectedForSwap = false;
+                letterEasel.isSelectedForManipulation = false;
             }
+            // Disable the current placement on the board when a click occurs in the easel
+        } else if (this.easel.nativeElement.contains(event.target)) {
+            this.boardHandlerService.cancelPlacement();
         }
     }
 
@@ -84,7 +90,7 @@ export class LetterEaselComponent implements OnInit {
 
     swap() {
         let lettersToSwap = '';
-        for (let i = 0; i < EASEL_SIZE; i++) {
+        for (let i = 0; i < this.letterEaselTab.length; i++) {
             if (this.letterEaselTab[i].isSelectedForSwap) {
                 lettersToSwap += this.letterEaselTab[i].value.toLowerCase();
                 this.swapLetterService.swap(i, INDEX_REAL_PLAYER);

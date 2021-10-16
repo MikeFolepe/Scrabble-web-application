@@ -1,4 +1,4 @@
-import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSITION_X, CENTRAL_CASE_POSITION_Y, dictionary, RESERVE } from '@app/classes/constants';
+import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSITION, dictionary, RESERVE } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { Range } from '@app/classes/range';
 import { board } from '@app/classes/scrabble-board';
@@ -25,8 +25,8 @@ export class PlaceLetters extends PlayStrategy {
         // only player's disponible letters
         this.isFirstRound = context.placeLetterService.isFirstRound;
         let pattern: string = this.pattern(player.letterTable);
-        let randomX: number = CENTRAL_CASE_POSITION_X;
-        let randomY: number = CENTRAL_CASE_POSITION_Y;
+        let randomX: number = CENTRAL_CASE_POSITION;
+        let randomY: number = CENTRAL_CASE_POSITION;
 
         if (!context.placeLetterService.isFirstRound) {
             do {

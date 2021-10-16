@@ -72,7 +72,7 @@ describe('PlaceLetterService', () => {
         const secondPlayer = new Player(2, 'Player 2', secondPlayerEasel);
         service['playerService'].addPlayer(secondPlayer);
 
-        // Fake these methods to be able to call place()
+        // Fake these methods to be able to call placeCommand()
         spyOn(service['playerService'], 'removeLetter');
         spyOn(service['playerService'], 'refillEasel');
         spyOn(service['letterService'], 'writeMessage');
@@ -111,12 +111,11 @@ describe('PlaceLetterService', () => {
         expect(service.isFirstWordValid(position, orientation, word)).toEqual(false);
     });
     it('word placed on the following rounds should be valid if he touches other words', () => {
-        // Fake these methods to be able to call place()
         // Place first word
         let position: Vec2 = { x: 7, y: 7 };
         let orientation = 'h';
         let word = 'bac';
-        service.place(position, orientation, word, INDEX_REAL_PLAYER);
+        service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER);
         // Try to place a word vertically while touching the previous word placed
         position = { x: 6, y: 10 };
         orientation = 'v';
@@ -135,7 +134,7 @@ describe('PlaceLetterService', () => {
         let position: Vec2 = { x: 7, y: 7 };
         let orientation = 'v';
         let word = 'bac';
-        service.place(position, orientation, word, INDEX_REAL_PLAYER);
+        service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER);
         // Try to place a word vertically without touching the previous word placed
         position = { x: 11, y: 13 };
         orientation = 'v';
@@ -147,14 +146,14 @@ describe('PlaceLetterService', () => {
         const position: Vec2 = { x: 7, y: 7 };
         const orientation = 'h';
         const word = 'fil';
-        expect(service.place(position, orientation, word, INDEX_REAL_PLAYER)).toEqual(false);
+        expect(service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER)).toEqual(false);
     });
     it('placing letters present in the easel or the scrabbleboard should be valid', () => {
         // Player 1 places the first word
         let position: Vec2 = { x: 7, y: 7 };
         let orientation = 'h';
         let word = 'abcd';
-        service.place(position, orientation, word, INDEX_REAL_PLAYER);
+        service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER);
         // Player 2 tries to vertically place a word while using letters already on the scrabbleBoard
         position = { x: 6, y: 10 };
         orientation = 'v';
@@ -179,14 +178,14 @@ describe('PlaceLetterService', () => {
         const position: Vec2 = { x: 7, y: 7 };
         const orientation = 'h';
         const word = 'abcd';
-        expect(service.place(position, orientation, word, INDEX_REAL_PLAYER)).toEqual(false);
+        expect(service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER)).toEqual(false);
     });
     it('only the invalid letters that we just placed should be removed from scrabbleBoard', () => {
         // Player 1 places the 1st word
         let position: Vec2 = { x: 7, y: 7 };
         let orientation = 'h';
         let word = 'bac';
-        service.place(position, orientation, word, INDEX_REAL_PLAYER);
+        service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER);
 
         // Player 2 places an invalid word on top of the previous one
         service['wordValidationService'].validateAllWordsOnBoard = jasmine.createSpy().and.returnValue({ validation: false, score: 0 });
@@ -195,14 +194,14 @@ describe('PlaceLetterService', () => {
         position = { x: 7, y: 7 };
         orientation = 'h';
         word = 'bacchaV';
-        let lettersRemoved = service.place(position, orientation, word, INDEX_PLAYER_AI);
+        let lettersRemoved = service.placeCommand(position, orientation, word, INDEX_PLAYER_AI);
         jasmine.clock().tick(THREE_SECONDS_DELAY + 1);
         expect(lettersRemoved).toEqual(false);
         // Vertically
         position = { x: 7, y: 7 };
         orientation = 'v';
         word = 'bEcchaa';
-        lettersRemoved = service.place(position, orientation, word, INDEX_PLAYER_AI);
+        lettersRemoved = service.placeCommand(position, orientation, word, INDEX_PLAYER_AI);
         jasmine.clock().tick(THREE_SECONDS_DELAY + 1);
         expect(lettersRemoved).toEqual(false);
         jasmine.clock().uninstall();
@@ -214,16 +213,16 @@ describe('PlaceLetterService', () => {
         const position: Vec2 = { x: 7, y: 7 };
         const orientation = 'h';
         let word = 'aabb';
-        service.place(position, orientation, word, INDEX_REAL_PLAYER);
+        service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER);
         // Player 1 horizontally places a second word on top of the 1st word that has different letters
         word = 'ccaa';
         jasmine.clock().tick(THREE_SECONDS_DELAY + 1);
-        expect(service.place(position, orientation, word, INDEX_REAL_PLAYER)).toEqual(false);
+        expect(service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER)).toEqual(false);
         jasmine.clock().uninstall();
     });
-    it('calling placeMethodAdapter() should call place()', () => {
+    it('calling placeMethodAdapter() should call placeCommand()', () => {
         service['wordValidationService'].validateAllWordsOnBoard = jasmine.createSpy().and.returnValue({ validation: false, score: 0 });
-        const spy = spyOn(service, 'place').and.callThrough();
+        const spy = spyOn(service, 'placeCommand').and.callThrough();
         const start: Vec2 = { x: 7, y: 7 };
         const orientation = 'h';
         const word = 'dab';
@@ -236,7 +235,7 @@ describe('PlaceLetterService', () => {
         const position: Vec2 = { x: 7, y: 7 };
         const orientation = 'h';
         const word = 'abah*cc';
-        service.place(position, orientation, word, INDEX_PLAYER_AI);
+        service.placeCommand(position, orientation, word, INDEX_PLAYER_AI);
         expect(service.isEaselSize).toEqual(true);
     });
     it('placing a word containing the same letter multiple times that is only present once in the easel should be invalid', () => {
