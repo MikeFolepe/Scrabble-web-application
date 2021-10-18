@@ -14,7 +14,7 @@ export class PassTurnService {
         // from now on, call func wherever you want inside this service
     }
 
-    writeMessage(message: string) {
+    writeMessage(message = '!passer') {
         this.messageSource.next(message);
         this.updateFunc();
     }

@@ -5,6 +5,7 @@ import { LetterService } from '@app/services/letter.service';
 import { PlayerService } from '@app/services/player.service';
 import { SwapLetterService } from '@app/services/swap-letter.service';
 import { TourService } from '@app/services/tour.service';
+import { PassTourService } from '@app/services/pass-tour.service';
 import { ChatboxService } from '@app/services/chatbox.service';
 
 @Component({
@@ -24,17 +25,17 @@ export class LetterEaselComponent implements OnInit {
         private letterService: LetterService,
         private swapLetterService: SwapLetterService,
         private chatBoxService: ChatboxService,
+        private passTurnService: PassTourService,
     ) {}
 
     // Disable all selections made when a click occurs outside the easel
     // TODO Changer le font size ne deselect pas ?
     @HostListener('document:click', ['$event'])
     clickOut(event: MouseEvent) {
-        if (!this.easelContainer.nativeElement.contains(event.target)) {
-            for (let i = 0; i < EASEL_SIZE; i++) {
-                this.letterEaselTab[i].isSelectedForSwap = false;
-                this.letterEaselTab[i].isSelectedForManipulation = false;
-            }
+        if (this.easelContainer.nativeElement.contains(event.target)) return;
+        for (let i = 0; i < EASEL_SIZE; i++) {
+            this.letterEaselTab[i].isSelectedForSwap = false;
+            this.letterEaselTab[i].isSelectedForManipulation = false;
         }
     }
 
@@ -84,17 +85,16 @@ export class LetterEaselComponent implements OnInit {
 
     swap() {
         let lettersToSwap = '';
-        for (let i = 0; i < EASEL_SIZE; i++) {
+        for (let i = 0; i < this.letterEaselTab.length; i++) {
             if (this.letterEaselTab[i].isSelectedForSwap) {
                 lettersToSwap += this.letterEaselTab[i].value.toLowerCase();
                 this.swapLetterService.swap(i, INDEX_REAL_PLAYER);
-                // i--; // Update the current index after a swap because we removed a letter from easel
-                // this.letterEaselTab[i].isSelectedForSwap = false; BUUUUUUG
             }
         }
-        // Display the respective message into the chatBox
+        // Display the respective message into the chatBox and pass the turn
         const message = this.playerService.getPlayers()[INDEX_REAL_PLAYER].name + ' : !échanger ' + lettersToSwap;
         this.chatBoxService.displayMessageByType(message, 'player');
+        this.passTurnService.writeMessage();
     }
 
     cancelSelection() {
