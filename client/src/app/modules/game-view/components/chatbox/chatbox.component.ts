@@ -26,7 +26,8 @@ export class ChatboxComponent implements OnInit, OnDestroy {
     constructor(private chatBoxService: ChatboxService, private tourService: TourService, private boardHandlerService: BoardHandlerService) {}
 
     // Disable the current placement on the board when a click occurs in the chatbox
-    @HostListener('document:click', ['$event'])
+    @HostListener('document:mouseup', ['$event'])
+    @HostListener('document:contextmenu', ['$event'])
     clickInChatBox(event: MouseEvent) {
         if (this.chatBox.nativeElement.contains(event.target)) {
             this.boardHandlerService.cancelPlacement();

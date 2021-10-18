@@ -90,7 +90,7 @@ export class PlaceLetterService implements OnDestroy {
             this.validLetters = [];
         }
         // If the letter isn't fitting or isn't in the easel, the placement is invalid
-        if (!(this.playerService.indexLetterInEasel(letter, 0, indexPlayer) !== INDEX_INVALID && this.isWordFitting(position, orientation, letter))) {
+        if (this.playerService.indexLetterInEasel(letter, 0, indexPlayer) === INDEX_INVALID || !this.isWordFitting(position, orientation, letter)) {
             return false;
         }
         return this.placeLetter(position, letter, orientation, indexLetterInWord, indexPlayer);

@@ -71,7 +71,7 @@ export class GridService {
             this.drawSymetricGrid(this.gridContextBoardLayer);
             this.gridContextBoardLayer.rotate((Math.PI / 180) * 90);
         }
-        this.drawStar(0, 0, 5, this.caseWidth / 2 - 9, 6);
+        this.drawStar(0, 0, 5, this.caseWidth / 2 - 10, 6);
         this.writeBonuses();
     }
 
@@ -99,11 +99,16 @@ export class GridService {
     drawLetter(ctx: CanvasRenderingContext2D, letter: string, positionTabX: number, positionTabY: number, fontSize: number) {
         const gridPosition = this.posTabToPosGrid(positionTabX, positionTabY);
         // Grid case style
-        ctx.lineWidth = 1;
-        ctx.fillStyle = 'tan';
+        const borderOffSet = 2;
+        ctx.fillStyle = 'black';
         ctx.fillRect(gridPosition.x, gridPosition.y, this.caseWidth, this.caseWidth);
-        ctx.strokeStyle = 'black';
-        ctx.strokeRect(gridPosition.x, gridPosition.y, this.caseWidth, this.caseWidth);
+        ctx.fillStyle = 'tan';
+        ctx.fillRect(
+            gridPosition.x + borderOffSet,
+            gridPosition.y + borderOffSet,
+            this.caseWidth - borderOffSet * 2,
+            this.caseWidth - borderOffSet * 2,
+        );
 
         // Score of the letter placed
         let letterScore = 0;

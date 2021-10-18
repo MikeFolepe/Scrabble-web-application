@@ -29,8 +29,8 @@ export class LetterEaselComponent implements OnInit {
     ) {}
 
     // TODO Changer le font size ne deselect pas ?
-    // TODO Right click cancel aussi
     @HostListener('document:click', ['$event'])
+    @HostListener('document:contextmenu', ['$event'])
     clickEvent(event: MouseEvent) {
         // Disable all easel selections made when a click occurs outside the easel
         if (!this.easel.nativeElement.contains(event.target)) {
