@@ -20,4 +20,11 @@ describe('PassTourComponent', () => {
     it('should create', () => {
         expect(component).toBeTruthy();
     });
+
+    it("should write '!passer' when toogleTour() is called", () => {
+        // eslint-disable-next-line dot-notation
+        const writeMessageSpy = spyOn(component['passtourService'], 'writeMessage');
+        component.toogleTour();
+        expect(writeMessageSpy).toHaveBeenCalledOnceWith('!passer');
+    });
 });

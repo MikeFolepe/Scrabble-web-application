@@ -9,7 +9,7 @@ export class SendMessageService {
     private displayMessage: () => void;
 
     // displayMessage() will call the method from chatBoxComponent to display the message
-    displayBinded(fn: () => void) {
+    displayBound(fn: () => void) {
         this.displayMessage = fn;
     }
 

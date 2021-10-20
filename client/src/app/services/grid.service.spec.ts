@@ -73,4 +73,9 @@ describe('GridService', () => {
         const afterSize = imageData.filter((x) => x !== 0).length;
         expect(afterSize).toBeGreaterThan(beforeSize);
     });
+
+    it('should set grid context', () => {
+        service.setGridContext(ctxStub);
+        expect(service.gridContext).toBe(ctxStub);
+    });
 });

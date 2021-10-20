@@ -1,4 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 import { TestBed } from '@angular/core/testing';
+import { SkipTurn } from '@app/models/skip-turn-strategy.model';
 import { PlayerAIComponent } from '@app/modules/game-view/components/player-ai/player-ai.component';
 import { PlayerAI } from '@app/models/player-ai.model';
 import { SwapLetter } from '@app/models/swap-letter-strategy.model';
@@ -32,20 +35,19 @@ describe('SwapLetter', () => {
 
     it('should call the right function when execute() is called', () => {
         spyOn(context, 'swap');
-        spyOn(context.letterService, 'addLetterToReserve');
+        spyOn<any>(context.letterService, 'addLetterToReserve');
         swapStrategy.execute(playerAI, context);
         expect(context.swap).toHaveBeenCalledTimes(1);
     });
 
-    /*
-    it('should call skip() if there is not enough letters in the reserve to change', () => {
-        spyOn(Math, 'random').and.returnValue(6);
-        const spy = spyOn(context, 'skip').and.callThrough();
+    it('should be SkipTurn if there is not enough letters in the reserve to change', () => {
+        spyOn(playerAI, 'play');
+
         context.letterService.reserve = [];
+        playerAI.strategy = swapStrategy;
+        swapStrategy.execute(playerAI, context);
+        const expectedStrategy = new SkipTurn();
 
-    //     swapStrategy.execute(playerAI, context);
-
-        expect(spy).toHaveBeenCalledTimes(1);
+        expect(playerAI.strategy).toEqual(expectedStrategy);
     });
-    */
 });

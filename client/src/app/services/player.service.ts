@@ -9,8 +9,8 @@ import {
     EASEL_SIZE,
     FONT_SIZE_MAX,
     FONT_SIZE_MIN,
-    RESERVE,
     INDEX_INVALID,
+    RESERVE,
 } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
@@ -27,7 +27,7 @@ export class PlayerService {
     scrabbleBoard: string[][];
     fontSize = DEFAULT_FONT_SIZE;
 
-    private players: Player[] = new Array<Player>();
+    players: Player[] = new Array<Player>();
     private myFunc: () => void;
     constructor(private letterService: LetterService, private gridService: GridService) {
         this.fontSize = DEFAULT_FONT_SIZE;

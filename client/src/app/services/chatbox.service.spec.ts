@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
 import { TestBed } from '@angular/core/testing';
+import { INDEX_REAL_PLAYER } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { Player } from '@app/models/player.model';
 import { ChatboxService } from './chatbox.service';
@@ -96,22 +98,24 @@ describe('ChatboxService', () => {
     });
 
     it('using command !debug should call executeDebug()', () => {
-        const spy = spyOn(service, 'executeDebug').and.callThrough();
+        spyOn(service, 'executeDebug');
         service.command = 'debug';
         const word = 'message de debug';
         const nbPt = 1;
         const table: { word: string; nbPt: number }[] = [];
         table.push({ word, nbPt });
 
-        service['debugService'].receiveAIDebugPossibilities(table);
         service.sendPlayerMessage('!debug');
-        expect(spy).toHaveBeenCalled();
+        expect(service.executeDebug).toHaveBeenCalled();
     });
 
     it('using command !debug without debug messages should display the respective message', () => {
+        service.command = 'debug';
+        service['debugService'].isDebugActive = false;
         service['debugService'].clearDebugMessage();
-        service.displayDebugMessage();
-        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('Aucune possibilité de placement trouvés!', 'system');
+
+        service.sendPlayerMessage('!debug');
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('Aucune possibilité de placement trouvée!', 'system');
     });
 
     it('using command !passer should display the respective message', () => {
@@ -140,15 +144,17 @@ describe('ChatboxService', () => {
         expect(service.message).toEqual('Player 1 : !échanger abc');
     });
 
-    it('desactivating debug should display the respective message', () => {
+    it('deactivating debug should display the respective message', () => {
+        spyOn<any>(service, 'displayDebugMessage');
+
         service.command = 'debug';
         const word = 'message de debug';
         const nbPt = 1;
-        const table: { word: string; nbPt: number }[] = [];
-        table.push({ word, nbPt });
+        const table: { word: string; nbPt: number }[] = [{ word, nbPt }];
 
-        service['debugService'].receiveAIDebugPossibilities(table);
-        service.sendPlayerMessage('!debug');
+        service['debugService'].debugServiceMessage = table;
+        service['debugService'].isDebugActive = true;
+
         service.sendPlayerMessage('!debug');
         expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('affichages de débogage désactivés', 'system');
     });
@@ -178,5 +184,23 @@ describe('ChatboxService', () => {
         const spyUnsubscribe = spyOn(service.tourSubscription, 'unsubscribe').and.callThrough();
         service.ngOnDestroy();
         expect(spyUnsubscribe).toHaveBeenCalled();
+    });
+
+    it('should display the right debug message if no possibility has been found', () => {
+        service['debugService'].debugServiceMessage = [];
+        service.displayDebugMessage();
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('Aucune possibilité de placement trouvée!', 'system');
+    });
+
+    it('should display the right debug message if at least one possibility has been found', () => {
+        service['debugService'].debugServiceMessage = [{ word: 'test', nbPt: 3 }];
+        service.displayDebugMessage();
+        expect(service.message).toEqual('test: -- 3');
+    });
+
+    it('callind displayFinalMessage should send the respective message to the chatbox', () => {
+        service['endGameService'].isEndGame = true;
+        service.displayFinalMessage(INDEX_REAL_PLAYER);
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('Player 1 : AABBCCA', 'system');
     });
 });

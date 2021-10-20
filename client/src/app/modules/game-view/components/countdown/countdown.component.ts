@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { ONESECOND_TIME } from '@app/classes/constants';
+import { EndGameService } from '@app/services/end-game.service';
 import { PassTourService } from '@app/services/pass-tour.service';
 import { Subscription } from 'rxjs';
 
@@ -20,18 +21,23 @@ export class CountdownComponent implements OnInit, OnDestroy {
     secondsInt: number;
     message: string;
     passSubscription: Subscription = new Subscription();
-    constructor(private passtourService: PassTourService) {}
+    constructor(private passTourService: PassTourService, public endgameService: EndGameService) {}
 
     ngOnInit(): void {
         setTimeout(() => {
             this.setTimer();
         }, ONESECOND_TIME);
-        this.passSubscription = this.passtourService.currentMessage.subscribe((message) => (this.message = message));
-        this.passtourService.updateTour(this.stopTimer.bind(this));
+        this.passSubscription = this.passTourService.currentMessage.subscribe((message) => (this.message = message));
+        this.passTourService.updateTour(this.stopTimer.bind(this));
     }
 
     // Set time always after a define interval of 1second and repeat it
     setTimer(): void {
+        // If the game is finished the timer is reset to 00:00
+        if (this.endgameService.isEndGame) {
+            this.stopTimer();
+            return;
+        }
         this.minutesInt = parseInt(this.minutes, 10);
         this.secondsInt = parseInt(this.seconds, 10);
         const intervalID = setInterval(() => {

@@ -1,10 +1,12 @@
+/* eslint-disable @typescript-eslint/no-magic-numbers */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
 import { TestBed } from '@angular/core/testing';
 import { PlayerAIComponent } from '@app/modules/game-view/components/player-ai/player-ai.component';
 import { PlaceLetters } from './place-letter-strategy.model';
-import { PlayerAI } from './player-ai.model';
-import { SkipTurn } from './skip-turn-strategy.model';
-import { SwapLetter } from './swap-letter-strategy.model';
+import { PlayerAI } from '@app/models/player-ai.model';
+import { SkipTurn } from '@app/models/skip-turn-strategy.model';
+import { SwapLetter } from '@app/models/swap-letter-strategy.model';
 
 describe('PlayerAI', () => {
     const id = 0;
@@ -30,35 +32,24 @@ describe('PlayerAI', () => {
     });
 
     it('should set the respective strategy based on random numbers', () => {
-        const RANDOM_NUMBER_1 = 0;
-        const RANDOM_NUMBER_2 = 3;
-        const RANDOM_NUMBER_3 = 5;
-        const RANDOM_NUMBER_4 = 22;
-        spyOn(playerAI, 'pointingRange').and.returnValue({ min: 0, max: 6 });
+        spyOn<any>(playerAI, 'generateRandomNumber').and.returnValues(0, 3, 5, 22);
+        spyOn<any>(playerAI, 'pointingRange').and.returnValue({ min: 0, max: 6 });
 
-        spyOn(playerAI, 'generateRandomNumber').and.returnValue(RANDOM_NUMBER_1);
         playerAI['setStrategy']();
-        expect(playerAI.strategy).toBeInstanceOf(PlaceLetters);
-
-        playerAI.generateRandomNumber = jasmine.createSpy().and.returnValue(RANDOM_NUMBER_2);
+        const placeStrategy = new PlaceLetters({ min: 0, max: 6 });
+        expect(playerAI.strategy).toEqual(placeStrategy);
         playerAI['setStrategy']();
-        expect(playerAI.strategy).toBeInstanceOf(SkipTurn);
-
-        playerAI.generateRandomNumber = jasmine.createSpy().and.returnValue(RANDOM_NUMBER_3);
+        const skipStrategy = new SkipTurn();
+        expect(playerAI.strategy).toEqual(skipStrategy);
         playerAI['setStrategy']();
-        expect(playerAI.strategy).toBeInstanceOf(SwapLetter);
-
-        playerAI.generateRandomNumber = jasmine.createSpy().and.returnValue(RANDOM_NUMBER_4);
+        const swapStrategy = new SwapLetter();
+        expect(playerAI.strategy).toEqual(swapStrategy);
         playerAI['setStrategy']();
-        expect(playerAI.strategy).toBeInstanceOf(SkipTurn);
+        expect(playerAI.strategy).toEqual(skipStrategy);
     });
 
     it('should have a scoring range', () => {
-        const RANDOM_NUMBER_1 = 0;
-        const RANDOM_NUMBER_2 = 1;
-        const RANDOM_NUMBER_3 = 4;
-        const RANDOM_NUMBER_4 = 22;
-        spyOn(playerAI, 'generateRandomNumber').and.returnValues(RANDOM_NUMBER_1, RANDOM_NUMBER_2, RANDOM_NUMBER_3, RANDOM_NUMBER_4);
+        spyOn(playerAI, 'generateRandomNumber').and.returnValues(0, 1, 4, 22);
 
         expect(playerAI['pointingRange']()).toEqual({ min: 0, max: 6 });
         expect(playerAI['pointingRange']()).toEqual({ min: 7, max: 12 });

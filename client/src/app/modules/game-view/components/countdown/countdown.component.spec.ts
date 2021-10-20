@@ -39,6 +39,15 @@ describe('CountdownComponent', () => {
         expect(component.setTimer).toHaveBeenCalled();
     });
 
+    it('should stop timer if it is the end of the game', () => {
+        spyOn(component, 'stopTimer');
+        component.endgameService.isEndGame = true;
+
+        component.setTimer();
+
+        expect(component.stopTimer).toHaveBeenCalled();
+    });
+
     it('adapt time output to correct value when when only seconds input is 0', () => {
         // when seconds input is 0
         component.seconds = '00';

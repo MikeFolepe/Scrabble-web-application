@@ -1,18 +1,16 @@
 <div class="container">
     <app-scrabble-board></app-scrabble-board>
     <div style="display: flex; width: 15vw; height: 85vh; justify-content: flex-start; flex-direction: column; flex-wrap: wrap; gap: 5vh">
-        <div style="
-            display: flex;
-            width: 15vw;
-            height: 85vh;
-            justify-content: flex-start;
-            flex-direction: column;
-            flex-wrap: wrap;
-            gap: 5vh;
-            ">
-            <app-letter-easel></app-letter-easel>
-            <button mat-raised-button color="primary" routerLink="/home">Abandonner</button>
-            <!-- <button mat-raised-button color="primary" id="Pass-button" [disabled]="false">Passer tour</button> -->
+        <app-letter-easel></app-letter-easel>
+        <div *ngIf="!this.endGameService.isEndGame">
+            <button mat-raised-button color="primary" id="Pass-button" (click)="this.endGameService.clearAllData()" routerLink="/home">
+                Abandonner
+            </button>
+        </div>
+        <div *ngIf="this.endGameService.isEndGame">
+            <button mat-raised-button color="primary" id="Pass-button" (click)="this.endGameService.clearAllData()" routerLink="/home">
+                Quitter
+            </button>
         </div>
     </div>
 </div>

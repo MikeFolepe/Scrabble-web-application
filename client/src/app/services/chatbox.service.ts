@@ -1,6 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { INDEX_REAL_PLAYER, MAX_NUMBER_OF_POSSIBILITY, ONE_POSSIBILITY, TWO_POSSIBILITY } from '@app/classes/constants';
+import { INDEX_REAL_PLAYER, MAX_NUMBER_OF_POSSIBILITY } from '@app/classes/constants';
 import { Vec2 } from '@app/classes/vec2';
+import { EndGameService } from '@app/services/end-game.service';
 import { PassTourService } from '@app/services/pass-tour.service';
 import { PlaceLetterService } from '@app/services/place-letter.service';
 import { PlayerService } from '@app/services/player.service';
@@ -20,6 +21,7 @@ export class ChatboxService implements OnDestroy {
     message: string = '';
     typeMessage: string = '';
     command: string = '';
+    endGameEasel: string = '';
 
     debugMessage: { word: string; nbPt: number }[] = [{ word: 'papier', nbPt: 6 }];
 
@@ -31,11 +33,12 @@ export class ChatboxService implements OnDestroy {
         private placeLetterService: PlaceLetterService,
         private debugService: DebugService,
         private sendMessageService: SendMessageService,
+        public endGameService: EndGameService,
     ) {
-        this.initializeTourSubcribtion();
+        this.initializeTourSubscription();
     }
 
-    initializeTourSubcribtion() {
+    initializeTourSubscription() {
         this.tourSubscription = this.tourService.tourSubject.subscribe((tourSubject: boolean) => {
             this.tour = tourSubject;
         });
@@ -127,7 +130,9 @@ export class ChatboxService implements OnDestroy {
             this.sendMessageService.displayMessageByType('affichages de débogage désactivés', 'system');
         }
     }
+
     executeSkipTurn() {
+        this.endGameService.actionsLog.push('passer');
         this.tour = this.tourService.getTour();
         if (this.tour) {
             this.sendMessageService.displayMessageByType(this.message, this.typeMessage);
@@ -136,7 +141,9 @@ export class ChatboxService implements OnDestroy {
             this.sendMessageService.displayMessageByType("ERREUR : Ce n'est pas ton tour", 'error');
         }
     }
+
     executeSwap() {
+        this.endGameService.actionsLog.push('echanger');
         this.tour = this.tourService.getTour();
         if (this.tour) {
             const messageSplitted = this.message.split(/\s/);
@@ -150,7 +157,9 @@ export class ChatboxService implements OnDestroy {
             this.sendMessageService.displayMessageByType("ERREUR : Ce n'est pas ton tour", 'error');
         }
     }
+
     executePlace() {
+        this.endGameService.actionsLog.push('placer');
         this.tour = this.tourService.getTour();
         if (this.tour) {
             const messageSplitted = this.message.split(/\s/);
@@ -173,37 +182,29 @@ export class ChatboxService implements OnDestroy {
         }
     }
 
-    // method which check the différents size of table of possibilty for the debug
+    // Method which check the different size of table of possibility for the debug
     displayDebugMessage(): void {
-        switch (this.debugService.debugServiceMessage.length) {
-            case 0: {
-                this.sendMessageService.displayMessageByType('Aucune possibilité de placement trouvés!', 'system');
-                break;
-            }
-            case 1: {
-                for (let i = 0; i < ONE_POSSIBILITY; i++) {
-                    this.message = this.debugService.debugServiceMessage[i].word + ': -- ' + this.debugService.debugServiceMessage[i].nbPt.toString();
-                    this.sendMessageService.displayMessageByType(this.message, 'system');
-                }
-                break;
-            }
-            case 2: {
-                for (let i = 0; i < TWO_POSSIBILITY; i++) {
-                    this.message = this.debugService.debugServiceMessage[i].word + ': -- ' + this.debugService.debugServiceMessage[i].nbPt.toString();
-                    this.sendMessageService.displayMessageByType(this.message, 'system');
-                }
-
-                break;
-            }
-            default: {
-                for (let i = 0; i < MAX_NUMBER_OF_POSSIBILITY; i++) {
-                    this.message = this.debugService.debugServiceMessage[i].word + ': -- ' + this.debugService.debugServiceMessage[i].nbPt.toString();
-                    this.sendMessageService.displayMessageByType(this.message, 'system');
-                }
-                break;
+        const nbPossibilities = this.debugService.debugServiceMessage.length;
+        if (nbPossibilities === 0) {
+            this.sendMessageService.displayMessageByType('Aucune possibilité de placement trouvée!', 'system');
+        } else {
+            for (let i = 0; i < Math.min(MAX_NUMBER_OF_POSSIBILITY, nbPossibilities); i++) {
+                this.message = this.debugService.debugServiceMessage[i].word + ': -- ' + this.debugService.debugServiceMessage[i].nbPt.toString();
+                this.sendMessageService.displayMessageByType(this.message, 'system');
             }
         }
         this.debugService.clearDebugMessage();
+    }
+
+    displayFinalMessage(indexPlayer: number): void {
+        if (!this.endGameService.isEndGame) return;
+        this.sendMessageService.displayMessageByType('Fin de partie - lettres restantes', 'system');
+        for (const letter of this.playerService.getLettersEasel(indexPlayer)) {
+            this.endGameEasel += letter.value;
+        }
+        this.sendMessageService.displayMessageByType(this.playerService.players[indexPlayer].name + ' : ' + this.endGameEasel, 'system');
+        // Clear the string
+        this.endGameEasel = '';
     }
 
     ngOnDestroy() {

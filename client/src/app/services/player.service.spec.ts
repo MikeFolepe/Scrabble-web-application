@@ -18,14 +18,13 @@ import { Player } from '@app/models/player.model';
 import { PlayerService } from './player.service';
 
 describe('PlayerService', () => {
-    let service: PlayerService;
-
     let letterA: Letter;
     let letterB: Letter;
     let letterC: Letter;
     let letterD: Letter;
 
     let player: Player;
+    let service: PlayerService;
     let playerAI: PlayerAI;
 
     beforeEach(() => {
@@ -289,10 +288,23 @@ describe('PlayerService', () => {
         playerAI.letterTable = [];
         service['players'].push(playerAI);
 
-        expect(service.indexLetterInEasel('a', 0, 0)).toEqual(0);
-        expect(service.indexLetterInEasel('b', 0, 0)).toEqual(1);
+        expect(service.indexLetterInEasel('a', 0, 0)).not.toEqual(INDEX_INVALID);
+        expect(service.indexLetterInEasel('b', 0, 0)).not.toEqual(INDEX_INVALID);
         expect(service.indexLetterInEasel('c', 0, 0)).toEqual(INDEX_INVALID);
         expect(service.indexLetterInEasel('a', 0, 1)).toEqual(INDEX_INVALID);
+    });
+
+    it("should know letter's index in easel", () => {
+        player.letterTable = [letterA, letterB];
+        service['players'].push(player);
+        playerAI.letterTable = [letterC];
+        service['players'].push(playerAI);
+
+        expect(service.indexLetterInEasel('a', 0, 0)).toEqual(0);
+        expect(service.indexLetterInEasel('b', 1, 0)).toEqual(1);
+        expect(service.indexLetterInEasel('b', 0, 0)).toEqual(1);
+        expect(service.indexLetterInEasel('c', 0, 1)).toEqual(0);
+        expect(service.indexLetterInEasel('d', 0, 0)).toEqual(INDEX_INVALID);
     });
 
     it('should add score when addScore() is called', () => {
@@ -325,5 +337,23 @@ describe('PlayerService', () => {
         service['players'].push(playerAI);
         expect(service.getScore(0)).toEqual(playerScore);
         expect(service.getScore(1)).toEqual(playerAIScore);
+    });
+
+    it('should replace a letter from player easel when swap() is called', () => {
+        spyOn(service['letterService'], 'getRandomLetter').and.returnValue(letterC);
+        let number = 1;
+        service['myFunc'] = () => {
+            number = number *= 2;
+            return;
+        };
+        const easel = [letterA, letterB, letterD, letterC, letterD, letterA, letterA];
+        player.letterTable = easel;
+        service['players'].push(player);
+        const easelAI = [letterC, letterD];
+        playerAI.letterTable = easelAI;
+        service['players'].push(playerAI);
+        service.swap(2, 0);
+        easel[2] = letterC;
+        expect(service['players'][0].letterTable).toEqual(easel);
     });
 });
