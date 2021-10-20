@@ -1,11 +1,11 @@
-import { SkipTurnService } from '@app/services/skip-turn.service';
 import { Injectable } from '@angular/core';
-import { INDEX_REAL_PLAYER, MAX_NUMBER_OF_POSSIBILITY, ONE_POSSIBILITY, TWO_POSSIBILITY } from '@app/classes/constants';
+import { INDEX_REAL_PLAYER, MAX_NUMBER_OF_POSSIBILITY } from '@app/classes/constants';
 import { Vec2 } from '@app/classes/vec2';
+import { EndGameService } from '@app/services/end-game.service';
 import { PlaceLetterService } from '@app/services/place-letter.service';
 import { PlayerService } from '@app/services/player.service';
+import { SkipTurnService } from '@app/services/skip-turn.service';
 import { SwapLetterService } from '@app/services/swap-letter.service';
-import { EndGameService } from '@app/services/end-game.service';
 import { Subscription } from 'rxjs';
 import { DebugService } from './debug.service';
 
@@ -67,11 +67,11 @@ export class ChatboxService {
                 break;
             }
             default: {
+                this.displayMessage();
                 break;
             }
         }
         this.command = ''; // reset value for next message
-        this.displayMessage();
     }
 
     isValid(): boolean {
@@ -129,6 +129,7 @@ export class ChatboxService {
         } else {
             this.typeMessage = 'system';
             this.message = 'affichages de débogage désactivés';
+            this.displayMessage();
         }
     }
     executeSkipTurn() {
@@ -139,7 +140,9 @@ export class ChatboxService {
             this.typeMessage = 'error';
             this.message = "ERREUR : Ce n'est pas ton tour";
         }
+        this.displayMessage();
     }
+
     executeSwap() {
         if (this.skipTurn.isTurn) {
             this.endGameService.actionsLog.push('echanger');
@@ -156,7 +159,9 @@ export class ChatboxService {
             this.typeMessage = 'error';
             this.message = "ERREUR : Ce n'est pas ton tour";
         }
+        this.displayMessage();
     }
+
     executePlace() {
         if (this.skipTurn.isTurn) {
             this.endGameService.actionsLog.push('placer');
@@ -179,37 +184,20 @@ export class ChatboxService {
             this.typeMessage = 'error';
             this.message = "ERREUR : Ce n'est pas ton tour";
         }
+        this.displayMessage();
     }
 
     // method which check the différents size of table of possibilty for the debug
     displayDebugMessage(): void {
-        switch (this.debugService.debugServiceMessage.length) {
-            case 0: {
+        const nbPossibilities = this.debugService.debugServiceMessage.length;
+        if (nbPossibilities === 0) {
+            this.typeMessage = 'system';
+            this.message = 'Aucune possibilité de placement trouvée!';
+        } else {
+            for (let i = 0; i < Math.min(MAX_NUMBER_OF_POSSIBILITY, nbPossibilities); i++) {
                 this.typeMessage = 'system';
-                this.message = 'Aucune possibilité de placement trouvés!';
-                break;
-            }
-            case 1: {
-                for (let i = 0; i < ONE_POSSIBILITY; i++) {
-                    this.typeMessage = 'system';
-                    this.message = this.debugService.debugServiceMessage[i].word + ': -- ' + this.debugService.debugServiceMessage[i].nbPt.toString();
-                }
-                break;
-            }
-            case 2: {
-                for (let i = 0; i < TWO_POSSIBILITY; i++) {
-                    this.typeMessage = 'system';
-                    this.message = this.debugService.debugServiceMessage[i].word + ': -- ' + this.debugService.debugServiceMessage[i].nbPt.toString();
-                }
-
-                break;
-            }
-            default: {
-                for (let i = 0; i < MAX_NUMBER_OF_POSSIBILITY; i++) {
-                    this.typeMessage = 'system';
-                    this.message = this.debugService.debugServiceMessage[i].word + ': -- ' + this.debugService.debugServiceMessage[i].nbPt.toString();
-                }
-                break;
+                this.message = this.debugService.debugServiceMessage[i].word + ': -- ' + this.debugService.debugServiceMessage[i].nbPt.toString();
+                this.displayMessage();
             }
         }
         this.debugService.clearDebugMessage();

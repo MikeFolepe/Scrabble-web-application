@@ -59,7 +59,7 @@ export class PlayerAIComponent implements OnInit {
             setTimeout(() => {
                 this.skipTurn.switchTurn();
             }, DELAY_TO_PLAY);
-            //this.endGameService.actionsLog.push('passer');
+            this.endGameService.actionsLog.push('passer');
             this.chatBoxService.displayMessageByType('passer', 'opponent');
         }
     }
@@ -70,17 +70,23 @@ export class PlayerAIComponent implements OnInit {
             setTimeout(() => {
                 this.skipTurn.switchTurn();
             }, DELAY_TO_PLAY);
-            //this.endGameService.actionsLog.push('echanger');
+            this.endGameService.actionsLog.push('echanger');
         }
     }
 
     place(object: { start: Vec2; orientation: string; word: string }, possibility: { word: string; nbPt: number }[]) {
         this.aiPossibility.emit(possibility);
+        this.debugService.receiveAIDebugPossibilities(possibility);
+        // if (this.debugService.debugActivate) {
+        //     this.chatBoxService.displayDebugMessage();
+        //     this.debugService.clearDebugMessage();
+        // }
+
         if (!this.skipTurn.isTurn) {
             setTimeout(() => {
                 this.skipTurn.switchTurn();
             }, DELAY_TO_PLAY);
         }
-        //this.endGameService.actionsLog.push('placer');
+        this.endGameService.actionsLog.push('placer');
     }
 }

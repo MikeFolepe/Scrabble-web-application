@@ -1,6 +1,8 @@
+// import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { ALL_EASEL_BONUS, BOARD_COLUMNS, BOARD_ROWS, BONUSES_POSITIONS, DICTIONARY, RESERVE } from '@app/classes/constants';
 import { ScoreValidation } from '@app/classes/validation-score';
+import { HttpClient } from '@angular/common/http';
 @Injectable({
     providedIn: 'root',
 })
@@ -10,7 +12,8 @@ export class WordValidationService {
     newPlayedWords: Map<string, string[]>;
     newPositions: string[];
     bonusesPositions: Map<string, string>;
-    constructor() {
+
+    constructor(private readonly http: HttpClient) {
         this.playedWords = new Map<string, string[]>();
         this.newPlayedWords = new Map<string, string[]>();
         this.newWords = new Array<string>();
@@ -185,6 +188,13 @@ export class WordValidationService {
         }
         return score;
     }
+
+    // getServerValidation(scrabbleBoard: string[][], isEaselSize: boolean, isRow: boolean): Observable<ScoreValidation> {
+        
+    //     const wordValidationUrl = 'api/validation/:scrabbleBoard/:isEaselSize/:boolean';
+    //     return this.http.get<ScoreValidation>(wordValidationUrl);
+    // }
+
 
     validateAllWordsOnBoard(scrabbleBoard: string[][], isEaselSize: boolean, isRow: boolean): ScoreValidation {
         let scoreTotal = 0;
