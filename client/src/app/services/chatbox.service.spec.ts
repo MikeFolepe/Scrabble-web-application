@@ -11,12 +11,6 @@ describe('ChatboxService', () => {
         TestBed.configureTestingModule({});
         service = TestBed.inject(ChatboxService);
 
-        let number = 1;
-        service['displayMessage'] = () => {
-            number = number *= 2;
-            return;
-        };
-
         const letterA: Letter = {
             value: 'A',
             quantity: 0,
@@ -41,6 +35,8 @@ describe('ChatboxService', () => {
         const firstPlayerEasel = [letterA, letterA, letterB, letterB, letterC, letterC, letterA];
         const firstPlayer = new Player(1, 'Player 1', firstPlayerEasel);
         service['playerService'].addPlayer(firstPlayer);
+
+        spyOn(service['sendMessageService'], 'displayMessageByType');
     });
 
     it('should be created', () => {
@@ -48,11 +44,9 @@ describe('ChatboxService', () => {
     });
 
     it('should have type error if command is not valid', () => {
-        spyOn(service, 'isValid').and.returnValue(false);
-
-        service.message = '';
+        service.message = '!debugg';
         service.sendPlayerMessage(service.message);
-        expect(service.typeMessage).toEqual('error');
+        expect(service.message).toEqual('ERREUR : La syntaxe est invalide');
     });
 
     it('should have type player if command is valid', () => {
@@ -114,6 +108,12 @@ describe('ChatboxService', () => {
         expect(spy).toHaveBeenCalled();
     });
 
+    it('using command !debug without debug messages should display the respective message', () => {
+        service['debugService'].clearDebugMessage();
+        service.displayDebugMessage();
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('Aucune possibilité de placement trouvés!', 'system');
+    });
+
     it('using command !passer should display the respective message', () => {
         spyOn(service['passTourService'], 'writeMessage');
         spyOn(service['tourService'], 'getTour').and.returnValue(true);
@@ -150,21 +150,21 @@ describe('ChatboxService', () => {
         service['debugService'].receiveAIDebugPossibilities(table);
         service.sendPlayerMessage('!debug');
         service.sendPlayerMessage('!debug');
-        expect(service.message).toEqual('affichages de débogage désactivés');
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('affichages de débogage désactivés', 'system');
     });
 
     it('using command !passer while it is not your turn should display an error', () => {
         spyOn(service['tourService'], 'getTour').and.returnValue(false);
         service.command = 'passer';
         service.sendPlayerMessage('!passer');
-        expect(service.message).toEqual("ERREUR : Ce n'est pas ton tour");
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith("ERREUR : Ce n'est pas ton tour", 'error');
     });
 
     it('using command !échanger while it is not your turn should display an error', () => {
         spyOn(service['tourService'], 'getTour').and.returnValue(false);
         service.command = 'echanger';
         service.sendPlayerMessage('!échanger');
-        expect(service.message).toEqual("ERREUR : Ce n'est pas ton tour");
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith("ERREUR : Ce n'est pas ton tour", 'error');
     });
 
     it('using command !placer while it is not your turn should display an error', () => {
@@ -174,27 +174,9 @@ describe('ChatboxService', () => {
         expect(service.message).toEqual("ERREUR : Ce n'est pas ton tour");
     });
 
-    it('using an unvalid command !échanger should display an error', () => {
-        spyOn(service['tourService'], 'getTour').and.returnValue(true);
-        spyOn(service['swapLetterService'], 'swapCommand').and.returnValue(false);
-        spyOn(service['passTourService'], 'writeMessage');
-        service.command = 'echanger';
-        service.sendPlayerMessage('!échanger xyz');
-        expect(service.message).toEqual('ERREUR : La commande est impossible à réaliser');
-    });
-
-    it('using an unvalid command !placer should display an error', () => {
-        spyOn(service['tourService'], 'getTour').and.returnValue(true);
-        spyOn(service['placeLetterService'], 'place').and.returnValue(false);
-        spyOn(service['passTourService'], 'writeMessage');
-        service.command = 'placer';
-        service.sendPlayerMessage('!placer h10v top');
-        expect(service.message).toEqual('ERREUR : Le placement est invalide');
-    });
-
-    it('displaying a message should display the respective message and its type', () => {
-        service.displayMessageByType('I am the player', 'player');
-        expect(service.message).toEqual('I am the player');
-        expect(service.typeMessage).toEqual('player');
+    it('ngOnDestroy should call unsubscribe', () => {
+        const spyUnsubscribe = spyOn(service.tourSubscription, 'unsubscribe').and.callThrough();
+        service.ngOnDestroy();
+        expect(spyUnsubscribe).toHaveBeenCalled();
     });
 });

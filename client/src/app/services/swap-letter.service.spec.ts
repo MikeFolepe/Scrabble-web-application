@@ -60,10 +60,9 @@ describe('SwapLetterService', () => {
         service['playerService'].addPlayer(player);
         service['letterService'].reserve = JSON.parse(JSON.stringify(RESERVE));
 
-        spyOn(service['playerService'], 'removeLetter');
+        spyOn(service['playerService'], 'swap');
         spyOn(service['playerService'], 'addEaselLetterToReserve');
-        spyOn(service['playerService'], 'refillEasel');
-        spyOn(service, 'lettersToSwapIntoIndexes');
+        spyOn(service['sendMessageService'], 'displayMessageByType');
     });
 
     it('should be created', () => {

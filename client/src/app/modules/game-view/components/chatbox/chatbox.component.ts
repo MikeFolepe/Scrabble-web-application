@@ -3,6 +3,7 @@ import { ChatboxService } from '@app/services/chatbox.service';
 import { DebugService } from '@app/services/debug.service';
 import { TourService } from '@app/services/tour.service';
 import { Subscription } from 'rxjs';
+import { SendMessageService } from '@app/services/send-message.service';
 
 @Component({
     selector: 'app-chatbox',
@@ -22,14 +23,19 @@ export class ChatboxComponent implements OnInit, OnDestroy {
     listTypes: string[] = [];
     debugMessage: { word: string; nbPt: number }[] = [];
 
-    constructor(private chatBoxService: ChatboxService, private tourService: TourService, public debugService: DebugService) {}
+    constructor(
+        private chatBoxService: ChatboxService,
+        private tourService: TourService,
+        public debugService: DebugService,
+        private sendMessageService: SendMessageService,
+    ) {}
 
     ngOnInit(): void {
         this.tourSubscription = this.tourService.tourSubject.subscribe((tourSubject: boolean) => {
             this.tour = tourSubject;
         });
         this.tourService.emitTour();
-        this.chatBoxService.displayBinded(this.displayAnyMessageByType.bind(this));
+        this.sendMessageService.displayBinded(this.displayMessageByType.bind(this));
     }
 
     handleKeyEvent(event: KeyboardEvent) {
@@ -40,7 +46,7 @@ export class ChatboxComponent implements OnInit, OnDestroy {
 
             setTimeout(() => {
                 // Timeout is used to update the scroll after the last element added
-                this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
+                this.scrollToBottom();
             }, 1);
         }
     }
@@ -49,11 +55,15 @@ export class ChatboxComponent implements OnInit, OnDestroy {
         this.message = '!passer';
         this.chatBoxService.sendPlayerMessage(this.message);
         this.message = '';
+        setTimeout(() => {
+            // Timeout is used to update the scroll after the last element added
+            this.scrollToBottom();
+        }, 1);
     }
 
-    displayAnyMessageByType() {
-        this.listTypes.push(this.chatBoxService.typeMessage);
-        this.listMessages.push(this.chatBoxService.message);
+    displayMessageByType() {
+        this.listTypes.push(this.sendMessageService.typeMessage);
+        this.listMessages.push(this.sendMessageService.message);
     }
 
     sendSystemMessage(systemMessage: string) {

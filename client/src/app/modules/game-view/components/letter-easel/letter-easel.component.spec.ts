@@ -8,7 +8,7 @@ import { Letter } from '@app/classes/letter';
 import { Player } from '@app/models/player.model';
 import { LetterEaselComponent } from './letter-easel.component';
 
-fdescribe('LetterEaselComponent', () => {
+describe('LetterEaselComponent', () => {
     let component: LetterEaselComponent;
     let fixture: ComponentFixture<LetterEaselComponent>;
     let getLettersSpy: any;
@@ -92,11 +92,11 @@ fdescribe('LetterEaselComponent', () => {
     });
 
     it('should update component fontSize and playerService fontSize with new fontSize', () => {
-        const spy = spyOn(component['playerService'], 'updateFontSize').and.callThrough();
+        spyOn(component['playerService'], 'updateFontSize');
         const fontSize = 10;
         component.handleFontSizeEvent(fontSize);
         expect(component.fontSize).toEqual(fontSize);
-        expect(spy).toHaveBeenCalled();
+        expect(component['playerService'].updateFontSize).toHaveBeenCalled();
     });
 
     it('left clicking on a letter in the easel should call onLeftClick()', () => {
@@ -147,7 +147,7 @@ fdescribe('LetterEaselComponent', () => {
 
     it('swapping a letter should call swap() from swapLetterService', () => {
         const swapSpy = spyOn(component['swapLetterService'], 'swap');
-        spyOn(component['chatBoxService'], 'displayMessageByType');
+        spyOn(component['sendMessageService'], 'displayMessageByType');
         spyOn(component['passTurnService'], 'writeMessage');
 
         component.letterEaselTab[0].isSelectedForSwap = true;

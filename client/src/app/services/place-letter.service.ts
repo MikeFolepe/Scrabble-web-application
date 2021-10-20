@@ -16,6 +16,8 @@ import { LetterService } from '@app/services/letter.service';
 import { PlayerService } from '@app/services/player.service';
 import { WordValidationService } from '@app/services/word-validation.service';
 import { Subscription } from 'rxjs';
+import { SendMessageService } from './send-message.service';
+import { PassTourService } from './pass-tour.service';
 
 @Injectable({
     providedIn: 'root',
@@ -38,6 +40,8 @@ export class PlaceLetterService implements OnDestroy {
         private gridService: GridService,
         private letterService: LetterService,
         private wordValidationService: WordValidationService,
+        private sendMessageService: SendMessageService,
+        private passTurnService: PassTourService,
     ) {
         this.scrabbleBoard = []; // Initializes the array with empty letters
         for (let i = 0; i < BOARD_ROWS; i++) {
@@ -59,6 +63,7 @@ export class PlaceLetterService implements OnDestroy {
         const wordNoAccents = word.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
         // If the command is possible according to the parameters
         if (!this.isPossible(position, orientation, wordNoAccents, indexPlayer)) {
+            this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', 'error');
             return false;
         }
         this.invalidLetters = []; // Reset the array containing the invalid letters
@@ -67,6 +72,7 @@ export class PlaceLetterService implements OnDestroy {
         // Placing all letters of the word
         if (!this.placeAllLetters(position, orientation, wordNoAccents, indexPlayer)) {
             this.handleInvalidPlacement(position, orientation, wordNoAccents, indexPlayer);
+            this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', 'error');
             return false;
         }
         this.isAIPlacementValid = true;
@@ -79,6 +85,8 @@ export class PlaceLetterService implements OnDestroy {
             return true;
         }
         this.handleInvalidPlacement(position, orientation, wordNoAccents, indexPlayer);
+        this.sendMessageService.displayMessageByType('ERREUR : Un ou des mots formés sont invalides', 'error');
+        this.passTurnService.writeMessage();
         return false;
     }
 

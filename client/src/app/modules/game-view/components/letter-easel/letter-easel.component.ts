@@ -6,7 +6,7 @@ import { PlayerService } from '@app/services/player.service';
 import { SwapLetterService } from '@app/services/swap-letter.service';
 import { TourService } from '@app/services/tour.service';
 import { PassTourService } from '@app/services/pass-tour.service';
-import { ChatboxService } from '@app/services/chatbox.service';
+import { SendMessageService } from '@app/services/send-message.service';
 
 @Component({
     selector: 'app-letter-easel',
@@ -24,18 +24,18 @@ export class LetterEaselComponent implements OnInit {
         private turnService: TourService,
         private letterService: LetterService,
         private swapLetterService: SwapLetterService,
-        private chatBoxService: ChatboxService,
         private passTurnService: PassTourService,
+        private sendMessageService: SendMessageService,
     ) {}
 
     // Disable all selections made when a click occurs outside the easel
-    // TODO Changer le font size ne deselect pas ?
     @HostListener('document:click', ['$event'])
+    @HostListener('document:contextmenu', ['$event'])
     clickOut(event: MouseEvent) {
         if (this.easelContainer.nativeElement.contains(event.target)) return;
-        for (let i = 0; i < EASEL_SIZE; i++) {
-            this.letterEaselTab[i].isSelectedForSwap = false;
-            this.letterEaselTab[i].isSelectedForManipulation = false;
+        for (const letterEasel of this.letterEaselTab) {
+            letterEasel.isSelectedForSwap = false;
+            letterEasel.isSelectedForManipulation = false;
         }
     }
 
@@ -93,7 +93,7 @@ export class LetterEaselComponent implements OnInit {
         }
         // Display the respective message into the chatBox and pass the turn
         const message = this.playerService.getPlayers()[INDEX_REAL_PLAYER].name + ' : !échanger ' + lettersToSwap;
-        this.chatBoxService.displayMessageByType(message, 'player');
+        this.sendMessageService.displayMessageByType(message, 'player');
         this.passTurnService.writeMessage();
     }
 

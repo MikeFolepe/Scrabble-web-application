@@ -8,6 +8,7 @@ import { SwapLetterService } from '@app/services/swap-letter.service';
 import { TourService } from '@app/services/tour.service';
 import { Subscription } from 'rxjs';
 import { DebugService } from './debug.service';
+import { SendMessageService } from './send-message.service';
 
 @Injectable({
     providedIn: 'root',
@@ -22,7 +23,6 @@ export class ChatboxService implements OnDestroy {
 
     debugMessage: { word: string; nbPt: number }[] = [{ word: 'papier', nbPt: 6 }];
 
-    private displayMessage: () => void;
     constructor(
         private tourService: TourService,
         private passTourService: PassTourService,
@@ -30,6 +30,7 @@ export class ChatboxService implements OnDestroy {
         private swapLetterService: SwapLetterService,
         private placeLetterService: PlaceLetterService,
         private debugService: DebugService,
+        private sendMessageService: SendMessageService,
     ) {
         this.initializeTourSubcribtion();
     }
@@ -41,21 +42,11 @@ export class ChatboxService implements OnDestroy {
         this.tourService.emitTour();
     }
 
-    displayBinded(fn: () => void) {
-        this.displayMessage = fn;
-    }
-
-    displayMessageByType(message: string, typeMessage: string) {
-        this.message = message;
-        this.typeMessage = typeMessage;
-        this.displayMessage();
-    }
-
     sendPlayerMessage(message: string) {
         this.typeMessage = 'player';
         this.message = message;
         if (!this.isValid()) {
-            this.typeMessage = 'error';
+            this.sendMessageService.displayMessageByType(this.message, 'error');
         }
         switch (this.command) {
             case 'debug': {
@@ -79,11 +70,11 @@ export class ChatboxService implements OnDestroy {
             }
         }
         this.command = ''; // reset value for next message
-        this.displayMessage();
     }
 
     isValid(): boolean {
         if (this.message[0] !== '!') {
+            this.sendMessageService.displayMessageByType(this.message, this.typeMessage);
             return true; // If it's a normal message, it's always valid
         }
         // If it's a command, we call the validation
@@ -91,12 +82,12 @@ export class ChatboxService implements OnDestroy {
     }
 
     isInputValid(): boolean {
-        const regexDebug = /^!debug/g;
-        const regexPasser = /^!passer/g;
-        const regexEchanger = /^!échanger/g;
-        const regexPlacer = /^!placer/g;
+        const debugInput = /^!debug/g;
+        const passInput = /^!passer/g;
+        const swapInput = /^!échanger/g;
+        const placeInput = /^!placer/g;
 
-        if (regexDebug.test(this.message) || regexPasser.test(this.message) || regexEchanger.test(this.message) || regexPlacer.test(this.message)) {
+        if (debugInput.test(this.message) || passInput.test(this.message) || swapInput.test(this.message) || placeInput.test(this.message)) {
             return true;
         }
 
@@ -105,20 +96,20 @@ export class ChatboxService implements OnDestroy {
     }
 
     isSyntaxValid(): boolean {
-        const regexDebug = /^!debug$/g;
-        const regexPasser = /^!passer$/g;
-        const regexEchanger = /^!échanger\s([a-z]|[*]){1,7}$/g;
-        const regexPlacer = /^!placer\s([a-o]([1-9]|1[0-5])[hv])\s([a-zA-Z\u00C0-\u00FF]|[*])+/g;
+        const debugSyntax = /^!debug$/g;
+        const passSyntax = /^!passer$/g;
+        const swapSyntax = /^!échanger\s([a-z]|[*]){1,7}$/g;
+        const placeSyntax = /^!placer\s([a-o]([1-9]|1[0-5])[hv])\s([a-zA-Z\u00C0-\u00FF]|[*])+/g;
 
         let isSyntaxValid = true;
 
-        if (regexDebug.test(this.message)) {
+        if (debugSyntax.test(this.message)) {
             this.command = 'debug';
-        } else if (regexPasser.test(this.message)) {
+        } else if (passSyntax.test(this.message)) {
             this.command = 'passer';
-        } else if (regexEchanger.test(this.message)) {
+        } else if (swapSyntax.test(this.message)) {
             this.command = 'echanger';
-        } else if (regexPlacer.test(this.message)) {
+        } else if (placeSyntax.test(this.message)) {
             this.command = 'placer';
         } else {
             isSyntaxValid = false;
@@ -130,22 +121,19 @@ export class ChatboxService implements OnDestroy {
     executeDebug() {
         this.debugService.switchDebugMode();
         if (this.debugService.isDebugActive) {
-            this.typeMessage = 'system';
-            this.message = 'affichages de débogage activés';
-            this.displayMessage();
+            this.sendMessageService.displayMessageByType('affichages de débogage activés', 'system');
             this.displayDebugMessage();
         } else {
-            this.typeMessage = 'system';
-            this.message = 'affichages de débogage désactivés';
+            this.sendMessageService.displayMessageByType('affichages de débogage désactivés', 'system');
         }
     }
     executeSkipTurn() {
         this.tour = this.tourService.getTour();
         if (this.tour) {
+            this.sendMessageService.displayMessageByType(this.message, this.typeMessage);
             this.passTourService.writeMessage('!passer');
         } else {
-            this.typeMessage = 'error';
-            this.message = "ERREUR : Ce n'est pas ton tour";
+            this.sendMessageService.displayMessageByType("ERREUR : Ce n'est pas ton tour", 'error');
         }
     }
     executeSwap() {
@@ -155,14 +143,11 @@ export class ChatboxService implements OnDestroy {
 
             if (this.swapLetterService.swapCommand(messageSplitted[1], INDEX_REAL_PLAYER)) {
                 this.message = this.playerService.getPlayers()[INDEX_REAL_PLAYER].name + ' : ' + this.message;
-            } else {
-                this.typeMessage = 'error';
-                this.message = 'ERREUR : La commande est impossible à réaliser';
+                this.sendMessageService.displayMessageByType(this.message, this.typeMessage);
+                this.passTourService.writeMessage();
             }
-            this.passTourService.writeMessage();
         } else {
-            this.typeMessage = 'error';
-            this.message = "ERREUR : Ce n'est pas ton tour";
+            this.sendMessageService.displayMessageByType("ERREUR : Ce n'est pas ton tour", 'error');
         }
     }
     executePlace() {
@@ -178,11 +163,10 @@ export class ChatboxService implements OnDestroy {
             };
             const orientation = positionSplitted[2];
 
-            if (this.placeLetterService.place(position, orientation, messageSplitted[2], INDEX_REAL_PLAYER) === false) {
-                this.typeMessage = 'error';
-                this.message = 'ERREUR : Le placement est invalide';
+            if (this.placeLetterService.place(position, orientation, messageSplitted[2], INDEX_REAL_PLAYER)) {
+                this.sendMessageService.displayMessageByType(this.message, this.typeMessage);
+                this.passTourService.writeMessage();
             }
-            this.passTourService.writeMessage();
         } else {
             this.typeMessage = 'error';
             this.message = "ERREUR : Ce n'est pas ton tour";
@@ -193,29 +177,28 @@ export class ChatboxService implements OnDestroy {
     displayDebugMessage(): void {
         switch (this.debugService.debugServiceMessage.length) {
             case 0: {
-                this.typeMessage = 'system';
-                this.message = 'Aucune possibilité de placement trouvés!';
+                this.sendMessageService.displayMessageByType('Aucune possibilité de placement trouvés!', 'system');
                 break;
             }
             case 1: {
                 for (let i = 0; i < ONE_POSSIBILITY; i++) {
-                    this.typeMessage = 'system';
                     this.message = this.debugService.debugServiceMessage[i].word + ': -- ' + this.debugService.debugServiceMessage[i].nbPt.toString();
+                    this.sendMessageService.displayMessageByType(this.message, 'system');
                 }
                 break;
             }
             case 2: {
                 for (let i = 0; i < TWO_POSSIBILITY; i++) {
-                    this.typeMessage = 'system';
                     this.message = this.debugService.debugServiceMessage[i].word + ': -- ' + this.debugService.debugServiceMessage[i].nbPt.toString();
+                    this.sendMessageService.displayMessageByType(this.message, 'system');
                 }
 
                 break;
             }
             default: {
                 for (let i = 0; i < MAX_NUMBER_OF_POSSIBILITY; i++) {
-                    this.typeMessage = 'system';
                     this.message = this.debugService.debugServiceMessage[i].word + ': -- ' + this.debugService.debugServiceMessage[i].nbPt.toString();
+                    this.sendMessageService.displayMessageByType(this.message, 'system');
                 }
                 break;
             }
