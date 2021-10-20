@@ -77,11 +77,14 @@ describe('PlaceLetterService', () => {
         spyOn(service['playerService'], 'refillEasel');
         spyOn(service['letterService'], 'writeMessage');
         spyOn(service['wordValidationService'], 'validateAllWordsOnBoard').and.returnValue({ validation: true, score: 0 });
+        spyOn(service['sendMessageService'], 'displayMessageByType');
+        spyOn(service['passTurnService'], 'writeMessage');
     });
 
     it('should create', () => {
         expect(service).toBeTruthy();
     });
+
     it('word placed outside the grid should be invalid', () => {
         const position: Vec2 = { x: 12, y: 12 };
         let orientation = 'h';
@@ -90,12 +93,14 @@ describe('PlaceLetterService', () => {
         orientation = 'v';
         expect(service.isWordFitting(position, orientation, word)).toEqual(false); // Vertically
     });
+
     it('word placed inside the grid should be valid', () => {
         const position: Vec2 = { x: 2, y: 7 };
         const orientation = 'h';
         const word = 'cadeau';
         expect(service.isWordFitting(position, orientation, word)).toEqual(true);
     });
+
     it('first word placed on central case should be valid', () => {
         const position: Vec2 = { x: 7, y: 7 }; // central case H8
         let orientation = 'h';
@@ -104,12 +109,14 @@ describe('PlaceLetterService', () => {
         orientation = 'v';
         expect(service.isFirstWordValid(position, orientation, word)).toEqual(true);
     });
+
     it('first word not placed on central case should be invalid', () => {
         const position: Vec2 = { x: 2, y: 9 };
         const orientation = 'v';
         const word = 'stage';
         expect(service.isFirstWordValid(position, orientation, word)).toEqual(false);
     });
+
     it('word placed on the following rounds should be valid if he touches other words', () => {
         // Place first word
         let position: Vec2 = { x: 7, y: 7 };
@@ -129,6 +136,7 @@ describe('PlaceLetterService', () => {
 
         expect(isWordTouching).toEqual(true);
     });
+
     it("word placed on the following rounds should be invalid if he's not touching others", () => {
         // Place first word
         let position: Vec2 = { x: 7, y: 7 };
@@ -142,12 +150,14 @@ describe('PlaceLetterService', () => {
         const isWordTouching = service.isWordTouchingOthers(position, orientation, word);
         expect(isWordTouching).toEqual(false);
     });
+
     it("placing letters that aren't present in the easel or the scrabbleboard should be invalid", () => {
         const position: Vec2 = { x: 7, y: 7 };
         const orientation = 'h';
         const word = 'fil';
         expect(service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER)).toEqual(false);
     });
+
     it('placing letters present in the easel or the scrabbleboard should be valid', () => {
         // Player 1 places the first word
         let position: Vec2 = { x: 7, y: 7 };
@@ -166,12 +176,14 @@ describe('PlaceLetterService', () => {
         isWordValid = service.isWordValid(position, orientation, word, INDEX_PLAYER_AI);
         expect(isWordValid).toEqual(true);
     });
+
     it('placing a word containing a white letter (*) which is present in the easel should be valid', () => {
         const position: Vec2 = { x: 7, y: 7 };
         const orientation = 'h';
         const word = 'bOa'; // white letter is used as 'O'
         expect(service.isWordValid(position, orientation, word, INDEX_PLAYER_AI)).toEqual(true);
     });
+
     it("placing letters that doesn't form a valid word should be removed from scrabbleBoard", () => {
         service['wordValidationService'].validateAllWordsOnBoard = jasmine.createSpy().and.returnValue({ validation: false, score: 0 });
         // Player 1 places an invalid word
@@ -180,6 +192,7 @@ describe('PlaceLetterService', () => {
         const word = 'abcd';
         expect(service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER)).toEqual(false);
     });
+
     it('only the invalid letters that we just placed should be removed from scrabbleBoard', () => {
         // Player 1 places the 1st word
         let position: Vec2 = { x: 7, y: 7 };
@@ -206,6 +219,7 @@ describe('PlaceLetterService', () => {
         expect(lettersRemoved).toEqual(false);
         jasmine.clock().uninstall();
     });
+
     it('placing a word on top of a different existing word should be invalid', () => {
         service['wordValidationService'].validateAllWordsOnBoard = jasmine.createSpy().and.returnValue({ validation: true, score: 0 });
         jasmine.clock().install();
@@ -230,6 +244,7 @@ describe('PlaceLetterService', () => {
         service.placeMethodAdapter(object);
         expect(spy).toHaveBeenCalled();
     });
+
     it('placing all the letters from the easel to form a valid word should give a bonus', () => {
         service['wordValidationService'].validateAllWordsOnBoard = jasmine.createSpy().and.returnValue({ validation: true, score: 0 });
         const position: Vec2 = { x: 7, y: 7 };
@@ -238,10 +253,17 @@ describe('PlaceLetterService', () => {
         service.placeCommand(position, orientation, word, INDEX_PLAYER_AI);
         expect(service.isEaselSize).toEqual(true);
     });
+
     it('placing a word containing the same letter multiple times that is only present once in the easel should be invalid', () => {
         const position: Vec2 = { x: 7, y: 7 };
         const orientation = 'h';
         const word = 'dad';
         expect(service.isWordValid(position, orientation, word, INDEX_REAL_PLAYER)).toEqual(false);
+    });
+
+    it('should unsubscribe on destroy', () => {
+        spyOn(service.viewSubscription, 'unsubscribe');
+        service.ngOnDestroy();
+        expect(service.viewSubscription.unsubscribe).toHaveBeenCalled();
     });
 });

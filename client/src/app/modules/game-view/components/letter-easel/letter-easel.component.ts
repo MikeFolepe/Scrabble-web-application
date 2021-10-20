@@ -5,8 +5,9 @@ import { LetterService } from '@app/services/letter.service';
 import { PlayerService } from '@app/services/player.service';
 import { SwapLetterService } from '@app/services/swap-letter.service';
 import { TourService } from '@app/services/tour.service';
-import { ChatboxService } from '@app/services/chatbox.service';
 import { BoardHandlerService } from '@app/services/board-handler.service';
+import { PassTourService } from '@app/services/pass-tour.service';
+import { SendMessageService } from '@app/services/send-message.service';
 
 @Component({
     selector: 'app-letter-easel',
@@ -24,23 +25,23 @@ export class LetterEaselComponent implements OnInit {
         private turnService: TourService,
         private letterService: LetterService,
         private swapLetterService: SwapLetterService,
-        private chatBoxService: ChatboxService,
         private boardHandlerService: BoardHandlerService,
+        private passTurnService: PassTourService,
+        private sendMessageService: SendMessageService,
     ) {}
 
     // TODO Changer le font size ne deselect pas ?
-    // TODO Right click cancel aussi
     @HostListener('document:click', ['$event'])
+    @HostListener('document:contextmenu', ['$event'])
     clickEvent(event: MouseEvent) {
-        // Disable all easel selections made when a click occurs outside the easel
-        if (!this.easel.nativeElement.contains(event.target)) {
-            for (const letterEasel of this.letterEaselTab) {
-                letterEasel.isSelectedForSwap = false;
-                letterEasel.isSelectedForManipulation = false;
-            }
-            // Disable the current placement on the board when a click occurs in the easel
-        } else if (this.easel.nativeElement.contains(event.target)) {
+        // Disable the current placement on the board when a click occurs in the easel
+        if (this.easel.nativeElement.contains(event.target)) {
             this.boardHandlerService.cancelPlacement();
+            return;
+        } // Disable all easel selections made when a click occurs outside the easel
+        for (const letterEasel of this.letterEaselTab) {
+            letterEasel.isSelectedForSwap = false;
+            letterEasel.isSelectedForManipulation = false;
         }
     }
 
@@ -94,13 +95,12 @@ export class LetterEaselComponent implements OnInit {
             if (this.letterEaselTab[i].isSelectedForSwap) {
                 lettersToSwap += this.letterEaselTab[i].value.toLowerCase();
                 this.swapLetterService.swap(i, INDEX_REAL_PLAYER);
-                // i--; // Update the current index after a swap because we removed a letter from easel
-                // this.letterEaselTab[i].isSelectedForSwap = false; BUUUUUUG
             }
         }
-        // Display the respective message into the chatBox
+        // Display the respective message into the chatBox and pass the turn
         const message = this.playerService.getPlayers()[INDEX_REAL_PLAYER].name + ' : !échanger ' + lettersToSwap;
-        this.chatBoxService.displayMessageByType(message, 'player');
+        this.sendMessageService.displayMessageByType(message, 'player');
+        this.passTurnService.writeMessage();
     }
 
     cancelSelection() {

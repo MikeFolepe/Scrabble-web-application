@@ -4,14 +4,13 @@ import { GameSettings } from '@app/classes/game-settings';
 import { PlayerAI } from '@app/models/player-ai.model';
 import { Player } from '@app/models/player.model';
 import { CountdownComponent } from '@app/modules/game-view/components/countdown/countdown.component';
+import { PlayerAIComponent } from '@app/modules/game-view/components/player-ai/player-ai.component';
+import { EndGameService } from '@app/services/end-game.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { LetterService } from '@app/services/letter.service';
-// eslint-disable-next-line import/no-deprecated
 import { PlayerService } from '@app/services/player.service';
 import { TourService } from '@app/services/tour.service';
 import { Subscription } from 'rxjs';
-// eslint-disable-next-line no-restricted-imports
-import { PlayerAIComponent } from '../player-ai/player-ai.component';
 
 @Component({
     selector: 'app-information-panel',
@@ -32,6 +31,7 @@ export class InformationPanelComponent implements OnDestroy, OnInit {
         public letterService: LetterService,
         private playerService: PlayerService,
         private tourService: TourService,
+        public endGameService: EndGameService,
     ) {}
     ngOnInit(): void {
         this.gameSettings = this.gameSettingsService.getSettings();
@@ -62,6 +62,7 @@ export class InformationPanelComponent implements OnDestroy, OnInit {
     }
 
     switchTour(counter: number): void {
+        if (this.endGameService.isEndGame) return;
         this.tour = this.tourService.getTour();
         if (counter === 0) {
             if (this.tour === false) {

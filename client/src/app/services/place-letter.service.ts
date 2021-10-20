@@ -16,6 +16,8 @@ import { LetterService } from '@app/services/letter.service';
 import { PlayerService } from '@app/services/player.service';
 import { WordValidationService } from '@app/services/word-validation.service';
 import { Subscription } from 'rxjs';
+import { SendMessageService } from './send-message.service';
+import { PassTourService } from './pass-tour.service';
 
 @Injectable({
     providedIn: 'root',
@@ -39,6 +41,8 @@ export class PlaceLetterService implements OnDestroy {
         private gridService: GridService,
         private letterService: LetterService,
         private wordValidationService: WordValidationService,
+        private sendMessageService: SendMessageService,
+        private passTurnService: PassTourService,
     ) {
         this.scrabbleBoard = []; // Initializes the array with empty letters
         for (let i = 0; i < BOARD_ROWS; i++) {
@@ -61,6 +65,7 @@ export class PlaceLetterService implements OnDestroy {
         const wordNoAccents = word.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
         // If the command is possible according to the parameters
         if (!this.isPossible(position, orientation, wordNoAccents, indexPlayer)) {
+            this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', 'error');
             return false;
         }
         this.validLetters = []; // Reset the array containing the valid letters
@@ -72,6 +77,7 @@ export class PlaceLetterService implements OnDestroy {
             if (!this.placeLetter(currentPosition, wordNoAccents[i], orientation, i, indexPlayer)) {
                 // If the placement of one letter is invalid, we erase all letters placed
                 this.handleInvalidPlacement(position, orientation, wordNoAccents, indexPlayer);
+                this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', 'error');
                 return false;
             }
             this.updatePosition(currentPosition, orientation);
@@ -130,6 +136,8 @@ export class PlaceLetterService implements OnDestroy {
             return true;
         }
         this.handleInvalidPlacement(position, orientation, word, indexPlayer);
+        this.sendMessageService.displayMessageByType('ERREUR : Un ou des mots formés sont invalides', 'error');
+        this.passTurnService.writeMessage();
         return false;
     }
 

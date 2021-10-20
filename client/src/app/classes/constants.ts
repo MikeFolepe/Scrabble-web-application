@@ -17,6 +17,10 @@ export const ALL_EASEL_BONUS = 50;
 export const MAX_NUMBER_OF_POSSIBILITY = 3;
 export const ONE_POSSIBILITY = 1;
 export const TWO_POSSIBILITY = 2;
+export const NUMBER_OF_SKIP = 6;
+
+export const CENTRAL_CASE_POSITION_X = 7;
+export const CENTRAL_CASE_POSITION_Y = 7;
 
 export const PLAYERS_NUMBER = 2;
 export const INDEX_INVALID = -1;

@@ -54,10 +54,10 @@ describe('ChatboxComponent', () => {
     });
 
     it('should use the message and the type from chatBoxService when we display a message', () => {
-        component['chatBoxService'].message = 'Service message';
-        component['chatBoxService'].typeMessage = 'system';
-        component.displayAnyMessageByType();
-        expect(component.listMessages.pop()).toEqual(component['chatBoxService'].message);
-        expect(component.listTypes.pop()).toEqual(component['chatBoxService'].typeMessage);
+        component['sendMessageService'].message = 'Service message';
+        component['sendMessageService'].typeMessage = 'system';
+        component.displayMessageByType();
+        expect(component.listMessages.pop()).toEqual(component['sendMessageService'].message);
+        expect(component.listTypes.pop()).toEqual(component['sendMessageService'].typeMessage);
     });
 });
