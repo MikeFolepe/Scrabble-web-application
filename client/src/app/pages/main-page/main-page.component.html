@@ -17,7 +17,7 @@
         </mat-tab>
     </mat-tab-group>
     <button class="button" id="playButton" mat-raised-button [disabled]="!selectedMode" color="warn"
-        (click)="setGameMode()" routerLink="/solo-game-ai">Jouer!</button>
+        (click)="setGameMode()">Jouer!</button>
     <p>
         {{ games[selectedGameIndex] }}<br />
         {{ selectedMode }}
