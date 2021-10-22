@@ -23,10 +23,15 @@ describe('LetterService', () => {
     });
 
     it('should add a letter to the reserve', () => {
-        const letterToAdd = service.reserve[0].value;
         const initialQuantity = service.reserve[0].quantity;
-        service.addLetterToReserve(letterToAdd);
+        service.addLetterToReserve(service.reserve[0].value);
         expect(service.reserve[0].quantity).toEqual(initialQuantity + 1);
+    });
+
+    it('should not change reserve state if parameter is not a letter', () => {
+        const reserveCopy: Letter[] = JSON.parse(JSON.stringify(service.reserve));
+        service.addLetterToReserve('!');
+        expect(service.reserve).toEqual(reserveCopy);
     });
 
     it('should return an empty letter if reserve is empty', () => {

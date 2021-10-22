@@ -356,4 +356,11 @@ describe('PlayerService', () => {
         easel[2] = letterC;
         expect(service['players'][0].letterTable).toEqual(easel);
     });
+
+    it('should call addLetterToReserve() of letterService when addEaselLetterToReserve() is called', () => {
+        const spy = spyOn(service['letterService'], 'addLetterToReserve');
+        spyOn(service, 'getLettersEasel').and.returnValue([letterA]);
+        service.addEaselLetterToReserve(0, 0);
+        expect(spy).toHaveBeenCalledOnceWith('A');
+    });
 });

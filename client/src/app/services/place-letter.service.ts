@@ -101,8 +101,6 @@ export class PlaceLetterService implements OnDestroy {
             } else if (orientation === 'h') {
                 y = i;
             }
-            this.invalidLetters[i] = false;
-
             // If the position is empty, we use a letter from the reserve
             if (this.scrabbleBoard[position.x + x][position.y + y] === '') {
                 this.scrabbleBoard[position.x + x][position.y + y] = word[i];

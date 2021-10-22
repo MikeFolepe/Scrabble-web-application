@@ -26,13 +26,12 @@ describe('PassTourService', () => {
 
     it('should call updated func when changing message', () => {
         let number = 1;
-        const message = 'test message';
         service.updateFunc = () => {
             number = number *= 2;
             return;
         };
         const updateFuncSpy = spyOn<any>(service, 'updateFunc');
-        service.writeMessage(message);
+        service.writeMessage();
         expect(updateFuncSpy).toHaveBeenCalled();
     });
 });

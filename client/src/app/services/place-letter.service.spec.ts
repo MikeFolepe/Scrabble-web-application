@@ -208,7 +208,7 @@ describe('PlaceLetterService', () => {
         position = { x: 7, y: 7 };
         orientation = 'h';
         word = 'bacchaV';
-        let lettersRemoved = service.place(position, orientation, word, INDEX_PLAYER_AI);
+        let lettersRemoved = service.place(position, orientation, word);
         jasmine.clock().tick(THREE_SECONDS_DELAY + 1);
         expect(lettersRemoved).toEqual(false);
         // Vertically

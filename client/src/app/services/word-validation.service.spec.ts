@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 import { TestBed } from '@angular/core/testing';
 import { BOARD_COLUMNS, BOARD_ROWS } from '@app/classes/constants';
 import { ScoreValidation } from '@app/classes/validation-score';
@@ -14,7 +16,6 @@ describe('WordValidationService', () => {
             scrabbleBoard[i] = [];
             for (let j = 0; j < BOARD_COLUMNS; j++) {
                 // To generate a grid with some letters anywhere on it
-                // eslint-disable-next-line @typescript-eslint/no-magic-numbers
                 if ((i + j) % 11 === 0) {
                     scrabbleBoard[i][j] = 'X';
                 } else {
@@ -34,11 +35,11 @@ describe('WordValidationService', () => {
         service.playedWords.set('mAsse', ['A1', 'A2', 'A3', 'A4', 'A5']);
         const isEaselSize = true;
         const passThroughAllRowsSpy = spyOn(service, 'passTroughAllRows').and.callThrough();
-        const passThroughAllCollumnsSpy = spyOn(service, 'passThroughAllColumns').and.callThrough();
+        const passThroughAllColumnsSpy = spyOn(service, 'passThroughAllColumns').and.callThrough();
         const calculateLettersScoreSpy = spyOn(service, 'calculateLettersScore').and.callThrough();
         service.validateAllWordsOnBoard(scrabbleBoard, isEaselSize);
         expect(passThroughAllRowsSpy).toHaveBeenCalledTimes(1);
-        expect(passThroughAllCollumnsSpy).toHaveBeenCalledTimes(1);
+        expect(passThroughAllColumnsSpy).toHaveBeenCalledTimes(1);
         expect(calculateLettersScoreSpy).toHaveBeenCalled();
     });
 
@@ -48,16 +49,48 @@ describe('WordValidationService', () => {
         service.playedWords.set('mAsse', ['A1', 'A2', 'A3', 'A4', 'A5']);
         const isEaselSize = false;
         const passThroughAllRowsSpy = spyOn(service, 'passTroughAllRows').and.callThrough();
-        const passThroughAllCollumnsSpy = spyOn(service, 'passThroughAllColumns').and.callThrough();
+        const passThroughAllColumnsSpy = spyOn(service, 'passThroughAllColumns').and.callThrough();
         const calculateLettersScoreSpy = spyOn(service, 'calculateLettersScore').and.callThrough();
         const applyBonusesWordSpy = spyOn(service, 'applyBonusesWord').and.callThrough();
         service.validateAllWordsOnBoard(scrabbleBoard, isEaselSize);
         expect(passThroughAllRowsSpy).toHaveBeenCalledTimes(1);
-        expect(passThroughAllCollumnsSpy).toHaveBeenCalledTimes(1);
+        expect(passThroughAllColumnsSpy).toHaveBeenCalledTimes(1);
         expect(calculateLettersScoreSpy).toHaveBeenCalled();
         expect(applyBonusesWordSpy).toHaveBeenCalled();
         // m has 2 points and a has 1 point
     });
+
+    it('should call addToPlayedWords if word is not already played', () => {
+        const posSpy = spyOn(service, 'getWordPositionsVertical');
+        const playedSpy = spyOn(service, 'checkIfNotPlayed').and.returnValue(true);
+        const addSpy = spyOn(service, 'addToPlayedWords');
+        const findSpy = spyOn(service, 'findWords').and.returnValue(['test']);
+
+        service.passThroughAllColumns(scrabbleBoard);
+
+        expect(findSpy).toHaveBeenCalled();
+        expect(posSpy).toHaveBeenCalled();
+        expect(playedSpy).toHaveBeenCalled();
+        expect(addSpy).toHaveBeenCalled();
+    });
+
+    it('should double the word score if the word is place on a double word tile', () => {
+        service.bonusesPositions.set('a', 'doubleword');
+        const initialScore = 35;
+        expect(service.applyBonusesWord(initialScore, 'a')).toEqual(initialScore * 2);
+    });
+
+    it('should double the word score if the word is place on a double word tile', () => {
+        service.bonusesPositions.set('p', 'tripleletter');
+        const initialScore = 35;
+        expect(service.calculateLettersScore(initialScore, 'a', 'p')).toEqual(initialScore + 1 * 3);
+    });
+
+    // it('should check if word is not already played including current turn', () => {
+    //     service.playedWords.clear();
+    //     service.newPlayedWords.set('p', ['A1']);
+    //     expect(service.checkIfNotPlayed('test', ['p'])).toBeTrue();
+    // });
 
     it('validate all words should be false once one word is not valid in dictionnary', () => {
         service.newWords = ['', 'is', ''];
@@ -71,7 +104,6 @@ describe('WordValidationService', () => {
     });
 
     it('check if not played should return true if there is no matching played word', () => {
-        service.playedWords.set('', []);
         const result = service.checkIfNotPlayed('ma', ['A1', 'A2']);
         expect(result).toEqual(true);
     });
@@ -111,10 +143,8 @@ describe('WordValidationService', () => {
 
     it('should correctly return the letters positions of the vertically given word', () => {
         service.newWords = ['', '', '', 'm', 'a', ''];
-        const word = 'ma';
-        const index = 7;
         const expectedPositions = ['D8', 'E8'];
-        const returnedPositions = service.getWordPositionsVertical(word, index);
+        const returnedPositions = service.getWordPositionsVertical('ma', 7);
         expect(returnedPositions).toEqual(expectedPositions);
     });
 });
