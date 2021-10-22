@@ -3,6 +3,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { AI_NAME_DATABASE } from '@app/classes/constants';
 import { GameSettings, StartingPlayer } from '@app/classes/game-settings';
 import { GameSettingsService } from '@app/services/game-settings.service';
+import { RandomBonusesService } from '@app/services/random-bonuses.service';
 
 @Component({
     selector: 'app-form',
@@ -18,7 +19,7 @@ export class FormComponent {
         randomBonus: new FormControl('Désactiver')
     });
 
-    constructor(private gameSettingsService: GameSettingsService) {}
+    constructor(private gameSettingsService: GameSettingsService, private randomBonusesService: RandomBonusesService) {}
 
     // Generates a random name for the AI
     chooseRandomAIName(): string {
@@ -58,5 +59,6 @@ export class FormComponent {
             'DICTIONARY.json',
         );
         this.gameSettingsService.initializeSettings(settings);
+        if (this.gameSettingsService.gameSettings.randomBonus === 'Activer') this.randomBonusesService.shuffleBonusesPositions();
     }
 }

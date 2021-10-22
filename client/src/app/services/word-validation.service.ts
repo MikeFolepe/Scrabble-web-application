@@ -14,17 +14,13 @@ export class WordValidationService {
     newPositions: string[];
     bonusesPositions: Map<string, string>;
 
-    constructor(private gridService: RandomBonusesService) {
+    constructor(private randomBonusesService: RandomBonusesService) {
         this.playedWords = new Map<string, string[]>();
         this.newPlayedWords = new Map<string, string[]>();
         this.newWords = new Array<string>();
         this.newPositions = new Array<string>();
-        this.bonusesPositions = new Map<string, string>(this.gridService.bonusesPositions);
+        this.bonusesPositions = new Map<string, string>(this.randomBonusesService.bonusesPositions);
     }
-
-    // ngAfterViewInit(){
-    //     this.bonusesPositions = new Map<string, string>(this.randomBonusesService.bonusesPositions);
-    // }
 
     isValidInDictionary(word: string): boolean {
         if (word.length >= 2) {

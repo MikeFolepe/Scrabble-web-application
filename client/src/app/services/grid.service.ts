@@ -10,11 +10,12 @@ import { RandomBonusesService } from './random-bonuses.service';
 export class GridService {
     gridContext: CanvasRenderingContext2D;
     gridContextLayer: CanvasRenderingContext2D;
-    private canvasSize: Vec2 = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
-    private caseWidth = DEFAULT_WIDTH / BOARD_SIZE;
+    private canvasSize: Vec2;
+    private caseWidth: number;
     bonusesPositions: Map<string, string>;
     constructor(private randomBonusesService: RandomBonusesService){
-        randomBonusesService.shuffleBonusesPositions();
+        this.canvasSize = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
+        this.caseWidth = DEFAULT_WIDTH / BOARD_SIZE;
         this.bonusesPositions = new Map<string, string>(this.randomBonusesService.bonusesPositions);
     }
     
