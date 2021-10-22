@@ -1,6 +1,7 @@
 /* eslint-disable dot-notation */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
 import { ChatboxComponent } from './chatbox.component';
 
 describe('ChatboxComponent', () => {
@@ -10,6 +11,7 @@ describe('ChatboxComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [ChatboxComponent],
+            imports: [FormsModule],
         }).compileComponents();
     });
 
