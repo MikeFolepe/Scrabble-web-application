@@ -1,6 +1,7 @@
 // import { ScoreValidation } from './../../../client/src/app/classes/validation-score';
 // import { WordValidationService } from '@app/services/word-validation.service';
-import { Router } from 'express';
+// import { WordValidationService } from '@app/services/word-validation.service';
+import { Request, Response, Router } from 'express';
 // Request, Response,
 import { Service } from 'typedi';
 
@@ -52,13 +53,12 @@ export class WordValidationController {
          *           $ref: '#/definitions/Message'
          *
          */
-        // this.router.get('validation/:scrabbleBoard/:easelSize/:isRow',  (req: Request, res: Response) => {
-        //     // Send the request to the service and send the response
-        //     // const validation: ScoreValidation = this.wordValidationService.validateAllWordsOnBoard(req.params.scrabbleBoard,req.params.easelSize,req.params.isRow);
-        //     // res.send(validation);
-        // });
-
+        this.router.get('/:word', (req: Request, res: Response) => {
+            //  Send the request to the service and send the response
+            console.log(req.params.word);
+            res.send();
+        });
     }
 
-    //postMan for testing routes
+    // postMan for testing routes
 }

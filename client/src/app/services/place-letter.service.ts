@@ -7,7 +7,7 @@ import {
     EASEL_SIZE,
     INDEX_INVALID,
     INDEX_PLAYER_AI,
-    THREE_SECONDS_DELAY,
+    THREE_SECONDS_DELAY
 } from '@app/classes/constants';
 import { ScoreValidation } from '@app/classes/validation-score';
 import { Vec2 } from '@app/classes/vec2';
@@ -47,11 +47,12 @@ export class PlaceLetterService {
     place(position: Vec2, orientation: string, word: string, indexPlayer = INDEX_PLAYER_AI): boolean {
         // Remove accents from the word to place
         let isRow = false;
-        if (orientation === 'v') {
-            isRow = false;
-        } else if (orientation === 'h') {
-            isRow = true;
-        }
+        // if (orientation === 'v') {
+        //     isRow = false;
+        // } else if (orientation === 'h') {
+        //     isRow = true;
+        // }
+        isRow = orientation === 'v' ? false : true;
         const wordNoAccents = word.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
         // If the command is possible according to the parameters
         if (!this.isPossible(position, orientation, wordNoAccents, indexPlayer)) {
