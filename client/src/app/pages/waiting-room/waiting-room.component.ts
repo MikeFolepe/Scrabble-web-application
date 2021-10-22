@@ -14,12 +14,31 @@ import { GameSettingsService } from '@app/services/game-settings.service';
     styleUrls: ['./waiting-room.component.scss'],
 })
 export class WaitingRoomComponent implements OnInit {
-    constructor(private router: Router, public gameSettingsService: GameSettingsService, public clientSocket: ClientSocketService) {
-        this.clientSocket.socketHandler();
-    }
+    status: string;
+    isWaiting: boolean;
+    constructor(private router: Router, public gameSettingsService: GameSettingsService, private clientSocket: ClientSocketService) {}
 
     ngOnInit() {
-        return;
+        this.clientSocket.socket.connect();
+
+        setTimeout(() => {
+            this.status = 'Connexion au serveur...';
+            this.isWaiting = true;
+        }, 500);
+
+        setTimeout(() => {
+            if (this.clientSocket.socket.connected) {
+                this.status = 'Connexion réussie';
+                this.isWaiting = true;
+                setTimeout(() => {
+                    this.status = 'En attente de joueur...';
+                }, 3500);
+                this.clientSocket.socket.emit('createRoom', this.gameSettingsService.gameSettings);
+            } else {
+                this.status = 'Erreur de connexion...veuillez réessayer';
+                this.isWaiting = false;
+            }
+        }, 4000);
     }
 
     route() {

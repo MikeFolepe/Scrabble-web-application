@@ -5,7 +5,7 @@ import { GameSettings } from '../classes/multiplayer-game-settings';
 
 @Service()
 export class RoomManager {
-    private rooms: Room[];
+    rooms: Room[];
 
     constructor() {
         this.rooms = [];

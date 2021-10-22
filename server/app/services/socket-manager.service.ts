@@ -15,30 +15,22 @@ export class SocketManager {
 
     handleSockets(): void {
         this.sio.on('connection', (socket) => {
-            console.log(`Connexion par l'utilisateur avec id : ${socket.id}` + 'salut Majid');
+            console.log(`Connexion par l'utilisateur avec id : ${socket.id}`);
 
             socket.on('createRoom', (gameSettings: GameSettings) => {
                 this.roomManager.createRoom(socket.id, gameSettings.playersName[0], gameSettings);
                 socket.join(socket.id);
+                // Broadcast all clients on the new rooms configurations
                 console.log(socket.rooms);
-                //console.log('ca emit');
+                console.log(this.roomManager.rooms);
+                this.sio.emit('roomConfiguration', this.roomManager.rooms);
+                // console.log('ca emit');
             });
-            // socket.on('validate', (word: string) => {
-            //     const isValid = word.length > 5;
-            //     socket.emit('wordValidated', isValid);
-            // });
 
-            // socket.on('broadcastAll', (message: string) => {
-            //     this.sio.sockets.emit('massMessage', `${socket.id} : ${message}`);
-            // });
-
-            // socket.on('joinRoom', () => {
-            //     socket.join(this.room);
-            // });
-
-            // socket.on('roomMessage', (message: string) => {
-            //     this.sio.to(this.room).emit('roomMessage', `${socket.id} : ${message}`);
-            // });
+            socket.on('getRoomsConfigurations', () => {
+                this.sio.emit('roomConfiguration', this.roomManager.rooms);
+                // console.log('ca emit');
+            });
 
             socket.on('disconnect', (reason) => {
                 console.log(`Deconnexion par l'utilisateur avec id : ${socket.id}`);
