@@ -64,6 +64,10 @@ export class ChatboxComponent implements OnInit, OnDestroy {
     displayAnyMessageByType() {
         this.listTypes.push(this.chatBoxService.typeMessage);
         this.listMessages.push(this.chatBoxService.message);
+        setTimeout(() => {
+            // Timeout is used to update the scroll after the last element added
+            this.scrollToBottom();
+        }, 1);
     }
 
     sendSystemMessage(systemMessage: string) {

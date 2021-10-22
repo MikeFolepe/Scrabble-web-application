@@ -180,6 +180,15 @@ export class BoardHandlerService {
     updateCaseDisplay() {
         this.gridService.eraseLayer(this.gridService.gridContextPlacementLayer);
         this.gridService.drawBorder(this.gridService.gridContextPlacementLayer, this.currentCase.x, this.currentCase.y);
+        // Colored border of the current placement
+        if (this.isFirstCaseLocked) {
+            for (let i = 0; i < this.word.length; i++) {
+                if (this.orientation === 'h')
+                    this.gridService.drawBorder(this.gridService.gridContextPlacementLayer, this.currentCase.x - i, this.currentCase.y);
+                else if (this.orientation === 'v')
+                    this.gridService.drawBorder(this.gridService.gridContextPlacementLayer, this.currentCase.x, this.currentCase.y - i);
+            }
+        }
         // Only display the arrow if there is an empty tile in the direction of the orientation
         if (
             (this.orientation === 'h' && this.playerService.scrabbleBoard[this.currentCase.y][this.currentCase.x + 1] === '') ||
