@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { GameSettingsService } from '@app/services/game-settings.service';
 import { AI_NAME_DATABASE } from '@app/classes/constants';
 import { GameSettings, StartingPlayer } from '@app/classes/game-settings';
+import { GameSettingsService } from '@app/services/game-settings.service';
 
 @Component({
     selector: 'app-form',
@@ -15,6 +15,7 @@ export class FormComponent {
         minuteInput: new FormControl('01'),
         secondInput: new FormControl('00'),
         levelInput: new FormControl('Facile'),
+        randomBonus: new FormControl('Désactiver')
     });
 
     constructor(private gameSettingsService: GameSettingsService) {}
@@ -53,8 +54,8 @@ export class FormComponent {
             this.form.controls.minuteInput.value,
             this.form.controls.secondInput.value,
             this.form.controls.levelInput.value,
-            false,
-            'dictionary.json',
+            this.form.controls.randomBonus.value,
+            'DICTIONARY.json',
         );
         this.gameSettingsService.initializeSettings(settings);
     }

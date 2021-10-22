@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable prefer-const */
 import { Component } from '@angular/core';
-import { ALL_EASEL_BONUS, BOARD_COLUMNS, BOARD_ROWS, BONUSES_POSITIONS, dictionary, RESERVE } from '@app/classes/constants';
+import { ALL_EASEL_BONUS, BOARD_COLUMNS, BOARD_ROWS, DICTIONARY, RESERVE } from '@app/classes/constants';
 import { ScoreValidation } from '@app/classes/validation-score';
+import { RandomBonusesService } from '@app/services/random-bonuses.service';
 
 @Component({
     selector: 'app-word-validation',
@@ -15,18 +16,18 @@ export class WordValidationComponent {
     newPlayedWords: Map<string, string[]>;
     newPositions: string[];
     bonusesPositions: Map<string, string>;
-    constructor() {
+    constructor(randomBonusesService: RandomBonusesService) {
         this.playedWords = new Map<string, string[]>();
         this.newPlayedWords = new Map<string, string[]>();
         this.newWords = new Array<string>();
         this.newPositions = new Array<string>();
-        this.bonusesPositions = new Map<string, string>(BONUSES_POSITIONS);
+        this.bonusesPositions = new Map<string, string>(randomBonusesService.bonusesPositions);
     }
 
     isValidInDictionary(word: string): boolean {
         if (word.length >= 2) {
             // eslint-disable-next-line prefer-const
-            for (let item of dictionary) {
+            for (let item of DICTIONARY) {
                 if (word === item) {
                     return true;
                 }

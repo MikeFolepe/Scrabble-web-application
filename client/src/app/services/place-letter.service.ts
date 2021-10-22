@@ -55,6 +55,7 @@ export class PlaceLetterService implements OnDestroy {
     }
 
     place(position: Vec2, orientation: string, word: string, indexPlayer = INDEX_PLAYER_AI): boolean {
+        let isRow: boolean = orientation === 'v';
         // Remove accents from the word to place
         const wordNoAccents = word.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
         // If the command is possible according to the parameters
@@ -73,7 +74,7 @@ export class PlaceLetterService implements OnDestroy {
         if (this.numLettersUsedFromEasel === EASEL_SIZE) this.isEaselSize = true;
 
         // Validation of the placement
-        const finalResult: ScoreValidation = this.wordValidationService.validateAllWordsOnBoard(this.scrabbleBoard, this.isEaselSize);
+        const finalResult: ScoreValidation = this.wordValidationService.validateAllWordsOnBoard(this.scrabbleBoard, this.isEaselSize, isRow);
         if (finalResult.validation) {
             this.handleValidPlacement(finalResult, indexPlayer);
             return true;

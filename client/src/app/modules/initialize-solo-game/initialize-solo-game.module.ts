@@ -13,8 +13,9 @@ import { FormComponent } from './form/form.component';
 import { LevelFieldComponent } from './level-field/level-field.component';
 import { PlayerNameFieldComponent } from './player-name-field/player-name-field.component';
 import { TimerFieldComponent } from './timer-field/timer-field.component';
+import { RandomBonusComponent } from './random-bonus/random-bonus.component';
 @NgModule({
-    declarations: [FormComponent, PlayerNameFieldComponent, TimerFieldComponent, LevelFieldComponent],
+    declarations: [FormComponent, PlayerNameFieldComponent, TimerFieldComponent, LevelFieldComponent, RandomBonusComponent],
     imports: [
         CommonModule,
         MatInputModule,

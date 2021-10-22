@@ -10,7 +10,7 @@ export class GameSettings {
         public timeMinute: string,
         public timeSecond: string,
         public level: string,
-        public randomBonus: boolean,
-        public dictionary: string,
+        public randomBonus: string,
+        public DICTIONARY: string,
     ) {}
 }

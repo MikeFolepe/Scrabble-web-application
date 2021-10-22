@@ -1,4 +1,4 @@
-import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSITION_X, CENTRAL_CASE_POSITION_Y, dictionary, RESERVE } from '@app/classes/constants';
+import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSITION_X, CENTRAL_CASE_POSITION_Y, DICTIONARY, RESERVE } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { Range } from '@app/classes/range';
 import { board } from '@app/classes/scrabble-board';
@@ -64,7 +64,7 @@ export class PlaceLetters extends PlayStrategy {
     private generateAllPossibilities(pattern: string): string[] {
         const allPossibleWord: string[] = [];
         const re = new RegExp(pattern, 'igm');
-        for (const word of dictionary) {
+        for (const word of DICTIONARY) {
             // test all words and retain those who satisfies the pattern
             if (re.test(word)) {
                 allPossibleWord.push(word);

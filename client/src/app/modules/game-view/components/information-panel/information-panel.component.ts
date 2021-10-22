@@ -87,6 +87,7 @@ export class InformationPanelComponent implements OnDestroy, OnInit {
             this.players[INDEX_PLAYER_AI].score = this.playerService.getScore(INDEX_PLAYER_AI);
         }
     }
+    
     ngOnDestroy(): void {
         this.playerService.clearPlayers();
         this.viewSubscription.unsubscribe();

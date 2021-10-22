@@ -18,6 +18,10 @@
             <legend>Difficulté de l'IA</legend>
             <app-level-field [formGroup]="form" [parentForm]="form"></app-level-field>
         </fieldset>
+        <fieldset class="form-section">
+            <legend>Bonus Aléatoire</legend>
+            <app-random-bonus [formGroup]="form" [parentForm]="form"></app-random-bonus>
+        </fieldset>
     </fieldset>
 </form>
 <button mat-raised-button (click)="initGame()" id="submit-button" color="warn" [disabled]="!form.valid" routerLink="/game">Continue</button>
