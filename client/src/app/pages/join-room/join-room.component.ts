@@ -1,8 +1,9 @@
+/* eslint-disable no-restricted-imports */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 import { Component, OnInit } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
-import { Room } from '@app/classes/room';
 import { ClientSocketService } from '@app/services/client-socket.service';
+import { Room } from '../../classes/room';
 
 @Component({
     selector: 'app-join-room',
@@ -11,32 +12,26 @@ import { ClientSocketService } from '@app/services/client-socket.service';
 })
 export class JoinRoomComponent implements OnInit {
     rooms: Room[] = [];
-    length: number = 4;
-    pageSize = 2;
+    pageSize: number;
+    startIdx: number;
 
-    // MatPaginator Output
-    pageEvent: PageEvent;
-    // eslint-disable-next-line @typescript-eslint/no-useless-constructor
-    constructor(public clientSocketService: ClientSocketService) {
-        // do nothing
-        // this.clientSocketService.socketHandler();
-        // console.log(this.clientSocketService.roomsConfiguration);
-        // this.length = this.clientSocketService.roomsConfiguration.length;
+    constructor(private clientSocketService: ClientSocketService) {
+        this.clientSocketService.socket.connect();
+        this.clientSocketService.socket.emit('getRoomsConfigurations');
+        this.clientSocketService.socket.on('roomConfiguration', (room: Room[]) => {
+            this.rooms = room;
+            console.log(this.rooms);
+        });
+        this.startIdx = 0;
+        this.pageSize = 2;
+    }
+
+    onPageChange(event: PageEvent) {
+        // offset in rooms[] since we're displaying 2rooms per page
+        this.startIdx = event.pageSize * event.pageIndex;
     }
 
     ngOnInit(): void {
-        this.clientSocketService.socket.connect();
-        setTimeout(() => {
-            console.log(this.clientSocketService.socket.id);
-            console.log(this.clientSocketService.socket.connected);
-            this.clientSocketService.socket.on('roomConfiguration', (room: Room[]) => {
-                this.rooms = room;
-                this.length = room.length;
-                console.log(this.rooms);
-            });
-            this.clientSocketService.socket.emit('getRoomsConfigurations');
-        }, 1000);
-
         return;
     }
 }

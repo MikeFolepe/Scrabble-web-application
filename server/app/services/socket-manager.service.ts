@@ -15,21 +15,18 @@ export class SocketManager {
 
     handleSockets(): void {
         this.sio.on('connection', (socket) => {
-            console.log(`Connexion par l'utilisateur avec id : ${socket.id}`);
-
             socket.on('createRoom', (gameSettings: GameSettings) => {
                 this.roomManager.createRoom(socket.id, gameSettings.playersName[0], gameSettings);
                 socket.join(socket.id);
-                // Broadcast all clients on the new rooms configurations
-                console.log(socket.rooms);
-                console.log(this.roomManager.rooms);
+                // console.log(socket.rooms);
+                // console.log(this.roomManager.rooms);
+                // room creation alerts all clients on the new rooms configurations
                 this.sio.emit('roomConfiguration', this.roomManager.rooms);
-                // console.log('ca emit');
             });
 
             socket.on('getRoomsConfigurations', () => {
-                this.sio.emit('roomConfiguration', this.roomManager.rooms);
-                // console.log('ca emit');
+                // getRoomsConfigurations only alerts the asker about the rooms configurations
+                socket.emit('roomConfiguration', this.roomManager.rooms);
             });
 
             socket.on('disconnect', (reason) => {

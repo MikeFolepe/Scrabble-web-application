@@ -1,9 +1,9 @@
 // eslint-disable-next-line no-restricted-imports
-import { GameSettings } from './game-settings';
+import { GameSettings } from './multiplayer-game-settings';
 
 export enum State {
-    Waiting,
-    Playing,
+    Waiting = 'En attente',
+    Playing = 'Jeu en cours',
 }
 
 export class Room {

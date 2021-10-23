@@ -1,37 +1,25 @@
 <app-background></app-background>
-<mat-paginator id="paginator" [length]="length" [pageSize]="pageSize" (page)="pageEvent = $event"
+
+
+<mat-paginator id="paginator" [length]="rooms.length" [pageSize]="pageSize" (page)="onPageChange($event)"
     aria-label="Select page">
 </mat-paginator>
-<div *ngIf="pageEvent">
-    <mat-card *ngIf="pageSize*pageEvent.pageIndex < rooms.length" class="card">
-        <mat-card-title>{{rooms[pageSize*pageEvent.pageIndex].ownerName}}
-        </mat-card-title>
-        <mat-card-subtitle>
-            Minute: {{rooms[pageSize*pageEvent.pageIndex].gameSettings.timeMinute}}
-            <br>
-            Second: {{rooms[pageSize*pageEvent.pageIndex].gameSettings.timeSecond}}
-            <br>
-            Bonus aléatoire: {{rooms[pageSize*pageEvent.pageIndex].gameSettings.randomBonus}}
-        </mat-card-subtitle>
-        <mat-card-actions>
-            <span>Statut: {{rooms[pageSize*pageEvent.pageIndex].state}}</span>
-            <button mat-button>Join</button>
-        </mat-card-actions>
-    </mat-card>
 
-    <mat-card *ngIf="pageSize*pageEvent.pageIndex + 1 < rooms.length" class="card">
-        <mat-card-title>{{rooms[pageSize*pageEvent.pageIndex + 1].ownerName}}
+<div *ngFor="let room of (rooms ? rooms.slice(startIdx, startIdx + pageSize): []);">
+    <mat-card class="card">
+        <mat-card-title>{{room.ownerName}}
         </mat-card-title>
         <mat-card-subtitle>
-            Minute: {{rooms[pageSize*pageEvent.pageIndex + 1].gameSettings.timeMinute}}
+            Minute : {{room.gameSettings.timeMinute}}
             <br>
-            Second: {{rooms[pageSize*pageEvent.pageIndex + 1].gameSettings.timeSecond}}
+            Second : {{room.gameSettings.timeSecond}}
             <br>
-            Bonus aléatoire: {{rooms[pageSize*pageEvent.pageIndex + 1].gameSettings.randomBonus}}
+            Bonus aléatoire : {{room.gameSettings.randomBonus}}
         </mat-card-subtitle>
         <mat-card-actions>
-            <span>Statut: {{rooms[pageSize*pageEvent.pageIndex + 1].state}}</span>
-            <button mat-button>Join</button>
+            <span>Statut : </span>
+            <span>{{room.state}}</span>
+            <button mat-button color="warn">Join</button>
         </mat-card-actions>
     </mat-card>
 </div>
