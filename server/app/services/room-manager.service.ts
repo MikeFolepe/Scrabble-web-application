@@ -1,4 +1,4 @@
-import { Room } from '@app/classes/room';
+import { Room, State } from '@app/classes/room';
 import { Service } from 'typedi';
 // eslint-disable-next-line no-restricted-imports
 import { GameSettings } from '../classes/multiplayer-game-settings';
@@ -16,12 +16,23 @@ export class RoomManager {
     }
 
     addCustomer(customerName: string, roomId: string): boolean {
-        const room = this.find(roomId);
+        const room = this.find(roomId) as Room;
         if (room === undefined || this.isSameName(room, customerName)) {
-            return true;
+            return false;
         }
+        room.customerName = customerName;
+        room.gameSettings.playersName[1] = customerName;
+        return true;
+    }
 
-        return false;
+    setState(roomId: string, state: State) {
+        const room = this.find(roomId) as Room;
+        room.state = state;
+    }
+
+    getGameSettings(roomId: string) {
+        const room = this.find(roomId) as Room;
+        return room.gameSettings;
     }
 
     private find(roomId: string): Room | undefined {

@@ -16,7 +16,9 @@ import { GameSettingsService } from '@app/services/game-settings.service';
 export class WaitingRoomComponent implements OnInit {
     status: string;
     isWaiting: boolean;
-    constructor(private router: Router, public gameSettingsService: GameSettingsService, private clientSocket: ClientSocketService) {}
+    constructor(private router: Router, public gameSettingsService: GameSettingsService, private clientSocket: ClientSocketService) {
+        this.clientSocket.route();
+    }
 
     ngOnInit() {
         this.clientSocket.socket.connect();
@@ -27,6 +29,14 @@ export class WaitingRoomComponent implements OnInit {
         }, 500);
 
         setTimeout(() => {
+            if (this.gameSettingsService.gameSettings.playersName[0] === '') {
+                setTimeout(() => {
+                    this.status = 'Une erreur est survenu';
+                }, 1000);
+                this.router.navigate(['home']);
+                return;
+            }
+
             if (this.clientSocket.socket.connected) {
                 this.status = 'Connexion réussie';
                 this.isWaiting = true;

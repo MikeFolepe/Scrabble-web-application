@@ -1,4 +1,5 @@
 import { GameSettings } from '@app/classes/multiplayer-game-settings';
+import { State } from '@app/classes/room';
 import * as http from 'http';
 import * as io from 'socket.io';
 import { Service } from 'typedi';
@@ -18,8 +19,6 @@ export class SocketManager {
             socket.on('createRoom', (gameSettings: GameSettings) => {
                 this.roomManager.createRoom(socket.id, gameSettings.playersName[0], gameSettings);
                 socket.join(socket.id);
-                // console.log(socket.rooms);
-                // console.log(this.roomManager.rooms);
                 // room creation alerts all clients on the new rooms configurations
                 this.sio.emit('roomConfiguration', this.roomManager.rooms);
             });
@@ -27,6 +26,17 @@ export class SocketManager {
             socket.on('getRoomsConfigurations', () => {
                 // getRoomsConfigurations only alerts the asker about the rooms configurations
                 socket.emit('roomConfiguration', this.roomManager.rooms);
+            });
+
+            socket.on('newRoomCustomer', (playerName: string, roomId: string) => {
+                this.roomManager.addCustomer(playerName, roomId);
+                this.roomManager.setState(roomId, State.Playing);
+                socket.join(roomId);
+                // all client must be alerted tha new full some room is filled
+                this.sio.emit('roomConfiguration', this.roomManager.rooms);
+                // redirect the clients in the new filled room to game view
+                this.sio.in(roomId).emit('goToGameView', this.roomManager.getGameSettings(roomId));
+                console.log(this.roomManager.getGameSettings(roomId));
             });
 
             socket.on('disconnect', (reason) => {

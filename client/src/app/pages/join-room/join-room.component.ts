@@ -1,7 +1,9 @@
 /* eslint-disable no-restricted-imports */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
+import { DialogComponent } from '@app/modules/initialize-solo-game/dialog/dialog.component';
 import { ClientSocketService } from '@app/services/client-socket.service';
 import { Room, State } from '../../classes/room';
 
@@ -14,16 +16,20 @@ export class JoinRoomComponent implements OnInit {
     rooms: Room[] = [];
     pageSize: number;
     startIdx: number;
+    isNameValid: boolean;
 
-    constructor(private clientSocketService: ClientSocketService) {
+    constructor(private clientSocketService: ClientSocketService, public dialog: MatDialog) {
+        this.isNameValid = true;
         this.clientSocketService.socket.connect();
         this.clientSocketService.socket.emit('getRoomsConfigurations');
         this.clientSocketService.socket.on('roomConfiguration', (room: Room[]) => {
             this.rooms = room;
-            console.log(this.rooms);
+            // console.log(this.rooms);
         });
         this.startIdx = 0;
         this.pageSize = 2;
+        console.log(this.rooms);
+        this.clientSocketService.route();
     }
 
     onPageChange(event: PageEvent) {
@@ -36,7 +42,26 @@ export class JoinRoomComponent implements OnInit {
             return 'En attente';
         }
 
-        return 'Occupé';
+        return 'Indisponible';
+    }
+
+    join(room: Room) {
+        console.log(this.dialog);
+        const ref = this.dialog.open(DialogComponent, { disableClose: true });
+
+        ref.afterClosed().subscribe((playerName: string) => {
+            // if user closes the dialog box without input nothing
+            if (playerName === null) return;
+            // if name matches
+            if (room.ownerName === playerName) {
+                this.isNameValid = false;
+                setTimeout(() => {
+                    this.isNameValid = true;
+                }, 4000);
+                return;
+            }
+            this.clientSocketService.socket.emit('newRoomCustomer', playerName, room.id);
+        });
     }
 
     ngOnInit(): void {
