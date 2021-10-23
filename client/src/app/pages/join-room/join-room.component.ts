@@ -3,7 +3,7 @@
 import { Component, OnInit } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { ClientSocketService } from '@app/services/client-socket.service';
-import { Room } from '../../classes/room';
+import { Room, State } from '../../classes/room';
 
 @Component({
     selector: 'app-join-room',
@@ -29,6 +29,14 @@ export class JoinRoomComponent implements OnInit {
     onPageChange(event: PageEvent) {
         // offset in rooms[] since we're displaying 2rooms per page
         this.startIdx = event.pageSize * event.pageIndex;
+    }
+
+    computeRoomState(state: State): string {
+        if (state === State.Waiting) {
+            return 'En attente';
+        }
+
+        return 'Occupé';
     }
 
     ngOnInit(): void {

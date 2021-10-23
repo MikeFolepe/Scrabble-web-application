@@ -18,8 +18,11 @@
         </mat-card-subtitle>
         <mat-card-actions>
             <span>Statut : </span>
-            <span>{{room.state}}</span>
-            <button mat-button color="warn">Join</button>
+            <span [ngClass]="{
+            'red' : room.state === 0,
+            'green' : room.state === 1
+         }">{{computeRoomState(room.state)}}</span>
+            <button mat-button color="primary">Join</button>
         </mat-card-actions>
     </mat-card>
 </div>

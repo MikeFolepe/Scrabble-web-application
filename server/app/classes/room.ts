@@ -2,8 +2,8 @@
 import { GameSettings } from './multiplayer-game-settings';
 
 export enum State {
-    Waiting = 'En attente',
-    Playing = 'Jeu en cours',
+    Playing,
+    Waiting,
 }
 
 export class Room {
