@@ -21,6 +21,12 @@ export class CommunicationService {
         return this.http.post<void>(`${this.baseUrl}/example/send`, message).pipe(catchError(this.handleError<void>('basicPost')));
     }
 
+    validationPost(newPlayedWords: Map<string, string[]>): Observable<boolean> {
+        return this.http
+            .post<boolean>(`${this.baseUrl}/validation/words`, newPlayedWords)
+            .pipe(catchError(this.handleError<boolean>('validationPost')));
+    }
+
     private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {
         return () => of(result as T);
     }

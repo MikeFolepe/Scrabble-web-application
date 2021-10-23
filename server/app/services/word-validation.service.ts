@@ -2,7 +2,6 @@
 // eslint-disable-next-line no-restricted-imports
 import * as fs from 'fs';
 import { Service } from 'typedi';
-
 @Service()
 export class WordValidationService {
 
@@ -14,14 +13,14 @@ export class WordValidationService {
         console.log(this.dictionary);
     }
 
-    isValidInDictionary(word: string): boolean {
-        if (word.length >= 2) {
+    isValidInDictionary(newPlayedWords: Map<string,string[]>): boolean {
+
+        for (const word of newPlayedWords.keys()){
             for (const item of this.dictionary) {
                 if (word === item) {
                     return true;
                 }
             }
-            return false;
         }
         return false;
     }

@@ -1,6 +1,6 @@
 // import { ScoreValidation } from './../../../client/src/app/classes/validation-score';
 // import { WordValidationService } from '@app/services/word-validation.service';
-// import { WordValidationService } from '@app/services/word-validation.service';
+import { WordValidationService } from '@app/services/word-validation.service';
 import { Request, Response, Router } from 'express';
 // Request, Response,
 import { Service } from 'typedi';
@@ -9,7 +9,7 @@ import { Service } from 'typedi';
 export class WordValidationController {
     router: Router;
     // private wordValidationService: WordValidationService
-    constructor() {
+    constructor(private wordValidator: WordValidationService) {
         this.configureRouter();
     }
 
@@ -53,10 +53,10 @@ export class WordValidationController {
          *           $ref: '#/definitions/Message'
          *
          */
-        this.router.get('/:word', (req: Request, res: Response) => {
+        this.router.post('/words', (req: Request, res: Response) => {
             //  Send the request to the service and send the response
-            console.log(req.params.word);
-            res.send();
+            const validation = this.wordValidator.isValidInDictionary(req.body.newPlayedWords);
+            res.send(validation);
         });
     }
 
