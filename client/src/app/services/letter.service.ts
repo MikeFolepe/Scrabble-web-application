@@ -68,11 +68,9 @@ export class LetterService {
     }
 
     addLetterToReserve(letter: string): void {
-        for (const letterReserve of this.reserve) {
-            if (letter.toUpperCase() === letterReserve.value) {
-                letterReserve.quantity++;
-                return;
-            }
+        const letterReserve = this.reserve.find((letterSearched) => letter.toUpperCase() === letterSearched.value);
+        if (letterReserve) {
+            letterReserve.quantity++;
         }
     }
 

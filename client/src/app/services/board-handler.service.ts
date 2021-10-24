@@ -65,15 +65,10 @@ export class BoardHandlerService {
 
             // If the click is on the same case, it will change the orientation
             if (this.areCasePositionsEqual(this.currentCase, caseClicked)) {
-                this.orientation = this.orientation === 'h' ? 'v' : 'h'; // Change orientation when clicked
-                this.updateCaseDisplay();
+                this.switchOrientation();
                 // If the click is on a different case, it will select this case as the new starting case
             } else {
-                this.currentCase = { x: caseClicked.x, y: caseClicked.y };
-                this.firstCase = { x: caseClicked.x, y: caseClicked.y };
-                this.isFirstCasePicked = true;
-                this.orientation = 'h';
-                this.updateCaseDisplay();
+                this.selectStartingCase(caseClicked);
             }
         }
     }
@@ -137,13 +132,26 @@ export class BoardHandlerService {
     }
 
     cancelPlacement() {
-        while (this.word.length > 0) {
+        while (this.word.length) {
             this.removePlacedLetter();
         }
         this.gridService.eraseLayer(this.gridService.gridContextPlacementLayer);
         this.currentCase.x = INDEX_INVALID;
         this.currentCase.y = INDEX_INVALID;
         this.isFirstCasePicked = false;
+    }
+
+    selectStartingCase(caseClicked: Vec2): void {
+        this.currentCase = { x: caseClicked.x, y: caseClicked.y };
+        this.firstCase = { x: caseClicked.x, y: caseClicked.y };
+        this.isFirstCasePicked = true;
+        this.orientation = 'h';
+        this.updateCaseDisplay();
+    }
+
+    switchOrientation(): void {
+        this.orientation = this.orientation === 'h' ? 'v' : 'h'; // Change orientation when clicked
+        this.updateCaseDisplay();
     }
 
     calculateFirstCasePosition(event: MouseEvent): Vec2 {

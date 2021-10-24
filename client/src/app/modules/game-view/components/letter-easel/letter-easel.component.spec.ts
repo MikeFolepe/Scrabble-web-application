@@ -199,12 +199,11 @@ describe('LetterEaselComponent', () => {
         expect(component.letterEaselTab[0].isSelectedForManipulation).toBeFalse();
     });
 
-    it('clicking inside the easel should not unselect all letters', () => {
-        component.letterEaselTab[0].isSelectedForManipulation = true;
-        spyOn(component, 'onLeftClick');
+    it('clicking inside the easel should call cancelPlacement from BoardHandlerService', () => {
+        spyOn(component['boardHandlerService'], 'cancelPlacement');
         fixture.detectChanges();
-        const easelContainer = fixture.debugElement.query(By.css('.easel-container'));
-        easelContainer.triggerEventHandler('click', null);
-        expect(component.letterEaselTab[0].isSelectedForManipulation).toBeTrue();
+        const easel = fixture.debugElement.query(By.css('.easel-container'));
+        easel.triggerEventHandler('click', null);
+        expect(component['boardHandlerService'].cancelPlacement).toHaveBeenCalled();
     });
 });

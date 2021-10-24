@@ -34,11 +34,8 @@ export class LetterEaselComponent implements OnInit {
     @HostListener('document:click', ['$event'])
     @HostListener('document:contextmenu', ['$event'])
     clickEvent(event: MouseEvent) {
-        // Disable the current placement on the board when a click occurs in the easel
-        if (this.easel.nativeElement.contains(event.target)) {
-            this.boardHandlerService.cancelPlacement();
-            return;
-        } // Disable all easel selections made when a click occurs outside the easel
+        if (this.easel.nativeElement.contains(event.target)) return;
+        // Disable all easel selections made when a click occurs outside the easel
         for (const letterEasel of this.letterEaselTab) {
             letterEasel.isSelectedForSwap = false;
             letterEasel.isSelectedForManipulation = false;
@@ -62,6 +59,10 @@ export class LetterEaselComponent implements OnInit {
     onLeftClick(event: MouseEvent, indexLetter: number) {
         event.preventDefault();
         this.handleManipulationSelection(indexLetter);
+    }
+
+    onEaselClick() {
+        this.boardHandlerService.cancelPlacement();
     }
 
     handleSwapSelection(indexLetter: number) {

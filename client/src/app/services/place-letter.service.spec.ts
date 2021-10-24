@@ -9,7 +9,7 @@ import { PlaceLetterService } from './place-letter.service';
 
 describe('PlaceLetterService', () => {
     let service: PlaceLetterService;
-    let gridServiceSpy: unknown;
+    let gridServiceSpy: jasmine.SpyObj<GridService>;
     beforeEach(() => {
         gridServiceSpy = jasmine.createSpyObj('GridService', ['drawLetter', 'eraseLetter']);
     });
@@ -124,12 +124,12 @@ describe('PlaceLetterService', () => {
         let word = 'bac';
         service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER);
         // Try to place a word vertically while touching the previous word placed
-        position = { x: 6, y: 10 };
+        position = { x: 10, y: 6 };
         orientation = 'v';
         word = 'cba';
         let isWordTouching = service.isWordTouchingOthers(position, orientation, word);
         // Try to place a word horizontally while touching the previous word placed
-        position = { x: 8, y: 4 };
+        position = { x: 4, y: 8 };
         orientation = 'h';
         word = 'dabb';
         isWordTouching = service.isWordTouchingOthers(position, orientation, word);
@@ -165,12 +165,12 @@ describe('PlaceLetterService', () => {
         let word = 'abcd';
         service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER);
         // Player 2 tries to vertically place a word while using letters already on the scrabbleBoard
-        position = { x: 6, y: 10 };
+        position = { x: 10, y: 6 };
         orientation = 'v';
         word = 'adbcc';
         let isWordValid = service.isWordValid(position, orientation, word, INDEX_PLAYER_AI);
         // Player 2 tries to horizontally place a word while using letters already on the scrabbleBoard
-        position = { x: 7, y: 10 };
+        position = { x: 10, y: 7 };
         orientation = 'h';
         word = 'daah';
         isWordValid = service.isWordValid(position, orientation, word, INDEX_PLAYER_AI);

@@ -53,11 +53,18 @@ describe('ChatboxComponent', () => {
         expect(component.listTypes[0]).toEqual('opponent');
     });
 
-    it('should use the message and the type from chatBoxService when we display a message', () => {
+    it('should use the message and the type from sendMessageService when we display a message', () => {
         component['sendMessageService'].message = 'Service message';
         component['sendMessageService'].typeMessage = 'system';
         component.displayMessageByType();
         expect(component.listMessages.pop()).toEqual(component['sendMessageService'].message);
         expect(component.listTypes.pop()).toEqual(component['sendMessageService'].typeMessage);
+    });
+
+    it('Clicking in the chatbox should call cancelPlacement from BoardHandlerService', () => {
+        spyOn(component['boardHandlerService'], 'cancelPlacement');
+        const event = new MouseEvent('mouseup');
+        fixture.elementRef.nativeElement.dispatchEvent(event);
+        expect(component['boardHandlerService'].cancelPlacement).toHaveBeenCalled();
     });
 });

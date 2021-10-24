@@ -69,7 +69,7 @@ export class WordValidationService {
     checkIfNotPlayed(word: string, positions: string[]): boolean {
         let result = true;
         if (this.playedWords.has(word)) {
-            if (this.playedWords.get(word) !== undefined) {
+            if (this.playedWords.get(word)) {
                 let mapValues: any = this.playedWords.get(word);
                 result = this.containsArray(mapValues, positions);
                 return !result;

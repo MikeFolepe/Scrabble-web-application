@@ -186,15 +186,6 @@ describe('ChatboxService', () => {
         expect(spyUnsubscribe).toHaveBeenCalled();
     });
 
-    it('using an unvalid command !placer should display an error', () => {
-        spyOn(service['tourService'], 'getTour').and.returnValue(true);
-        spyOn(service['placeLetterService'], 'placeCommand').and.returnValue(false);
-        spyOn(service['passTourService'], 'writeMessage');
-        service.command = 'placer';
-        service.sendPlayerMessage('!placer h10v top');
-        expect(service.message).toEqual('ERREUR : Le placement est invalide');
-    });
-
     it('should display the right debug message if no possibility has been found', () => {
         service['debugService'].debugServiceMessage = [];
         service.displayDebugMessage();
@@ -207,9 +198,33 @@ describe('ChatboxService', () => {
         expect(service.message).toEqual('test: -- 3');
     });
 
-    it('callind displayFinalMessage should send the respective message to the chatbox', () => {
+    it('calling displayFinalMessage should send the respective message to the chatbox', () => {
         service['endGameService'].isEndGame = true;
         service.displayFinalMessage(INDEX_REAL_PLAYER);
         expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('Player 1 : AABBCCA', 'system');
+    });
+
+    it('should not write a message if swapCommand is false in executeSwap()', () => {
+        spyOn(service['tourService'], 'getTour').and.returnValue(true);
+        const spy = spyOn(service['passTourService'], 'writeMessage');
+        spyOn(service['swapLetterService'], 'swapCommand').and.returnValue(false);
+        service.message = '!échanger *s';
+        service.executeSwap();
+        expect(spy).not.toHaveBeenCalled();
+    });
+
+    it('should return immediately if it is not the end of the game when displayFinalMessage() is called', () => {
+        service.endGameService.isEndGame = false;
+        service.displayFinalMessage(0);
+        expect(service['sendMessageService'].displayMessageByType).not.toHaveBeenCalled();
+    });
+
+    it('should not display message if place is false when executePlace() is called', () => {
+        spyOn(service['tourService'], 'getTour').and.returnValue(true);
+        const spy = spyOn(service['passTourService'], 'writeMessage');
+        spyOn(service['placeLetterService'], 'placeCommand').and.returnValue(false);
+        service.message = '!placer h8h test';
+        service.executePlace();
+        expect(spy).not.toHaveBeenCalled();
     });
 });
