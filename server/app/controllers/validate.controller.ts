@@ -66,7 +66,7 @@ export class WordValidationController {
 
             res.send(this.wordValidator.isValidInDictionary(req.body));
 
-            console.log(req.body);
+            // console.log(req.body);
         });
     }
 
