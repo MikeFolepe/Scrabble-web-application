@@ -1,0 +1,35 @@
+<app-background></app-background>
+
+
+<mat-paginator id="paginator" [length]="rooms.length" [pageSize]="pageSize" (page)="onPageChange($event)"
+    aria-label="Select page">
+</mat-paginator>
+
+<div *ngIf="isNameValid">
+    <div *ngFor="let room of (rooms ? rooms.slice(startIdx, startIdx + pageSize): []);">
+        <mat-card class="card">
+            <mat-card-title>{{room.ownerName}}
+            </mat-card-title>
+            <mat-card-subtitle>
+                Minute : {{room.gameSettings.timeMinute}}
+                <br>
+                Second : {{room.gameSettings.timeSecond}}
+                <br>
+                Bonus aléatoire : {{room.gameSettings.randomBonus}}
+            </mat-card-subtitle>
+            <mat-card-actions>
+                <span>Statut : </span>
+                <span [ngClass]="{
+            'red' : room.state === 0,
+            'green' : room.state === 1
+         }">{{computeRoomState(room.state)}}</span>
+                <button mat-button color="primary" (click)="join(room)" [disabled]="room.state === 0">Join</button>
+            </mat-card-actions>
+        </mat-card>
+    </div>
+</div>
+
+<div *ngIf="!isNameValid">
+    <mat-card id='error-message'><span id='warning'>Erreur</span>: Ce nom de joueur est déjà utilisé dans cette partie
+    </mat-card>
+</div>
