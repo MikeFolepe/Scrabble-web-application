@@ -209,9 +209,9 @@ export class WordValidationService {
 
         this.httpServer.validationPost(this.newPlayedWords).subscribe((validation) => (this.validationState = validation));
         if (!this.validationState) {
+            this.newPlayedWords.clear();
             return { validation: this.validationState, score: scoreTotal };
         }
-        this.validationState = true;
         scoreTotal += this.calculateTotalScore(scoreTotal, this.newPlayedWords);
 
         if (isEaselSize) {

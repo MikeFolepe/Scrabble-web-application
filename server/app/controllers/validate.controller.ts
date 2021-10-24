@@ -55,8 +55,18 @@ export class WordValidationController {
          */
         this.router.post('/words', (req: Request, res: Response) => {
             //  Send the request to the service and send the response
-            const validation = this.wordValidator.isValidInDictionary(req.body.newPlayedWords);
-            res.send(validation);
+            // eslint-disable-next-line @typescript-eslint/prefer-for-of
+            // for (let i = 0; i < req.body.length; i++) {
+            //     if (!this.wordValidator.isValidInDictionary(req.body[i])) {
+            //         res.send(false);
+            //         return;
+            //     }
+            // }
+            // res.send(true);
+
+            res.send(this.wordValidator.isValidInDictionary(req.body));
+
+            console.log(req.body);
         });
     }
 
