@@ -35,6 +35,12 @@ export class RoomManager {
         return room.gameSettings;
     }
 
+    deleteRoom(roomId: string) {
+        this.rooms.forEach((room, roomIndex) => {
+            if (room.id === roomId) this.rooms.splice(roomIndex, 1);
+        });
+    }
+
     private find(roomId: string): Room | undefined {
         return this.rooms.find((room) => room.id === roomId);
     }
