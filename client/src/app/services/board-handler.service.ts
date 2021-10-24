@@ -4,7 +4,6 @@ import { Vec2 } from '@app/classes/vec2';
 import { GridService } from './grid.service';
 import { PlaceLetterService } from './place-letter.service';
 import { PlayerService } from './player.service';
-import { PassTourService } from './pass-tour.service';
 import { TourService } from './tour.service';
 import { SendMessageService } from './send-message.service';
 
@@ -24,7 +23,6 @@ export class BoardHandlerService {
         private gridService: GridService,
         private placeLetterService: PlaceLetterService,
         private playerService: PlayerService,
-        private passTurnService: PassTourService,
         private turnService: TourService,
         private sendMessageService: SendMessageService,
     ) {}
@@ -36,7 +34,7 @@ export class BoardHandlerService {
                 break;
             }
             case 'Enter': {
-                if (this.word.length > 0) {
+                if (this.word.length) {
                     this.confirmPlacement();
                 }
                 break;
@@ -123,12 +121,10 @@ export class BoardHandlerService {
             this.isFirstCaseLocked = false;
         } else {
             this.gridService.eraseLayer(this.gridService.gridContextPlacementLayer);
-            this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', 'error');
             this.word = '';
             this.isFirstCasePicked = false;
             this.isFirstCaseLocked = false;
         }
-        this.passTurnService.writeMessage();
     }
 
     cancelPlacement() {

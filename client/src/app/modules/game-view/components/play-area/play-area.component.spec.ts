@@ -22,9 +22,16 @@ describe('PlayAreaComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('Pressing skip button should call sendPlayerMessage from ChatBoxService to skip the turn', () => {
+    it('Pressing skip button should call sendPlayerMessage() from ChatBoxService to skip the turn', () => {
         spyOn(component['chatBoxService'], 'sendPlayerMessage');
         component.passButton();
         expect(component['chatBoxService'].sendPlayerMessage).toHaveBeenCalledWith('!passer');
+    });
+
+    it('Pressing play button should call confirmPlacement() from boardHandlerService', () => {
+        spyOn(component['boardHandlerService'], 'confirmPlacement');
+        component['boardHandlerService'].word = 'test';
+        component.playButton();
+        expect(component['boardHandlerService'].confirmPlacement).toHaveBeenCalled();
     });
 });

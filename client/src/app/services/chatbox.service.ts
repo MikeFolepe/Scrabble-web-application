@@ -128,7 +128,6 @@ export class ChatboxService implements OnDestroy {
 
             if (this.placeLetterService.placeCommand(position, orientation, messageSplitted[2], INDEX_REAL_PLAYER)) {
                 this.sendMessageService.displayMessageByType(this.message, this.typeMessage);
-                this.passTourService.writeMessage();
             }
         } else {
             this.typeMessage = 'error';

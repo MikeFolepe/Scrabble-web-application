@@ -136,11 +136,14 @@ export class PlaceLetterService implements OnDestroy {
         const finalResult: ScoreValidation = this.wordValidationService.validateAllWordsOnBoard(this.scrabbleBoard, this.isEaselSize);
         if (finalResult.validation) {
             this.handleValidPlacement(finalResult, indexPlayer);
+            this.passTurnService.writeMessage();
             return true;
         }
         this.handleInvalidPlacement(position, orientation, word, indexPlayer);
         this.sendMessageService.displayMessageByType('ERREUR : Un ou des mots formés sont invalides', 'error');
-        this.passTurnService.writeMessage();
+        setTimeout(() => {
+            this.passTurnService.writeMessage();
+        }, THREE_SECONDS_DELAY);
         return false;
     }
 
@@ -151,12 +154,14 @@ export class PlaceLetterService implements OnDestroy {
                 return this.validatePlacement(position, orientation, word, indexPlayer);
             }
             this.handleInvalidPlacement(position, orientation, word, indexPlayer);
+            this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', 'error');
             return false;
         } // Placing the following words
         if (this.isWordTouchingOthers(position, orientation, word)) {
             return this.validatePlacement(position, orientation, word, indexPlayer);
         }
         this.handleInvalidPlacement(position, orientation, word, indexPlayer);
+        this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', 'error');
         return false;
     }
 

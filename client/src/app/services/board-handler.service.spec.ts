@@ -21,7 +21,6 @@ describe('BoardHandlerService', () => {
         spyOn(service['turnService'], 'getTour').and.returnValue(true);
         spyOn(service['placeLetterService'], 'removePlacedLetter');
         spyOn(service['sendMessageService'], 'displayMessageByType');
-        spyOn(service['passTurnService'], 'writeMessage');
     });
 
     it('should be created', () => {
@@ -111,7 +110,7 @@ describe('BoardHandlerService', () => {
         }
 
         expect(service.word).toEqual('');
-        expect(service.isFirstCaseLocked).toEqual(false);
+        expect(service.isFirstCaseLocked).toBeFalse();
     });
 
     it('pressing escape should cancel all the placements and the case selection made', () => {
@@ -131,8 +130,8 @@ describe('BoardHandlerService', () => {
 
         expect(service.word).toEqual('');
         expect(service.currentCase).toEqual({ x: INDEX_INVALID, y: INDEX_INVALID });
-        expect(service.isFirstCaseLocked).toEqual(false);
-        expect(service.isFirstCasePicked).toEqual(false);
+        expect(service.isFirstCaseLocked).toBeFalse();
+        expect(service.isFirstCasePicked).toBeFalse();
     });
 
     it('pressing Enter with a valid word placed should display the respective message ', () => {
@@ -154,7 +153,7 @@ describe('BoardHandlerService', () => {
         expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('!placer h8h Frite', 'player');
     });
 
-    it('pressing Enter with an unvalid word placed should display the respective message ', () => {
+    it('pressing Enter with an unvalid word placed should cancel the placement', () => {
         service['placeLetterService'].placeWithKeyboard = jasmine.createSpy().and.returnValue(true);
         service['placeLetterService'].validateKeyboardPlacement = jasmine.createSpy().and.returnValue(false);
         service.currentCase = { x: 7, y: 7 };
@@ -169,30 +168,6 @@ describe('BoardHandlerService', () => {
         keyboardEvent = new KeyboardEvent('keydown', { key: 'Enter' });
         service.buttonDetect(keyboardEvent);
 
-        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('ERREUR : Le placement est invalide', 'error');
+        expect(service.word).toEqual('');
     });
-    /*
-    it('mouseHitDetect should assign the mouse position to mousePosition variable', () => {
-        const expectedPosition: Vec2 = { x: 100, y: 200 };
-        mouseEvent = {
-            offsetX: expectedPosition.x,
-            offsetY: expectedPosition.y,
-            button: 0,
-        } as MouseEvent;
-        service.mouseHitDetect(mouseEvent);
-        expect(service.mousePosition).toEqual(expectedPosition);
-    });
-
-    it('mouseHitDetect should not change the mouse position if it is not a left click', () => {
-        const expectedPosition: Vec2 = { x: 0, y: 0 };
-        mouseEvent = {
-            offsetX: expectedPosition.x + 10,
-            offsetY: expectedPosition.y + 10,
-            button: 1,
-        } as MouseEvent;
-        service.mouseHitDetect(mouseEvent);
-        expect(service.mousePosition).not.toEqual({ x: mouseEvent.offsetX, y: mouseEvent.offsetY });
-        expect(service.mousePosition).toEqual(expectedPosition);
-    });
-*/
 });
