@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-imports */
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -7,6 +8,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ClientSocketService } from '@app/services/client-socket.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
+import { Room } from '../../classes/room';
 
 @Component({
     selector: 'app-waiting-room',
@@ -16,7 +18,9 @@ import { GameSettingsService } from '@app/services/game-settings.service';
 export class WaitingRoomComponent implements OnInit {
     status: string;
     isWaiting: boolean;
-    constructor(private router: Router, public gameSettingsService: GameSettingsService, private clientSocket: ClientSocketService) {
+    rooms: Room[] = [];
+
+    constructor(private router: Router, public gameSettingsService: GameSettingsService, public clientSocket: ClientSocketService) {
         this.clientSocket.route();
     }
 
@@ -51,6 +55,9 @@ export class WaitingRoomComponent implements OnInit {
         }, 4000);
     }
 
+    delete(roomId: string) {
+        this.clientSocket.socket.emit('cancelMultiplayerparty', roomId);
+    }
     route() {
         this.gameSettingsService.isSoloMode = true;
         this.gameSettingsService.isRedirectedFromMultiplayerGame = true;
