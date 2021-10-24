@@ -76,6 +76,6 @@ describe('GridService', () => {
 
     it('should set grid context', () => {
         service.setGridContext(ctxStub);
-        expect(service.gridContext).toBe(ctxStub);
+        expect(service.gridContextBoardLayer).toBe(ctxStub);
     });
 });

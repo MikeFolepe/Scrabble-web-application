@@ -3,10 +3,10 @@ import { CASE_SIZE, INDEX_INVALID, INDEX_REAL_PLAYER, MouseButton, LAST_INDEX } 
 import { Vec2 } from '@app/classes/vec2';
 import { GridService } from './grid.service';
 import { PlaceLetterService } from './place-letter.service';
-import { ChatboxService } from './chatbox.service';
 import { PlayerService } from './player.service';
 import { PassTourService } from './pass-tour.service';
 import { TourService } from './tour.service';
+import { SendMessageService } from './send-message.service';
 
 @Injectable({
     providedIn: 'root',
@@ -23,10 +23,10 @@ export class BoardHandlerService {
     constructor(
         private gridService: GridService,
         private placeLetterService: PlaceLetterService,
-        private chatBoxService: ChatboxService,
         private playerService: PlayerService,
         private passTurnService: PassTourService,
         private turnService: TourService,
+        private sendMessageService: SendMessageService,
     ) {}
 
     buttonDetect(event: KeyboardEvent) {
@@ -122,13 +122,13 @@ export class BoardHandlerService {
             this.gridService.eraseLayer(this.gridService.gridContextPlacementLayer);
             const column = (this.firstCase.x + 1).toString();
             const row: string = String.fromCharCode(this.firstCase.y + 'a'.charCodeAt(0));
-            this.chatBoxService.displayMessageByType('!placer ' + row + column + this.orientation + ' ' + this.word, 'player');
+            this.sendMessageService.displayMessageByType('!placer ' + row + column + this.orientation + ' ' + this.word, 'player');
             this.word = '';
             this.isFirstCasePicked = false;
             this.isFirstCaseLocked = false;
         } else {
             this.gridService.eraseLayer(this.gridService.gridContextPlacementLayer);
-            this.chatBoxService.displayMessageByType('ERREUR : Le placement est invalide', 'error');
+            this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', 'error');
             this.word = '';
             this.isFirstCasePicked = false;
             this.isFirstCaseLocked = false;
@@ -180,6 +180,15 @@ export class BoardHandlerService {
     updateCaseDisplay() {
         this.gridService.eraseLayer(this.gridService.gridContextPlacementLayer);
         this.gridService.drawBorder(this.gridService.gridContextPlacementLayer, this.currentCase.x, this.currentCase.y);
+        // Colored border of the current placement
+        if (this.isFirstCaseLocked) {
+            for (let i = 0; i < this.word.length; i++) {
+                if (this.orientation === 'h')
+                    this.gridService.drawBorder(this.gridService.gridContextPlacementLayer, this.currentCase.x - i, this.currentCase.y);
+                else if (this.orientation === 'v')
+                    this.gridService.drawBorder(this.gridService.gridContextPlacementLayer, this.currentCase.x, this.currentCase.y - i);
+            }
+        }
         // Only display the arrow if there is an empty tile in the direction of the orientation
         if (
             (this.orientation === 'h' && this.playerService.scrabbleBoard[this.currentCase.y][this.currentCase.x + 1] === '') ||

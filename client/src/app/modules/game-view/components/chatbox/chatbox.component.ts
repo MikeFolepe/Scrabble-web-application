@@ -71,8 +71,8 @@ export class ChatboxComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     displayMessageByType() {
-        this.listTypes.push(this.sendMessageService.typeMessage);
-        this.listMessages.push(this.sendMessageService.message);
+        this.listTypes.push(this.chatBoxService.typeMessage);
+        this.listMessages.push(this.chatBoxService.message);
         this.scrollToBottom();
     }
 
