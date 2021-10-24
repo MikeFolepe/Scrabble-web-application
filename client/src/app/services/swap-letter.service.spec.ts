@@ -12,48 +12,12 @@ describe('SwapLetterService', () => {
         TestBed.configureTestingModule({});
         service = TestBed.inject(SwapLetterService);
 
-        const letterA: Letter = {
-            value: 'A',
-            quantity: 0,
-            points: 0,
-            isSelectedForSwap: false,
-            isSelectedForManipulation: false,
-        };
-        const letterB: Letter = {
-            value: 'B',
-            quantity: 0,
-            points: 0,
-            isSelectedForSwap: false,
-            isSelectedForManipulation: false,
-        };
-        const letterC: Letter = {
-            value: 'C',
-            quantity: 0,
-            points: 0,
-            isSelectedForSwap: false,
-            isSelectedForManipulation: false,
-        };
-        const letterD: Letter = {
-            value: 'D',
-            quantity: 0,
-            points: 0,
-            isSelectedForSwap: false,
-            isSelectedForManipulation: false,
-        };
-        const letterE: Letter = {
-            value: 'E',
-            quantity: 0,
-            points: 0,
-            isSelectedForSwap: false,
-            isSelectedForManipulation: false,
-        };
-        const letterWhite: Letter = {
-            value: '*',
-            quantity: 0,
-            points: 0,
-            isSelectedForSwap: false,
-            isSelectedForManipulation: false,
-        };
+        const letterA: Letter = RESERVE[0];
+        const letterB: Letter = RESERVE[1];
+        const letterC: Letter = RESERVE[2];
+        const letterD: Letter = RESERVE[3];
+        const letterE: Letter = RESERVE[4];
+        const letterWhite: Letter = RESERVE[26];
 
         const playerEasel = [letterA, letterA, letterB, letterC, letterD, letterE, letterWhite];
         const player = new Player(1, 'Player 1', playerEasel);

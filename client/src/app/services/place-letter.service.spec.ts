@@ -1,6 +1,6 @@
 /* eslint-disable dot-notation */
 import { TestBed } from '@angular/core/testing';
-import { INDEX_PLAYER_AI, INDEX_REAL_PLAYER, THREE_SECONDS_DELAY } from '@app/classes/constants';
+import { INDEX_PLAYER_AI, INDEX_REAL_PLAYER, RESERVE, THREE_SECONDS_DELAY } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
 import { Player } from '@app/models/player.model';
@@ -22,48 +22,12 @@ describe('PlaceLetterService', () => {
     });
 
     beforeEach(() => {
-        const letterA: Letter = {
-            value: 'A',
-            quantity: 0,
-            points: 0,
-            isSelectedForSwap: false,
-            isSelectedForManipulation: false,
-        };
-        const letterB: Letter = {
-            value: 'B',
-            quantity: 0,
-            points: 0,
-            isSelectedForSwap: false,
-            isSelectedForManipulation: false,
-        };
-        const letterC: Letter = {
-            value: 'C',
-            quantity: 0,
-            points: 0,
-            isSelectedForSwap: false,
-            isSelectedForManipulation: false,
-        };
-        const letterD: Letter = {
-            value: 'D',
-            quantity: 0,
-            points: 0,
-            isSelectedForSwap: false,
-            isSelectedForManipulation: false,
-        };
-        const letterH: Letter = {
-            value: 'H',
-            quantity: 0,
-            points: 0,
-            isSelectedForSwap: false,
-            isSelectedForManipulation: false,
-        };
-        const letterWhite: Letter = {
-            value: '*',
-            quantity: 0,
-            points: 0,
-            isSelectedForSwap: false,
-            isSelectedForManipulation: false,
-        };
+        const letterA: Letter = RESERVE[0];
+        const letterB: Letter = RESERVE[1];
+        const letterC: Letter = RESERVE[2];
+        const letterD: Letter = RESERVE[3];
+        const letterH: Letter = RESERVE[7];
+        const letterWhite: Letter = RESERVE[26];
 
         const firstPlayerEasel = [letterA, letterA, letterB, letterB, letterC, letterC, letterD];
         const firstPlayer = new Player(1, 'Player 1', firstPlayerEasel);

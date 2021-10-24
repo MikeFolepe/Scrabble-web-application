@@ -26,55 +26,14 @@ describe('LetterEaselComponent', () => {
         spyOn(component['playerService'], 'updateLettersEasel');
         fixture.detectChanges();
 
-        const letterA: Letter = {
-            value: 'A',
-            quantity: 0,
-            points: 0,
-            isSelectedForSwap: false,
-            isSelectedForManipulation: false,
-        };
-        const letterB: Letter = {
-            value: 'B',
-            quantity: 0,
-            points: 0,
-            isSelectedForSwap: false,
-            isSelectedForManipulation: false,
-        };
-        const letterC: Letter = {
-            value: 'C',
-            quantity: 0,
-            points: 0,
-            isSelectedForSwap: false,
-            isSelectedForManipulation: false,
-        };
-        const letterD: Letter = {
-            value: 'D',
-            quantity: 0,
-            points: 0,
-            isSelectedForSwap: false,
-            isSelectedForManipulation: false,
-        };
-        const letterE: Letter = {
-            value: 'E',
-            quantity: 0,
-            points: 0,
-            isSelectedForSwap: false,
-            isSelectedForManipulation: false,
-        };
-        const letterH: Letter = {
-            value: 'H',
-            quantity: 0,
-            points: 0,
-            isSelectedForSwap: false,
-            isSelectedForManipulation: false,
-        };
-        const letterWhite: Letter = {
-            value: '*',
-            quantity: 0,
-            points: 0,
-            isSelectedForSwap: false,
-            isSelectedForManipulation: false,
-        };
+        const letterA: Letter = { value: 'A', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false };
+        const letterB: Letter = { value: 'B', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false };
+        const letterC: Letter = { value: 'C', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false };
+        const letterD: Letter = { value: 'D', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false };
+        const letterE: Letter = { value: 'E', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false };
+        const letterH: Letter = { value: 'H', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false };
+        const letterWhite: Letter = { value: '*', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false };
+
         component.letterEaselTab = [letterA, letterE, letterB, letterC, letterD, letterH, letterWhite];
         const firstPlayer = new Player(1, 'Player 1', component.letterEaselTab);
         component['playerService'].addPlayer(firstPlayer);

@@ -2,6 +2,7 @@
 /* eslint-disable dot-notation */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { TestBed } from '@angular/core/testing';
+import { RESERVE } from '@app/classes/constants';
 // import { PlaceLetters } from '@app/models/place-letter-strategy.model';
 import { PlayerAI } from '@app/models/player-ai.model';
 import { PlayerAIComponent } from '@app/modules/game-view/components/player-ai/player-ai.component';
@@ -11,15 +12,15 @@ import { PlayerAIComponent } from '@app/modules/game-view/components/player-ai/p
 describe('PlayerAI', () => {
     const id = 0;
     const name = 'Player 1';
-    const letterTable = [
-        { value: 'A', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
-        { value: 'B', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
-        { value: 'C', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
-        { value: 'D', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
-        { value: 'E', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
-        { value: 'F', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
-        { value: 'G', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
-    ];
+
+    const letterA = RESERVE[0];
+    const letterB = RESERVE[1];
+    const letterC = RESERVE[2];
+    const letterD = RESERVE[3];
+    const letterE = RESERVE[4];
+    const letterF = RESERVE[5];
+    const letterG = RESERVE[6];
+    const letterTable = [letterA, letterB, letterC, letterD, letterE, letterF, letterG];
 
     let playerAI: PlayerAI;
 

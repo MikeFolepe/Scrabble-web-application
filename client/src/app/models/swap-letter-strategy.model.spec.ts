@@ -5,19 +5,20 @@ import { SkipTurn } from '@app/models/skip-turn-strategy.model';
 import { PlayerAIComponent } from '@app/modules/game-view/components/player-ai/player-ai.component';
 import { PlayerAI } from '@app/models/player-ai.model';
 import { SwapLetter } from '@app/models/swap-letter-strategy.model';
+import { RESERVE } from '@app/classes/constants';
 
 describe('SwapLetter', () => {
     const id = 0;
     const name = 'Player 1';
-    const letterTable = [
-        { value: 'A', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
-        { value: 'B', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
-        { value: 'C', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
-        { value: 'D', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
-        { value: 'E', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
-        { value: 'F', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
-        { value: 'G', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
-    ];
+
+    const letterA = RESERVE[0];
+    const letterB = RESERVE[1];
+    const letterC = RESERVE[2];
+    const letterD = RESERVE[3];
+    const letterE = RESERVE[4];
+    const letterF = RESERVE[5];
+    const letterG = RESERVE[6];
+    const letterTable = [letterA, letterB, letterC, letterD, letterE, letterF, letterG];
 
     let playerAI: PlayerAI;
     let swapStrategy: SwapLetter;

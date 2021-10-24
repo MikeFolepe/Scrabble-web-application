@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
 import { TestBed } from '@angular/core/testing';
-import { INDEX_REAL_PLAYER } from '@app/classes/constants';
-import { Letter } from '@app/classes/letter';
+import { INDEX_REAL_PLAYER, RESERVE } from '@app/classes/constants';
 import { Player } from '@app/models/player.model';
 import { ChatboxService } from './chatbox.service';
 
@@ -13,27 +12,10 @@ describe('ChatboxService', () => {
         TestBed.configureTestingModule({});
         service = TestBed.inject(ChatboxService);
 
-        const letterA: Letter = {
-            value: 'A',
-            quantity: 0,
-            points: 0,
-            isSelectedForSwap: false,
-            isSelectedForManipulation: false,
-        };
-        const letterB: Letter = {
-            value: 'B',
-            quantity: 0,
-            points: 0,
-            isSelectedForSwap: false,
-            isSelectedForManipulation: false,
-        };
-        const letterC: Letter = {
-            value: 'C',
-            quantity: 0,
-            points: 0,
-            isSelectedForSwap: false,
-            isSelectedForManipulation: false,
-        };
+        const letterA = RESERVE[0];
+        const letterB = RESERVE[1];
+        const letterC = RESERVE[2];
+
         const firstPlayerEasel = [letterA, letterA, letterB, letterB, letterC, letterC, letterA];
         const firstPlayer = new Player(1, 'Player 1', firstPlayerEasel);
         service['playerService'].addPlayer(firstPlayer);
