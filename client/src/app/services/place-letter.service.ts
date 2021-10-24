@@ -63,17 +63,20 @@ export class PlaceLetterService implements OnDestroy {
         const currentPosition: Vec2 = { x: position.x, y: position.y };
         // Remove accents from the word to place
         const wordNoAccents = word.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        // Reset the array containing the valid letters by making them all valid
+        for (let i = 0; i < word.length; i++) {
+            this.validLetters[i] = true;
+        }
+        this.numLettersUsedFromEasel = 0; // Reset the number of letters used from the easel for next placement
+
         // If the command is possible according to the parameters
         if (!this.isPossible(position, orientation, wordNoAccents, indexPlayer)) {
             this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', 'error');
             return false;
         }
-        this.validLetters = []; // Reset the array containing the valid letters
-        this.numLettersUsedFromEasel = 0; // Reset the number of letters used from the easel for next placement
 
         // Placing all letters of the word
         for (let i = 0; i < wordNoAccents.length; i++) {
-            this.validLetters[i] = true; // Initialize the array as all letters are valid
             if (!this.placeLetter(currentPosition, wordNoAccents[i], orientation, i, indexPlayer)) {
                 // If the placement of one letter is invalid, we erase all letters placed
                 this.handleInvalidPlacement(position, orientation, wordNoAccents, indexPlayer);
@@ -295,36 +298,20 @@ export class PlaceLetterService implements OnDestroy {
         } else if (orientation === 'v') {
             y = 1;
         }
+
         // Search each position around the word that are in bounds of the board
         for (let i = 0; i < word.length; i++) {
-            // First letter
-            if (i === 0) {
-                if (this.isPositionFilled({ x: currentPosition.x + y, y: currentPosition.y + x })) {
-                    isWordTouching = true;
-                }
-                if (this.isPositionFilled({ x: currentPosition.x - y, y: currentPosition.y - x })) {
-                    isWordTouching = true;
-                }
-                if (this.isPositionFilled({ x: currentPosition.x - x, y: currentPosition.y - y })) {
-                    isWordTouching = true;
-                }
-                // Last letter
-            } else if (i === word.length - 1) {
-                if (this.isPositionFilled({ x: currentPosition.x + y, y: currentPosition.y + x })) {
-                    isWordTouching = true;
-                }
-                if (this.isPositionFilled({ x: currentPosition.x - y, y: currentPosition.y - x })) {
-                    isWordTouching = true;
-                }
-                if (this.isPositionFilled({ x: currentPosition.x + x, y: currentPosition.y + y })) {
-                    isWordTouching = true;
-                }
-                // Letters inbetween
-            } else {
-                if (this.isPositionFilled({ x: currentPosition.x + y, y: currentPosition.y + x })) {
-                    isWordTouching = true;
-                }
-                if (this.isPositionFilled({ x: currentPosition.x - y, y: currentPosition.y - x })) {
+            if (this.isPositionFilled({ x: currentPosition.x + y, y: currentPosition.y + x })) {
+                isWordTouching = true;
+            }
+            if (this.isPositionFilled({ x: currentPosition.x - y, y: currentPosition.y - x })) {
+                isWordTouching = true;
+            }
+            if (this.isPositionFilled({ x: currentPosition.x + x, y: currentPosition.y + y })) {
+                isWordTouching = true;
+            }
+            if (this.isPositionFilled({ x: currentPosition.x - x, y: currentPosition.y - y })) {
+                if (this.validLetters[i + 1]) {
                     isWordTouching = true;
                 }
             }

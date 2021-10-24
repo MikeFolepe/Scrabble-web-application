@@ -2,11 +2,11 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 import { TestBed } from '@angular/core/testing';
 import { CASE_SIZE, INDEX_INVALID } from '@app/classes/constants';
-import { BoardHandlerService } from './board-handler.service';
 import { Vec2 } from '@app/classes/vec2';
+import { BoardHandlerService } from './board-handler.service';
 import { GridService } from './grid.service';
 
-fdescribe('BoardHandlerService', () => {
+describe('BoardHandlerService', () => {
     let service: BoardHandlerService;
     let gridServiceSpy: jasmine.SpyObj<GridService>;
 

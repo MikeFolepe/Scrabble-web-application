@@ -229,7 +229,7 @@ describe('PlaceLetterService', () => {
         let word = 'aabb';
         service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER);
         // Player 1 horizontally places a second word on top of the 1st word that has different letters
-        word = 'ccaa';
+        word = 'ccd';
         jasmine.clock().tick(THREE_SECONDS_DELAY + 1);
         expect(service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER)).toEqual(false);
         jasmine.clock().uninstall();
@@ -243,6 +243,62 @@ describe('PlaceLetterService', () => {
         const object = { start, orientation, word };
         service.placeMethodAdapter(object);
         expect(spy).toHaveBeenCalled();
+    });
+
+    it('placing letters in the easel with the keyboard should be valid', () => {
+        const position: Vec2 = { x: 7, y: 7 };
+        const orientation = 'h';
+        const word = 'abcd';
+        let isPlacementValid = true;
+        for (let i = 0; i < word.length; i++) {
+            if (!service.placeWithKeyboard(position, word[i], orientation, i, INDEX_REAL_PLAYER)) isPlacementValid = false;
+            position.x++;
+        }
+        expect(isPlacementValid).toEqual(true);
+    });
+
+    it('placing letters that are not in the easel with the keyboard should be valid', () => {
+        const position: Vec2 = { x: 7, y: 7 };
+        const orientation = 'h';
+        const word = 'zyx';
+        let isPlacementValid = true;
+        for (let i = 0; i < word.length; i++) {
+            if (!service.placeWithKeyboard(position, word[i], orientation, i, INDEX_REAL_PLAYER)) isPlacementValid = false;
+            position.x++;
+        }
+        expect(isPlacementValid).toEqual(false);
+    });
+
+    it('validating multiple valid keyboard placements should return true', () => {
+        spyOn(service, 'isWordTouchingOthers').and.returnValue(true);
+        service.isFirstRound = true;
+        let position: Vec2 = { x: 7, y: 7 };
+        let orientation = 'h';
+        const word = 'abcd';
+        expect(service.validateKeyboardPlacement(position, orientation, word, INDEX_REAL_PLAYER)).toEqual(true);
+        service.isFirstRound = false;
+        position = { x: 7, y: 8 };
+        orientation = 'v';
+        expect(service.validateKeyboardPlacement(position, orientation, word, INDEX_REAL_PLAYER)).toEqual(true);
+    });
+
+    it('validating multiple unvalid keyboard placements should return false', () => {
+        service.isFirstRound = true;
+        let position: Vec2 = { x: 10, y: 10 };
+        const orientation = 'h';
+        const word = 'abcd';
+        expect(service.validateKeyboardPlacement(position, orientation, word, INDEX_REAL_PLAYER)).toEqual(false);
+        service.isFirstRound = false;
+        position = { x: 1, y: 1 };
+        expect(service.validateKeyboardPlacement(position, orientation, word, INDEX_REAL_PLAYER)).toEqual(false);
+    });
+
+    it('validating the first unvalid keyboard placement should return false', () => {
+        service.isFirstRound = true;
+        const position: Vec2 = { x: 10, y: 10 };
+        const orientation = 'h';
+        const word = 'abcd';
+        expect(service.validateKeyboardPlacement(position, orientation, word, INDEX_REAL_PLAYER)).toEqual(false);
     });
 
     it('placing all the letters from the easel to form a valid word should give a bonus', () => {
