@@ -47,6 +47,10 @@ export class SocketManager {
                 console.log(`Deconnexion par l'utilisateur avec id : ${socket.id}`);
                 console.log(`Raison de deconnexion : ${reason}`);
             });
+            socket.on('sendRoomMessage', (message: string, roomId: string) => {
+                // this.sio.to(roomId).emit('receiveRoomMessage', `${socket.id} : ${message}`);
+                this.sio.to(roomId).emit('receiveRoomMessage', message);
+            });
         });
     }
 }

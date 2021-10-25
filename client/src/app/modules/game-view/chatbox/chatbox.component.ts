@@ -1,3 +1,4 @@
+import { ClientSocketService } from './../../../services/client-socket.service';
 // import { PlayerService } from '@app/services/player.service';
 // import { SkipTurnService } from '@app/services/skip-turn.service';
 import { ChatboxService } from '@app/services/chatbox.service';
@@ -24,7 +25,12 @@ export class ChatboxComponent implements OnInit, AfterViewInit {
     debugMessage: { word: string; nbPt: number }[] = [];
     // Table to stock debug message from IA test avec des strings aléatoires
 
-    constructor(private chatBoxService: ChatboxService, public debugService: DebugService, public endGameService: EndGameService) {}
+    constructor(
+        private chatBoxService: ChatboxService,
+        public debugService: DebugService,
+        public endGameService: EndGameService,
+        private clientSocketService: ClientSocketService,
+    ) {}
 
     ngOnInit(): void {
         this.chatBoxService.bindDisplay(this.displayAnyMessageByType.bind(this));
@@ -40,6 +46,7 @@ export class ChatboxComponent implements OnInit, AfterViewInit {
                 // Timeout is used to update the scroll after the last element added
                 this.scrollToBottom();
             }, 1);
+            this.clientSocketService.socket.emit('sendRoomMessage',this.message )
         }
     }
 

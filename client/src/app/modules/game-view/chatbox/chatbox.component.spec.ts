@@ -1,20 +1,20 @@
 /* eslint-disable dot-notation */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ChatBoxComponent } from './chatbox.component';
+import { ChatboxComponent } from './chatbox.component';
 
 describe('ChatBoxComponent', () => {
-    let component: ChatBoxComponent;
-    let fixture: ComponentFixture<ChatBoxComponent>;
+    let component: ChatboxComponent;
+    let fixture: ComponentFixture<ChatboxComponent>;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [ChatBoxComponent],
+            declarations: [ChatboxComponent],
         }).compileComponents();
     });
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(ChatBoxComponent);
+        fixture = TestBed.createComponent(ChatboxComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });
