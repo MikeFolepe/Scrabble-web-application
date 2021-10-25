@@ -7,7 +7,6 @@ import { AppRoutingModule } from '@app/modules/app-routing.module';
 import { AppMaterialModule } from '@app/modules/material.module';
 import { AppComponent } from '@app/pages/app/app.component';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
-import { MaterialPageComponent } from '@app/pages/material-page/material-page.component';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { GameViewModule } from './modules/game-view/game-view.module';
 import { InitializeSoloGameModule } from './modules/initialize-solo-game/initialize-solo-game.module';
@@ -20,7 +19,7 @@ import { SharedModule } from './modules/shared/shared/shared.module';
  * Otherwise Angular Cli will not know in which module to put new component
  */
 @NgModule({
-    declarations: [AppComponent, MainPageComponent, MaterialPageComponent, PageNotFoundComponent],
+    declarations: [AppComponent, MainPageComponent, PageNotFoundComponent],
     imports: [
         AppMaterialModule,
         AppRoutingModule,

@@ -106,8 +106,8 @@ export class ExampleController {
          *         description: Created
          */
         this.router.post('/send', (req: Request, res: Response) => {
-            const message: Message = req.body;
-            this.exampleService.storeMessage(message);
+            // const message: Message = req.body;
+            // this.exampleService.storeMessage(message);
             res.sendStatus(HTTP_STATUS_CREATED);
         });
 
@@ -130,8 +130,8 @@ export class ExampleController {
          *           items:
          *             $ref: '#/definitions/Message'
          */
-        this.router.get('/all', (req: Request, res: Response) => {
-            res.json(this.exampleService.getAllMessages());
-        });
+        // this.router.get('/all', (req: Request, res: Response) => {
+        // res.json(this.exampleService.getAllMessages());
+        // });
     }
 }

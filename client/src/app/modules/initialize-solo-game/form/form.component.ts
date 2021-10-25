@@ -49,7 +49,7 @@ export class FormComponent {
     // Initializes the game with its settings
     initGame(): void {
         const playersName: string[] = [this.form.controls.playerName.value, this.chooseRandomAIName()];
-        const settings = new GameSettings(
+        this.gameSettingsService.gameSettings = new GameSettings(
             playersName,
             this.chooseStartingPlayer(),
             this.form.controls.minuteInput.value,
@@ -58,7 +58,7 @@ export class FormComponent {
             this.form.controls.randomBonus.value,
             'DICTIONARY.json',
         );
-        this.gameSettingsService.initializeSettings(settings);
+        //this.gameSettingsService.initializeSettings(settings);
         if (this.gameSettingsService.gameSettings.randomBonus === 'Activer') this.randomBonusesService.shuffleBonusesPositions();
     }
 }

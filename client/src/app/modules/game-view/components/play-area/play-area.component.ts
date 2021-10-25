@@ -1,3 +1,5 @@
+import { SkipTurnService } from '@app/services/skip-turn.service';
+import { ChatboxService } from '@app/services/chatbox.service';
 import { Component } from '@angular/core';
 import { EndGameService } from '@app/services/end-game.service';
 
@@ -7,5 +9,7 @@ import { EndGameService } from '@app/services/end-game.service';
     styleUrls: ['./play-area.component.scss'],
 })
 export class PlayAreaComponent {
-    constructor(public endGameService: EndGameService) {}
+    // isTour: boolean = true;
+    // timechoise: number = 60000;
+    constructor(public chatBox: ChatboxService, public skipTurn: SkipTurnService, public endGameService: EndGameService) {}
 }

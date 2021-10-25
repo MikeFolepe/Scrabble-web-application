@@ -18,10 +18,7 @@ export class GridService {
         this.caseWidth = DEFAULT_WIDTH / BOARD_SIZE;
         this.bonusesPositions = new Map<string, string>(this.randomBonusesService.bonusesPositions);
     }
-    
-    // ngAfterViewInit(){
-    //     this.bonusesPositions = new Map<string, string>(this.randomBonusesService.bonusesPositions);
-    // }
+
     /* eslint-disable @typescript-eslint/no-magic-numbers */
 
     setGridContext(gridContext: CanvasRenderingContext2D) {
@@ -67,11 +64,6 @@ export class GridService {
             }
         }
     }
-
-    //*************should i create this function?
-    // convertPosition(position: string): Vec2{
-    //     return {x: position[0].charCodeAt(0) - 'a'.charCodeAt(0), y: Number(position[1])-1};
-    // }
 
     //specify bonuses boxes on the grid by adding colors and bonuses names
     drawBonusesBoxes() {
