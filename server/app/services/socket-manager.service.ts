@@ -21,6 +21,8 @@ export class SocketManager {
                 socket.join(socket.id);
                 // room creation alerts all clients on the new rooms configurations
                 this.sio.emit('roomConfiguration', this.roomManager.rooms);
+
+                // TODO: update roomID in the client service
             });
 
             socket.on('getRoomsConfigurations', () => {
@@ -32,11 +34,14 @@ export class SocketManager {
                 this.roomManager.addCustomer(playerName, roomId);
                 this.roomManager.setState(roomId, State.Playing);
                 socket.join(roomId);
-                // all client must be alerted tha new full some room is filled
+                // all client must be alerted that some room is filled
                 this.sio.emit('roomConfiguration', this.roomManager.rooms);
+                // TODO: Je peux faire une convention entre les joueurs
+                // ...
                 // redirect the clients in the new filled room to game view
                 this.sio.in(roomId).emit('goToGameView', this.roomManager.getGameSettings(roomId));
                 console.log(this.roomManager.getGameSettings(roomId));
+                // TODO: update roomID dans les clients respectifs
             });
             // Delete  the room and uodate the client view
             socket.on('cancelMultiplayerparty', (roomId: string) => {

@@ -14,6 +14,7 @@ import { GameSettingsService } from './game-settings.service';
 export class ClientSocketService {
     socket: any;
     rooms: Room[] = [];
+    roomId: string;
     private urlString: string;
 
     constructor(private router: Router, private gameSettingsService: GameSettingsService) {
@@ -27,4 +28,6 @@ export class ClientSocketService {
             this.router.navigate(['game']);
         });
     }
+
+    // this.socket.on('')
 }
