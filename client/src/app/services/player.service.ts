@@ -106,13 +106,25 @@ export class PlayerService {
         if (letterToAdd === letterToAdd.toUpperCase()) {
             for (const letter of RESERVE) {
                 if (letter.value === '*') {
-                    this.players[indexPlayer].letterTable.push(letter);
+                    this.players[indexPlayer].letterTable.push({
+                        value: letter.value,
+                        quantity: letter.quantity,
+                        points: letter.points,
+                        isSelectedForSwap: letter.isSelectedForSwap,
+                        isSelectedForManipulation: letter.isSelectedForManipulation,
+                    });
                 }
             }
         } else {
             for (const letter of RESERVE) {
                 if (letterToAdd.toUpperCase() === letter.value) {
-                    this.players[indexPlayer].letterTable.push(letter);
+                    this.players[indexPlayer].letterTable.push({
+                        value: letter.value,
+                        quantity: letter.quantity,
+                        points: letter.points,
+                        isSelectedForSwap: letter.isSelectedForSwap,
+                        isSelectedForManipulation: letter.isSelectedForManipulation,
+                    });
                 }
             }
         }

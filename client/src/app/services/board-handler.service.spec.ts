@@ -38,6 +38,17 @@ describe('BoardHandlerService', () => {
         expect(service.currentCase).toEqual({ x: 7, y: 7 });
     });
 
+    it('left clicking an out of bounds case should not select it', () => {
+        const gridPosition: Vec2 = { x: -1 * CASE_SIZE + CASE_SIZE, y: -1 * CASE_SIZE + CASE_SIZE };
+        const mouseEvent = {
+            offsetX: gridPosition.x,
+            offsetY: gridPosition.y,
+            button: 0,
+        } as MouseEvent;
+        service.mouseHitDetect(mouseEvent);
+        expect(service.currentCase).toEqual({ x: -1, y: -1 });
+    });
+
     it('left clicking on the current selected case should switch the orientation of the placement', () => {
         service.currentCase = { x: 7, y: 7 };
         const gridPosition: Vec2 = { x: 7 * CASE_SIZE + CASE_SIZE, y: 7 * CASE_SIZE + CASE_SIZE };
@@ -51,7 +62,6 @@ describe('BoardHandlerService', () => {
     });
 
     it('pressing multiple keyboard buttons that are valid letters should all be placed', () => {
-        service['placeLetterService'].placeWithKeyboard = jasmine.createSpy().and.returnValue(true);
         service.currentCase = { x: 7, y: 7 };
         service.isFirstCasePicked = true;
         let keyboardEvent;
@@ -65,7 +75,7 @@ describe('BoardHandlerService', () => {
     });
 
     it('pressing a keyboard button that is a letter not present in the easel should not be placed', () => {
-        service['placeLetterService'].placeWithKeyboard = jasmine.createSpy().and.returnValue(true);
+        service.firstCase = { x: 7, y: 7 };
         service.currentCase = { x: 7, y: 7 };
         service.isFirstCasePicked = true;
         let keyboardEvent = new KeyboardEvent('keydown', { key: 'a' });
@@ -79,6 +89,7 @@ describe('BoardHandlerService', () => {
     });
 
     it('pressing Backspace should remove the last letter placed', () => {
+        service.firstCase = { x: 7, y: 7 };
         service.currentCase = { x: 7, y: 7 };
         service.isFirstCasePicked = true;
         let keyboardEvent;
@@ -95,6 +106,7 @@ describe('BoardHandlerService', () => {
     });
 
     it('removing all letters placed with Backspace should allow the user to pick a new starting case', () => {
+        service.firstCase = { x: 7, y: 7 };
         service.currentCase = { x: 7, y: 7 };
         service.isFirstCasePicked = true;
         let keyboardEvent;
@@ -114,6 +126,7 @@ describe('BoardHandlerService', () => {
     });
 
     it('pressing escape should cancel all the placements and the case selection made', () => {
+        service.firstCase = { x: 7, y: 7 };
         service.currentCase = { x: 7, y: 7 };
         service.isFirstCasePicked = true;
         service.orientation = 'v';
@@ -135,7 +148,6 @@ describe('BoardHandlerService', () => {
     });
 
     it('pressing Enter with a valid word placed should display the respective message ', () => {
-        service['placeLetterService'].placeWithKeyboard = jasmine.createSpy().and.returnValue(true);
         service['placeLetterService'].validateKeyboardPlacement = jasmine.createSpy().and.returnValue(true);
         service.currentCase = { x: 7, y: 7 };
         service.firstCase = { x: 7, y: 7 };
@@ -154,7 +166,6 @@ describe('BoardHandlerService', () => {
     });
 
     it('pressing Enter with an unvalid word placed should cancel the placement', () => {
-        service['placeLetterService'].placeWithKeyboard = jasmine.createSpy().and.returnValue(true);
         service['placeLetterService'].validateKeyboardPlacement = jasmine.createSpy().and.returnValue(false);
         service.currentCase = { x: 7, y: 7 };
         service.isFirstCasePicked = true;
@@ -169,5 +180,85 @@ describe('BoardHandlerService', () => {
         service.buttonDetect(keyboardEvent);
 
         expect(service.word).toEqual('');
+    });
+
+    it('forming a valid word out of already placed letters should be valid', () => {
+        service['placeLetterService'].validateKeyboardPlacement = jasmine.createSpy().and.returnValue(true);
+
+        service['placeLetterService'].scrabbleBoard[7][7] = 'l';
+        service['placeLetterService'].scrabbleBoard[7][8] = 'i';
+        service['placeLetterService'].scrabbleBoard[7][9] = 't';
+
+        service.firstCase = { x: 6, y: 7 };
+        service.currentCase = { x: 6, y: 7 };
+        service.isFirstCasePicked = true;
+
+        const wordToPlace = 'ee';
+        let keyboardEvent;
+        for (const letterToPlace of wordToPlace) {
+            keyboardEvent = new KeyboardEvent('keydown', { key: letterToPlace });
+            service.buttonDetect(keyboardEvent);
+        }
+        keyboardEvent = new KeyboardEvent('keydown', { key: 'Enter' });
+        service.buttonDetect(keyboardEvent);
+
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('!placer h7h elite', 'player');
+    });
+
+    it('placing horizontally out of bounds letters following already placed letters should not be placed', () => {
+        service['placeLetterService'].validateKeyboardPlacement = jasmine.createSpy().and.returnValue(true);
+
+        service['placeLetterService'].scrabbleBoard[7][11] = 'l';
+        service['placeLetterService'].scrabbleBoard[7][12] = 'i';
+        service['placeLetterService'].scrabbleBoard[7][13] = 't';
+        service['placeLetterService'].scrabbleBoard[7][14] = 'e';
+
+        service.firstCase = { x: 10, y: 7 };
+        service.currentCase = { x: 10, y: 7 };
+        service.isFirstCasePicked = true;
+
+        const wordToPlace = 'ees';
+
+        let keyboardEvent = new KeyboardEvent('keydown', { key: wordToPlace[0] });
+        service.buttonDetect(keyboardEvent);
+        service['placeLetterService'].placeWithKeyboard = jasmine.createSpy().and.returnValue(false);
+        keyboardEvent = new KeyboardEvent('keydown', { key: wordToPlace[1] });
+        service.buttonDetect(keyboardEvent);
+        keyboardEvent = new KeyboardEvent('keydown', { key: wordToPlace[2] });
+        service.buttonDetect(keyboardEvent);
+
+        keyboardEvent = new KeyboardEvent('keydown', { key: 'Enter' });
+        service.buttonDetect(keyboardEvent);
+
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('!placer h11h e', 'player');
+    });
+
+    it('placing vertically out of bounds letters following already placed letters should not be placed', () => {
+        service['placeLetterService'].validateKeyboardPlacement = jasmine.createSpy().and.returnValue(true);
+
+        service['placeLetterService'].scrabbleBoard[11][7] = 'l';
+        service['placeLetterService'].scrabbleBoard[12][7] = 'i';
+        service['placeLetterService'].scrabbleBoard[13][7] = 't';
+        service['placeLetterService'].scrabbleBoard[14][7] = 'e';
+
+        service.firstCase = { x: 7, y: 10 };
+        service.currentCase = { x: 7, y: 10 };
+        service.isFirstCasePicked = true;
+        service.orientation = 'v';
+
+        const wordToPlace = 'ees';
+
+        let keyboardEvent = new KeyboardEvent('keydown', { key: wordToPlace[0] });
+        service.buttonDetect(keyboardEvent);
+        service['placeLetterService'].placeWithKeyboard = jasmine.createSpy().and.returnValue(false);
+        keyboardEvent = new KeyboardEvent('keydown', { key: wordToPlace[1] });
+        service.buttonDetect(keyboardEvent);
+        keyboardEvent = new KeyboardEvent('keydown', { key: wordToPlace[2] });
+        service.buttonDetect(keyboardEvent);
+
+        keyboardEvent = new KeyboardEvent('keydown', { key: 'Enter' });
+        service.buttonDetect(keyboardEvent);
+
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('!placer k8v e', 'player');
     });
 });

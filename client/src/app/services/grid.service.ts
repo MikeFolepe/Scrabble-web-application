@@ -142,15 +142,23 @@ export class GridService {
         ctx.beginPath();
         if (orientation === 'h') {
             // Horizontal arrow
-            ctx.moveTo(gridPosition.x + this.caseWidth + this.caseWidth / 5, gridPosition.y + this.caseWidth / 4);
-            ctx.lineTo(gridPosition.x + this.caseWidth + this.caseWidth / 5, gridPosition.y + (3 * this.caseWidth) / 4);
-            ctx.lineTo(gridPosition.x + this.caseWidth + this.caseWidth / 5 + this.caseWidth / 3, gridPosition.y + this.caseWidth / 2);
+            ctx.moveTo(gridPosition.x + this.caseWidth / 2, gridPosition.y + this.caseWidth / 4);
+            ctx.lineTo(gridPosition.x + this.caseWidth / 2, gridPosition.y + (3 * this.caseWidth) / 4);
+            ctx.lineTo(gridPosition.x + (5 * this.caseWidth) / 6, gridPosition.y + this.caseWidth / 2);
+            ctx.lineTo(gridPosition.x + this.caseWidth / 2, gridPosition.y + this.caseWidth / 4);
+            ctx.lineTo(gridPosition.x + this.caseWidth / 2, gridPosition.y + (3 * this.caseWidth) / 4);
         } else {
             // Vertical arrow
-            ctx.moveTo(gridPosition.x + this.caseWidth / 4, gridPosition.y + this.caseWidth + this.caseWidth / 5);
-            ctx.lineTo(gridPosition.x + (3 * this.caseWidth) / 4, gridPosition.y + this.caseWidth + this.caseWidth / 5);
-            ctx.lineTo(gridPosition.x + this.caseWidth / 2, gridPosition.y + this.caseWidth + this.caseWidth / 5 + this.caseWidth / 3);
+            ctx.moveTo(gridPosition.x + this.caseWidth / 4, gridPosition.y + this.caseWidth / 2);
+            ctx.lineTo(gridPosition.x + (3 * this.caseWidth) / 4, gridPosition.y + this.caseWidth / 2);
+            ctx.lineTo(gridPosition.x + this.caseWidth / 2, gridPosition.y + (5 * this.caseWidth) / 6);
+            ctx.lineTo(gridPosition.x + this.caseWidth / 4, gridPosition.y + this.caseWidth / 2);
+            ctx.lineTo(gridPosition.x + (3 * this.caseWidth) / 4, gridPosition.y + this.caseWidth / 2);
         }
+        ctx.fillStyle = 'orange';
+        ctx.lineWidth = 4;
+        ctx.strokeStyle = 'black';
+        ctx.stroke();
         ctx.fill();
     }
 

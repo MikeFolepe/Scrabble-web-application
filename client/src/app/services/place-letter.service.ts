@@ -169,6 +169,7 @@ export class PlaceLetterService implements OnDestroy {
         setTimeout(() => {
             const currentPosition = { x: position.x, y: position.y };
             for (let i = 0; i < this.validLetters.length; i++) {
+                if (this.validLetters[i] === undefined) this.validLetters[i] = true;
                 // If the word is invalid, we remove only the letters that we just placed on the grid and add them back to the easel.
                 if (!this.validLetters[i]) {
                     this.removePlacedLetter(currentPosition, word[i], indexPlayer);

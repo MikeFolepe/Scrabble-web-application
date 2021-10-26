@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
-import { CASE_SIZE, INDEX_INVALID, INDEX_REAL_PLAYER, MouseButton, LAST_INDEX } from '@app/classes/constants';
+import { CASE_SIZE, INDEX_INVALID, INDEX_REAL_PLAYER, MouseButton, LAST_INDEX, BOARD_ROWS, BOARD_COLUMNS } from '@app/classes/constants';
 import { Vec2 } from '@app/classes/vec2';
 import { GridService } from './grid.service';
 import { PlaceLetterService } from './place-letter.service';
-import { PlayerService } from './player.service';
 import { TourService } from './tour.service';
 import { SendMessageService } from './send-message.service';
 
@@ -14,6 +13,8 @@ export class BoardHandlerService {
     currentCase: Vec2 = { x: INDEX_INVALID, y: INDEX_INVALID };
     firstCase: Vec2 = { x: INDEX_INVALID, y: INDEX_INVALID };
     word: string = '';
+    placedLetters: boolean[] = [];
+    // Attribut indexletters? pour track les letters déja placées
 
     isFirstCasePicked = false;
     isFirstCaseLocked = false;
@@ -22,12 +23,11 @@ export class BoardHandlerService {
     constructor(
         private gridService: GridService,
         private placeLetterService: PlaceLetterService,
-        private playerService: PlayerService,
         private turnService: TourService,
         private sendMessageService: SendMessageService,
     ) {}
 
-    buttonDetect(event: KeyboardEvent) {
+    buttonDetect(event: KeyboardEvent): void {
         switch (event.key) {
             case 'Backspace': {
                 this.removePlacedLetter();
@@ -55,7 +55,7 @@ export class BoardHandlerService {
         }
     }
 
-    mouseHitDetect(event: MouseEvent) {
+    mouseHitDetect(event: MouseEvent): void {
         if (event.button === MouseButton.Left) {
             if (this.isFirstCaseLocked) return;
             const caseClicked: Vec2 = this.calculateFirstCasePosition(event);
@@ -71,17 +71,20 @@ export class BoardHandlerService {
         }
     }
 
-    placeLetter(letter: string) {
+    placeLetter(letter: string): void {
         if (this.isFirstCasePicked && !this.isFirstCaseLocked) {
             // Placing the 1st letter
             if (this.placeLetterService.placeWithKeyboard(this.currentCase, letter, this.orientation, this.word.length, INDEX_REAL_PLAYER)) {
+                this.placedLetters[this.word.length] = true;
                 this.word += letter;
                 this.isFirstCaseLocked = true;
+                this.updateCaseDisplay();
             }
         } else if (this.isFirstCaseLocked) {
             // Placing following letters
             this.goToNextCase();
             if (this.placeLetterService.placeWithKeyboard(this.currentCase, letter, this.orientation, this.word.length, INDEX_REAL_PLAYER)) {
+                this.placedLetters[this.word.length] = true;
                 this.word += letter;
                 this.updateCaseDisplay();
             } else {
@@ -90,7 +93,7 @@ export class BoardHandlerService {
         }
     }
 
-    removePlacedLetter() {
+    removePlacedLetter(): void {
         const letterToRemove = this.word[this.word.length - 1];
         // Verify that letterToRemove isn't undefined
         if (letterToRemove) {
@@ -106,10 +109,12 @@ export class BoardHandlerService {
         else {
             // We can now select a new starting case
             this.isFirstCaseLocked = false;
+            this.placedLetters = [];
+            this.updateCaseDisplay();
         }
     }
 
-    confirmPlacement() {
+    confirmPlacement(): void {
         // Validation of the placement
         if (this.placeLetterService.validateKeyboardPlacement(this.firstCase, this.orientation, this.word, INDEX_REAL_PLAYER)) {
             this.gridService.eraseLayer(this.gridService.gridContextPlacementLayer);
@@ -117,17 +122,19 @@ export class BoardHandlerService {
             const row: string = String.fromCharCode(this.firstCase.y + 'a'.charCodeAt(0));
             this.sendMessageService.displayMessageByType('!placer ' + row + column + this.orientation + ' ' + this.word, 'player');
             this.word = '';
+            this.placedLetters = [];
             this.isFirstCasePicked = false;
             this.isFirstCaseLocked = false;
         } else {
             this.gridService.eraseLayer(this.gridService.gridContextPlacementLayer);
             this.word = '';
+            this.placedLetters = [];
             this.isFirstCasePicked = false;
             this.isFirstCaseLocked = false;
         }
     }
 
-    cancelPlacement() {
+    cancelPlacement(): void {
         while (this.word.length) {
             this.removePlacedLetter();
         }
@@ -162,43 +169,97 @@ export class BoardHandlerService {
     }
 
     isCasePositionValid(caseSelected: Vec2): boolean {
-        return caseSelected.x >= 0 && caseSelected.y >= 0;
+        if (caseSelected.x >= 0 && caseSelected.y >= 0) {
+            return this.placeLetterService.scrabbleBoard[caseSelected.y][caseSelected.x] === '';
+        }
+        return false;
     }
 
     goToNextCase(): void {
         if (this.orientation === 'h') {
-            this.currentCase.x++;
-        } else {
-            this.currentCase.y++;
+            this.goToNextHorizontalCase();
+        } else if (this.orientation === 'v') {
+            this.goToNextVerticallCase();
         }
     }
 
-    goToPreviousCase() {
+    goToNextHorizontalCase(): void {
+        this.currentCase.x++;
+        if (this.currentCase.x + 1 > BOARD_COLUMNS) return;
+        while (this.placeLetterService.scrabbleBoard[this.currentCase.y][this.currentCase.x] !== '') {
+            this.placedLetters[this.word.length] = false;
+            this.word += this.placeLetterService.scrabbleBoard[this.currentCase.y][this.currentCase.x];
+            this.currentCase.x++;
+            if (this.currentCase.x + 1 > BOARD_COLUMNS) return;
+        }
+    }
+
+    goToNextVerticallCase(): void {
+        this.currentCase.y++;
+        if (this.currentCase.y + 1 > BOARD_ROWS) return;
+        while (this.placeLetterService.scrabbleBoard[this.currentCase.y][this.currentCase.x] !== '') {
+            this.placedLetters[this.word.length] = false;
+            this.word += this.placeLetterService.scrabbleBoard[this.currentCase.y][this.currentCase.x];
+            this.currentCase.y++;
+            if (this.currentCase.y + 1 > BOARD_ROWS) return;
+        }
+    }
+
+    goToPreviousCase(): void {
         if (this.orientation === 'h') {
             this.currentCase.x--;
+            while (!this.placedLetters[this.currentCase.x - this.firstCase.x]) {
+                this.word = this.word.slice(0, LAST_INDEX);
+                this.currentCase.x--;
+            }
         } else {
             this.currentCase.y--;
+            while (!this.placedLetters[this.currentCase.y - this.firstCase.y]) {
+                this.word = this.word.slice(0, LAST_INDEX);
+                this.currentCase.y--;
+            }
         }
     }
 
-    updateCaseDisplay() {
+    updateCaseDisplay(): void {
         this.gridService.eraseLayer(this.gridService.gridContextPlacementLayer);
         this.gridService.drawBorder(this.gridService.gridContextPlacementLayer, this.currentCase.x, this.currentCase.y);
-        // Colored border of the current placement
+        // Colored border of the current placement if there is letters placed
         if (this.isFirstCaseLocked) {
-            for (let i = 0; i < this.word.length; i++) {
-                if (this.orientation === 'h')
-                    this.gridService.drawBorder(this.gridService.gridContextPlacementLayer, this.currentCase.x - i, this.currentCase.y);
-                else if (this.orientation === 'v')
-                    this.gridService.drawBorder(this.gridService.gridContextPlacementLayer, this.currentCase.x, this.currentCase.y - i);
-            }
+            this.drawPlacementBorder();
         }
-        // Only display the arrow if there is an empty tile in the direction of the orientation
-        if (
-            (this.orientation === 'h' && this.playerService.scrabbleBoard[this.currentCase.y][this.currentCase.x + 1] === '') ||
-            (this.orientation === 'v' && this.playerService.scrabbleBoard[this.currentCase.y + 1][this.currentCase.x] === '')
-        ) {
+        // Drawing the arrow on the starting case when no letters are placed
+        if (!this.isFirstCaseLocked) {
             this.gridService.drawArrow(this.gridService.gridContextPlacementLayer, this.currentCase.x, this.currentCase.y, this.orientation);
+            return;
         }
+        // Only display the arrow on the next empty tile if there is an empty tile in the direction of the orientation
+        this.drawArrowOnNextEmpty();
+    }
+
+    drawPlacementBorder(): void {
+        for (let i = 0; i < this.word.length; i++) {
+            if (this.orientation === 'h')
+                this.gridService.drawBorder(this.gridService.gridContextPlacementLayer, this.currentCase.x - i, this.currentCase.y);
+            else if (this.orientation === 'v')
+                this.gridService.drawBorder(this.gridService.gridContextPlacementLayer, this.currentCase.x, this.currentCase.y - i);
+        }
+    }
+
+    drawArrowOnNextEmpty(): void {
+        const currentArrowIndex: Vec2 = { x: this.currentCase.x, y: this.currentCase.y };
+        if (this.orientation === 'h') {
+            do {
+                currentArrowIndex.x++;
+                if (currentArrowIndex.x + 1 > BOARD_COLUMNS) return;
+            } while (this.placeLetterService.scrabbleBoard[currentArrowIndex.y][currentArrowIndex.x] !== '');
+        }
+        if (this.orientation === 'v') {
+            do {
+                currentArrowIndex.y++;
+                if (currentArrowIndex.y + 1 > BOARD_ROWS) return;
+            } while (this.placeLetterService.scrabbleBoard[currentArrowIndex.y][currentArrowIndex.x] !== '');
+        }
+        this.gridService.drawArrow(this.gridService.gridContextPlacementLayer, currentArrowIndex.x, currentArrowIndex.y, this.orientation);
     }
 }
