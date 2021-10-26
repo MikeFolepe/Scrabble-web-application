@@ -49,6 +49,7 @@ export class InformationPanelComponent implements OnDestroy, OnInit {
         let player = new Player(1, this.gameSettings.playersName[0], this.letterService.getRandomLetters());
         this.playerService.addPlayer(player);
         player = new PlayerAI(2, this.gameSettings.playersName[1], this.letterService.getRandomLetters());
+        // TODO: Resoudre en fonction du mode
         this.playerService.addPlayer(player);
     }
 
@@ -74,6 +75,7 @@ export class InformationPanelComponent implements OnDestroy, OnInit {
                 this.reAssignTour(this.tour);
                 this.countDown.setTimer();
                 this.playerAI.play();
+                // TODO: Resoudre en fonction du mode
             }
         }
     }
