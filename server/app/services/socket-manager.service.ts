@@ -43,7 +43,11 @@ export class SocketManager {
                 console.log(this.roomManager.getGameSettings(roomId));
                 // TODO: update roomID dans les clients respectifs
             });
-
+            // Delete  the room and uodate the client view
+            socket.on('cancelMultiplayerparty', (roomId: string) => {
+                this.roomManager.deleteRoom(roomId);
+                this.sio.emit('roomConfiguration', this.roomManager.rooms);
+            });
             socket.on('disconnect', (reason) => {
                 console.log(`Deconnexion par l'utilisateur avec id : ${socket.id}`);
                 console.log(`Raison de deconnexion : ${reason}`);

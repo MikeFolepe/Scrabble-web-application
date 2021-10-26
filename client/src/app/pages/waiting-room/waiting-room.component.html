@@ -8,7 +8,12 @@
 </mat-card>
 
 <button mat-raised-button id="submit-button" color="warn" (click)="route()">Je veux jouer contre le Joueur
-    Virtuel</button>
+    Virtuel
+</button>
+
+<button mat-raised-button color="warn" id="submit-button-1" (click) = "delete(clientSocket.socket.id)" routerLink="/home">
+    Annuler la partie multijoueur
+</button>
 <br>
 <br>
 <br>
