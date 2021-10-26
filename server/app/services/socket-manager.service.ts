@@ -18,14 +18,13 @@ export class SocketManager {
         this.sio.on('connection', (socket) => {
             socket.on('createRoom', (gameSettings: GameSettings) => {
                 this.roomManager.createRoom(socket.id, gameSettings.playersName[0], gameSettings);
+                // Each room created will have the creator's socket id as roomId
                 socket.join(socket.id);
                 // room creation alerts all clients on the new rooms configurations
                 this.sio.emit('roomConfiguration', this.roomManager.rooms);
-
-                // TODO: update roomID in the client service
             });
 
-            socket.on('getRoomsConfigurations', () => {
+            socket.on('getRoomsConfiguration', () => {
                 // getRoomsConfigurations only alerts the asker about the rooms configurations
                 socket.emit('roomConfiguration', this.roomManager.rooms);
             });
@@ -33,16 +32,20 @@ export class SocketManager {
             socket.on('newRoomCustomer', (playerName: string, roomId: string) => {
                 this.roomManager.addCustomer(playerName, roomId);
                 this.roomManager.setState(roomId, State.Playing);
-                socket.join(roomId);
-                // all client must be alerted that some room is filled
+                // all clients must be alerted that some room is filled to block someone else entry
                 this.sio.emit('roomConfiguration', this.roomManager.rooms);
-                // TODO: Je peux faire une convention entre les joueurs
-                // ...
+                socket.join(roomId);
+                // update roomID in the new filled room to allow the clients in this room
+                // to ask the server make some actions in their room later
+                this.sio.in(roomId).emit('yourRoomId', roomId);
+                // send back to all clients in this room their game settings with different starting status
+                // and display each user name at top
+                // TODO: Renvoyez à chaque client son GameSettings formaté
                 // redirect the clients in the new filled room to game view
                 this.sio.in(roomId).emit('goToGameView', this.roomManager.getGameSettings(roomId));
                 console.log(this.roomManager.getGameSettings(roomId));
-                // TODO: update roomID dans les clients respectifs
             });
+
             // Delete  the room and uodate the client view
             socket.on('cancelMultiplayerparty', (roomId: string) => {
                 this.roomManager.deleteRoom(roomId);

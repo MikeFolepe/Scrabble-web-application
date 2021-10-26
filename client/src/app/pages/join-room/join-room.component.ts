@@ -21,7 +21,7 @@ export class JoinRoomComponent implements OnInit {
     constructor(private clientSocketService: ClientSocketService, public dialog: MatDialog) {
         this.isNameValid = true;
         this.clientSocketService.socket.connect();
-        this.clientSocketService.socket.emit('getRoomsConfigurations');
+        this.clientSocketService.socket.emit('getRoomsConfiguration');
         this.clientSocketService.socket.on('roomConfiguration', (room: Room[]) => {
             this.rooms = room;
             // console.log(this.rooms);
@@ -52,7 +52,7 @@ export class JoinRoomComponent implements OnInit {
         ref.afterClosed().subscribe((playerName: string) => {
             // if user closes the dialog box without input nothing
             if (playerName === null) return;
-            // if name matches
+            // if name are equals
             if (room.ownerName === playerName) {
                 this.isNameValid = false;
                 setTimeout(() => {
@@ -60,7 +60,6 @@ export class JoinRoomComponent implements OnInit {
                 }, 4000);
                 return;
             }
-            this.clientSocketService.roomId = room.id;
             this.clientSocketService.socket.emit('newRoomCustomer', playerName, room.id);
         });
     }

@@ -20,14 +20,19 @@ export class ClientSocketService {
     constructor(private router: Router, private gameSettingsService: GameSettingsService) {
         this.urlString = `http://${window.location.hostname}:3000`;
         this.socket = io(this.urlString);
+        this.initializeRoomId();
     }
 
-    route() {
+    route(): void {
         this.socket.on('goToGameView', (gameSettings: GameSettings) => {
             this.gameSettingsService.gameSettings = gameSettings;
             this.router.navigate(['game']);
         });
     }
 
-    // this.socket.on('')
+    initializeRoomId(): void {
+        this.socket.on('yourRoomId', (roomIdFromServer: string) => {
+            this.roomId = roomIdFromServer;
+        });
+    }
 }
