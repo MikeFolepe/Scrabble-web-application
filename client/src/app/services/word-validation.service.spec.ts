@@ -1,4 +1,3 @@
-import { CommunicationService } from './communication.service';
 // import { CommunicationService } from '@app/services/communication.service';
 /* eslint-disable dot-notation */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
@@ -7,6 +6,7 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { TestBed } from '@angular/core/testing';
 import { ALL_EASEL_BONUS, BOARD_COLUMNS, BOARD_ROWS } from '@app/classes/constants';
 import { ScoreValidation } from '@app/classes/validation-score';
+import { CommunicationService } from './communication.service';
 import { WordValidationService } from './word-validation.service';
 
 fdescribe('WordValidationService', () => {
@@ -56,24 +56,24 @@ fdescribe('WordValidationService', () => {
         const passThroughAllRowsOrColumnsSpy = spyOn(service, 'passThroughAllRowsOrColumns').and.callThrough();
         // const calculateLettersScoreSpy = spyOn<any>(service, 'calculateLettersScore').and.callThrough();
         service.validateAllWordsOnBoard(scrabbleBoard, isEaselSize, isRow);
+        const req = httpMock.expectOne(`${service['httpServer']['baseUrl']}/multiplayer/validateWords`);
+        expect(req.request.method).toBe('POST');
         // expect(calculateLettersScoreSpy).toHaveBeenCalled();
         expect(passThroughAllRowsOrColumnsSpy).toHaveBeenCalledTimes(2);
     });
-
-    it('should calculateLetterScore and calculate word bonuses if the word touch a wordBonuses position', () => {
-        service['newWords'] = ['', 'mais', ''];
-        service['newPlayedWords'].set('mAsse', ['A1', 'A2', 'A3', 'A4', 'A5']);
-        service['playedWords'].set('mAsse', ['A1', 'A2', 'A3', 'A4', 'A5']);
+    it('should return the correct state and score to the player when validation is true', () => {
+        const easelSize = false;
         const isRow = true;
-        const isEaselSize = false;
-        const passThroughAllRowsOrColumnsSpy = spyOn(service, 'passThroughAllRowsOrColumns').and.callThrough();
-        const calculateLettersScoreSpy = spyOn(service, 'calculateLettersScore').and.callThrough();
-        const applyBonusesWordSpy = spyOn(service, 'applyBonusesWord').and.callThrough();
-        service.validateAllWordsOnBoard(scrabbleBoard, isEaselSize, isRow);
-        expect(passThroughAllRowsOrColumnsSpy).toHaveBeenCalledTimes(2);
-        expect(calculateLettersScoreSpy).toHaveBeenCalled();
-        expect(applyBonusesWordSpy).toHaveBeenCalled();
-        // m has 2 points and a has 1 point
+        service['newPlayedWords'].set('mAison', ['H8', 'H9', 'H10', 'H11', 'H12', 'H13']);
+        // TODO : stop forcing this value
+        service['validationState'] = true;
+        const expectedResult: ScoreValidation = { validation: true, score: 7 };
+        const result = service.validateAllWordsOnBoard(scrabbleBoard, easelSize, isRow);
+        const req = httpMock.expectOne(`${service['httpServer']['baseUrl']}/multiplayer/validateWords`);
+        expect(req.request.method).toBe('POST');
+
+        expect(result.score).toEqual(expectedResult.score);
+        expect(result.validation).toEqual(expectedResult.validation);
     });
 
     it('should double word score if word is placed on a double word case', () => {
@@ -93,33 +93,42 @@ fdescribe('WordValidationService', () => {
     it('should add easel bonus when condition encountered and validateAllWordsOnBoard() is called', () => {
         const initialScore = 100;
         spyOn(service, 'calculateTotalScore').and.returnValue(initialScore);
+        // TODO : stop forcing this value
+        service['validationState'] = true;
         const result = service.validateAllWordsOnBoard(scrabbleBoard, true, true);
+        const req = httpMock.expectOne(`${service['httpServer']['baseUrl']}/multiplayer/validateWords`);
+        expect(req.request.method).toBe('POST');
         expect(result.score).toEqual(initialScore + ALL_EASEL_BONUS);
     });
 
     it('should call the right functions in case word is greater than two letters in passThroughAllRowsOrColumns()', () => {
         const spyOnHorizontalOrVertical = spyOn(service, 'getWordHorizontalOrVerticalPositions');
         const spyOnCheck = spyOn(service, 'checkIfPlayed');
-        const spyOnGetWordPositions = spyOn(service,'getWordHorizontalOrVerticalPositions');
-        service['newWords'] = ['test'];
+        const spyOnAddToPlayedWords = spyOn(service, 'addToPlayedWords');
+        service['newWords'] = ['', '', '', '', 't', 'e', 's', 't', '', '', '', '', '', '', ''];
+        service['newPositions'] = ['H8', 'H9', 'H10', 'H11'];
         service.passThroughAllRowsOrColumns(scrabbleBoard, true);
-
-        service['newWords'] = ['test'];
+        service['newWords'] = ['', '', '', '', 't', 'e', 's', 't', '', '', '', '', '', '', ''];
+        service['newPositions'] = ['H8', 'H9', 'H10', 'H11'];
         service.passThroughAllRowsOrColumns(scrabbleBoard, false);
-        expect(spyOnGetWordPositions).toHaveBeenCalled();
         expect(spyOnHorizontalOrVertical).toHaveBeenCalledTimes(2);
         expect(spyOnCheck).toHaveBeenCalledTimes(2);
+        expect(spyOnAddToPlayedWords).toHaveBeenCalledTimes(2);
     });
 
     it('validate all words should be false once one word is not valid in dictionnary', () => {
-        service['newWords'] = ['', 'is', ''];
         service['newPlayedWords'].set('nrteu', ['A1', 'A2', 'A3', 'A4', 'A5']);
         service['playedWords'].set('ma', ['B1', 'B2']);
         const isEaselSize = true;
         const isRow = true;
+        // TODO: Verify the return of the request
         const expectedResult: ScoreValidation = { validation: false, score: 0 };
+        // const spyToServer = spyOn(service['httpServer'], 'validationPost');
         const result = service.validateAllWordsOnBoard(scrabbleBoard, isEaselSize, isRow);
+        const req = httpMock.expectOne(`${service['httpServer']['baseUrl']}/multiplayer/validateWords`);
+        expect(req.request.method).toBe('POST');
         expect(result).toEqual(expectedResult);
+        // expect(spyToServer).toHaveBeenCalled();
         // m has 2 points and a has 1 point
     });
 
@@ -133,6 +142,19 @@ fdescribe('WordValidationService', () => {
         service['playedWords'].set('ma', ['A1', 'A2']);
         const result = service.checkIfPlayed('ma', ['A1', 'A2']);
         expect(result).toEqual(true);
+    });
+
+    it('should not add the already played word when passing through lines and columns', () => {
+        service['playedWords'].set('test', ['H8', 'H9', 'H10', 'H11']);
+        // service['newWords'] = ['', '', '', '', 't', 'e', 's', 't', '', '', '', '', '', '', ''];
+        service['newPositions'] = ['H8', 'H9', 'H10', 'H11'];
+        const isRow = true;
+        const checkOn = spyOn(service, 'checkIfPlayed');
+        service.passThroughAllRowsOrColumns(scrabbleBoard, isRow);
+        service.passThroughAllRowsOrColumns(scrabbleBoard, !isRow);
+        expect(checkOn).toHaveBeenCalled();
+        expect(checkOn).toEqual(true);
+        expect(service['newPlayedWords'].size).toEqual(0);
     });
 
     it('add to playedWords should add the new position to the words map if the concerned word is already played', () => {
@@ -153,5 +175,32 @@ fdescribe('WordValidationService', () => {
         const expectedPositions = ['D8', 'E8'];
         const returnedPositions = service.getWordHorizontalOrVerticalPositions(word, indexLine, indexColumn, isRow);
         expect(returnedPositions).toEqual(expectedPositions);
+    });
+
+    it('should find words of a given line or column', () => {
+        const lineOrColumn: string[] = ['', '', 'm', 'a', '', 'b', 'e', 'b', 'e'];
+
+        const result = service.findWords(lineOrColumn);
+        const expectedResult = ['', 'ma', 'bebe'];
+
+        expect(result).toEqual(expectedResult);
+    });
+
+    it('should find *(the emptyCharacter) when calculating score and apply bonuses', () => {
+        const score = 0;
+        const map: Map<string, string[]> = new Map<string, string[]>([['mAisonee', ['H8', 'H9', 'H10', 'H11', 'H12', 'H13', 'H14', 'H15']]]);
+        const scoreResult = service.calculateTotalScore(score, map);
+        const expectedScore = 27;
+        expect(scoreResult).toEqual(expectedScore);
+    });
+
+    it('should remove the bonus when a turn is done', () => {
+        const map: Map<string, string[]> = new Map<string, string[]>([['mAisonee', ['H8', 'H9', 'H10', 'H11', 'H12', 'H13', 'H14', 'H15']]]);
+        const expectedSize = service['bonusesPositions'].size - 2;
+        service.removeBonuses(map);
+
+        expect(service['bonusesPositions'].size).toEqual(expectedSize);
+        expect(service['bonusesPositions'].get('H12')).toBe(undefined);
+        expect(service['bonusesPositions'].get('H15')).toBe(undefined);
     });
 });

@@ -28,7 +28,7 @@ export class MultiplayerController {
          *
          */
         this.router.post('/validateWords', (req: Request, res: Response) => {
-            return res.send(this.wordValidator.isValidInDictionary(req.body));
+            res.send(this.wordValidator.isValidInDictionary(req.body));
         });
     }
 }
