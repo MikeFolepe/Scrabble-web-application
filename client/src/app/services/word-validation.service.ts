@@ -7,11 +7,11 @@ import { CommunicationService } from '@app/services/communication.service';
     providedIn: 'root',
 })
 export class WordValidationService {
-    newWords: string[];
-    playedWords: Map<string, string[]>;
-    newPlayedWords: Map<string, string[]>;
-    newPositions: string[];
-    bonusesPositions: Map<string, string>;
+    private newWords: string[];
+    private playedWords: Map<string, string[]>;
+    private newPlayedWords: Map<string, string[]>;
+    private newPositions: string[];
+    private bonusesPositions: Map<string, string>;
     private validationState = false;
 
     constructor(private httpServer: CommunicationService) {
@@ -21,19 +21,6 @@ export class WordValidationService {
         this.newPositions = new Array<string>();
         this.bonusesPositions = new Map<string, string>(BONUSES_POSITIONS);
     }
-
-    // isValidInDictionary(word: string): boolean {
-    //     if (word.length >= 2) {
-    //         // eslint-disable-next-line prefer-const
-    //         for (const item of DICTIONARY) {
-    //             if (word === item) {
-    //                 return true;
-    //             }
-    //         }
-    //         return false;
-    //     }
-    //     return false;
-    // }
 
     findWords(words: string[]): string[] {
         return words
@@ -73,25 +60,31 @@ export class WordValidationService {
         return false;
     }
 
-    getWordHorizontalPositions(word: string, index: number): string[] {
+    getWordHorizontalOrVerticalPositions(word: string, indexLine: number, indexColumn: number, isRow: boolean): string[] {
         const positions: string[] = new Array<string>();
         for (const char of word) {
-            const indexChar = this.newWords.indexOf(char) + 1;
-            positions.push(this.getCharPosition(index) + indexChar.toString());
+            if (isRow) {
+                const indexChar = this.newWords.indexOf(char) + 1;
+                positions.push(this.getCharPosition(indexLine) + indexChar.toString());
+            } else {
+                const indexChar = this.newWords.indexOf(char);
+                const column = indexColumn + 1;
+                positions.push(this.getCharPosition(indexChar) + column.toString());
+            }
         }
 
         return positions;
     }
 
-    getWordVerticalPositions(word: string, index: number): string[] {
-        const positions: string[] = new Array<string>();
-        for (const char of word) {
-            const indexChar = this.newWords.indexOf(char);
-            const column = index + 1;
-            positions.push(this.getCharPosition(indexChar) + column.toString());
-        }
-        return positions;
-    }
+    // getWordVerticalPositions(word: string, index: number): string[] {
+    //     const positions: string[] = new Array<string>();
+    //     for (const char of word) {
+    //         const indexChar = this.newWords.indexOf(char);
+    //         const column = index + 1;
+    //         positions.push(this.getCharPosition(indexChar) + column.toString());
+    //     }
+    //     return positions;
+    // }
 
     passThroughAllRowsOrColumns(scrabbleBoard: string[][], isRow: boolean) {
         let x = 0;
@@ -107,7 +100,7 @@ export class WordValidationService {
 
             for (const word of words) {
                 if (word.length >= 2) {
-                    this.newPositions = isRow ? this.getWordHorizontalPositions(word, x) : this.getWordVerticalPositions(word, y);
+                    this.newPositions = this.getWordHorizontalOrVerticalPositions(word, x, y, isRow);
                     if (!this.checkIfPlayed(word, this.newPositions)) {
                         this.addToPlayedWords(word, this.newPositions, this.newPlayedWords);
                     }
@@ -190,33 +183,24 @@ export class WordValidationService {
         return score;
     }
 
-    // getServerValidation(scrabbleBoard: string[][], isEaselSize: boolean, isRow: boolean): Observable<ScoreValidation> {
-    //     const wordValidationUrl = 'api/validation/:scrabbleBoard/:isEaselSize/:boolean';
-    //     return this.http.get<ScoreValidation>(wordValidationUrl);
-    // }
-
     validateAllWordsOnBoard(scrabbleBoard: string[][], isEaselSize: boolean, isRow: boolean): ScoreValidation {
         let scoreTotal = 0;
         this.passThroughAllRowsOrColumns(scrabbleBoard, isRow);
         this.passThroughAllRowsOrColumns(scrabbleBoard, !isRow);
-        // for (const word of this.newPlayedWords.keys()) {
-        //     const lowerCaseWord = word.toLowerCase();
-        //     if (!this.isValidInDictionary(lowerCaseWord)) {
-        //         this.newPlayedWords.clear();
-        //         return { validation: false, score: scoreTotal };
-        //     }
-        // }
 
         this.httpServer.validationPost(this.newPlayedWords).subscribe((validation) => (this.validationState = validation));
+
         if (!this.validationState) {
             this.newPlayedWords.clear();
             return { validation: this.validationState, score: scoreTotal };
         }
+
         scoreTotal += this.calculateTotalScore(scoreTotal, this.newPlayedWords);
 
         if (isEaselSize) {
             scoreTotal += ALL_EASEL_BONUS;
         }
+
         this.removeBonuses(this.newPlayedWords);
 
         for (const word of this.newPlayedWords.keys()) {

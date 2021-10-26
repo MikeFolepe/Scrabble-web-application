@@ -1,4 +1,4 @@
-import { WordValidationController } from './controllers/validate.controller';
+import { MultiplayerController } from './controllers/multiplayer.controller';
 import { HttpException } from '@app/classes/http.exception';
 import { DateController } from '@app/controllers/date.controller';
 import { ExampleController } from '@app/controllers/example.controller';
@@ -20,7 +20,7 @@ export class Application {
     constructor(
         private readonly exampleController: ExampleController,
         private readonly dateController: DateController,
-        private readonly wordValidationController: WordValidationController,
+        private readonly multiplayerController: MultiplayerController,
     ) {
         this.app = express();
 
@@ -44,7 +44,7 @@ export class Application {
         this.app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerJSDoc(this.swaggerOptions)));
         this.app.use('/api/example', this.exampleController.router);
         this.app.use('/api/date', this.dateController.router);
-        this.app.use('/api/validation', this.wordValidationController.router);
+        this.app.use('/api/multiplayer', this.multiplayerController.router);
         this.app.use('/', (req, res) => {
             res.redirect('/api/docs');
         });

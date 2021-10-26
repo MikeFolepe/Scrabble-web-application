@@ -1,3 +1,5 @@
+import { CommunicationService } from './communication.service';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 /* eslint-disable dot-notation */
 import { TestBed } from '@angular/core/testing';
 import { INDEX_PLAYER_AI, INDEX_REAL_PLAYER, THREE_SECONDS_DELAY } from '@app/classes/constants';
@@ -5,7 +7,6 @@ import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
 import { Player } from '@app/models/player.model';
 import { GridService } from '@app/services/grid.service';
-
 import { PlaceLetterService } from './place-letter.service';
 
 describe('PlaceLetterService', () => {
@@ -16,6 +17,10 @@ describe('PlaceLetterService', () => {
     });
 
     beforeEach(() => {
+        TestBed.configureTestingModule({
+            imports: [HttpClientTestingModule],
+            providers: [CommunicationService],
+        });
         TestBed.configureTestingModule({
             providers: [{ provide: GridService, useValue: gridServiceSpy }],
         });

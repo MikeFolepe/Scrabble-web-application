@@ -7,7 +7,7 @@ import {
     EASEL_SIZE,
     INDEX_INVALID,
     INDEX_PLAYER_AI,
-    THREE_SECONDS_DELAY
+    THREE_SECONDS_DELAY,
 } from '@app/classes/constants';
 import { ScoreValidation } from '@app/classes/validation-score';
 import { Vec2 } from '@app/classes/vec2';
