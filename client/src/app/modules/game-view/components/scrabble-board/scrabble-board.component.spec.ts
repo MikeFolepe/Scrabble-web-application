@@ -1,21 +1,22 @@
 /* eslint-disable dot-notation */
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MouseHandlerService } from '@app/services/mouse-handler.service';
+import { BoardHandlerService } from '@app/services/board-handler.service';
 import { ScrabbleBoardComponent } from './scrabble-board.component';
+import { By } from '@angular/platform-browser';
 
 describe('ScrabbleBoardComponent', () => {
     let component: ScrabbleBoardComponent;
     let fixture: ComponentFixture<ScrabbleBoardComponent>;
-    let mouseServiceSpy: jasmine.SpyObj<MouseHandlerService>;
+    let boardHandlerServiceSpy: jasmine.SpyObj<BoardHandlerService>;
 
     beforeEach(() => {
-        mouseServiceSpy = jasmine.createSpyObj('MouseHandlerService', ['mouseHitDetect']);
+        boardHandlerServiceSpy = jasmine.createSpyObj('BoardHandlerService', ['mouseHitDetect', 'buttonDetect']);
     });
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [ScrabbleBoardComponent],
-            providers: [{ provide: MouseHandlerService, useValue: mouseServiceSpy }],
+            providers: [{ provide: BoardHandlerService, useValue: boardHandlerServiceSpy }],
         }).compileComponents();
     });
 
@@ -29,24 +30,15 @@ describe('ScrabbleBoardComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('buttonDetect should modify the buttonPressed variable', () => {
-        spyOn(component['gridService'], 'setGridContext');
-        const expectedKey = 'a';
-        const buttonEvent = {
-            key: expectedKey,
-        } as KeyboardEvent;
-        component.buttonDetect(buttonEvent);
-        expect(component.buttonPressed).toEqual(expectedKey);
+    it('Pressing a keyboard button should call buttonDetect from BoardHandlerService', () => {
+        const event = new Event('keydown');
+        fixture.elementRef.nativeElement.dispatchEvent(event);
+        expect(component['boardHandlerService'].buttonDetect).toHaveBeenCalled();
     });
-
-    it('mouse hit detect should call mouse hit detect from gridService', () => {
-        spyOn(component['gridService'], 'setGridContext');
-        const mouseEvent = {
-            offsetX: 10,
-            offsetY: 1,
-            button: 0,
-        } as MouseEvent;
-        component.mouseHitDetect(mouseEvent);
-        expect(mouseServiceSpy.mouseHitDetect).toHaveBeenCalledWith(mouseEvent);
+    it('Clicking on the scrabbleboard should call mouseHitDetect from BoardHandlerService', () => {
+        fixture.detectChanges();
+        const gridCanvasPlacementLayer = fixture.debugElement.query(By.css('#layer3'));
+        gridCanvasPlacementLayer.triggerEventHandler('click', null);
+        expect(component['boardHandlerService'].mouseHitDetect).toHaveBeenCalled();
     });
 });

@@ -10,6 +10,10 @@
     gap: 5em;
 }
 
+.board-container {
+    outline: none;
+}
+
 /*.side-board-container {
     display: flex;
     width: 15vw;
@@ -28,7 +32,12 @@ button {
     width: 8em;
 }
 
-#Pass-button {
+#pass-button {
+    height: 3em;
+    width: 8em;
+}
+
+#play-button {
     height: 3em;
     width: 8em;
 }

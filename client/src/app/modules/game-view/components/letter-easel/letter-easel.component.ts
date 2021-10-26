@@ -5,6 +5,7 @@ import { LetterService } from '@app/services/letter.service';
 import { PlayerService } from '@app/services/player.service';
 import { SwapLetterService } from '@app/services/swap-letter.service';
 import { TourService } from '@app/services/tour.service';
+import { BoardHandlerService } from '@app/services/board-handler.service';
 import { PassTourService } from '@app/services/pass-tour.service';
 import { SendMessageService } from '@app/services/send-message.service';
 
@@ -14,7 +15,7 @@ import { SendMessageService } from '@app/services/send-message.service';
     styleUrls: ['./letter-easel.component.scss'],
 })
 export class LetterEaselComponent implements OnInit {
-    @ViewChild('easelContainer') easelContainer: ElementRef;
+    @ViewChild('easel') easel: ElementRef;
 
     letterEaselTab: Letter[] = [];
     fontSize: number = DEFAULT_FONT_SIZE;
@@ -24,15 +25,17 @@ export class LetterEaselComponent implements OnInit {
         private turnService: TourService,
         private letterService: LetterService,
         private swapLetterService: SwapLetterService,
+        private boardHandlerService: BoardHandlerService,
         private passTurnService: PassTourService,
         private sendMessageService: SendMessageService,
     ) {}
 
-    // Disable all selections made when a click occurs outside the easel
+    // TODO Changer le font size ne deselect pas ?
     @HostListener('document:click', ['$event'])
     @HostListener('document:contextmenu', ['$event'])
-    clickOut(event: MouseEvent) {
-        if (this.easelContainer.nativeElement.contains(event.target)) return;
+    clickEvent(event: MouseEvent) {
+        if (this.easel.nativeElement.contains(event.target)) return;
+        // Disable all easel selections made when a click occurs outside the easel
         for (const letterEasel of this.letterEaselTab) {
             letterEasel.isSelectedForSwap = false;
             letterEasel.isSelectedForManipulation = false;
@@ -56,6 +59,10 @@ export class LetterEaselComponent implements OnInit {
     onLeftClick(event: MouseEvent, indexLetter: number) {
         event.preventDefault();
         this.handleManipulationSelection(indexLetter);
+    }
+
+    onEaselClick() {
+        this.boardHandlerService.cancelPlacement();
     }
 
     handleSwapSelection(indexLetter: number) {

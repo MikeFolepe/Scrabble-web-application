@@ -75,52 +75,6 @@ export class ChatboxService implements OnDestroy {
         this.command = ''; // reset value for next message
     }
 
-    isValid(): boolean {
-        if (this.message[0] !== '!') {
-            this.sendMessageService.displayMessageByType(this.message, this.typeMessage);
-            return true; // If it's a normal message, it's always valid
-        }
-        // If it's a command, we call the validation
-        return this.isInputValid() && this.isSyntaxValid();
-    }
-
-    isInputValid(): boolean {
-        const debugInput = /^!debug/g;
-        const passInput = /^!passer/g;
-        const swapInput = /^!échanger/g;
-        const placeInput = /^!placer/g;
-
-        if (debugInput.test(this.message) || passInput.test(this.message) || swapInput.test(this.message) || placeInput.test(this.message)) {
-            return true;
-        }
-
-        this.message = "ERREUR : L'entrée est invalide";
-        return false;
-    }
-
-    isSyntaxValid(): boolean {
-        const debugSyntax = /^!debug$/g;
-        const passSyntax = /^!passer$/g;
-        const swapSyntax = /^!échanger\s([a-z]|[*]){1,7}$/g;
-        const placeSyntax = /^!placer\s([a-o]([1-9]|1[0-5])[hv])\s([a-zA-Z\u00C0-\u00FF]|[*])+/g;
-
-        let isSyntaxValid = true;
-
-        if (debugSyntax.test(this.message)) {
-            this.command = 'debug';
-        } else if (passSyntax.test(this.message)) {
-            this.command = 'passer';
-        } else if (swapSyntax.test(this.message)) {
-            this.command = 'echanger';
-        } else if (placeSyntax.test(this.message)) {
-            this.command = 'placer';
-        } else {
-            isSyntaxValid = false;
-            this.message = 'ERREUR : La syntaxe est invalide';
-        }
-        return isSyntaxValid;
-    }
-
     executeDebug() {
         this.debugService.switchDebugMode();
         if (this.debugService.isDebugActive) {
@@ -167,19 +121,64 @@ export class ChatboxService implements OnDestroy {
 
             // Vector containing start position of the word to place
             const position: Vec2 = {
-                x: positionSplitted[0].charCodeAt(0) - 'a'.charCodeAt(0),
-                y: Number(positionSplitted[1]) - 1,
+                x: Number(positionSplitted[1]) - 1,
+                y: positionSplitted[0].charCodeAt(0) - 'a'.charCodeAt(0),
             };
             const orientation = positionSplitted[2];
 
-            if (this.placeLetterService.place(position, orientation, messageSplitted[2], INDEX_REAL_PLAYER)) {
+            if (this.placeLetterService.placeCommand(position, orientation, messageSplitted[2], INDEX_REAL_PLAYER)) {
                 this.sendMessageService.displayMessageByType(this.message, this.typeMessage);
-                this.passTourService.writeMessage();
             }
         } else {
             this.typeMessage = 'error';
             this.message = "ERREUR : Ce n'est pas ton tour";
         }
+    }
+
+    isValid(): boolean {
+        if (this.message[0] !== '!') {
+            this.sendMessageService.displayMessageByType(this.message, this.typeMessage);
+            return true; // If it's a normal message, it's always valid
+        }
+        // If it's a command, we call the validation
+        return this.isInputValid() && this.isSyntaxValid();
+    }
+
+    isInputValid(): boolean {
+        const debugInput = /^!debug/g;
+        const passInput = /^!passer/g;
+        const swapInput = /^!échanger/g;
+        const placeInput = /^!placer/g;
+
+        if (debugInput.test(this.message) || passInput.test(this.message) || swapInput.test(this.message) || placeInput.test(this.message)) {
+            return true;
+        }
+
+        this.message = "ERREUR : L'entrée est invalide";
+        return false;
+    }
+
+    isSyntaxValid(): boolean {
+        const debugSyntax = /^!debug$/g;
+        const passSyntax = /^!passer$/g;
+        const swapSyntax = /^!échanger\s([a-z]|[*]){1,7}$/g;
+        const placeSyntax = /^!placer\s([a-o]([1-9]|1[0-5])[hv])\s([a-zA-Z\u00C0-\u00FF]|[*])+/g;
+
+        let isSyntaxValid = true;
+
+        if (debugSyntax.test(this.message)) {
+            this.command = 'debug';
+        } else if (passSyntax.test(this.message)) {
+            this.command = 'passer';
+        } else if (swapSyntax.test(this.message)) {
+            this.command = 'echanger';
+        } else if (placeSyntax.test(this.message)) {
+            this.command = 'placer';
+        } else {
+            isSyntaxValid = false;
+            this.message = 'ERREUR : La syntaxe est invalide';
+        }
+        return isSyntaxValid;
     }
 
     // Method which check the different size of table of possibility for the debug

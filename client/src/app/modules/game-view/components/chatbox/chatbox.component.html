@@ -1,4 +1,4 @@
-<div class="chat-box">
+<div id="chat-box" class="chat-box">
     <div class="fakeMenu">
         <div class="fakeButtons fakeClose"></div>
         <div class="fakeButtons fakeMinimize"></div>
@@ -22,16 +22,6 @@
         </p>
     </div>
 
-    <input
-        type="text"
-        placeholder="Veuillez entrer un message ou une commande"
-        maxlength="512"
-        [(ngModel)]="message"
-        (keypress)="handleKeyEvent($event)"
-        onblur="this.focus()"
-        autofocus
-    />
-</div>
-<div>
-    <button mat-raised-button color="primary" id="Pass-button" [disabled]="!tour" (click)="passButton()">Passer tour</button>
+    <input type="text" placeholder="Veuillez entrer un message ou une commande" maxlength="512" [(ngModel)]="message"
+        (keypress)="handleKeyEvent($event)"/>
 </div>

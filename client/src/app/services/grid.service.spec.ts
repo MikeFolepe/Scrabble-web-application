@@ -13,7 +13,7 @@ describe('GridService', () => {
         TestBed.configureTestingModule({});
         service = TestBed.inject(GridService);
         ctxStub = CanvasTestHelper.createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT).getContext('2d') as CanvasRenderingContext2D;
-        service.gridContext = ctxStub;
+        service.gridContextBoardLayer = ctxStub;
     });
 
     // it('should be created', () => {
@@ -66,16 +66,16 @@ describe('GridService', () => {
     // });
 
     it(' drawGrid should color pixels on the canvas', () => {
-        let imageData = service.gridContext.getImageData(0, 0, service.width, service.height).data;
+        let imageData = service.gridContextBoardLayer.getImageData(0, 0, service.width, service.height).data;
         const beforeSize = imageData.filter((x) => x !== 0).length;
         service.drawGrid();
-        imageData = service.gridContext.getImageData(0, 0, service.width, service.height).data;
+        imageData = service.gridContextBoardLayer.getImageData(0, 0, service.width, service.height).data;
         const afterSize = imageData.filter((x) => x !== 0).length;
         expect(afterSize).toBeGreaterThan(beforeSize);
     });
 
     it('should set grid context', () => {
         service.setGridContext(ctxStub);
-        expect(service.gridContext).toBe(ctxStub);
+        expect(service.gridContextBoardLayer).toBe(ctxStub);
     });
 });

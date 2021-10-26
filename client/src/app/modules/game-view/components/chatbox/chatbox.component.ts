@@ -1,18 +1,18 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { INDEX_PLAYER_AI, INDEX_REAL_PLAYER, ONESECOND_TIME } from '@app/classes/constants';
+import { BoardHandlerService } from '@app/services/board-handler.service';
 import { ChatboxService } from '@app/services/chatbox.service';
 import { DebugService } from '@app/services/debug.service';
 import { EndGameService } from '@app/services/end-game.service';
-import { TourService } from '@app/services/tour.service';
-import { Subscription } from 'rxjs';
 import { SendMessageService } from '@app/services/send-message.service';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-chatbox',
     templateUrl: './chatbox.component.html',
     styleUrls: ['./chatbox.component.scss'],
 })
-export class ChatboxComponent implements OnInit, OnDestroy, AfterViewInit {
+export class ChatboxComponent implements OnInit, AfterViewInit {
     @ViewChild('scrollMe') private myScrollContainer: ElementRef;
 
     tourSubscription: Subscription = new Subscription();
@@ -27,17 +27,20 @@ export class ChatboxComponent implements OnInit, OnDestroy, AfterViewInit {
 
     constructor(
         private chatBoxService: ChatboxService,
-        private tourService: TourService,
         public debugService: DebugService,
         private sendMessageService: SendMessageService,
         public endGameService: EndGameService,
+        private boardHandlerService: BoardHandlerService,
     ) {}
 
+    // Disable the current placement on the board when a click occurs in the chatbox
+    @HostListener('mouseup', ['$event'])
+    @HostListener('contextmenu', ['$event'])
+    clickInChatBox() {
+        this.boardHandlerService.cancelPlacement();
+    }
+
     ngOnInit(): void {
-        this.tourSubscription = this.tourService.tourSubject.subscribe((tourSubject: boolean) => {
-            this.tour = tourSubject;
-        });
-        this.tourService.emitTour();
         this.sendMessageService.displayBound(this.displayMessageByType.bind(this));
     }
 
@@ -49,13 +52,6 @@ export class ChatboxComponent implements OnInit, OnDestroy, AfterViewInit {
 
             this.scrollToBottom();
         }
-    }
-
-    passButton() {
-        this.message = '!passer';
-        this.chatBoxService.sendPlayerMessage(this.message);
-        this.message = '';
-        this.scrollToBottom();
     }
 
     displayMessageByType() {
@@ -94,9 +90,5 @@ export class ChatboxComponent implements OnInit, OnDestroy, AfterViewInit {
                 clearInterval(findEnd);
             }
         }, ONESECOND_TIME);
-    }
-
-    ngOnDestroy() {
-        this.tourSubscription.unsubscribe();
     }
 }

@@ -97,9 +97,11 @@ export class PlayerAIComponent implements OnInit {
     place(object: { start: Vec2; orientation: string; word: string }, possibility: { word: string; nbPt: number }[]) {
         this.placeLetterService.placeMethodAdapter(object);
         this.debugService.receiveAIDebugPossibilities(possibility);
+        /*
         setTimeout(() => {
             this.passtourService.writeMessage();
         }, DELAY_TO_PLAY);
+        */
         this.endGameService.actionsLog.push('placer');
     }
 

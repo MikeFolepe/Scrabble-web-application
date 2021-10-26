@@ -2,10 +2,7 @@ import { Injectable } from '@angular/core';
 import {
     BOARD_COLUMNS,
     BOARD_ROWS,
-    CASE_SIZE,
     DEFAULT_FONT_SIZE,
-    DEFAULT_HEIGHT,
-    DEFAULT_WIDTH,
     EASEL_SIZE,
     FONT_SIZE_MAX,
     FONT_SIZE_MIN,
@@ -13,7 +10,6 @@ import {
     RESERVE,
 } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
-import { Vec2 } from '@app/classes/vec2';
 import { Player } from '@app/models/player.model';
 import { Subject } from 'rxjs';
 import { GridService } from './grid.service';
@@ -78,9 +74,8 @@ export class PlayerService {
         for (let i = 0; i < BOARD_ROWS; i++) {
             for (let j = 0; j < BOARD_COLUMNS; j++) {
                 if (this.scrabbleBoard[i][j] !== '') {
-                    const positionGrid = this.posTabToPosGrid(j, i);
-                    this.gridService.eraseLetter(this.gridService.gridContextLayer, positionGrid);
-                    this.gridService.drawLetter(this.gridService.gridContextLayer, this.scrabbleBoard[i][j], positionGrid, this.fontSize);
+                    this.gridService.eraseLetter(this.gridService.gridContextLettersLayer, j, i);
+                    this.gridService.drawLetter(this.gridService.gridContextLettersLayer, this.scrabbleBoard[i][j], j, i, this.fontSize);
                 }
             }
         }
@@ -107,9 +102,30 @@ export class PlayerService {
     }
 
     addLetterToEasel(letterToAdd: string, indexPlayer: number): void {
-        for (const letter of RESERVE) {
-            if (letterToAdd.toUpperCase() === letter.value) {
-                this.players[indexPlayer].letterTable.push(letter);
+        // If it is a white letter
+        if (letterToAdd === letterToAdd.toUpperCase()) {
+            for (const letter of RESERVE) {
+                if (letter.value === '*') {
+                    this.players[indexPlayer].letterTable.push({
+                        value: letter.value,
+                        quantity: letter.quantity,
+                        points: letter.points,
+                        isSelectedForSwap: letter.isSelectedForSwap,
+                        isSelectedForManipulation: letter.isSelectedForManipulation,
+                    });
+                }
+            }
+        } else {
+            for (const letter of RESERVE) {
+                if (letterToAdd.toUpperCase() === letter.value) {
+                    this.players[indexPlayer].letterTable.push({
+                        value: letter.value,
+                        quantity: letter.quantity,
+                        points: letter.points,
+                        isSelectedForSwap: letter.isSelectedForSwap,
+                        isSelectedForManipulation: letter.isSelectedForManipulation,
+                    });
+                }
             }
         }
     }
@@ -154,14 +170,6 @@ export class PlayerService {
 
     addScore(score: number, indexPlayer: number): void {
         this.players[indexPlayer].score += score;
-    }
-
-    // Transpose the positions from 15x15 array to 750x750 grid
-    posTabToPosGrid(positionTabX: number, positionTabY: number): Vec2 {
-        return {
-            x: positionTabX * CASE_SIZE + CASE_SIZE - DEFAULT_WIDTH / 2,
-            y: positionTabY * CASE_SIZE + CASE_SIZE - DEFAULT_HEIGHT / 2,
-        };
     }
 
     getScore(indexPlayer: number): number {
