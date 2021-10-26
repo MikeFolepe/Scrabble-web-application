@@ -15,8 +15,7 @@ import { SkipTurnService } from '@app/services/skip-turn.service';
     styleUrls: ['./information-panel.component.scss'],
 })
 export class InformationPanelComponent implements OnInit, OnDestroy {
-    gameSettings: GameSettings;
-    skipTurnService: SkipTurnService;
+    private gameSettings: GameSettings;
     constructor(
         public gameSettingsService: GameSettingsService,
         public letterService: LetterService,
