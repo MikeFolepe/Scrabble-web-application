@@ -1,11 +1,11 @@
-import { ClientSocketService } from './../../../services/client-socket.service';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { INDEX_PLAYER_AI, INDEX_REAL_PLAYER, ONE_SECOND_TIME } from '@app/classes/constants';
 // import { PlayerService } from '@app/services/player.service';
 // import { SkipTurnService } from '@app/services/skip-turn.service';
 import { ChatboxService } from '@app/services/chatbox.service';
 import { DebugService } from '@app/services/debug.service';
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { INDEX_PLAYER_AI, INDEX_REAL_PLAYER, ONE_SECOND_TIME } from '@app/classes/constants';
 import { EndGameService } from '@app/services/end-game.service';
+import { ClientSocketService } from './../../../services/client-socket.service';
 
 @Component({
     selector: 'app-chatbox',
@@ -34,27 +34,27 @@ export class ChatboxComponent implements OnInit, AfterViewInit {
 
     ngOnInit(): void {
         this.chatBoxService.bindDisplay(this.displayAnyMessageByType.bind(this));
+        this.clientSocketService.socket.on('receiveRoomMessage', (message: string) => {
+            console.log(message);
+            setTimeout(() => {
+                this.sendOpponentMessage(message);
+            }, 500);
+        });
     }
 
     handleKeyEvent(event: KeyboardEvent) {
         if (event.key === 'Enter') {
             event.preventDefault();
             this.chatBoxService.sendPlayerMessage(this.message);
+            this.clientSocketService.socket.emit('sendRoomMessage', this.message, this.clientSocketService.roomId);
             this.message = ''; // Clear l'input
 
             setTimeout(() => {
                 // Timeout is used to update the scroll after the last element added
                 this.scrollToBottom();
             }, 1);
-            this.clientSocketService.socket.emit('sendRoomMessage',this.message )
         }
     }
-
-    // passButton() {
-    //     this.message = '!passer';
-    //     this.chatBoxService.sendPlayerMessage(this.message);
-    //     this.message = '';
-    // }
 
     displayAnyMessageByType() {
         this.listTypes.push(this.chatBoxService.typeMessage);

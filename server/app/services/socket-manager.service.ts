@@ -17,9 +17,10 @@ export class SocketManager {
     handleSockets(): void {
         this.sio.on('connection', (socket) => {
             socket.on('createRoom', (gameSettings: GameSettings) => {
-                this.roomManager.createRoom(socket.id, gameSettings.playersName[0], gameSettings);
+                this.roomManager.createRoom(socket.id + 'i', gameSettings.playersName[0], gameSettings);
+                console.log('createur:' + socket.id);
                 // Each room created will have the creator's socket id as roomId
-                socket.join(socket.id);
+                socket.join(socket.id + 'i');
                 // room creation alerts all clients on the new rooms configurations
                 this.sio.emit('roomConfiguration', this.roomManager.rooms);
             });
@@ -35,6 +36,8 @@ export class SocketManager {
                 // all clients must be alerted that some room is filled to block someone else entry
                 this.sio.emit('roomConfiguration', this.roomManager.rooms);
                 socket.join(roomId);
+                console.log('le joigneur a :' + roomId);
+                console.log('le joigneur a :' + socket.rooms);
                 // update roomID in the new filled room to allow the clients in this room
                 // to ask the server make some actions in their room later
                 this.sio.in(roomId).emit('yourRoomId', roomId);
@@ -51,13 +54,18 @@ export class SocketManager {
                 this.roomManager.deleteRoom(roomId);
                 this.sio.emit('roomConfiguration', this.roomManager.rooms);
             });
+
             socket.on('disconnect', (reason) => {
                 console.log(`Deconnexion par l'utilisateur avec id : ${socket.id}`);
                 console.log(`Raison de deconnexion : ${reason}`);
             });
+
             socket.on('sendRoomMessage', (message: string, roomId: string) => {
                 // this.sio.to(roomId).emit('receiveRoomMessage', `${socket.id} : ${message}`);
-                this.sio.to(roomId).emit('receiveRoomMessage', message);
+                console.log(message);
+                console.log(socket.rooms);
+                // this.sio.to(roomId).emit('receiveRoomMessage', message);
+                socket.to(roomId).emit('receiveRoomMessage', message);
             });
         });
     }
