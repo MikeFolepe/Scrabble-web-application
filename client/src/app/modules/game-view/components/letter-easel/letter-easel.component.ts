@@ -8,6 +8,7 @@ import { TourService } from '@app/services/tour.service';
 import { BoardHandlerService } from '@app/services/board-handler.service';
 import { PassTourService } from '@app/services/pass-tour.service';
 import { SendMessageService } from '@app/services/send-message.service';
+import { ManipulateService } from '@app/services/manipulate.service';
 
 @Component({
     selector: 'app-letter-easel',
@@ -28,6 +29,7 @@ export class LetterEaselComponent implements OnInit {
         private boardHandlerService: BoardHandlerService,
         private passTurnService: PassTourService,
         private sendMessageService: SendMessageService,
+        private manipulateService: ManipulateService,
     ) {}
 
     // TODO Changer le font size ne deselect pas ?
@@ -39,12 +41,29 @@ export class LetterEaselComponent implements OnInit {
         for (const letterEasel of this.letterEaselTab) {
             letterEasel.isSelectedForSwap = false;
             letterEasel.isSelectedForManipulation = false;
+            this.manipulateService.usedLetters.fill(false, 0, this.manipulateService.usedLetters.length);
+        }
+        this.manipulateService.enableScrolling();
+    }
+
+    @HostListener('keydown', ['$event'])
+    onKeyPress(event: KeyboardEvent) {
+        if (this.easel.nativeElement.contains(event.target)) {
+            this.manipulateService.onKeyPress(event);
+        }
+    }
+
+    @HostListener('document:wheel', ['$event'])
+    onMouseWheelTick(event: WheelEvent) {
+        if (this.letterEaselTab.some((letter) => letter.isSelectedForManipulation)) {
+            this.manipulateService.onMouseWheelTick(event);
         }
     }
 
     ngOnInit(): void {
         this.playerService.updateLettersEasel(this.update.bind(this));
         this.update();
+        this.manipulateService.sendEasel(this.letterEaselTab);
     }
 
     update(): void {
@@ -58,7 +77,7 @@ export class LetterEaselComponent implements OnInit {
 
     onLeftClick(event: MouseEvent, indexLetter: number) {
         event.preventDefault();
-        this.handleManipulationSelection(indexLetter);
+        this.manipulateService.selectWithClick(indexLetter);
     }
 
     onEaselClick() {
@@ -72,16 +91,6 @@ export class LetterEaselComponent implements OnInit {
         } // Select to swap if the letter isn't selected for swap or manipulation
         else if (!this.letterEaselTab[indexLetter].isSelectedForManipulation) {
             this.letterEaselTab[indexLetter].isSelectedForSwap = true;
-        }
-    }
-
-    handleManipulationSelection(indexLetter: number) {
-        // Unselect manipulation
-        if (this.letterEaselTab[indexLetter].isSelectedForManipulation) {
-            this.letterEaselTab[indexLetter].isSelectedForManipulation = false;
-        } // Select to manipulate if the letter isn't selected for swap or manipulation
-        else if (!this.letterEaselTab[indexLetter].isSelectedForSwap) {
-            this.letterEaselTab[indexLetter].isSelectedForManipulation = true;
         }
     }
 
