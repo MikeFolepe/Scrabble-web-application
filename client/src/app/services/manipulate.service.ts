@@ -52,7 +52,7 @@ export class ManipulateService {
 
     selectWithClick(indexClicked: number): void {
         for (let i = 0; i < this.letterEaselTab.length; i++) {
-            if (i < indexClicked && this.letterEaselTab[i].value === this.letterEaselTab[indexClicked].value) {
+            if (i < indexClicked) {
                 this.usedLetters[i] = this.letterEaselTab[i].value === this.letterEaselTab[indexClicked].value ? true : false;
             } else if (i > indexClicked) {
                 this.usedLetters[i] = false;
@@ -76,10 +76,8 @@ export class ManipulateService {
             if (this.letterEaselTab[this.usedLetters.indexOf(true)].value !== letterToSelect.toUpperCase())
                 this.usedLetters.fill(false, 0, this.usedLetters.length);
         }
-
         indexCurrentLetter = this.playerService.indexLetterInEasel(letterToSelect, 0, indexPlayer);
         // If we select the same letter 2 times, we verify that we're not using the same index in the easel
-
         while (this.usedLetters[indexCurrentLetter] && indexCurrentLetter !== INDEX_INVALID) {
             indexCurrentLetter = this.playerService.indexLetterInEasel(letterToSelect, indexCurrentLetter + 1, indexPlayer);
         }

@@ -75,18 +75,12 @@ describe('LetterEaselComponent', () => {
     });
 
     it('left clicking the 1st letter that is unselected should select it for manipulation', () => {
+        spyOn(component['manipulateService'], 'selectWithClick');
         component.letterEaselTab[0].isSelectedForSwap = false;
         component.letterEaselTab[0].isSelectedForManipulation = false;
         const clickEvent = new MouseEvent('click');
         component.onLeftClick(clickEvent, 0);
-        expect(component.letterEaselTab[0].isSelectedForManipulation).toBeTrue();
-    });
-
-    it('left clicking the 1st letter that is already selected for manipulation should unselect it', () => {
-        component.letterEaselTab[0].isSelectedForManipulation = true;
-        const clickEvent = new MouseEvent('click');
-        component.onLeftClick(clickEvent, 0);
-        expect(component.letterEaselTab[0].isSelectedForManipulation).toBeFalse();
+        expect(component['manipulateService'].selectWithClick).toHaveBeenCalledWith(0);
     });
 
     it('right clicking the 1st letter that is unselected should select it for swapping', () => {
@@ -164,5 +158,21 @@ describe('LetterEaselComponent', () => {
         const easel = fixture.debugElement.query(By.css('.easel-container'));
         easel.triggerEventHandler('click', null);
         expect(component['boardHandlerService'].cancelPlacement).toHaveBeenCalled();
+    });
+
+    it('pressing key while the easel is focused should call onKeyPress from manipulateService', () => {
+        spyOn(component.easel.nativeElement, 'contains').and.returnValue(true);
+        spyOn(component['manipulateService'], 'onKeyPress');
+        const event = new Event('keydown');
+        fixture.nativeElement.dispatchEvent(event);
+        expect(component['manipulateService'].onKeyPress).toHaveBeenCalled();
+    });
+
+    it('scrolling one wheel tick while one letter is selected for manipulation should call onMouseWheelTick from manipulateService', () => {
+        spyOn(component['manipulateService'], 'onMouseWheelTick');
+        component.letterEaselTab[0].isSelectedForManipulation = true;
+        const event = new Event('wheel');
+        document.dispatchEvent(event);
+        expect(component['manipulateService'].onMouseWheelTick).toHaveBeenCalled();
     });
 });
