@@ -1,5 +1,6 @@
-// /* eslint-disable @typescript-eslint/no-unused-expressions /
-// / eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-magic-numbers */
+/* eslint-disable dot-notation */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // import { ComponentFixture, TestBed } from '@angular/core/testing';
 // import { BOARD_COLUMNS, BOARD_ROWS } from '@app/classes/constants';
 // import { Letter } from '@app/classes/letter';

@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-magic-numbers */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable dot-notation */
+// import { NO_ERRORS_SCHEMA } from '@angular/core';
 // import { ComponentFixture, TestBed } from '@angular/core/testing';
 // import { PlayerService } from '@app/services/player.service';
 // import { LetterEaselComponent } from './letter-easel.component';
@@ -15,6 +19,7 @@
 //         await TestBed.configureTestingModule({
 //             declarations: [LetterEaselComponent],
 //             providers: [{ provide: PlayerService, useValue: playerServiceSpy }],
+//             schemas: [NO_ERRORS_SCHEMA],
 //         }).compileComponents();
 //     });
 
