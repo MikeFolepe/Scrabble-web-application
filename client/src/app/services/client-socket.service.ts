@@ -21,11 +21,11 @@ export class ClientSocketService {
         this.urlString = `http://${window.location.hostname}:3000`;
         this.socket = io(this.urlString);
         this.initializeRoomId();
+        this.initializeGameSettings();
     }
 
     route(): void {
-        this.socket.on('goToGameView', (gameSettings: GameSettings) => {
-            this.gameSettingsService.gameSettings = gameSettings;
+        this.socket.on('goToGameView', () => {
             this.router.navigate(['game']);
         });
     }
@@ -33,6 +33,13 @@ export class ClientSocketService {
     initializeRoomId(): void {
         this.socket.on('yourRoomId', (roomIdFromServer: string) => {
             this.roomId = roomIdFromServer;
+        });
+    }
+
+    initializeGameSettings(): void {
+        this.socket.on('yourGameSettings', (gameSettingsFromServer: GameSettings) => {
+            console.log(gameSettingsFromServer);
+            this.gameSettingsService.gameSettings = gameSettingsFromServer;
         });
     }
 }

@@ -35,10 +35,38 @@ export class RoomManager {
         return room.gameSettings;
     }
 
+    formatGameSettingsForCustomerIn(roomId: string): GameSettings {
+        const room = this.find(roomId) as Room;
+        const gameSettings = room.gameSettings;
+        const playerNames: string[] = [gameSettings.playersName[1], gameSettings.playersName[0]];
+        const startingPlayer = gameSettings.startingPlayer ? 0 : 1;
+        const formattedGameSettings = new GameSettings(
+            playerNames,
+            startingPlayer,
+            gameSettings.timeMinute,
+            gameSettings.timeSecond,
+            gameSettings.randomBonus,
+            gameSettings.randomBonus,
+            gameSettings.dictionary,
+        );
+
+        return formattedGameSettings;
+    }
+
     deleteRoom(roomId: string) {
         this.rooms.forEach((room, roomIndex) => {
             if (room.id === roomId) this.rooms.splice(roomIndex, 1);
         });
+    }
+
+    isNotAvailable(roomId: string): boolean {
+        const room = this.find(roomId);
+
+        if (room === undefined) {
+            return false;
+        }
+
+        return room.state === State.Playing;
     }
 
     private find(roomId: string): Room | undefined {

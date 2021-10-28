@@ -1,11 +1,10 @@
 <app-background></app-background>
 
-
 <mat-paginator id="paginator" [length]="rooms.length" [pageSize]="pageSize" (page)="onPageChange($event)"
     aria-label="Select page">
 </mat-paginator>
 
-<div *ngIf="isNameValid">
+<div *ngIf="isNameValid && isRoomStillAvailable">
     <div *ngFor="let room of (rooms ? rooms.slice(startIdx, startIdx + pageSize): []);">
         <mat-card class="card">
             <mat-card-title>{{room.ownerName}}
@@ -30,6 +29,11 @@
 </div>
 
 <div *ngIf="!isNameValid">
-    <mat-card id='error-message'><span id='warning'>Erreur</span>: Ce nom de joueur est déjà utilisé dans cette partie
+    <mat-card id='error-message'><span id='warning'>Erreur</span> : Ce nom de joueur est déjà utilisé dans cette partie
+    </mat-card>
+</div>
+
+<div *ngIf="!isRoomStillAvailable">
+    <mat-card id='error-message'><span id='warning'>Erreur</span> : Cette partie n'existe plus ou vient d'être rejointe
     </mat-card>
 </div>
