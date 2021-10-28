@@ -17,6 +17,7 @@ export class SocketManager {
     handleSockets(): void {
         this.sio.on('connection', (socket) => {
             socket.on('createRoom', (gameSettings: GameSettings) => {
+                // TODO: trouver une solution definitive au roomId
                 this.roomManager.createRoom(socket.id, gameSettings.playersName[0], gameSettings);
                 // Each room created will have the creator's socket id as roomId
                 socket.join(socket.id);
@@ -30,20 +31,27 @@ export class SocketManager {
             });
 
             socket.on('newRoomCustomer', (playerName: string, roomId: string) => {
+                if (this.roomManager.isNotAvailable(roomId)) {
+                    // block someone else entry from dialog window
+                    socket.emit('roomAlreadyToken');
+                    return;
+                }
                 this.roomManager.addCustomer(playerName, roomId);
                 this.roomManager.setState(roomId, State.Playing);
-                // all clients must be alerted that some room is filled to block someone else entry
+                // block someone else entry from room selection
                 this.sio.emit('roomConfiguration', this.roomManager.rooms);
                 socket.join(roomId);
                 // update roomID in the new filled room to allow the clients in this room
                 // to ask the server make some actions in their room later
                 this.sio.in(roomId).emit('yourRoomId', roomId);
-                // send back to all clients in this room their game settings with different starting status
-                // and display each user name at top
-                // TODO: Renvoyez à chaque client son GameSettings formaté
+                // send back to the joiner his game settings with his starting status
+                // and his name display position
+                socket.emit('yourGameSettings', this.roomManager.formatGameSettingsForCustomerIn(roomId));
+                // send back to the creator his game settings with his starting status
+                // and his name display position
+                socket.to(roomId).emit('yourGameSettings', this.roomManager.getGameSettings(roomId));
                 // redirect the clients in the new filled room to game view
-                this.sio.in(roomId).emit('goToGameView', this.roomManager.getGameSettings(roomId));
-                console.log(this.roomManager.getGameSettings(roomId));
+                this.sio.in(roomId).emit('goToGameView');
             });
 
             // Delete  the room and uodate the client view
@@ -51,6 +59,7 @@ export class SocketManager {
                 this.roomManager.deleteRoom(roomId);
                 this.sio.emit('roomConfiguration', this.roomManager.rooms);
             });
+
             socket.on('disconnect', (reason) => {
                 console.log(`Deconnexion par l'utilisateur avec id : ${socket.id}`);
                 console.log(`Raison de deconnexion : ${reason}`);
