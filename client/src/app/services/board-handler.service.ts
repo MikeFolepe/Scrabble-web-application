@@ -3,8 +3,8 @@ import { CASE_SIZE, INDEX_INVALID, INDEX_REAL_PLAYER, MouseButton, LAST_INDEX, B
 import { Vec2 } from '@app/classes/vec2';
 import { GridService } from './grid.service';
 import { PlaceLetterService } from './place-letter.service';
-import { TourService } from './tour.service';
 import { SendMessageService } from './send-message.service';
+import { SkipTurnService } from './skip-turn.service';
 
 @Injectable({
     providedIn: 'root',
@@ -23,8 +23,8 @@ export class BoardHandlerService {
     constructor(
         private gridService: GridService,
         private placeLetterService: PlaceLetterService,
-        private turnService: TourService,
         private sendMessageService: SendMessageService,
+        private skipTurnService: SkipTurnService,
     ) {}
 
     buttonDetect(event: KeyboardEvent): void {
@@ -44,7 +44,7 @@ export class BoardHandlerService {
                 break;
             }
             default: {
-                if (!this.turnService.getTour()) break;
+                if (!this.skipTurnService.isTurn) break;
                 if (/([a-zA-Z\u00C0-\u00FF])+/g.test(event.key) && event.key.length === 1) {
                     // Remove accents from the letter to place
                     const letterNoAccents = event.key.normalize('NFD').replace(/[\u0300-\u036f]/g, '');

@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSliderModule } from '@angular/material/slider';
 import { DEFAULT_FONT_SIZE, SIZE_VARIATION } from '@app/classes/constants';
 
 import { FontSizeComponent } from './font-size.component';
@@ -11,6 +14,7 @@ describe('FontSizeComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [FontSizeComponent],
+            imports: [MatSliderModule, MatIconModule, FormsModule],
         }).compileComponents();
     });
 

@@ -1,11 +1,10 @@
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
-import { INDEX_PLAYER_AI, INDEX_REAL_PLAYER, ONESECOND_TIME } from '@app/classes/constants';
+import { INDEX_PLAYER_AI, INDEX_REAL_PLAYER, ONE_SECOND_TIME } from '@app/classes/constants';
 import { BoardHandlerService } from '@app/services/board-handler.service';
 import { ChatboxService } from '@app/services/chatbox.service';
 import { DebugService } from '@app/services/debug.service';
 import { EndGameService } from '@app/services/end-game.service';
 import { SendMessageService } from '@app/services/send-message.service';
-import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-chatbox',
@@ -14,9 +13,6 @@ import { Subscription } from 'rxjs';
 })
 export class ChatboxComponent implements OnInit, AfterViewInit {
     @ViewChild('scrollMe') private myScrollContainer: ElementRef;
-
-    tourSubscription: Subscription = new Subscription();
-    tour: boolean;
 
     typeMessage: string = '';
     message: string = '';
@@ -89,6 +85,6 @@ export class ChatboxComponent implements OnInit, AfterViewInit {
             if (this.endGameService.isEndGame) {
                 clearInterval(findEnd);
             }
-        }, ONESECOND_TIME);
+        }, ONE_SECOND_TIME);
     }
 }

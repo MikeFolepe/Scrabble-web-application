@@ -22,59 +22,18 @@ describe('LetterEaselComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(LetterEaselComponent);
         component = fixture.componentInstance;
-        getLettersSpy = spyOn(component['playerService'], 'getLettersEasel').and.returnValue(component.letterEaselTab);
-        spyOn(component['playerService'], 'updateLettersEasel');
+        getLettersSpy = spyOn(component['playerService'], 'getEasel').and.returnValue(component.letterEaselTab);
+        spyOn(component['playerService'], 'bindUpdateEasel');
         fixture.detectChanges();
 
-        const letterA: Letter = {
-            value: 'A',
-            quantity: 0,
-            points: 0,
-            isSelectedForSwap: false,
-            isSelectedForManipulation: false,
-        };
-        const letterB: Letter = {
-            value: 'B',
-            quantity: 0,
-            points: 0,
-            isSelectedForSwap: false,
-            isSelectedForManipulation: false,
-        };
-        const letterC: Letter = {
-            value: 'C',
-            quantity: 0,
-            points: 0,
-            isSelectedForSwap: false,
-            isSelectedForManipulation: false,
-        };
-        const letterD: Letter = {
-            value: 'D',
-            quantity: 0,
-            points: 0,
-            isSelectedForSwap: false,
-            isSelectedForManipulation: false,
-        };
-        const letterE: Letter = {
-            value: 'E',
-            quantity: 0,
-            points: 0,
-            isSelectedForSwap: false,
-            isSelectedForManipulation: false,
-        };
-        const letterH: Letter = {
-            value: 'H',
-            quantity: 0,
-            points: 0,
-            isSelectedForSwap: false,
-            isSelectedForManipulation: false,
-        };
-        const letterWhite: Letter = {
-            value: '*',
-            quantity: 0,
-            points: 0,
-            isSelectedForSwap: false,
-            isSelectedForManipulation: false,
-        };
+        const letterA: Letter = { value: 'A', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false };
+        const letterB: Letter = { value: 'B', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false };
+        const letterC: Letter = { value: 'C', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false };
+        const letterD: Letter = { value: 'D', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false };
+        const letterE: Letter = { value: 'E', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false };
+        const letterH: Letter = { value: 'H', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false };
+        const letterWhite: Letter = { value: '*', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false };
+
         component.letterEaselTab = [letterA, letterE, letterB, letterC, letterD, letterH, letterWhite];
         const firstPlayer = new Player(1, 'Player 1', component.letterEaselTab);
         component['playerService'].addPlayer(firstPlayer);
@@ -148,7 +107,7 @@ describe('LetterEaselComponent', () => {
     it('swapping a letter should call swap() from swapLetterService', () => {
         const swapSpy = spyOn(component['swapLetterService'], 'swap');
         spyOn(component['sendMessageService'], 'displayMessageByType');
-        spyOn(component['passTurnService'], 'writeMessage');
+        spyOn(component['skipTurnService'], 'switchTurn');
 
         component.letterEaselTab[0].isSelectedForSwap = true;
         component.swap();
@@ -169,25 +128,25 @@ describe('LetterEaselComponent', () => {
     });
 
     it('swap button should be disactive if it is not your turn', () => {
-        spyOn(component['turnService'], 'getTour').and.returnValue(false);
+        component['skipTurnService'].isTurn = false;
         expect(component.isSwapButtonActive()).toBeFalse();
     });
 
     it('swap button should be disactive if there is less than 7 letters in the reserve', () => {
-        spyOn(component['turnService'], 'getTour').and.returnValue(true);
-        spyOn(component['letterService'], 'getReserveSize').and.returnValue(6);
+        component['skipTurnService'].isTurn = true;
+        component['letterService'].reserveSize = 6;
         expect(component.isSwapButtonActive()).toBeFalse();
     });
 
     it('swap button should be disactive if none letters are selected for swapping', () => {
-        spyOn(component['turnService'], 'getTour').and.returnValue(true);
-        spyOn(component['letterService'], 'getReserveSize').and.returnValue(7);
+        component['skipTurnService'].isTurn = true;
+        component['letterService'].reserveSize = 7;
         expect(component.isSwapButtonActive()).toBeFalse();
     });
 
     it('swap button should be active if at least one letter is selected for swapping', () => {
-        spyOn(component['turnService'], 'getTour').and.returnValue(true);
-        spyOn(component['letterService'], 'getReserveSize').and.returnValue(7);
+        component['skipTurnService'].isTurn = true;
+        component['letterService'].reserveSize = 7;
         component.letterEaselTab[0].isSelectedForSwap = true;
         expect(component.isSwapButtonActive()).toBeTrue();
     });

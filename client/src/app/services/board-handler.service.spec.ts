@@ -18,7 +18,7 @@ describe('BoardHandlerService', () => {
         service = TestBed.inject(BoardHandlerService);
 
         service['placeLetterService'].placeWithKeyboard = jasmine.createSpy().and.returnValue(true);
-        spyOn(service['turnService'], 'getTour').and.returnValue(true);
+        service['skipTurnService'].isTurn = true;
         spyOn(service['placeLetterService'], 'removePlacedLetter');
         spyOn(service['sendMessageService'], 'displayMessageByType');
     });

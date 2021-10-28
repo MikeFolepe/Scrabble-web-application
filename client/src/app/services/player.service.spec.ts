@@ -48,32 +48,10 @@ describe('PlayerService', () => {
     });
 
     it('should add players when addPlayer() is called', () => {
-        expect(service.playerSubject.observers.toString()).toHaveSize(0);
         service.addPlayer(player);
         expect(service['players']).toHaveSize(1);
         service.addPlayer(playerAI);
         expect(service['players']).toHaveSize(2);
-    });
-
-    it('should emit when adding players', () => {
-        let emitted = false;
-        service.playerSubject.subscribe(() => {
-            emitted = true;
-        });
-        service.emitPlayers();
-        expect(emitted).toBeTrue();
-    });
-
-    it('should subscribe when adding players', () => {
-        let players: Player[] = [];
-        service.playerSubject.subscribe((p) => {
-            players = p;
-        });
-
-        service.addPlayer(player);
-
-        expect(players).toHaveSize(1);
-        expect(players[0]).toEqual(player);
     });
 
     it('should update scrabble board value when updateScrabbleBoard() is called', () => {
@@ -126,14 +104,14 @@ describe('PlayerService', () => {
         playerAI.letterTable = playerAIEasel;
         service['players'].push(playerAI);
 
-        expect(service.getLettersEasel(0)).toEqual(playerEasel);
-        expect(service.getLettersEasel(1)).toEqual(playerAIEasel);
+        expect(service.players[0].letterTable).toEqual(playerEasel);
+        expect(service.players[1].letterTable).toEqual(playerAIEasel);
     });
 
     it('should return players when getPlayers() is called', () => {
         service['players'].push(player);
         service['players'].push(playerAI);
-        expect(service.getPlayers()).toEqual([player, playerAI]);
+        expect(service.players).toEqual([player, playerAI]);
     });
 
     it('should call the right times functions that updates the grid font size when updateGridFontSize() is called', () => {
@@ -168,7 +146,7 @@ describe('PlayerService', () => {
         player.letterTable = playerEasel;
         service['players'].push(player);
         let number = 1;
-        service['myFunc'] = () => {
+        service['updateEasel'] = () => {
             number = number *= 2;
             return;
         };
@@ -187,7 +165,7 @@ describe('PlayerService', () => {
         player.letterTable = playerEasel;
         service['players'].push(player);
         let number = 1;
-        service['myFunc'] = () => {
+        service['updateEasel'] = () => {
             number = number *= 2;
             return;
         };
@@ -207,7 +185,7 @@ describe('PlayerService', () => {
         service['players'].push(playerAI);
 
         let number = 1;
-        service['myFunc'] = () => {
+        service['updateEasel'] = () => {
             number = number *= 2;
             return;
         };
@@ -226,13 +204,13 @@ describe('PlayerService', () => {
             number = number *= 2;
             return;
         };
-        service.updateLettersEasel(fn);
-        expect(service['myFunc']).toBe(fn);
+        service.bindUpdateEasel(fn);
+        expect(service['updateEasel']).toBe(fn);
     });
 
     it("should refill player's empty easel when refillEasel() is called", () => {
         let number = 1;
-        service['myFunc'] = () => {
+        service['updateEasel'] = () => {
             number = number *= 2;
             return;
         };
@@ -249,7 +227,7 @@ describe('PlayerService', () => {
 
     it("should refill player's easel that already has values when refillEasel() is called", () => {
         let number = 1;
-        service['myFunc'] = () => {
+        service['updateEasel'] = () => {
             number = number *= 2;
             return;
         };
@@ -318,7 +296,7 @@ describe('PlayerService', () => {
     it('should replace a letter from player easel when swap() is called', () => {
         spyOn(service['letterService'], 'getRandomLetter').and.returnValue(letterC);
         let number = 1;
-        service['myFunc'] = () => {
+        service['updateEasel'] = () => {
             number = number *= 2;
             return;
         };
@@ -335,7 +313,7 @@ describe('PlayerService', () => {
 
     it('should call addLetterToReserve() of letterService when addEaselLetterToReserve() is called', () => {
         const spy = spyOn(service['letterService'], 'addLetterToReserve');
-        spyOn(service, 'getLettersEasel').and.returnValue([letterA]);
+        spyOn(service, 'getEasel').and.returnValue([letterA]);
         service.addEaselLetterToReserve(0, 0);
         expect(spy).toHaveBeenCalledOnceWith('A');
     });
