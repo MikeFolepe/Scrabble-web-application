@@ -1,7 +1,9 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { INDEX_PLAYER_AI, INDEX_REAL_PLAYER, ONE_SECOND_TIME } from '@app/classes/constants';
 import { ChatboxService } from '@app/services/chatbox.service';
+import { DebugService } from '@app/services/debug.service';
 import { EndGameService } from '@app/services/end-game.service';
+import { SendMessageService } from '@app/services/send-message.service';
 
 @Component({
     selector: 'app-chatbox',
@@ -16,10 +18,17 @@ export class ChatboxComponent implements OnInit, AfterViewInit {
 
     listMessages: string[] = [];
     listTypes: string[] = [];
-    constructor(private chatBoxService: ChatboxService, public endGameService: EndGameService) {}
+    debugMessage: { word: string; nbPt: number }[] = [];
+
+    constructor(
+        private chatBoxService: ChatboxService,
+        public debugService: DebugService,
+        private sendMessageService: SendMessageService,
+        public endGameService: EndGameService,
+    ) {}
 
     ngOnInit(): void {
-        this.chatBoxService.bindDisplay(this.displayAnyMessageByType.bind(this));
+        this.sendMessageService.displayBound(this.displayMessageByType.bind(this));
     }
 
     handleKeyEvent(event: KeyboardEvent) {
@@ -28,16 +37,21 @@ export class ChatboxComponent implements OnInit, AfterViewInit {
             this.chatBoxService.sendPlayerMessage(this.message);
             this.message = ''; // Clear input
 
-            setTimeout(() => {
-                // Timeout is used to update the scroll after the last element added
-                this.scrollToBottom();
-            }, 1);
+            this.scrollToBottom();
         }
     }
 
-    displayAnyMessageByType() {
-        this.listTypes.push(this.chatBoxService.typeMessage);
-        this.listMessages.push(this.chatBoxService.message);
+    passButton() {
+        this.message = '!passer';
+        this.chatBoxService.sendPlayerMessage(this.message);
+        this.message = '';
+        this.scrollToBottom();
+    }
+
+    displayMessageByType() {
+        this.listTypes.push(this.sendMessageService.typeMessage);
+        this.listMessages.push(this.sendMessageService.message);
+        this.scrollToBottom();
     }
 
     sendSystemMessage(systemMessage: string) {
@@ -53,7 +67,10 @@ export class ChatboxComponent implements OnInit, AfterViewInit {
     }
 
     scrollToBottom(): void {
-        this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
+        setTimeout(() => {
+            // Timeout is used to update the scroll after the last element added
+            this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
+        }, 1);
     }
 
     ngAfterViewInit() {

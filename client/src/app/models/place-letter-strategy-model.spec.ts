@@ -19,13 +19,13 @@ describe('Place Letter', () => {
         const id = 1;
         const name = 'PlayerAI';
         letterTable = [
-            { value: 'A', quantity: 0, points: 0 },
-            { value: 'B', quantity: 0, points: 0 },
-            { value: 'C', quantity: 0, points: 0 },
-            { value: 'D', quantity: 0, points: 0 },
-            { value: 'E', quantity: 0, points: 0 },
-            { value: 'F', quantity: 0, points: 0 },
-            { value: 'G', quantity: 0, points: 0 },
+            { value: 'A', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
+            { value: 'B', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
+            { value: 'C', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
+            { value: 'D', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
+            { value: 'E', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
+            { value: 'F', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
+            { value: 'G', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
         ];
 
         playerAI = new PlayerAI(id, name, letterTable);
@@ -169,13 +169,13 @@ describe('Place Letter', () => {
         context.playerAIService.isFirstRound = true;
         playerAI.strategy = placeStrategy;
         playerAI.letterTable = [
-            { value: 'H', quantity: 0, points: 0 },
-            { value: 'O', quantity: 0, points: 0 },
-            { value: 'N', quantity: 0, points: 0 },
-            { value: 'T', quantity: 0, points: 0 },
-            { value: 'D', quantity: 0, points: 0 },
-            { value: 'A', quantity: 0, points: 0 },
-            { value: 'R', quantity: 0, points: 0 },
+            { value: 'H', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
+            { value: 'O', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
+            { value: 'N', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
+            { value: 'T', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
+            { value: 'D', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
+            { value: 'A', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
+            { value: 'R', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
         ];
 
         placeStrategy.dictionary = myDictionary;

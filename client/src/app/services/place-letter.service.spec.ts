@@ -1,6 +1,6 @@
 /* eslint-disable dot-notation */
 import { TestBed } from '@angular/core/testing';
-import { INDEX_PLAYER_AI, INDEX_REAL_PLAYER, THREE_SECONDS_DELAY } from '@app/classes/constants';
+import { INDEX_PLAYER_AI, INDEX_REAL_PLAYER, RESERVE, THREE_SECONDS_DELAY } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
 import { Player } from '@app/models/player.model';
@@ -23,36 +23,12 @@ describe('PlaceLetterService', () => {
     });
 
     beforeEach(() => {
-        const letterA: Letter = {
-            value: 'A',
-            quantity: 0,
-            points: 0,
-        };
-        const letterB: Letter = {
-            value: 'B',
-            quantity: 0,
-            points: 0,
-        };
-        const letterC: Letter = {
-            value: 'C',
-            quantity: 0,
-            points: 0,
-        };
-        const letterD: Letter = {
-            value: 'D',
-            quantity: 0,
-            points: 0,
-        };
-        const letterH: Letter = {
-            value: 'H',
-            quantity: 0,
-            points: 0,
-        };
-        const letterWhite: Letter = {
-            value: '*',
-            quantity: 0,
-            points: 0,
-        };
+        const letterA: Letter = RESERVE[0];
+        const letterB: Letter = RESERVE[1];
+        const letterC: Letter = RESERVE[2];
+        const letterD: Letter = RESERVE[3];
+        const letterH: Letter = RESERVE[7];
+        const letterWhite: Letter = RESERVE[26];
 
         const firstPlayerEasel = [letterA, letterA, letterB, letterB, letterC, letterC, letterD];
         const firstPlayer = new Player(1, 'Player 1', firstPlayerEasel);
@@ -65,6 +41,7 @@ describe('PlaceLetterService', () => {
         spyOn(service['playerService'], 'removeLetter');
         spyOn(service['playerService'], 'refillEasel');
         spyOn(service['wordValidationService'], 'validateAllWordsOnBoard').and.returnValue({ validation: true, score: 0 });
+        spyOn(service['sendMessageService'], 'displayMessageByType');
     });
 
     it('should create', () => {
@@ -194,7 +171,7 @@ describe('PlaceLetterService', () => {
         position = { x: 7, y: 7 };
         orientation = 'h';
         word = 'bacchaV';
-        let lettersRemoved = service.place(position, orientation, word, INDEX_PLAYER_AI);
+        let lettersRemoved = service.place(position, orientation, word);
         jasmine.clock().tick(THREE_SECONDS_DELAY + 1);
         expect(lettersRemoved).toEqual(false);
         // Vertically

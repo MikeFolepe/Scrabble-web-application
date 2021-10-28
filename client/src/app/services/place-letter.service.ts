@@ -15,18 +15,20 @@ import { GridService } from '@app/services/grid.service';
 import { PlayerAIService } from '@app/services/player-ia.service';
 import { PlayerService } from '@app/services/player.service';
 import { WordValidationService } from '@app/services/word-validation.service';
+import { SendMessageService } from './send-message.service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class PlaceLetterService {
     scrabbleBoard: string[][]; // 15x15 array
-    invalidLetters: boolean[] = []; // Array of the size of the word to place that tells which letter is invalid
-    numLettersUsedFromEasel: number;
-    isAIPlacementValid: boolean;
-    isEaselSize: boolean;
+    invalidLetters: boolean[] = []; // Array of the size of he word to place that tells which letter is invalid
+
     emptyTile: string = '';
     isFirstRound: boolean = true;
+    isAIPlacementValid: boolean = false;
+    numLettersUsedFromEasel: number = 0; // Number of letters used from the easel to form the word
+    isEaselSize: boolean = false; // If the bonus to form a word with all the letters from the easel applies
     message: string;
 
     constructor(
@@ -34,6 +36,7 @@ export class PlaceLetterService {
         private gridService: GridService,
         public playerAIService: PlayerAIService,
         private wordValidationService: WordValidationService,
+        private sendMessageService: SendMessageService,
     ) {
         this.scrabbleBoard = []; // Initializes the array with empty letters
         for (let i = 0; i < BOARD_ROWS; i++) {
@@ -62,6 +65,7 @@ export class PlaceLetterService {
         const wordNoAccents = word.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
         // If the command is possible according to the parameters
         if (!this.isPossible(position, orientation, wordNoAccents, indexPlayer)) {
+            this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', 'error');
             return false;
         }
         this.invalidLetters = []; // Reset the array containing the invalid letters
@@ -70,6 +74,7 @@ export class PlaceLetterService {
         // Placing all letters of the word
         if (!this.placeAllLetters(position, orientation, wordNoAccents, indexPlayer)) {
             this.handleInvalidPlacement(position, orientation, wordNoAccents, indexPlayer);
+            this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', 'error');
             return false;
         }
         this.isAIPlacementValid = true;
@@ -82,6 +87,7 @@ export class PlaceLetterService {
             return true;
         }
         this.handleInvalidPlacement(position, orientation, wordNoAccents, indexPlayer);
+        this.sendMessageService.displayMessageByType('ERREUR : Un ou des mots formés sont invalides', 'error');
         return false;
     }
 
@@ -96,8 +102,6 @@ export class PlaceLetterService {
             } else if (orientation === 'h') {
                 y = i;
             }
-            this.invalidLetters[i] = false;
-
             // If the position is empty, we use a letter from the reserve
             if (this.scrabbleBoard[position.x + x][position.y + y] === '') {
                 this.scrabbleBoard[position.x + x][position.y + y] = word[i];
@@ -106,11 +110,11 @@ export class PlaceLetterService {
                 this.numLettersUsedFromEasel++;
 
                 if (word[i] === word[i].toUpperCase()) {
-                    // If we put a capital letter (white letter), we remove a '*' from the easel
-                    this.playerService.removeLetter('*', indexPlayer);
+                    // If we put an upper-case letter (white letter), we remove a '*' from the easel
+                    this.playerService.removeLetter(this.playerService.indexLetterInEasel('*', 0, indexPlayer), indexPlayer);
                 } else {
                     // Otherwise we remove the respective letter from the easel
-                    this.playerService.removeLetter(word[i], indexPlayer);
+                    this.playerService.removeLetter(this.playerService.indexLetterInEasel(word[i], 0, indexPlayer), indexPlayer);
                 }
                 // Display the letter on the scrabble board grid
                 const positionGrid = this.playerService.convertSizeFormat(position.y + y, position.x + x);
@@ -204,13 +208,13 @@ export class PlaceLetterService {
             }
             // If the letter isn't on the board, we look into the easel
             if (!isLetterExisting) {
-                currentLetterIndex = this.playerService.easelContainsLetter(word[i], 0, indexPlayer);
+                currentLetterIndex = this.playerService.indexLetterInEasel(word[i], 0, indexPlayer);
                 if (currentLetterIndex !== INDEX_INVALID) {
                     isLetterExisting = true;
                 }
                 for (const index of indexLetters) {
                     while (currentLetterIndex === index) {
-                        currentLetterIndex = this.playerService.easelContainsLetter(word[i], currentLetterIndex + 1, indexPlayer);
+                        currentLetterIndex = this.playerService.indexLetterInEasel(word[i], currentLetterIndex + 1, indexPlayer);
                         if (currentLetterIndex === INDEX_INVALID) {
                             isLetterExisting = false;
                         }
@@ -266,10 +270,10 @@ export class PlaceLetterService {
                 if (this.scrabbleBoard[position.x + x - 1][position.y + y] !== '') isWordTouching = true;
             }
             if (this.isPositionInBounds(position.y + y + 1)) {
-                if (this.scrabbleBoard[position.x + x][position.y + y + 1]) isWordTouching = true;
+                if (this.scrabbleBoard[position.x + x][position.y + y + 1] !== '') isWordTouching = true;
             }
             if (this.isPositionInBounds(position.y + y - 1)) {
-                if (this.scrabbleBoard[position.x + x][position.y + y - 1]) isWordTouching = true;
+                if (this.scrabbleBoard[position.x + x][position.y + y - 1] !== '') isWordTouching = true;
             }
         }
         return isWordTouching;
