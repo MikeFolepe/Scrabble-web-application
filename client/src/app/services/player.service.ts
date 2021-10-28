@@ -26,8 +26,14 @@ export class PlayerService {
     fontSize = DEFAULT_FONT_SIZE;
     players: Player[] = new Array<Player>();
 
+    private updateEasel: () => void;
+
     constructor(private letterService: LetterService, private gridService: GridService) {
         this.fontSize = DEFAULT_FONT_SIZE;
+    }
+
+    bindUpdateEasel(fn: () => void) {
+        this.updateEasel = fn;
     }
 
     addPlayer(user: Player) {
@@ -36,6 +42,10 @@ export class PlayerService {
 
     clearPlayers(): void {
         this.players = [];
+    }
+
+    getEasel(indexPlayer: number): Letter[] {
+        return this.players[indexPlayer].letterTable;
     }
 
     updateScrabbleBoard(scrabbleBoard: string[][]): void {
@@ -65,14 +75,24 @@ export class PlayerService {
         }
     }
 
+    swap(indexToSwap: number, indexPlayer: number) {
+        const letterFromReserve = this.letterService.getRandomLetter();
+        // Add a copy of the random letter from the reserve
+        const letterToAdd = {
+            value: letterFromReserve.value,
+            quantity: letterFromReserve.quantity,
+            points: letterFromReserve.points,
+            isSelectedForSwap: letterFromReserve.isSelectedForSwap,
+            isSelectedForManipulation: letterFromReserve.isSelectedForManipulation,
+        };
+        this.players[indexPlayer].letterTable.splice(indexToSwap, 1, letterToAdd);
+        this.updateEasel();
+    }
+
     // Remove one letter from easel
-    removeLetter(letterToRemove: string, indexPlayer: number): void {
-        for (let i = 0; i < this.players[indexPlayer].letterTable.length; i++) {
-            if (this.players[indexPlayer].letterTable[i].value === letterToRemove.toUpperCase()) {
-                this.players[indexPlayer].letterTable.splice(i, 1);
-                break;
-            }
-        }
+    removeLetter(indexToRemove: number, indexPlayer: number): void {
+        this.players[indexPlayer].letterTable.splice(indexToRemove, 1);
+        this.updateEasel();
     }
 
     addLetterToEasel(letterToAdd: string, indexPlayer: number): void {
@@ -83,24 +103,30 @@ export class PlayerService {
         }
     }
 
+    addEaselLetterToReserve(indexInEasel: number, indexPlayer: number) {
+        this.letterService.addLetterToReserve(this.getEasel(indexPlayer)[indexInEasel].value);
+    }
+
     refillEasel(indexPlayer: number): void {
-        let letterToInsert: Letter;
+        let letterToAdd: Letter;
         for (let i = this.players[indexPlayer].letterTable.length; i < EASEL_SIZE; i++) {
-            letterToInsert = this.letterService.getRandomLetter();
-            if (letterToInsert.value === '') {
+            letterToAdd = this.letterService.getRandomLetter();
+            if (letterToAdd.value === '') {
                 break;
             }
-            this.players[indexPlayer].letterTable[i] = letterToInsert;
+            // Add a copy of the letter found
+            this.players[indexPlayer].letterTable[i] = {
+                value: letterToAdd.value,
+                quantity: letterToAdd.quantity,
+                points: letterToAdd.points,
+                isSelectedForSwap: letterToAdd.isSelectedForSwap,
+                isSelectedForManipulation: letterToAdd.isSelectedForManipulation,
+            };
         }
     }
 
-    swap(letter: string, indexPlayer: number): void {
-        this.removeLetter(letter, indexPlayer);
-        this.letterService.addLetterToReserve(letter);
-        this.refillEasel(indexPlayer);
-    }
-
-    easelContainsLetter(letter: string, startIndex: number, indexPlayer: number): number {
+    // Return the index of the letter found in the easel
+    indexLetterInEasel(letter: string, startIndex: number, indexPlayer: number): number {
         for (let i = startIndex; i < this.players[indexPlayer].letterTable.length; i++) {
             if (letter === this.players[indexPlayer].letterTable[i].value.toLowerCase()) {
                 return i;

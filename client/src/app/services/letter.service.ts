@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { EASEL_SIZE, RESERVE } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { BehaviorSubject } from 'rxjs';
+
 @Injectable({
     providedIn: 'root',
 })
@@ -24,14 +25,14 @@ export class LetterService {
             value: '',
             quantity: 0,
             points: 0,
+            isSelectedForSwap: false,
+            isSelectedForManipulation: false,
         };
+        let letter: Letter;
 
         if (this.isReserveEmpty()) {
             return letterEmpty;
         }
-
-        let letter: Letter;
-
         do {
             this.randomElement = Math.floor(Math.random() * this.reserve.length);
             letter = this.reserve[this.randomElement];
@@ -80,6 +81,8 @@ export class LetterService {
                 value: letter.value,
                 quantity: letter.quantity,
                 points: letter.points,
+                isSelectedForSwap: letter.isSelectedForSwap,
+                isSelectedForManipulation: letter.isSelectedForManipulation,
             };
         }
         return tab;
