@@ -9,6 +9,7 @@ import { SkipTurnService } from '@app/services/skip-turn.service';
 import { SwapLetterService } from '@app/services/swap-letter.service';
 import { Subscription } from 'rxjs';
 import { DebugService } from './debug.service';
+import { LetterService } from './letter.service';
 
 @Injectable({
     providedIn: 'root',
@@ -31,6 +32,7 @@ export class ChatboxService {
         private placeLetterService: PlaceLetterService,
         private debugService: DebugService,
         public endGameService: EndGameService,
+        public letterService: LetterService,
         public skipTurn: SkipTurnService,
     ) {}
 

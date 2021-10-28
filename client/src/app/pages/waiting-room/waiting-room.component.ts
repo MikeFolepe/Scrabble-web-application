@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ClientSocketService } from '@app/services/client-socket.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
+import { ClientSocketService } from '@app/services/client-socket.service';
+
 @Component({
     selector: 'app-waiting-room',
     templateUrl: './waiting-room.component.html',
@@ -10,7 +12,6 @@ import { GameSettingsService } from '@app/services/game-settings.service';
 export class WaitingRoomComponent implements OnInit {
     status: string;
     isWaiting: boolean;
-    rooms: Room[] = [];
     router: Router;
 
     constructor(public gameSettingsService: GameSettingsService, public clientSocket: ClientSocketService) {

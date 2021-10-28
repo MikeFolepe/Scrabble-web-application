@@ -4,7 +4,7 @@ import { ClientSocketService } from '@app/services/client-socket.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { WaitingRoomComponent } from './waiting-room.component';
 
-fdescribe('WaitingRoomComponent', () => {
+describe('WaitingRoomComponent', () => {
     let component: WaitingRoomComponent;
     let fixture: ComponentFixture<WaitingRoomComponent>;
     let clientSocketServiceSpyjob: jasmine.SpyObj<ClientSocketService>;
@@ -51,14 +51,15 @@ fdescribe('WaitingRoomComponent', () => {
         gameSettingsServiceSpyjob.gameSettings.playersName[0] = 'Mike';
         // eslint-disable-next-line no-console
         console.log(gameSettingsServiceSpyjob.gameSettings.playersName[0]);
-        expect(component.status).toEqual('Une erreur est survenu'); 
+        expect(component.status).toEqual('Une erreur est survenu');
         expect(component.router.navigate).toHaveBeenCalled();
     });
 
-    it('should dislplay the corrct message if the socket is not connected', () => {
+    it('should dislplay the corrct message if the socket is not ', () => {
         // eslint-disable-next-line no-console
-        clientSocketServiceSpyjob.socket.connected = false;
-        expect(component.status).toEqual('Erreur de connexion...veuillez réessayer'); 
+        clientSocketServiceSpyjob.socket.connect();
+        console.log(clientSocketServiceSpyjob.socket.connected);
+        expect(component.status).toEqual('Erreur de connexion...veuillez réessayer');
         expect(component.isWaiting).toEqual(false);
     });
 });
