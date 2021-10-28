@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable } from '@angular/core';
 import {
     BOARD_COLUMNS,
     BOARD_ROWS,
@@ -12,31 +12,27 @@ import {
 import { ScoreValidation } from '@app/classes/validation-score';
 import { Vec2 } from '@app/classes/vec2';
 import { GridService } from '@app/services/grid.service';
-import { LetterService } from '@app/services/letter.service';
+import { PlayerAIService } from '@app/services/player-ia.service';
 import { PlayerService } from '@app/services/player.service';
 import { WordValidationService } from '@app/services/word-validation.service';
-import { Subscription } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
 })
-export class PlaceLetterService implements OnDestroy {
-    viewSubscription: Subscription = new Subscription();
-
+export class PlaceLetterService {
     scrabbleBoard: string[][]; // 15x15 array
     invalidLetters: boolean[] = []; // Array of the size of the word to place that tells which letter is invalid
-
+    numLettersUsedFromEasel: number;
+    isAIPlacementValid: boolean;
+    isEaselSize: boolean;
     emptyTile: string = '';
     isFirstRound: boolean = true;
-    isAIPlacementValid: boolean = false;
-    numLettersUsedFromEasel: number = 0; // Number of letters used from the easel to from 1 word
-    isEaselSize: boolean = false; // If the bonus to form a word with all the letters from the easel applies
     message: string;
 
     constructor(
         private playerService: PlayerService,
         private gridService: GridService,
-        private letterService: LetterService,
+        public playerAIService: PlayerAIService,
         private wordValidationService: WordValidationService,
     ) {
         this.scrabbleBoard = []; // Initializes the array with empty letters
@@ -47,15 +43,22 @@ export class PlaceLetterService implements OnDestroy {
             }
         }
         this.playerService.updateScrabbleBoard(this.scrabbleBoard);
-        this.viewSubscription = this.letterService.currentMessage.subscribe((message) => (this.message = message));
     }
 
-    placeMethodAdapter(object: { start: Vec2; orientation: string; word: string }) {
-        this.place(object.start, object.orientation, object.word, INDEX_PLAYER_AI);
+    placeMethodAdapter(object: { start: Vec2; orientation: string; word: string; indexPlayer: number }) {
+        this.playerAIService.isPlacementValid = false;
+        const isValid = this.place(object.start, object.orientation, object.word, object.indexPlayer);
+        this.playerAIService.isPlacementValid = isValid;
     }
 
     place(position: Vec2, orientation: string, word: string, indexPlayer = INDEX_PLAYER_AI): boolean {
         // Remove accents from the word to place
+        let isRow = false;
+        if (orientation === 'v') {
+            isRow = false;
+        } else if (orientation === 'h') {
+            isRow = true;
+        }
         const wordNoAccents = word.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
         // If the command is possible according to the parameters
         if (!this.isPossible(position, orientation, wordNoAccents, indexPlayer)) {
@@ -73,7 +76,7 @@ export class PlaceLetterService implements OnDestroy {
         if (this.numLettersUsedFromEasel === EASEL_SIZE) this.isEaselSize = true;
 
         // Validation of the placement
-        const finalResult: ScoreValidation = this.wordValidationService.validateAllWordsOnBoard(this.scrabbleBoard, this.isEaselSize);
+        const finalResult: ScoreValidation = this.wordValidationService.validateAllWordsOnBoard(this.scrabbleBoard, this.isEaselSize, isRow);
         if (finalResult.validation) {
             this.handleValidPlacement(finalResult, indexPlayer);
             return true;
@@ -110,7 +113,7 @@ export class PlaceLetterService implements OnDestroy {
                     this.playerService.removeLetter(word[i], indexPlayer);
                 }
                 // Display the letter on the scrabble board grid
-                const positionGrid = this.playerService.posTabToPosGrid(position.y + y, position.x + x);
+                const positionGrid = this.playerService.convertSizeFormat(position.y + y, position.x + x);
                 this.gridService.drawLetter(this.gridService.gridContextLayer, word[i], positionGrid, this.playerService.fontSize);
             }
             // If there's already a letter at this position, we verify that it's the same as the one we want to place
@@ -138,7 +141,7 @@ export class PlaceLetterService implements OnDestroy {
                 // and add them back to the easel.
                 if (this.invalidLetters[i]) {
                     this.scrabbleBoard[position.x + x][position.y + y] = '';
-                    const positionGrid = this.playerService.posTabToPosGrid(position.y + y, position.x + x);
+                    const positionGrid = this.playerService.convertSizeFormat(position.y + y, position.x + x);
                     this.gridService.eraseLetter(this.gridService.gridContextLayer, positionGrid);
                     this.playerService.addLetterToEasel(word[i], indexPlayer);
                 }
@@ -150,8 +153,8 @@ export class PlaceLetterService implements OnDestroy {
         this.playerService.addScore(finalResult.score, indexPlayer);
         this.playerService.updateScrabbleBoard(this.scrabbleBoard);
         this.playerService.refillEasel(indexPlayer); // Fill the easel with new letters from the reserve
-        this.letterService.writeMessage('mise a jour');
         this.isFirstRound = false;
+        this.playerAIService.isFirstRound = false;
     }
 
     isPossible(position: Vec2, orientation: string, word: string, indexPlayer: number): boolean {
@@ -278,9 +281,5 @@ export class PlaceLetterService implements OnDestroy {
             return true;
         }
         return false;
-    }
-
-    ngOnDestroy() {
-        this.viewSubscription.unsubscribe();
     }
 }

@@ -62,7 +62,7 @@ export class FormComponent implements OnDestroy {
 
     initSoloGame(): void {
         const playersName: string[] = [this.form.controls.playerName.value, this.chooseRandomAIName()];
-        const settings = new GameSettings(
+        this.gameSettingsService.gameSettings = new GameSettings(
             playersName,
             this.chooseStartingPlayer(),
             this.form.controls.minuteInput.value,
@@ -71,8 +71,6 @@ export class FormComponent implements OnDestroy {
             this.form.controls.randomBonus.value,
             'dictionary.json',
         );
-
-        this.gameSettingsService.initializeSettings(settings);
     }
 
     initMultiplayerGame(): void {

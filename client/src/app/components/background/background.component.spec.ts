@@ -20,4 +20,9 @@ describe('BackgroundComponent', () => {
     it('should create', () => {
         expect(component).toBeTruthy();
     });
+
+    it('should have a boolean for dark theme', () => {
+        // This functionality is not available yet, but will be soon
+        expect(component.isDark).toBeInstanceOf(Boolean);
+    });
 });

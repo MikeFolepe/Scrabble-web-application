@@ -15,17 +15,33 @@ export class ClientSocketService {
     socket: any;
     rooms: Room[] = [];
     router: Router;
+    roomId: string;
     private urlString: string;
 
     constructor(private gameSettingsService: GameSettingsService) {
         this.urlString = `http://${window.location.hostname}:3000`;
         this.socket = io(this.urlString);
+        this.initializeRoomId();
+        this.initializeGameSettings();
     }
 
-    route() {
-        this.socket.on('goToGameView', (gameSettings: GameSettings) => {
-            this.gameSettingsService.gameSettings = gameSettings;
+    route(): void {
+        this.socket.on('goToGameView', () => {
             this.router.navigate(['game']);
         });
     }
+
+    initializeRoomId(): void {
+        this.socket.on('yourRoomId', (roomIdFromServer: string) => {
+            this.roomId = roomIdFromServer;
+        });
+    }
+
+    initializeGameSettings(): void {
+        this.socket.on('yourGameSettings', (gameSettingsFromServer: GameSettings) => {
+            this.gameSettingsService.gameSettings = gameSettingsFromServer;
+        });
+    }
+
+    // les methodes de reception des commandes de jeu sont définies ici
 }

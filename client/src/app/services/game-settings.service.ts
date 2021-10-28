@@ -6,7 +6,7 @@ import { GameSettings, StartingPlayer } from '@app/classes/game-settings';
 })
 export class GameSettingsService {
     gameSettings: GameSettings = {
-        playersName: ['', ''],
+        playersName: ['Majid', ''],
         startingPlayer: StartingPlayer.Player1,
         timeMinute: '01',
         timeSecond: '00',
@@ -17,11 +17,11 @@ export class GameSettingsService {
     isSoloMode: boolean;
     isRedirectedFromMultiplayerGame: boolean;
 
-    initializeSettings(settings: GameSettings) {
-        this.gameSettings = settings;
-    }
+    // initializeSettings(settings: GameSettings) {
+    //     this.gameSettings = settings;
+    // }
 
-    getSettings(): GameSettings {
-        return this.gameSettings;
-    }
+    // getSettings(): GameSettings {
+    //     return this.gameSettings;
+    // }
 }

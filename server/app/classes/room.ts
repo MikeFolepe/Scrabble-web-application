@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // eslint-disable-next-line no-restricted-imports
 import { GameSettings } from './multiplayer-game-settings';
 
@@ -8,18 +9,16 @@ export enum State {
 
 export class Room {
     id: string;
-    ownerName: string;
-    customerName: string;
     gameSettings: GameSettings;
     state: State;
-    constructor(id: string, ownerName: string, gameSettings: GameSettings, state: State = State.Waiting) {
+
+    constructor(id: string, gameSettings: GameSettings, state: State = State.Waiting) {
         this.id = id;
-        this.ownerName = ownerName;
         this.gameSettings = gameSettings;
         this.state = state;
     }
 
-    addCustomer(customerName: string): void {
-        this.customerName = customerName;
+    addCustomer(customerName: string) {
+        this.gameSettings.playersName[1] = customerName;
     }
 }
