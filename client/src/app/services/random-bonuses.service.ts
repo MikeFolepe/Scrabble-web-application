@@ -80,10 +80,11 @@ export class RandomBonusesService {
   }
 
   //met dans le map des positions de bonus les valeurs issues du tableau de bonus mélangés
-  shuffleBonusesPositions(){
+  shuffleBonusesPositions():Map<string, string> {
       let bonuses = this.shuffleBonuses();
       this.bonusesPositions.forEach((bonus:string, position:string)=>{
         this.bonusesPositions.set(position,bonuses.pop() as string);
       });
+      return this.bonusesPositions;
   }
 }

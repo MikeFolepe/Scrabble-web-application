@@ -12,6 +12,7 @@ export class GridService {
     gridContextLayer: CanvasRenderingContext2D;
     private canvasSize: Vec2;
     private caseWidth: number;
+    private readonly gridLength = 15;
     bonusesPositions: Map<string, string>;
     constructor(private randomBonusesService: RandomBonusesService){
         this.canvasSize = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
@@ -35,9 +36,9 @@ export class GridService {
 
 
     drawGrid() {
-        this.writeGridIndexes(this.gridContext, 15);
+        this.writeGridIndexes(this.gridContext, this.gridLength);
         this.drawSimpleGrid(this.gridContext);
-        this.drawBonusesBoxes();
+        this.drawBonusesBoxes(this.bonusesPositions);
         this.drawCenterBoxe();
     }
 
@@ -54,9 +55,9 @@ export class GridService {
     //draw the game grid without any bonus on it
     drawSimpleGrid(gridContext: CanvasRenderingContext2D) {
         const startPosition: Vec2 = { x: 0, y: 0 };
-        for (let i = 1; i < 16; i++) {
+        for (let i = 1; i <= this.gridLength; i++) {
             startPosition.x = i* this.caseWidth;
-            for (let j = 1; j < 16; j++) {
+            for (let j = 1; j <= this.gridLength; j++) {
                 startPosition.y = j * this.caseWidth;
                     gridContext.fillStyle = 'lightGrey';
                     gridContext.fillRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
@@ -66,8 +67,8 @@ export class GridService {
     }
 
     //specify bonuses boxes on the grid by adding colors and bonuses names
-    drawBonusesBoxes() {
-        this.bonusesPositions.forEach((bonus: string, position: string) => {
+    drawBonusesBoxes(bonusesPositions: Map<string, string>) {
+        bonusesPositions.forEach((bonus: string, position: string) => {
             const positionSplitted = position.split(/([0-9]+)/)
             let convertedPositon = {x: (positionSplitted[0].charCodeAt(0) - 'A'.charCodeAt(0)+1)*this.caseWidth, y: Number(positionSplitted[1])*this.caseWidth};
             switch(bonus){
