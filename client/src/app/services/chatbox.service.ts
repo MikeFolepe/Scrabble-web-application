@@ -133,6 +133,7 @@ export class ChatboxService {
             this.displayMessage();
         }
     }
+
     executeSkipTurn() {
         if (this.skipTurn.isTurn) {
             this.endGameService.actionsLog.push('passer');
@@ -188,7 +189,7 @@ export class ChatboxService {
         this.displayMessage();
     }
 
-    // method which check the différents size of table of possibilty for the debug
+    // Method that checks the different size of table of possibility for the debug
     displayDebugMessage(): void {
         const nbPossibilities = this.debugService.debugServiceMessage.length;
         if (nbPossibilities === 0) {
