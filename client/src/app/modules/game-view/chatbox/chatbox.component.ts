@@ -36,10 +36,7 @@ export class ChatboxComponent implements OnInit, AfterViewInit {
 
     ngOnInit(): void {
         this.chatBoxService.bindDisplay(this.displayAnyMessageByType.bind(this));
-        this.clientSocketService.socket.on('receiveRoomMessage', (message: string) => {
-            console.log(message);
-            this.sendOpponentMessage(message);
-        });
+        this.receiveMessageFromOpponent();
     }
 
     handleKeyEvent(event: KeyboardEvent) {
@@ -69,6 +66,12 @@ export class ChatboxComponent implements OnInit, AfterViewInit {
 
     sendMessageToOpponent(message: string, myName: string) {
         this.clientSocketService.socket.emit('sendRoomMessage', 'Message de ' + myName + ' : ' + message, this.clientSocketService.roomId);
+    }
+
+    receiveMessageFromOpponent() {
+        this.clientSocketService.socket.on('receiveRoomMessage', (message: string) => {
+            this.sendOpponentMessage(message);
+        });
     }
 
     sendOpponentMessage(opponentMessage: string) {
