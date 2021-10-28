@@ -5,6 +5,7 @@ import { INDEX_PLAYER_AI, INDEX_REAL_PLAYER, ONE_SECOND_TIME } from '@app/classe
 import { ChatboxService } from '@app/services/chatbox.service';
 import { DebugService } from '@app/services/debug.service';
 import { EndGameService } from '@app/services/end-game.service';
+import { GameSettingsService } from '@app/services/game-settings.service';
 import { ClientSocketService } from './../../../services/client-socket.service';
 
 @Component({
@@ -30,15 +31,14 @@ export class ChatboxComponent implements OnInit, AfterViewInit {
         public debugService: DebugService,
         public endGameService: EndGameService,
         private clientSocketService: ClientSocketService,
+        private gameSettingsService: GameSettingsService,
     ) {}
 
     ngOnInit(): void {
         this.chatBoxService.bindDisplay(this.displayAnyMessageByType.bind(this));
         this.clientSocketService.socket.on('receiveRoomMessage', (message: string) => {
             console.log(message);
-            setTimeout(() => {
-                this.sendOpponentMessage(message);
-            }, 500);
+            this.sendOpponentMessage(message);
         });
     }
 
@@ -46,8 +46,8 @@ export class ChatboxComponent implements OnInit, AfterViewInit {
         if (event.key === 'Enter') {
             event.preventDefault();
             this.chatBoxService.sendPlayerMessage(this.message);
-            this.clientSocketService.socket.emit('sendRoomMessage', this.message, this.clientSocketService.roomId);
-            this.message = ''; // Clear l'input
+            this.sendMessageToOpponent(this.message, this.gameSettingsService.gameSettings.playersName[0]);
+            this.message = ''; // Clear input
 
             setTimeout(() => {
                 // Timeout is used to update the scroll after the last element added
@@ -65,6 +65,10 @@ export class ChatboxComponent implements OnInit, AfterViewInit {
         this.typeMessage = 'system';
         this.listTypes.push(this.typeMessage);
         this.listMessages.push(systemMessage);
+    }
+
+    sendMessageToOpponent(message: string, myName: string) {
+        this.clientSocketService.socket.emit('sendRoomMessage', 'Message de ' + myName + ' : ' + message, this.clientSocketService.roomId);
     }
 
     sendOpponentMessage(opponentMessage: string) {
