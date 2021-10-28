@@ -88,11 +88,7 @@
         "eslint-plugin-prettier": "^3.4.0",
         "eslint-plugin-unicorn": "^35.0.0",
         "mocha": "^9.0.3",
-<<<<<<< HEAD
         "nodemon": "^2.0.14",
-=======
-        "nodemon": "^2.0.13",
->>>>>>> 9fef5b9307a31a22229ab27da685083c2eef4485
         "nyc": "^15.1.0",
         "rimraf": "3.0.2",
         "sinon": "^11.1.2",
