@@ -228,7 +228,7 @@ describe('PlaceLetterService', () => {
         const start: Vec2 = { x: 7, y: 7 };
         const orientation = 'h';
         const word = 'dab';
-        const object = { start, orientation, word };
+        const object = { start, orientation, word, indexPlayer: 1 };
         service.placeMethodAdapter(object);
         expect(spy).toHaveBeenCalled();
     });

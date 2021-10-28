@@ -71,8 +71,6 @@ export class FormComponent implements OnDestroy {
             this.form.controls.randomBonus.value,
             'dictionary.json',
         );
-
-        // this.gameSettingsService.initializeSettings(settings);
     }
 
     initMultiplayerGame(): void {

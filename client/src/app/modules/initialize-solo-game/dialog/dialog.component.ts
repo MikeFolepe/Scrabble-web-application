@@ -21,7 +21,7 @@ export class DialogComponent implements OnInit {
     // eslint-disable-next-line no-invalid-this
     validationPattern: string = '^([A-Za-z][A-Za-z][A-Za-z][A-Za-z])[A-Za-z0-9' + this.specialChar + ']*';
     constructor(public dialogRef: MatDialogRef<DialogComponent>) {
-        this.form = new FormControl('');
+        this.form = new FormControl('Djido');
     }
 
     ngOnInit(): void {

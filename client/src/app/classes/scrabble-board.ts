@@ -62,3 +62,8 @@ export enum board {
     'O8' = 'tripleword',
     'O15' = 'tripleword',
 }
+
+export interface Earning {
+    letterPt: number;
+    wordFactor: number;
+}

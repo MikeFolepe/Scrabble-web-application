@@ -38,8 +38,9 @@ export class ClientSocketService {
 
     initializeGameSettings(): void {
         this.socket.on('yourGameSettings', (gameSettingsFromServer: GameSettings) => {
-            console.log(gameSettingsFromServer);
             this.gameSettingsService.gameSettings = gameSettingsFromServer;
         });
     }
+
+    // les methodes de reception des commandes de jeu sont définies ici
 }

@@ -63,7 +63,7 @@ describe('SkipTurnService', () => {
     //     expect(clearInterval).toHaveBeenCalled();
     // });
 
-        /* eslint-disable @typescript-eslint/no-magic-numbers */
+    /* eslint-disable @typescript-eslint/no-magic-numbers */
     /* eslint-disable @typescript-eslint/no-explicit-any */
     // import { ComponentFixture, TestBed } from '@angular/core/testing';
     // import { ONESECOND_TIME } from '@app/classes/constants';

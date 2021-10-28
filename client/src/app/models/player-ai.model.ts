@@ -11,14 +11,10 @@ import { SwapLetter } from './swap-letter-strategy.model';
 export class PlayerAI extends Player {
     context: PlayerAIComponent;
     strategy: PlayStrategy;
-    constructor(public id: number, public name: string, public letterTable: Letter[]) {
+    constructor(id: number, name: string, letterTable: Letter[]) {
         super(id, name, letterTable);
         // Initialize the first concrete strategy to be executed later
         this.strategy = new SkipTurn();
-    }
-
-    generateRandomNumber(maxValue: number): number {
-        return Math.floor(Number(Math.random()) * maxValue);
     }
 
     play() {
@@ -27,7 +23,6 @@ export class PlayerAI extends Player {
         // Set the next strategy for next tour
         this.setStrategy();
     }
-
     setContext(context: PlayerAIComponent) {
         this.context = context;
     }
@@ -37,6 +32,26 @@ export class PlayerAI extends Player {
         this.play();
     }
 
+    getHand(): string {
+        let hand = '[';
+        for (const letter of this.letterTable) {
+            hand += letter.value;
+        }
+
+        return hand + ']';
+    }
+
+    playerQuantityOf(character: string): number {
+        let quantity = 0;
+
+        for (const letter of this.letterTable) {
+            if (letter.value === character.toUpperCase()) {
+                quantity++;
+            }
+        }
+
+        return quantity;
+    }
     private setStrategy() {
         const randomNumber = this.generateRandomNumber(strategyBallotBox.length);
         switch (strategyBallotBox[randomNumber]) {
@@ -63,7 +78,7 @@ export class PlayerAI extends Player {
 
         switch (placingBallotBox[randomNumber]) {
             case PlacingStrategy.LessSix:
-                pointingRange = { min: 0, max: 6 };
+                pointingRange = { min: 1, max: 6 };
                 break;
             case PlacingStrategy.SevenToTwelve:
                 pointingRange = { min: 7, max: 12 };
@@ -76,5 +91,9 @@ export class PlayerAI extends Player {
                 break;
         }
         return pointingRange;
+    }
+
+    private generateRandomNumber(maxValue: number): number {
+        return Math.floor(Number(Math.random()) * maxValue);
     }
 }

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { INDEX_REAL_PLAYER, MAX_NUMBER_OF_POSSIBILITY } from '@app/classes/constants';
+import { PossibleWords } from '@app/classes/scrabble-board-pattern';
 import { Vec2 } from '@app/classes/vec2';
 import { EndGameService } from '@app/services/end-game.service';
 import { PlaceLetterService } from '@app/services/place-letter.service';
@@ -21,7 +22,7 @@ export class ChatboxService {
     command: string = '';
     endGameEasel: string = '';
 
-    debugMessage: { word: string; nbPt: number }[] = [{ word: 'papier', nbPt: 6 }];
+    debugMessage: PossibleWords[] = [];
 
     private displayMessage: () => void;
     constructor(
@@ -196,7 +197,7 @@ export class ChatboxService {
         } else {
             for (let i = 0; i < Math.min(MAX_NUMBER_OF_POSSIBILITY, nbPossibilities); i++) {
                 this.typeMessage = 'system';
-                this.message = this.debugService.debugServiceMessage[i].word + ': -- ' + this.debugService.debugServiceMessage[i].nbPt.toString();
+                this.message = this.debugService.debugServiceMessage[i].word + ': -- ' + this.debugService.debugServiceMessage[i].point.toString();
                 this.displayMessage();
             }
         }

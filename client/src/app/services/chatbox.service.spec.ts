@@ -101,9 +101,15 @@
 //         spyOn(service, 'executeDebug');
 //         service.command = 'debug';
 //         const word = 'message de debug';
+<<<<<<< HEAD
 //         const nbPt = 1;
 //         const table: { word: string; nbPt: number }[] = [];
 //         table.push({ word, nbPt });
+=======
+//         const point = 1;
+//         const table: PossibleWords[] = [];
+//         table.push({ word, point });
+>>>>>>> 7ef0fddeffb8906076034cf5193c377cdcc4fceb
 
 //         service['debugService'].receiveAIDebugPossibilities(table);
 //         service.sendPlayerMessage('!debug');
@@ -141,9 +147,15 @@
 //     it('desactivating debug should display the respective message', () => {
 //         service.command = 'debug';
 //         const word = 'message de debug';
+<<<<<<< HEAD
 //         const nbPt = 1;
 //         const table: { word: string; nbPt: number }[] = [];
 //         table.push({ word, nbPt });
+=======
+//         const point = 1;
+//         const table: PossibleWords[] = [];
+//         table.push({ word, point });
+>>>>>>> 7ef0fddeffb8906076034cf5193c377cdcc4fceb
 
 //         service['debugService'].receiveAIDebugPossibilities(table);
 //         service.sendPlayerMessage('!debug');
@@ -154,8 +166,13 @@
 
 //         service.command = 'debug';
 //         const word = 'message de debug';
+<<<<<<< HEAD
 //         const nbPt = 1;
 //         const table: { word: string; nbPt: number }[] = [{ word, nbPt }];
+=======
+//         const point = 1;
+//         const table: PossibleWords[] = [{ word, point }];
+>>>>>>> 7ef0fddeffb8906076034cf5193c377cdcc4fceb
 
 //         service['debugService'].debugServiceMessage = table;
 //         service['debugService'].isDebugActive = true;
@@ -219,7 +236,11 @@
 //     });
 
 //     it('should display the right debug message if at least one possibility has been found', () => {
+<<<<<<< HEAD
 //         service['debugService'].debugServiceMessage = [{ word: 'test', nbPt: 3 }];
+=======
+//         service['debugService'].debugServiceMessage = [{ word: 'test', point: 3 }];
+>>>>>>> 7ef0fddeffb8906076034cf5193c377cdcc4fceb
 //         service.displayDebugMessage();
 
 //         expect(service.typeMessage).toEqual('system');

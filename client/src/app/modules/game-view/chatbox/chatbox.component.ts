@@ -1,7 +1,5 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { INDEX_PLAYER_AI, INDEX_REAL_PLAYER, ONE_SECOND_TIME } from '@app/classes/constants';
-// import { PlayerService } from '@app/services/player.service';
-// import { SkipTurnService } from '@app/services/skip-turn.service';
 import { ChatboxService } from '@app/services/chatbox.service';
 import { DebugService } from '@app/services/debug.service';
 import { EndGameService } from '@app/services/end-game.service';
@@ -15,8 +13,6 @@ import { ClientSocketService } from './../../../services/client-socket.service';
 })
 export class ChatboxComponent implements OnInit, AfterViewInit {
     @ViewChild('scrollMe') private myScrollContainer: ElementRef;
-    // turnSubscription: Subscription = new Subscription();
-    // turn: boolean;
 
     typeMessage: string = '';
     message: string = '';

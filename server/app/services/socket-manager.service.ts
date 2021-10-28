@@ -17,10 +17,11 @@ export class SocketManager {
     handleSockets(): void {
         this.sio.on('connection', (socket) => {
             socket.on('createRoom', (gameSettings: GameSettings) => {
-                this.roomManager.createRoom(socket.id + 'i', gameSettings.playersName[0], gameSettings);
-                console.log('createur:' + socket.id);
+                const roomId = this.roomManager.createRoomId(gameSettings.playersName[0]);
+                // TODO: trouver une solution definitive au roomId
+                this.roomManager.createRoom(roomId, gameSettings);
                 // Each room created will have the creator's socket id as roomId
-                socket.join(socket.id + 'i');
+                socket.join(roomId);
                 // room creation alerts all clients on the new rooms configurations
                 this.sio.emit('roomConfiguration', this.roomManager.rooms);
             });

@@ -1,3 +1,4 @@
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { TimerFieldComponent } from './timer-field.component';
@@ -11,6 +12,7 @@ describe('TimerFieldComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [TimerFieldComponent],
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
     });
 

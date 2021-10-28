@@ -7,11 +7,12 @@ import {
     EASEL_SIZE,
     INDEX_INVALID,
     INDEX_PLAYER_AI,
-    THREE_SECONDS_DELAY
+    THREE_SECONDS_DELAY,
 } from '@app/classes/constants';
 import { ScoreValidation } from '@app/classes/validation-score';
 import { Vec2 } from '@app/classes/vec2';
 import { GridService } from '@app/services/grid.service';
+import { PlayerAIService } from '@app/services/player-ia.service';
 import { PlayerService } from '@app/services/player.service';
 import { WordValidationService } from '@app/services/word-validation.service';
 
@@ -21,15 +22,19 @@ import { WordValidationService } from '@app/services/word-validation.service';
 export class PlaceLetterService {
     scrabbleBoard: string[][]; // 15x15 array
     invalidLetters: boolean[] = []; // Array of the size of the word to place that tells which letter is invalid
-
+    numLettersUsedFromEasel: number;
+    isAIPlacementValid: boolean;
+    isEaselSize: boolean;
     emptyTile: string = '';
     isFirstRound: boolean = true;
-    isAIPlacementValid: boolean = false;
-    numLettersUsedFromEasel: number = 0; // Number of letters used from the easel to from 1 word
-    isEaselSize: boolean = false; // If the bonus to form a word with all the letters from the easel applies
     message: string;
 
-    constructor(private playerService: PlayerService, private gridService: GridService, private wordValidationService: WordValidationService) {
+    constructor(
+        private playerService: PlayerService,
+        private gridService: GridService,
+        public playerAIService: PlayerAIService,
+        private wordValidationService: WordValidationService,
+    ) {
         this.scrabbleBoard = []; // Initializes the array with empty letters
         for (let i = 0; i < BOARD_ROWS; i++) {
             this.scrabbleBoard[i] = [];
@@ -40,19 +45,20 @@ export class PlaceLetterService {
         this.playerService.updateScrabbleBoard(this.scrabbleBoard);
     }
 
-    placeMethodAdapter(object: { start: Vec2; orientation: string; word: string }) {
-        this.place(object.start, object.orientation, object.word, INDEX_PLAYER_AI);
+    placeMethodAdapter(object: { start: Vec2; orientation: string; word: string; indexPlayer: number }) {
+        this.playerAIService.isPlacementValid = false;
+        const isValid = this.place(object.start, object.orientation, object.word, object.indexPlayer);
+        this.playerAIService.isPlacementValid = isValid;
     }
 
     place(position: Vec2, orientation: string, word: string, indexPlayer = INDEX_PLAYER_AI): boolean {
         // Remove accents from the word to place
         let isRow = false;
-        // if (orientation === 'v') {
-        //     isRow = false;
-        // } else if (orientation === 'h') {
-        //     isRow = true;
-        // }
-        isRow = orientation === 'v' ? false : true;
+        if (orientation === 'v') {
+            isRow = false;
+        } else if (orientation === 'h') {
+            isRow = true;
+        }
         const wordNoAccents = word.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
         // If the command is possible according to the parameters
         if (!this.isPossible(position, orientation, wordNoAccents, indexPlayer)) {
@@ -148,6 +154,7 @@ export class PlaceLetterService {
         this.playerService.updateScrabbleBoard(this.scrabbleBoard);
         this.playerService.refillEasel(indexPlayer); // Fill the easel with new letters from the reserve
         this.isFirstRound = false;
+        this.playerAIService.isFirstRound = false;
     }
 
     isPossible(position: Vec2, orientation: string, word: string, indexPlayer: number): boolean {

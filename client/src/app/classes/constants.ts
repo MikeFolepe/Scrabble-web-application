@@ -33,7 +33,7 @@ export const TRIPLE_WORD = 3;
 export const DOUBLE_WORD = 2;
 export const TRIPLE_LETTER = 3;
 export const DOUBLE_LETTER = 2;
-export const MIN_RESERVE_SIZE_TOSWAP = 7;
+export const MIN_RESERVE_SIZE_TO_SWAP = 7;
 
 export const THREE_SECONDS_DELAY = 3000;
 
