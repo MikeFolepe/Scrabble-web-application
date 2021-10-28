@@ -18,7 +18,7 @@ export class PlayerAIService {
     sortDecreasing = (word1: PossibleWords, word2: PossibleWords) => {
         // eslint-disable-next-line @typescript-eslint/no-magic-numbers
         if (word1.point > word2.point) return -1;
-        if (word2.point < word1.point) return 1;
+        if (word1.point < word2.point) return 1;
         return 0;
     };
 

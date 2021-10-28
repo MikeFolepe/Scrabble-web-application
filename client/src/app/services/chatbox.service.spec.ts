@@ -1,25 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
 import { TestBed } from '@angular/core/testing';
-import { INDEX_REAL_PLAYER, RESERVE } from '@app/classes/constants';
-import { Orientation } from '@app/classes/scrabble-board-pattern';
 import { Player } from '@app/models/player.model';
 import { ChatboxService } from './chatbox.service';
+import { Orientation, PossibleWords } from '@app/classes/scrabble-board-pattern';
+import { INDEX_REAL_PLAYER, RESERVE } from '@app/classes/constants';
 
 describe('ChatboxService', () => {
     let service: ChatboxService;
+    let possibleWord: PossibleWords;
 
     beforeEach(() => {
         TestBed.configureTestingModule({});
         service = TestBed.inject(ChatboxService);
 
-        const letterA = RESERVE[0];
-        const letterB = RESERVE[1];
-        const letterC = RESERVE[2];
-
-        const firstPlayerEasel = [letterA, letterA, letterB, letterB, letterC, letterC, letterA];
+        const firstPlayerEasel = [RESERVE[0], RESERVE[0], RESERVE[1], RESERVE[1], RESERVE[2], RESERVE[2], RESERVE[0]];
         const firstPlayer = new Player(1, 'Player 1', firstPlayerEasel);
         service['playerService'].addPlayer(firstPlayer);
+        possibleWord = { word: 'test', orientation: Orientation.HorizontalOrientation, line: 0, startIdx: 0, point: 1 };
 
         spyOn(service['sendMessageService'], 'displayMessageByType');
     });
@@ -38,13 +36,6 @@ describe('ChatboxService', () => {
         spyOn(service, 'isValid').and.returnValue(true);
 
         service.message = '';
-        service.sendPlayerMessage(service.message);
-        expect(service.typeMessage).toEqual('player');
-    });
-
-    it('should have type player if command is valid', () => {
-        spyOn(service, 'isValid').and.returnValue(true);
-
         service.sendPlayerMessage(service.message);
         expect(service.typeMessage).toEqual('player');
         expect(service.command).toEqual('');
@@ -81,6 +72,21 @@ describe('ChatboxService', () => {
     });
 
     it('using command !debug should call executeDebug()', () => {
+        const spy = spyOn(service, 'executeDebug');
+        service.command = 'debug';
+        const table: PossibleWords[] = [];
+        table.push(possibleWord);
+
+        service['debugService'].receiveAIDebugPossibilities(table);
+        service.sendPlayerMessage('!debug');
+        expect(spy).toHaveBeenCalled();
+        service.sendPlayerMessage('!debug');
+        expect(spy).toHaveBeenCalled();
+    });
+
+    it('using command !passer should display the respective message', () => {
+        service.command = 'passer';
+        service.skipTurn.isTurn = true;
         spyOn(service, 'executeDebug');
         service.command = 'debug';
         const word = 'message de debug';
@@ -110,10 +116,11 @@ describe('ChatboxService', () => {
     });
 
     it('using a valid command !placer should display the respective message', () => {
-        spyOn(service['skipTurn'], 'switchTurn');
-        service['skipTurn'].isTurn = true;
         spyOn(service['placeLetterService'], 'place').and.returnValue(true);
+        spyOn(service['skipTurn'], 'switchTurn');
+
         service.command = 'placer';
+        service.skipTurn.isTurn = true;
         service.sendPlayerMessage('!placer h8h hello');
         expect(service.message).toEqual('!placer h8h hello');
     });
@@ -128,8 +135,6 @@ describe('ChatboxService', () => {
     });
 
     it('deactivating debug should display the respective message', () => {
-        spyOn<any>(service, 'displayDebugMessage');
-
         service.command = 'debug';
         const table: { word: string; orientation: Orientation; line: number; startIdx: number; point: number }[] = [
             { word: 'message de debug', orientation: Orientation.HorizontalOrientation, line: 0, startIdx: 0, point: 1 },
