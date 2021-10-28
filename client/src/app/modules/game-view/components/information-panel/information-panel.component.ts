@@ -1,67 +1,54 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { INDEX_PLAYER_AI, INDEX_REAL_PLAYER } from '@app/classes/constants';
 import { GameSettings } from '@app/classes/game-settings';
 import { PlayerAI } from '@app/models/player-ai.model';
 import { Player } from '@app/models/player.model';
-import { CountdownComponent } from '@app/modules/game-view/components/countdown/countdown.component';
-import { PlayerAIComponent } from '@app/modules/game-view/components/player-ai/player-ai.component';
 import { EndGameService } from '@app/services/end-game.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { LetterService } from '@app/services/letter.service';
 import { PlayerService } from '@app/services/player.service';
-import { TourService } from '@app/services/tour.service';
-import { Subscription } from 'rxjs';
+import { SkipTurnService } from '@app/services/skip-turn.service';
 
 @Component({
     selector: 'app-information-panel',
     templateUrl: './information-panel.component.html',
     styleUrls: ['./information-panel.component.scss'],
 })
-export class InformationPanelComponent implements OnDestroy, OnInit {
-    @ViewChild(CountdownComponent) countDown: CountdownComponent;
-    @ViewChild(PlayerAIComponent) playerAI: PlayerAIComponent;
-    players: Player[] = new Array<Player>();
+export class InformationPanelComponent implements OnInit, OnDestroy {
     gameSettings: GameSettings;
-    tour: boolean;
-    reserveState: number;
-    message: string;
-    viewSubscription: Subscription = new Subscription();
     constructor(
-        private gameSettingsService: GameSettingsService,
+        public gameSettingsService: GameSettingsService,
         public letterService: LetterService,
-        private playerService: PlayerService,
-        private tourService: TourService,
+        public playerService: PlayerService,
+        public skipTurnService: SkipTurnService,
         public endGameService: EndGameService,
-    ) {}
-    ngOnInit(): void {
-        this.gameSettings = this.gameSettingsService.getSettings();
-        this.initializePlayers();
-        this.players = this.playerService.getPlayers();
-        this.initializeFirstTour();
-        this.tour = this.tourService.getTour();
-        this.reserveState = this.letterService.getReserveSize();
-        this.viewSubscription = this.letterService.currentMessage.subscribe((message) => (this.message = message));
-        this.letterService.updateView(this.updateView.bind(this));
+    ) {
+        this.gameSettings = gameSettingsService.gameSettings;
     }
 
-    // initializing players to playersService
-    initializePlayers() {
-        let player = new Player(1, this.gameSettings.playersName[0], this.letterService.getRandomLetters());
+    ngOnInit(): void {
+        this.initializePlayers();
+        this.initializeFirstTurn();
+        this.skipTurnService.startTimer();
+    }
+
+    initializePlayers(): void {
+        let player = new Player(1, this.gameSettings.playersName[INDEX_REAL_PLAYER], this.letterService.getRandomLetters());
         this.playerService.addPlayer(player);
+<<<<<<< HEAD
         player = new PlayerAI(2, this.gameSettings.playersName[1], this.letterService.getRandomLetters());
         // TODO: Resoudre en fonction du mode
+=======
+        player = new PlayerAI(2, this.gameSettings.playersName[INDEX_PLAYER_AI], this.letterService.getRandomLetters());
+>>>>>>> 9fef5b9307a31a22229ab27da685083c2eef4485
         this.playerService.addPlayer(player);
     }
 
-    // function to initialize the boolean specifying which player will start first
-    initializeFirstTour(): void {
-        this.tourService.initializeTour(Boolean(this.gameSettings.startingPlayer.valueOf()));
+    initializeFirstTurn(): void {
+        this.skipTurnService.isTurn = Boolean(this.gameSettings.startingPlayer.valueOf());
     }
 
-    reAssignTour(tour: boolean): void {
-        this.tourService.initializeTour(tour);
-    }
-
+<<<<<<< HEAD
     switchTour(counter: number): void {
         if (this.endGameService.isEndGame) return;
         this.tour = this.tourService.getTour();
@@ -89,8 +76,10 @@ export class InformationPanelComponent implements OnDestroy, OnInit {
             this.players[INDEX_PLAYER_AI].score = this.playerService.getScore(INDEX_PLAYER_AI);
         }
     }
+=======
+>>>>>>> 9fef5b9307a31a22229ab27da685083c2eef4485
     ngOnDestroy(): void {
         this.playerService.clearPlayers();
-        this.viewSubscription.unsubscribe();
+        this.skipTurnService.stopTimer();
     }
 }

@@ -1,9 +1,16 @@
 import { Component, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+<<<<<<< HEAD
 import { Router } from '@angular/router';
 import { AI_NAME_DATABASE } from '@app/classes/constants';
 import { GameSettings, StartingPlayer } from '@app/classes/game-settings';
 import { GameSettingsService } from '@app/services/game-settings.service';
+=======
+import { AI_NAME_DATABASE } from '@app/classes/constants';
+import { GameSettings, StartingPlayer } from '@app/classes/game-settings';
+import { GameSettingsService } from '@app/services/game-settings.service';
+
+>>>>>>> 9fef5b9307a31a22229ab27da685083c2eef4485
 @Component({
     selector: 'app-form',
     templateUrl: './form.component.html',
@@ -12,6 +19,7 @@ import { GameSettingsService } from '@app/services/game-settings.service';
 export class FormComponent implements OnDestroy {
     form: FormGroup;
 
+<<<<<<< HEAD
     constructor(public gameSettingsService: GameSettingsService, private router: Router) {
         this.form = new FormGroup({
             playerName: new FormControl(this.gameSettingsService.gameSettings.playersName[0]),
@@ -21,6 +29,9 @@ export class FormComponent implements OnDestroy {
             randomBonus: new FormControl(this.gameSettingsService.gameSettings.randomBonus),
         });
     }
+=======
+    constructor(public gameSettingsService: GameSettingsService) {}
+>>>>>>> 9fef5b9307a31a22229ab27da685083c2eef4485
 
     // Generates a random name for the AI
     chooseRandomAIName(): string {
@@ -62,7 +73,7 @@ export class FormComponent implements OnDestroy {
 
     initSoloGame(): void {
         const playersName: string[] = [this.form.controls.playerName.value, this.chooseRandomAIName()];
-        const settings = new GameSettings(
+        this.gameSettingsService.gameSettings = new GameSettings(
             playersName,
             this.chooseStartingPlayer(),
             this.form.controls.minuteInput.value,
@@ -71,8 +82,11 @@ export class FormComponent implements OnDestroy {
             this.form.controls.randomBonus.value,
             'dictionary.json',
         );
+<<<<<<< HEAD
 
         this.gameSettingsService.initializeSettings(settings);
+=======
+>>>>>>> 9fef5b9307a31a22229ab27da685083c2eef4485
     }
 
     initMultiplayerGame(): void {

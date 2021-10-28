@@ -1,4 +1,5 @@
 import { HttpClientModule } from '@angular/common/http';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 
@@ -10,6 +11,7 @@ describe('MainPageComponent', () => {
         await TestBed.configureTestingModule({
             imports: [HttpClientModule],
             declarations: [MainPageComponent],
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
     });
 

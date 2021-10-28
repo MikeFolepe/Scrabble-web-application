@@ -3,7 +3,10 @@ import { RouterModule, Routes } from '@angular/router';
 import { PageNotFoundComponent } from '@app/components/page-not-found/page-not-found.component';
 import { JoinRoomComponent } from '@app/pages/join-room/join-room.component';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
+<<<<<<< HEAD
 import { WaitingRoomComponent } from '@app/pages/waiting-room/waiting-room.component';
+=======
+>>>>>>> 9fef5b9307a31a22229ab27da685083c2eef4485
 import { GameViewComponent } from './game-view/components/game-view/game-view.component';
 import { FormComponent } from './initialize-solo-game/form/form.component';
 

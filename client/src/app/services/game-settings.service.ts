@@ -17,11 +17,11 @@ export class GameSettingsService {
     isSoloMode: boolean;
     isRedirectedFromMultiplayerGame: boolean;
 
-    initializeSettings(settings: GameSettings) {
-        this.gameSettings = settings;
-    }
+    // initializeSettings(settings: GameSettings) {
+    //     this.gameSettings = settings;
+    // }
 
-    getSettings(): GameSettings {
-        return this.gameSettings;
-    }
+    // getSettings(): GameSettings {
+    //     return this.gameSettings;
+    // }
 }

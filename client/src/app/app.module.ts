@@ -24,7 +24,11 @@ import { WaitingRoomComponent } from './pages/waiting-room/waiting-room.componen
  * Otherwise Angular Cli will not know in which module to put new component
  */
 @NgModule({
+<<<<<<< HEAD
     declarations: [AppComponent, MainPageComponent, PageNotFoundComponent, WaitingRoomComponent, JoinRoomComponent],
+=======
+    declarations: [AppComponent, MainPageComponent, PageNotFoundComponent],
+>>>>>>> 9fef5b9307a31a22229ab27da685083c2eef4485
     imports: [
         AppMaterialModule,
         AppRoutingModule,
