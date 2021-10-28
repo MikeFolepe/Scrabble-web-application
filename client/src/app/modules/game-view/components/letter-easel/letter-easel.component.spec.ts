@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { INDEX_REAL_PLAYER } from '@app/classes/constants';
@@ -16,6 +17,7 @@ describe('LetterEaselComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [LetterEaselComponent],
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
     });
 
