@@ -36,7 +36,7 @@ export class PlaceLetters extends PlayStrategy {
         matchingPointingRangeWords = context.playerAIService.filterByRange(allPossibleWords, this.pointingRange);
 
         this.computeResults(allPossibleWords, matchingPointingRangeWords, context);
-        context.switchTurn();
+        //context.switchTurn();
     }
 
     computeResults(allPossibleWords: PossibleWords[], matchingPointingRangeWords: PossibleWords[], context: PlayerAIComponent): void {

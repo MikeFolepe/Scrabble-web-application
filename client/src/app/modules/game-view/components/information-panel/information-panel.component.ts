@@ -45,6 +45,6 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
 
     ngOnDestroy(): void {
         this.playerService.clearPlayers();
-        this.skipTurnService.stopTimer();
+        //this.skipTurnService.stopTimer();
     }
 }
