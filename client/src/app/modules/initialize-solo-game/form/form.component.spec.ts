@@ -66,8 +66,8 @@ describe('FormComponent', () => {
         expect(spy).toHaveBeenCalled();
     });
 
-    it('should initialize all GameSettings elements', () => {
-        component.initGame();
-        expect(gameSettingsServiceSpy.initializeSettings).toHaveBeenCalled();
-    });
+    // it('should initialize all GameSettings elements', () => {
+    //     component.initGame();
+    //     expect(gameSettingsServiceSpy.initializeSettings).toHaveBeenCalled();
+    // });
 });

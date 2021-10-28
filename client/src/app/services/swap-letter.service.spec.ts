@@ -60,7 +60,7 @@ describe('SwapLetterService', () => {
     });
 
     it('an empty reserve should not have enough letters to swap', () => {
-        const initReserveSize: number = service['letterService'].getReserveSize();
+        const initReserveSize: number = service['letterService'].reserveSize;
         // Emptying the reserve
         for (let i = 0; i < initReserveSize; i++) {
             service['letterService'].getRandomLetter();

@@ -1,23 +1,40 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { InformationPanelComponent } from './information-panel.component';
+// import { ComponentFixture, TestBed } from '@angular/core/testing';
+// import { GameSettings, StartingPlayer } from '@app/classes/game-settings';
+// import { SkipTurnService } from '@app/services/skip-turn.service';
+// import { InformationPanelComponent } from './information-panel.component';
 
-describe('InformationPannelComponent', () => {
-    // let component: InformationPanelComponent;
-    let fixture: ComponentFixture<InformationPanelComponent>;
+// describe('InformationPanelComponent', () => {
+//     let component: InformationPanelComponent;
+//     let fixture: ComponentFixture<InformationPanelComponent>;
+//     let skipTurnSpy: unknown;
 
-    beforeEach(async () => {
-        await TestBed.configureTestingModule({
-            declarations: [InformationPanelComponent],
-        }).compileComponents();
-    });
+//     beforeEach(() => {
+//         skipTurnSpy = jasmine.createSpyObj('SkipTurnService', ['startTimer']);
+//     });
 
-    beforeEach(() => {
-        fixture = TestBed.createComponent(InformationPanelComponent);
-        // component = fixture.componentInstance;
-        fixture.detectChanges();
-    });
+//     beforeEach(async () => {
+//         await TestBed.configureTestingModule({
+//             declarations: [InformationPanelComponent],
+//             providers: [{ provide: SkipTurnService, useValue: skipTurnSpy }],
+//         }).compileComponents();
+//     });
 
-    // it('should create', () => {
-    // expect(component).toBeTruthy();
-    // });
-});
+//     beforeEach(() => {
+//         fixture = TestBed.createComponent(InformationPanelComponent);
+//         component = fixture.componentInstance;
+//         component.gameSettings = new GameSettings(['player1', 'player2'], StartingPlayer.Player1, '01', '00', 'facile', false, 'dictionary.json');
+//         fixture.detectChanges();
+//     });
+
+//     it('should create', () => {
+//         expect(component).toBeTruthy();
+//     });
+
+//     it('should call clearPlayers and stop timer on Destroy', () => {
+//         spyOn(component.playerService, 'clearPlayers');
+//         spyOn(component.skipTurnService, 'stopTimer');
+//         component.ngOnDestroy();
+//         expect(component.playerService.clearPlayers).toHaveBeenCalled();
+//         expect(component.skipTurnService.stopTimer).toHaveBeenCalled();
+//     });
+// });
