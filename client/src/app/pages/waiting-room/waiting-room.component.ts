@@ -19,8 +19,9 @@ export class WaitingRoomComponent implements OnInit {
     status: string;
     isWaiting: boolean;
     rooms: Room[] = [];
+    router: Router;
 
-    constructor(private router: Router, public gameSettingsService: GameSettingsService, public clientSocket: ClientSocketService) {
+    constructor(public gameSettingsService: GameSettingsService, public clientSocket: ClientSocketService) {
         this.clientSocket.route();
     }
 
@@ -62,5 +63,6 @@ export class WaitingRoomComponent implements OnInit {
         this.gameSettingsService.isSoloMode = true;
         this.gameSettingsService.isRedirectedFromMultiplayerGame = true;
         this.router.navigate(['solo-game-ai']);
+        this.clientSocket.socket.emit('cancelMultiplayerparty', this.clientSocket.socket.id);
     }
 }

@@ -14,9 +14,10 @@ import { GameSettingsService } from './game-settings.service';
 export class ClientSocketService {
     socket: any;
     rooms: Room[] = [];
+    router: Router;
     private urlString: string;
 
-    constructor(private router: Router, private gameSettingsService: GameSettingsService) {
+    constructor(private gameSettingsService: GameSettingsService) {
         this.urlString = `http://${window.location.hostname}:3000`;
         this.socket = io(this.urlString);
     }

@@ -2,6 +2,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { INDEX_REAL_PLAYER, MAX_NUMBER_OF_POSSIBILITY } from '@app/classes/constants';
 import { Vec2 } from '@app/classes/vec2';
 import { EndGameService } from '@app/services/end-game.service';
+import { LetterService } from '@app/services/letter.service';
 import { PassTourService } from '@app/services/pass-tour.service';
 import { PlaceLetterService } from '@app/services/place-letter.service';
 import { PlayerService } from '@app/services/player.service';
@@ -33,6 +34,7 @@ export class ChatboxService implements OnDestroy {
         private placeLetterService: PlaceLetterService,
         private debugService: DebugService,
         public endGameService: EndGameService,
+        public letterService: LetterService,
     ) {
         this.initializeTourSubscription();
     }
@@ -77,6 +79,11 @@ export class ChatboxService implements OnDestroy {
                 this.executePlace();
                 break;
             }
+            case 'reserve': {
+                this.executeReserve();
+                break;
+            }
+
             default: {
                 break;
             }
@@ -98,8 +105,14 @@ export class ChatboxService implements OnDestroy {
         const regexPasser = /^!passer/g;
         const regexEchanger = /^!échanger/g;
         const regexPlacer = /^!placer/g;
-
-        if (regexDebug.test(this.message) || regexPasser.test(this.message) || regexEchanger.test(this.message) || regexPlacer.test(this.message)) {
+        const regexReserve = /^!reserve$/g;
+        if (
+            regexDebug.test(this.message) ||
+            regexPasser.test(this.message) ||
+            regexEchanger.test(this.message) ||
+            regexPlacer.test(this.message) ||
+            regexReserve.test(this.message)
+        ) {
             return true;
         }
 
@@ -108,6 +121,7 @@ export class ChatboxService implements OnDestroy {
     }
 
     isSyntaxValid(): boolean {
+        const regexReserve = /^!reserve$/g;
         const regexDebug = /^!debug$/g;
         const regexPasser = /^!passer$/g;
         const regexEchanger = /^!échanger\s([a-z]|[*]){1,7}$/g;
@@ -123,6 +137,8 @@ export class ChatboxService implements OnDestroy {
             this.command = 'echanger';
         } else if (regexPlacer.test(this.message)) {
             this.command = 'placer';
+        } else if (regexReserve.test(this.message)) {
+            this.command = 'reserve';
         } else {
             isSyntaxValid = false;
             this.message = 'ERREUR : La syntaxe est invalide';
@@ -130,7 +146,7 @@ export class ChatboxService implements OnDestroy {
         return isSyntaxValid;
     }
 
-    executeDebug() {
+    executeDebug(): void {
         this.debugService.switchDebugMode();
         if (this.debugService.isDebugActive) {
             this.typeMessage = 'system';
@@ -143,7 +159,7 @@ export class ChatboxService implements OnDestroy {
         }
     }
 
-    executeSkipTurn() {
+    executeSkipTurn(): void {
         this.endGameService.actionsLog.push('passer');
         this.tour = this.tourService.getTour();
         if (this.tour) {
@@ -151,6 +167,19 @@ export class ChatboxService implements OnDestroy {
         } else {
             this.typeMessage = 'error';
             this.message = "ERREUR : Ce n'est pas ton tour";
+        }
+    }
+
+    executeReserve(): void {
+        if (!this.debugService.isDebugActive) {
+            this.displayMessageByType('Commande non réalisable', 'error');
+            this.message = '';
+            return;
+        }
+        for (const letter of this.letterService.reserve) {
+            this.message = 'system';
+            this.displayMessageByType(letter.value + ':' + letter.quantity.toString(), 'system');
+            this.message = '';
         }
     }
 

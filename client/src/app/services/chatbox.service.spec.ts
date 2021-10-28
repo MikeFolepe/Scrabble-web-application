@@ -5,7 +5,7 @@ import { Letter } from '@app/classes/letter';
 import { Player } from '@app/models/player.model';
 import { ChatboxService } from './chatbox.service';
 
-describe('ChatboxService', () => {
+fdescribe('ChatboxService', () => {
     let service: ChatboxService;
 
     beforeEach(() => {
@@ -33,9 +33,11 @@ describe('ChatboxService', () => {
             quantity: 0,
             points: 0,
         };
+
         const firstPlayerEasel = [letterA, letterA, letterB, letterB, letterC, letterC, letterA];
         const firstPlayer = new Player(1, 'Player 1', firstPlayerEasel);
         service['playerService'].addPlayer(firstPlayer);
+        service['letterService'].reserve = [letterA];
     });
 
     it('should be created', () => {
@@ -71,6 +73,9 @@ describe('ChatboxService', () => {
         expect(service.isValid()).toBeTrue();
 
         service.message = '!passer';
+        expect(service.isValid()).toBeTrue();
+
+        service.message = '!reserve';
         expect(service.isValid()).toBeTrue();
 
         service.message = '!échanger *s';
@@ -133,6 +138,12 @@ describe('ChatboxService', () => {
         service.sendPlayerMessage('!échanger abc');
         expect(service.message).toEqual('Player 1 : !échanger abc');
     });
+    it('using a valid command !reserve should call command executeReserve', () => {
+        spyOn(service, 'executeReserve');
+        service.command = 'reserve';
+        service.sendPlayerMessage('!reserve');
+        expect(service.executeReserve).toHaveBeenCalled();
+    });
 
     it('deactivating debug should display the respective message', () => {
         spyOn<any>(service, 'displayMessage');
@@ -156,6 +167,20 @@ describe('ChatboxService', () => {
         service.command = 'passer';
         service.sendPlayerMessage('!passer');
         expect(service.message).toEqual("ERREUR : Ce n'est pas ton tour");
+    });
+
+    it('should not display all letters available in the reserve and their quantity', () => {
+        service['debugService'].isDebugActive = false;
+        service.executeReserve();
+        // Commande non réalisable
+        expect(service.message).toEqual('');
+    });
+
+    it('should  display all letters available in the reserve and their quantity', () => {
+        service['debugService'].isDebugActive = true;
+        service.executeReserve();
+        // A:0
+        expect(service.message).toEqual('');
     });
 
     it('using command !échanger while it is not your turn should display an error', () => {

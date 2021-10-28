@@ -28,6 +28,7 @@ export class JoinRoomComponent implements OnInit {
         });
         this.startIdx = 0;
         this.pageSize = 2;
+        // eslint-disable-next-line no-console
         console.log(this.rooms);
         this.clientSocketService.route();
     }
@@ -46,6 +47,7 @@ export class JoinRoomComponent implements OnInit {
     }
 
     join(room: Room) {
+        // eslint-disable-next-line no-console
         console.log(this.dialog);
         const ref = this.dialog.open(DialogComponent, { disableClose: true });
 
