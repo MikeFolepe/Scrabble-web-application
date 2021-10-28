@@ -15,7 +15,6 @@ import {
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
 import { Player } from '@app/models/player.model';
-import { Subject } from 'rxjs';
 import { GridService } from './grid.service';
 import { LetterService } from './letter.service';
 
@@ -23,28 +22,16 @@ import { LetterService } from './letter.service';
     providedIn: 'root',
 })
 export class PlayerService {
-    playerSubject = new Subject<Player[]>();
     scrabbleBoard: string[][];
     fontSize = DEFAULT_FONT_SIZE;
-
     players: Player[] = new Array<Player>();
-    private myFunc: () => void;
+
     constructor(private letterService: LetterService, private gridService: GridService) {
         this.fontSize = DEFAULT_FONT_SIZE;
     }
 
-    updateLettersEasel(fn: () => void) {
-        this.myFunc = fn;
-        // from now on, call myFunc wherever you want inside this service
-    }
-
-    emitPlayers(): void {
-        this.playerSubject.next(this.players.slice());
-    }
-
     addPlayer(user: Player) {
         this.players.push(user);
-        this.emitPlayers();
     }
 
     clearPlayers(): void {
@@ -65,20 +52,12 @@ export class PlayerService {
         this.updateGridFontSize();
     }
 
-    getLettersEasel(indexPlayer: number): Letter[] {
-        return this.players[indexPlayer].letterTable;
-    }
-
-    getPlayers(): Player[] {
-        return this.players;
-    }
-
     // Update the font size of the letters placed on the grid
     updateGridFontSize(): void {
         for (let i = 0; i < BOARD_ROWS; i++) {
             for (let j = 0; j < BOARD_COLUMNS; j++) {
                 if (this.scrabbleBoard[i][j] !== '') {
-                    const positionGrid = this.posTabToPosGrid(j, i);
+                    const positionGrid = this.convertSizeFormat(j, i);
                     this.gridService.eraseLetter(this.gridService.gridContextLayer, positionGrid);
                     this.gridService.drawLetter(this.gridService.gridContextLayer, this.scrabbleBoard[i][j], positionGrid, this.fontSize);
                 }
@@ -91,7 +70,6 @@ export class PlayerService {
         for (let i = 0; i < this.players[indexPlayer].letterTable.length; i++) {
             if (this.players[indexPlayer].letterTable[i].value === letterToRemove.toUpperCase()) {
                 this.players[indexPlayer].letterTable.splice(i, 1);
-                this.myFunc();
                 break;
             }
         }
@@ -114,7 +92,6 @@ export class PlayerService {
             }
             this.players[indexPlayer].letterTable[i] = letterToInsert;
         }
-        this.myFunc();
     }
 
     swap(letter: string, indexPlayer: number): void {
@@ -141,8 +118,8 @@ export class PlayerService {
         this.players[indexPlayer].score += score;
     }
 
-    // Transpose the positions from 15x15 array to 750x750 grid
-    posTabToPosGrid(positionTabX: number, positionTabY: number): Vec2 {
+    // Convert the positions from 15x15 array to 750x750 grid
+    convertSizeFormat(positionTabX: number, positionTabY: number): Vec2 {
         return {
             x: positionTabX * CASE_SIZE + CASE_SIZE - DEFAULT_WIDTH / 2,
             y: positionTabY * CASE_SIZE + CASE_SIZE - DEFAULT_HEIGHT / 2,
