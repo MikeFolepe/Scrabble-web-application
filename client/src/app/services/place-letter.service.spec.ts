@@ -42,7 +42,6 @@ describe('PlaceLetterService', () => {
         spyOn(service['playerService'], 'refillEasel');
         spyOn(service['wordValidationService'], 'validateAllWordsOnBoard').and.returnValue({ validation: true, score: 0 });
         spyOn(service['sendMessageService'], 'displayMessageByType');
-        spyOn(service['passTurnService'], 'writeMessage');
     });
 
     it('should create', () => {
