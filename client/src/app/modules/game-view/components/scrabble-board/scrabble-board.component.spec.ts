@@ -28,6 +28,15 @@ describe('ScrabbleBoardComponent', () => {
     it('should create', () => {
         expect(component).toBeTruthy();
     });
+    //     it('buttonDetect should modify the buttonPressed variable', () => {
+    //         spyOn(component['gridService'], 'setGridContext');
+    //         const expectedKey = 'a';
+    //         const buttonEvent = {
+    //             key: expectedKey,
+    //         } as KeyboardEvent;
+    //         component.buttonDetect(buttonEvent);
+    //         expect(component.buttonPressed).toEqual(expectedKey);
+    //     });
 
     it('buttonDetect should modify the buttonPressed variable', () => {
         spyOn(component['gridService'], 'setGridContext');

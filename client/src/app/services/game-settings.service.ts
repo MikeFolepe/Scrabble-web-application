@@ -7,11 +7,11 @@ import { GameSettings } from '@app/classes/game-settings';
 export class GameSettingsService {
     gameSettings: GameSettings;
 
-    initializeSettings(settings: GameSettings) {
-        this.gameSettings = settings;
-    }
+    // initializeSettings(settings: GameSettings) {
+    //     this.gameSettings = settings;
+    // }
 
-    getSettings(): GameSettings {
-        return this.gameSettings;
-    }
+    // getSettings(): GameSettings {
+    //     return this.gameSettings;
+    // }
 }

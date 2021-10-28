@@ -62,36 +62,36 @@ describe('LetterService', () => {
         expect(letters).toHaveSize(EASEL_SIZE);
     });
 
-    it('should return right reserve size', () => {
-        const REAL_TOTAL_NUMBER = 102;
-        expect(service.getReserveSize()).toEqual(REAL_TOTAL_NUMBER);
-        service.reserve[0].quantity--;
-        expect(service.getReserveSize()).toEqual(REAL_TOTAL_NUMBER - 1);
-        service.reserve = [];
-        const emptyQuantity = 0;
-        expect(service.getReserveSize()).toEqual(emptyQuantity);
-    });
+    // it('should return right reserve size', () => {
+    //     const REAL_TOTAL_NUMBER = 102;
+    //     expect(service.getReserveSize()).toEqual(REAL_TOTAL_NUMBER);
+    //     service.reserve[0].quantity--;
+    //     expect(service.getReserveSize()).toEqual(REAL_TOTAL_NUMBER - 1);
+    //     service.reserve = [];
+    //     const emptyQuantity = 0;
+    //     expect(service.getReserveSize()).toEqual(emptyQuantity);
+    // });
 
-    it('should change function when updateReserve() is called', () => {
-        let number = 1;
-        const fn = () => {
-            number = number *= 2;
-            return;
-        };
-        service.updateView(fn);
-        expect(service['func']).toBe(fn);
-    });
+    // it('should change function when updateReserve() is called', () => {
+    //     let number = 1;
+    //     const fn = () => {
+    //         number = number *= 2;
+    //         return;
+    //     };
+    //     service.updateView(fn);
+    //     expect(service['func']).toBe(fn);
+    // });
 
-    it('should write message when writeMessage() is called', () => {
-        let number = 1;
-        const message = 'test message';
-        service['func'] = () => {
-            number = number *= 2;
-            return;
-        };
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const funcSpy = spyOn<any>(service, 'func');
-        service.writeMessage(message);
-        expect(funcSpy).toHaveBeenCalled();
-    });
+    // it('should write message when writeMessage() is called', () => {
+    //     let number = 1;
+    //     const message = 'test message';
+    //     service['func'] = () => {
+    //         number = number *= 2;
+    //         return;
+    //     };
+    //     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    //     const funcSpy = spyOn<any>(service, 'func');
+    //     service.writeMessage(message);
+    //     expect(funcSpy).toHaveBeenCalled();
+    // });
 });

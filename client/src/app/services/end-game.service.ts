@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { NUMBER_OF_SKIP, RESERVE } from '@app/classes/constants';
+import { NUMBER_OF_SKIP, RESERVE, INDEX_PLAYER_AI, INDEX_REAL_PLAYER } from '@app/classes/constants';
 import { DebugService } from './debug.service';
 import { LetterService } from './letter.service';
 import { PlayerService } from './player.service';
@@ -31,7 +31,7 @@ export class EndGameService {
         if (!this.isEndGame || this.playerService.players[indexPlayer].score === 0) {
             return;
         }
-        for (const letter of this.playerService.getLettersEasel(indexPlayer)) {
+        for (const letter of this.playerService.players[indexPlayer].letterTable) {
             this.playerService.players[indexPlayer].score -= letter.points;
             // Check if score decrease under 0 after soustraction
             if (this.playerService.players[indexPlayer].score < 0) {
@@ -63,8 +63,9 @@ export class EndGameService {
 
     private isEndGameByEasel(): boolean {
         return (
-            this.letterService.getReserveSize() === 0 &&
-            (this.playerService.getLettersEasel(0).length === 0 || this.playerService.getLettersEasel(1).length === 0)
+            this.letterService.reserveSize === 0 &&
+            (this.playerService.players[INDEX_REAL_PLAYER].letterTable.length === 0 ||
+                this.playerService.players[INDEX_PLAYER_AI].letterTable.length === 0)
         );
     }
 }

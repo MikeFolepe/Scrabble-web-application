@@ -3,7 +3,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ChatboxComponent } from './chatbox.component';
 
-describe('ChatboxComponent', () => {
+describe('ChatBoxComponent', () => {
     let component: ChatboxComponent;
     let fixture: ComponentFixture<ChatboxComponent>;
 
