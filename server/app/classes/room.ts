@@ -19,7 +19,7 @@ export class Room {
         this.state = state;
     }
 
-    addCustomer(customerName: string) {
+    addCustomer(customerName: string): void {
         this.customerName = customerName;
     }
 }

@@ -21,6 +21,8 @@ export class SocketManager {
                 socket.join(socket.id);
                 // room creation alerts all clients on the new rooms configurations
                 this.sio.emit('roomConfiguration', this.roomManager.rooms);
+                // affiche les rooms après ajout
+                // console.log(socket.rooms);
             });
 
             socket.on('getRoomsConfigurations', () => {
@@ -37,11 +39,19 @@ export class SocketManager {
                 // redirect the clients in the new filled room to game view
                 this.sio.in(roomId).emit('goToGameView', this.roomManager.getGameSettings(roomId));
                 console.log(this.roomManager.getGameSettings(roomId));
+                // affiche les rooms après ajout
+                // console.log(socket.rooms);
             });
-            // Delete  the room and uodate the client view
+            // Delete  the room inside the table of room and update the client view
             socket.on('cancelMultiplayerparty', (roomId: string) => {
                 this.roomManager.deleteRoom(roomId);
+                // Delete the room inside th socket
+                // socket.leave(roomId);
+                this.sio.in(roomId).socketsLeave(roomId);
+                // Broadcast the  rooms available after deletion
                 this.sio.emit('roomConfiguration', this.roomManager.rooms);
+                // Afficher toutes les rooms restantes
+                console.log(socket.rooms);
             });
             socket.on('disconnect', (reason) => {
                 console.log(`Deconnexion par l'utilisateur avec id : ${socket.id}`);
