@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { INDEX_PLAYER_AI, INDEX_REAL_PLAYER } from '@app/classes/constants';
+import { INDEX_REAL_PLAYER } from '@app/classes/constants';
 import { GameSettings } from '@app/classes/game-settings';
 import { PlayerAI } from '@app/models/player-ai.model';
 import { Player } from '@app/models/player.model';
@@ -35,8 +35,7 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
     initializePlayers(): void {
         let player = new Player(1, this.gameSettings.playersName[INDEX_REAL_PLAYER], this.letterService.getRandomLetters());
         this.playerService.addPlayer(player);
-        //
-        player = new PlayerAI(2, this.gameSettings.playersName[INDEX_PLAYER_AI], this.letterService.getRandomLetters());
+        player = this.resolveByGameMode();
         this.playerService.addPlayer(player);
     }
 
@@ -47,5 +46,13 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this.playerService.clearPlayers();
         this.skipTurnService.stopTimer();
+    }
+
+    resolveByGameMode() {
+        if (this.gameSettingsService.isSoloMode) {
+            return new PlayerAI(2, this.gameSettings.playersName[1], this.letterService.getRandomLetters());
+        }
+
+        return new Player(2, this.gameSettings.playersName[1], this.letterService.getRandomLetters());
     }
 }

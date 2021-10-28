@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ClientSocketService } from '@app/services/client-socket.service';
@@ -18,34 +19,43 @@ export class WaitingRoomComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.playAnimation();
+    }
+
+    playAnimation() {
+        const startMessage = 'Connexion au serveur...';
+        this.waitBeforeChangeStatus(500, startMessage);
         this.clientSocket.socket.connect();
-
         setTimeout(() => {
-            this.status = 'Connexion au serveur...';
-            this.isWaiting = true;
-        }, 500);
-
-        setTimeout(() => {
-            if (this.gameSettingsService.gameSettings.playersName[0] === '') {
-                setTimeout(() => {
-                    this.status = 'Une erreur est survenu';
-                }, 1000);
-                this.router.navigate(['home']);
-                return;
-            }
+            this.handleReloadErrors();
 
             if (this.clientSocket.socket.connected) {
-                this.status = 'Connexion réussie';
+                const connexionSuccess = 'Connexion réussie';
                 this.isWaiting = true;
-                setTimeout(() => {
-                    this.status = 'En attente de joueur...';
-                }, 3500);
+                this.waitBeforeChangeStatus(0, connexionSuccess);
+                const waitingMessage = 'En attente de joueur...';
+                this.waitBeforeChangeStatus(2000, waitingMessage);
                 this.clientSocket.socket.emit('createRoom', this.gameSettingsService.gameSettings);
             } else {
                 this.status = 'Erreur de connexion...veuillez réessayer';
                 this.isWaiting = false;
             }
-        }, 4000);
+        }, 2000);
+    }
+
+    handleReloadErrors() {
+        if (this.gameSettingsService.gameSettings.playersName[0] === '') {
+            const errorMessage = 'Une erreur est survenue';
+            this.waitBeforeChangeStatus(1000, errorMessage);
+            this.router.navigate(['home']);
+            return;
+        }
+    }
+
+    waitBeforeChangeStatus(waitingTime: number, message: string) {
+        setTimeout(() => {
+            this.status = message;
+        }, waitingTime);
     }
 
     delete(roomId: string) {
