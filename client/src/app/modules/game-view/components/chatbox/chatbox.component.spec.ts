@@ -34,7 +34,7 @@ describe('ChatBoxComponent', () => {
     });
 
     it('should call bindDisplay on init', () => {
-        const spy = spyOn(component['chatBoxService'], 'bindDisplay').and.callThrough();
+        const spy = spyOn<any>(component['sendMessageService'], 'displayBound').and.callThrough();
         component.ngOnInit();
         expect(spy).toHaveBeenCalled();
     });
@@ -89,6 +89,16 @@ describe('ChatBoxComponent', () => {
         component.displayMessageByType();
         expect(component.listMessages.pop()).toEqual(component['sendMessageService'].message);
         expect(component.listTypes.pop()).toEqual(component['sendMessageService'].typeMessage);
+    });
+
+    it('function passButton should do the same thing than entering command !passer', () => {
+        const spy1 = spyOn(component['chatBoxService'], 'sendPlayerMessage');
+        const spy2 = spyOn(component, 'scrollToBottom');
+
+        component.passButton();
+        expect(spy1).toHaveBeenCalledOnceWith('!passer');
+        expect(component.message).toEqual('');
+        expect(spy2).toHaveBeenCalledTimes(1);
     });
 
     it('should set interval for all required functions', () => {
