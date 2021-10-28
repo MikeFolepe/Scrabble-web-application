@@ -11,17 +11,28 @@ export class RoomManager {
         this.rooms = [];
     }
 
-    createRoom(roomId: string, ownerName: string, gameSettings: GameSettings) {
-        this.rooms.push(new Room(roomId, ownerName, gameSettings));
+    createRoom(roomId: string, gameSettings: GameSettings) {
+        this.rooms.push(new Room(this.createRoomId(gameSettings.playersName[0]), gameSettings));
+    }
+
+    createRoomId(playerName: string) {
+        return (
+            new Date().getFullYear().toString() +
+            new Date().getMonth().toString() +
+            new Date().getHours().toString() +
+            new Date().getMinutes().toString() +
+            new Date().getSeconds().toString() +
+            new Date().getMilliseconds().toString() +
+            playerName
+        );
     }
 
     addCustomer(customerName: string, roomId: string): boolean {
         const room = this.find(roomId) as Room;
-        if (room === undefined || this.isSameName(room, customerName)) {
+        if (room === undefined) {
             return false;
         }
-        room.customerName = customerName;
-        room.gameSettings.playersName[1] = customerName;
+        room.addCustomer(customerName);
         return true;
     }
 
@@ -71,9 +82,5 @@ export class RoomManager {
 
     private find(roomId: string): Room | undefined {
         return this.rooms.find((room) => room.id === roomId);
-    }
-
-    private isSameName(room: Room, customerName: string): boolean {
-        return room.ownerName === customerName;
     }
 }

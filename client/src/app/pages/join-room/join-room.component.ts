@@ -62,7 +62,7 @@ export class JoinRoomComponent implements OnInit {
             // if user closes the dialog box without input nothing
             if (playerName === null) return;
             // if names are equals
-            if (room.ownerName === playerName) {
+            if (room.gameSettings.playersName[0] === playerName) {
                 this.isNameValid = false;
                 setTimeout(() => {
                     this.isNameValid = true;

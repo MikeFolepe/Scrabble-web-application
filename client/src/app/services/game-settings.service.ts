@@ -6,7 +6,7 @@ import { GameSettings, StartingPlayer } from '@app/classes/game-settings';
 })
 export class GameSettingsService {
     gameSettings: GameSettings = {
-        playersName: ['', ''],
+        playersName: ['Majid', ''],
         startingPlayer: StartingPlayer.Player1,
         timeMinute: '01',
         timeSecond: '00',

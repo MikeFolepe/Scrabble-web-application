@@ -8,18 +8,16 @@ export enum State {
 
 export class Room {
     id: string;
-    ownerName: string;
-    customerName: string;
     gameSettings: GameSettings;
     state: State;
-    constructor(id: string, ownerName: string, gameSettings: GameSettings, state: State = State.Waiting) {
+
+    constructor(id: string, gameSettings: GameSettings, state: State = State.Waiting) {
         this.id = id;
-        this.ownerName = ownerName;
         this.gameSettings = gameSettings;
         this.state = state;
     }
 
     addCustomer(customerName: string) {
-        this.customerName = customerName;
+        this.gameSettings.playersName[1] = customerName;
     }
 }
