@@ -4,9 +4,8 @@ import { Letter } from '@app/classes/letter';
 import { LetterService } from '@app/services/letter.service';
 import { PlayerService } from '@app/services/player.service';
 import { SwapLetterService } from '@app/services/swap-letter.service';
-import { TourService } from '@app/services/tour.service';
-import { PassTourService } from '@app/services/pass-tour.service';
 import { SendMessageService } from '@app/services/send-message.service';
+import { SkipTurnService } from '@app/services/skip-turn.service';
 
 @Component({
     selector: 'app-letter-easel',
@@ -21,11 +20,10 @@ export class LetterEaselComponent implements OnInit {
 
     constructor(
         private playerService: PlayerService,
-        private turnService: TourService,
         private letterService: LetterService,
         private swapLetterService: SwapLetterService,
-        private passTurnService: PassTourService,
         private sendMessageService: SendMessageService,
+        private skipTurnService: SkipTurnService,
     ) {}
 
     // Disable all selections made when a click occurs outside the easel
@@ -40,12 +38,12 @@ export class LetterEaselComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.playerService.updateLettersEasel(this.update.bind(this));
+        this.playerService.bindUpdateEasel(this.update.bind(this));
         this.update();
     }
 
     update(): void {
-        this.letterEaselTab = this.playerService.getLettersEasel(INDEX_REAL_PLAYER);
+        this.letterEaselTab = this.playerService.getEasel(INDEX_REAL_PLAYER);
     }
 
     onRightClick(event: MouseEvent, indexLetter: number) {
@@ -92,9 +90,9 @@ export class LetterEaselComponent implements OnInit {
             }
         }
         // Display the respective message into the chatBox and pass the turn
-        const message = this.playerService.getPlayers()[INDEX_REAL_PLAYER].name + ' : !échanger ' + lettersToSwap;
+        const message = this.playerService.players[INDEX_REAL_PLAYER].name + ' : !échanger ' + lettersToSwap;
         this.sendMessageService.displayMessageByType(message, 'player');
-        this.passTurnService.writeMessage();
+        this.skipTurnService.switchTurn();
     }
 
     cancelSelection() {
@@ -107,11 +105,11 @@ export class LetterEaselComponent implements OnInit {
     isSwapButtonActive(): boolean {
         let isButtonActive = false;
         // Desactivated if it is not your turn
-        if (!this.turnService.getTour()) {
+        if (!this.skipTurnService.isTurn) {
             return isButtonActive;
         }
         // Desactivated if there's less than 7 letters in the reserve
-        if (this.letterService.getReserveSize() < EASEL_SIZE) {
+        if (this.letterService.reserveSize < EASEL_SIZE) {
             return isButtonActive;
         }
         // Activated if at least one letter is selected to swap

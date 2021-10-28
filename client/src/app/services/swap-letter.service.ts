@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { INDEX_INVALID, MIN_RESERVE_SIZE_TOSWAP } from '@app/classes/constants';
+import { INDEX_INVALID, MIN_RESERVE_SIZE_TO_SWAP } from '@app/classes/constants';
 import { LetterService } from '@app/services/letter.service';
 import { PlayerService } from '@app/services/player.service';
 import { SendMessageService } from './send-message.service';
@@ -61,7 +61,7 @@ export class SwapLetterService {
 
     // Reserve needs to have at least 7 letters to perform a swap
     reserveHasEnoughLetters(): boolean {
-        if (this.letterService.getReserveSize() >= MIN_RESERVE_SIZE_TOSWAP) {
+        if (this.letterService.reserveSize >= MIN_RESERVE_SIZE_TO_SWAP) {
             return true;
         }
         return false;

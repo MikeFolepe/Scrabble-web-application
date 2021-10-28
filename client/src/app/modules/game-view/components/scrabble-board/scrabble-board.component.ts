@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, ViewChild, OnDestroy } from '@angular/core';
 import { Vec2 } from '@app/classes/vec2';
 import { GridService } from '@app/services/grid.service';
 import { MouseHandlerService } from '@app/services/mouse-handler.service';
@@ -8,7 +8,7 @@ import { MouseHandlerService } from '@app/services/mouse-handler.service';
     templateUrl: './scrabble-board.component.html',
     styleUrls: ['./scrabble-board.component.scss'],
 })
-export class ScrabbleBoardComponent implements /* OnInit,*/ AfterViewInit {
+export class ScrabbleBoardComponent implements /* OnInit,*/ AfterViewInit, OnDestroy {
     @ViewChild('gridCanvas', { static: false }) private gridCanvas!: ElementRef<HTMLCanvasElement>;
     @ViewChild('gridCanvasLayer', { static: false }) private gridCanvasLayer!: ElementRef<HTMLCanvasElement>;
 
@@ -39,5 +39,8 @@ export class ScrabbleBoardComponent implements /* OnInit,*/ AfterViewInit {
 
     mouseHitDetect(event: MouseEvent) {
         this.mouseService.mouseHitDetect(event);
+    }
+    ngOnDestroy(): void {
+        this.gridCanvasLayer.nativeElement.remove();
     }
 }

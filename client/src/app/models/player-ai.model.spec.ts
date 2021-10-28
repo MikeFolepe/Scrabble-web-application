@@ -1,26 +1,24 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { TestBed } from '@angular/core/testing';
-import { PlayerAIComponent } from '@app/modules/game-view/components/player-ai/player-ai.component';
-import { PlaceLetters } from './place-letter-strategy.model';
+import { PlaceLetters } from '@app/models/place-letter-strategy.model';
 import { PlayerAI } from '@app/models/player-ai.model';
 import { SkipTurn } from '@app/models/skip-turn-strategy.model';
 import { SwapLetter } from '@app/models/swap-letter-strategy.model';
 import { RESERVE } from '@app/classes/constants';
+import { PlayerAIComponent } from '@app/modules/game-view/components/player-ai/player-ai.component';
 
 describe('PlayerAI', () => {
-    const id = 0;
-    const name = 'Player 1';
+    const id = 1;
+    const name = 'PlayerAI';
 
     const letterA = RESERVE[0];
     const letterB = RESERVE[1];
     const letterC = RESERVE[2];
-    const letterD = RESERVE[3];
     const letterE = RESERVE[4];
-    const letterF = RESERVE[5];
     const letterG = RESERVE[6];
-    const letterTable = [letterA, letterB, letterC, letterD, letterE, letterF, letterG];
+    const letterTable = [letterA, letterB, letterC, letterE, letterE, letterE, letterG];
 
     let playerAI: PlayerAI;
 
@@ -32,52 +30,47 @@ describe('PlayerAI', () => {
         expect(playerAI).toBeTruthy();
     });
 
-    it('should set the respective strategy based on random numbers', () => {
+    it('should set a strategy', () => {
         spyOn<any>(playerAI, 'generateRandomNumber').and.returnValues(0, 3, 5, 22);
-        spyOn<any>(playerAI, 'pointingRange').and.returnValue({ min: 0, max: 6 });
+        spyOn<any>(playerAI, 'pointingRange').and.returnValue({ min: 1, max: 6 });
 
         playerAI['setStrategy']();
-        const placeStrategy = new PlaceLetters({ min: 0, max: 6 });
-        expect(playerAI.strategy).toEqual(placeStrategy);
+        expect(playerAI.strategy).toBeInstanceOf(PlaceLetters);
         playerAI['setStrategy']();
-        const skipStrategy = new SkipTurn();
-        expect(playerAI.strategy).toEqual(skipStrategy);
+        expect(playerAI.strategy).toBeInstanceOf(SkipTurn);
         playerAI['setStrategy']();
-        const swapStrategy = new SwapLetter();
-        expect(playerAI.strategy).toEqual(swapStrategy);
+        expect(playerAI.strategy).toBeInstanceOf(SwapLetter);
         playerAI['setStrategy']();
-        expect(playerAI.strategy).toEqual(skipStrategy);
+        expect(playerAI.strategy).toBeInstanceOf(SkipTurn);
     });
 
     it('should have a scoring range', () => {
-        spyOn(playerAI, 'generateRandomNumber').and.returnValues(0, 1, 4, 22);
-
-        expect(playerAI['pointingRange']()).toEqual({ min: 0, max: 6 });
+        spyOn<any>(playerAI, 'generateRandomNumber').and.returnValues(0, 1, 4, 22);
+        expect(playerAI['pointingRange']()).toEqual({ min: 1, max: 6 });
         expect(playerAI['pointingRange']()).toEqual({ min: 7, max: 12 });
         expect(playerAI['pointingRange']()).toEqual({ min: 13, max: 18 });
         expect(playerAI['pointingRange']()).toEqual({ min: 0, max: 0 });
     });
 
     it('should return a random number between 0 and a give number', () => {
-        const MAX_VALUE_1 = 3;
-        const MAX_VALUE_2 = 10;
-        const MAX_INDEX = 10;
-        for (let i = 0; i < MAX_INDEX; i++) {
-            const result = playerAI['generateRandomNumber'](MAX_VALUE_1);
+        let MAX_VALUE = 3;
+        for (let i = 0; i < 10; i++) {
+            const result = playerAI['generateRandomNumber'](MAX_VALUE);
             expect(result).toBeGreaterThanOrEqual(0);
-            expect(result).toBeLessThan(MAX_VALUE_1);
+            expect(result).toBeLessThan(MAX_VALUE);
         }
 
-        for (let i = 0; i < MAX_INDEX; i++) {
-            const result = playerAI['generateRandomNumber'](MAX_VALUE_2);
+        MAX_VALUE = 10;
+        for (let i = 0; i < 10; i++) {
+            const result = playerAI['generateRandomNumber'](MAX_VALUE);
             expect(result).toBeGreaterThanOrEqual(0);
-            expect(result).toBeLessThan(MAX_VALUE_2);
+            expect(result).toBeLessThan(MAX_VALUE);
         }
     });
 
     it('should call the right functions when calling play()', () => {
-        spyOn(playerAI.strategy, 'execute');
-        spyOn(playerAI, 'setStrategy');
+        spyOn<any>(playerAI.strategy, 'execute');
+        spyOn<any>(playerAI, 'setStrategy');
 
         playerAI.play();
 
@@ -89,5 +82,37 @@ describe('PlayerAI', () => {
         const context: PlayerAIComponent = TestBed.createComponent(PlayerAIComponent).componentInstance;
         playerAI.setContext(context);
         expect(playerAI.context).toEqual(context);
+    });
+
+    it('should change strategy and play it', () => {
+        const spy = spyOn<any>(playerAI, 'play');
+        const newStrategy = new SkipTurn();
+
+        playerAI.replaceStrategy(newStrategy);
+
+        expect(playerAI.strategy).toBe(newStrategy);
+        expect(spy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should return playerHand formatted', () => {
+        const playerHandFormated = '[ABCEEEG]';
+
+        expect(playerAI.getHand()).toEqual(playerHandFormated);
+    });
+
+    it('should return quantity of present letter', () => {
+        expect(playerAI.playerQuantityOf('A')).toEqual(1);
+    });
+
+    it('should return quantity of no present letter', () => {
+        expect(playerAI.playerQuantityOf('H')).toEqual(0);
+    });
+
+    it('should return quantity of multiple letter', () => {
+        expect(playerAI.playerQuantityOf('E')).toEqual(3);
+    });
+
+    it('should return quantity of letter with case insentivity', () => {
+        expect(playerAI.playerQuantityOf('e')).toEqual(3);
     });
 });
