@@ -32,11 +32,6 @@ export class JoinRoomComponent implements OnInit {
         this.clientSocketService.socket.on('roomConfiguration', (room: Room[]) => {
             this.rooms = room;
         });
-        this.startIdx = 0;
-        this.pageSize = 2;
-        // eslint-disable-next-line no-console
-        console.log(this.rooms);
-        this.clientSocketService.route();
 
         this.clientSocketService.socket.on('roomAlreadyToken', () => {
             this.isRoomStillAvailable = false;
