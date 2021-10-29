@@ -90,13 +90,13 @@ export class ChatboxService {
 
     executeReserve(): void {
         if (!this.debugService.isDebugActive) {
-            this.sendMessageService.displayMessageByType('Commande non réalisable', 'error');
+            this.sendMessageService.displayMessageByType('Commande non réalisable', TypeMessage.Error);
             this.message = '';
             return;
         }
         for (const letter of this.letterService.reserve) {
             this.message = 'system';
-            this.sendMessageService.displayMessageByType(letter.value + ':' + letter.quantity.toString(), 'system');
+            this.sendMessageService.displayMessageByType(letter.value + ':' + letter.quantity.toString(), TypeMessage.System);
             this.message = '';
         }
     }

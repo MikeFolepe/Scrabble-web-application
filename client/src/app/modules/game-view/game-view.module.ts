@@ -12,7 +12,7 @@ import { PlayerAIComponent } from '@app/modules/game-view/player-ai/player-ai.co
 import { ScrabbleBoardComponent } from '@app/modules/game-view/scrabble-board/scrabble-board.component';
 import { SidebarComponent } from '@app/modules/game-view/sidebar/sidebar.component';
 import { AppMaterialModule } from '@app/modules/material.module';
-import { SharedModule } from '@app/modules/shared/shared/shared.module';
+import { SharedModule } from '@app/modules/shared/shared.module';
 @NgModule({
     declarations: [
         GameViewComponent,

@@ -13,7 +13,7 @@ import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { GameViewModule } from './modules/game-view/game-view.module';
 import { InitializeSoloGameModule } from './modules/initialize-solo-game/initialize-solo-game.module';
-import { SharedModule } from './modules/shared/shared/shared.module';
+import { SharedModule } from './modules/shared/shared.module';
 import { JoinRoomComponent } from './pages/join-room/join-room.component';
 import { WaitingRoomComponent } from './pages/waiting-room/waiting-room.component';
 

@@ -147,14 +147,4 @@ export class LetterEaselComponent implements OnInit {
             this.letterEaselTab[indexLetter].isSelectedForSwap = true;
         }
     }
-
-    private handleManipulationSelection(indexLetter: number): void {
-        // Unselect manipulation
-        if (this.letterEaselTab[indexLetter].isSelectedForManipulation) {
-            this.letterEaselTab[indexLetter].isSelectedForManipulation = false;
-        } // Select to manipulate if the letter isn't selected for swap or manipulation
-        else if (!this.letterEaselTab[indexLetter].isSelectedForSwap) {
-            this.letterEaselTab[indexLetter].isSelectedForManipulation = true;
-        }
-    }
 }
