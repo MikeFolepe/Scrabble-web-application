@@ -1,7 +1,8 @@
 // import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
-import { ALL_EASEL_BONUS, BOARD_COLUMNS, BOARD_ROWS, BONUSES_POSITIONS, DICTIONARY, RESERVE } from '@app/classes/constants';
+import { ALL_EASEL_BONUS, BOARD_COLUMNS, BOARD_ROWS, BONUSES_POSITIONS, RESERVE } from '@app/classes/constants';
 import { ScoreValidation } from '@app/classes/validation-score';
+import { CommunicationService } from '@app/services/communication.service';
 @Injectable({
     providedIn: 'root',
 })
@@ -11,8 +12,9 @@ export class WordValidationService {
     newPlayedWords: Map<string, string[]>;
     newPositions: string[];
     bonusesPositions: Map<string, string>;
+    private validationState = false;
 
-    constructor() {
+    constructor(private httpServer: CommunicationService) {
         this.playedWords = new Map<string, string[]>();
         this.newPlayedWords = new Map<string, string[]>();
         this.newWords = new Array<string>();
@@ -20,17 +22,18 @@ export class WordValidationService {
         this.bonusesPositions = new Map<string, string>(BONUSES_POSITIONS);
     }
 
-    isValidInDictionary(word: string): boolean {
-        if (word.length >= 2) {
-            for (const item of DICTIONARY) {
-                if (word === item) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        return false;
-    }
+    // isValidInDictionary(word: string): boolean {
+    //     if (word.length >= 2) {
+    //         // eslint-disable-next-line prefer-const
+    //         for (const item of DICTIONARY) {
+    //             if (word === item) {
+    //                 return true;
+    //             }
+    //         }
+    //         return false;
+    //     }
+    //     return false;
+    // }
 
     findWords(words: string[]): string[] {
         return words
@@ -196,12 +199,18 @@ export class WordValidationService {
         let scoreTotal = 0;
         this.passThroughAllRowsOrColumns(scrabbleBoard, isRow);
         this.passThroughAllRowsOrColumns(scrabbleBoard, !isRow);
-        for (const word of this.newPlayedWords.keys()) {
-            const lowerCaseWord = word.toLowerCase();
-            if (!this.isValidInDictionary(lowerCaseWord)) {
-                this.newPlayedWords.clear();
-                return { validation: false, score: scoreTotal };
-            }
+        // for (const word of this.newPlayedWords.keys()) {
+        //     const lowerCaseWord = word.toLowerCase();
+        //     if (!this.isValidInDictionary(lowerCaseWord)) {
+        //         this.newPlayedWords.clear();
+        //         return { validation: false, score: scoreTotal };
+        //     }
+        // }
+
+        this.httpServer.validationPost(this.newPlayedWords).subscribe((validation) => (this.validationState = validation));
+        if (!this.validationState) {
+            this.newPlayedWords.clear();
+            return { validation: this.validationState, score: scoreTotal };
         }
         scoreTotal += this.calculateTotalScore(scoreTotal, this.newPlayedWords);
 
@@ -216,6 +225,6 @@ export class WordValidationService {
 
         this.newPlayedWords.clear();
 
-        return { validation: true, score: scoreTotal };
+        return { validation: this.validationState, score: scoreTotal };
     }
 }

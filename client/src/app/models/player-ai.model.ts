@@ -2,7 +2,7 @@ import { placingBallotBox, strategyBallotBox } from '@app/classes/constants';
 import { AIStrategy, PlacingStrategy } from '@app/classes/enum';
 import { Letter } from '@app/classes/letter';
 import { Range } from '@app/classes/range';
-import { PlayerAIComponent } from '@app/modules/game-view/components/player-ai/player-ai.component';
+import { PlayerAIComponent } from '@app/modules/game-view/player-ai/player-ai.component';
 import { PlayStrategy } from './abstract-strategy.model';
 import { PlaceLetters } from './place-letter-strategy.model';
 import { Player } from './player.model';

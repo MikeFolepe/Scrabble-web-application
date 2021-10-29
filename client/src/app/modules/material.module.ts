@@ -11,6 +11,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 // import { MatInputModule } from '@angular/material/input';
 // import { MatListModule } from '@angular/material/list';
 // import { MatMenuModule } from '@angular/material/menu';
@@ -44,6 +45,7 @@ const modules = [
     MatFormFieldModule,
     MatGridListModule,
     MatIconModule,
+    MatProgressSpinnerModule,
     // MatInputModule,
     // MatListModule,
     // MatMenuModule,
@@ -62,6 +64,7 @@ const modules = [
     MatTabsModule,
     MatToolbarModule,
     MatTooltipModule,
+    MatTabsModule,
 ];
 
 /**

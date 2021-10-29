@@ -8,12 +8,14 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { AppRoutingModule } from '@app/modules/app-routing.module';
 import { SharedModule } from '@app/modules/shared/shared.module';
+import { DialogComponent } from './dialog/dialog.component';
 import { FormComponent } from './form/form.component';
 import { LevelFieldComponent } from './level-field/level-field.component';
 import { PlayerNameFieldComponent } from './player-name-field/player-name-field.component';
+import { RandomBonusComponent } from './random-bonus/random-bonus.component';
 import { TimerFieldComponent } from './timer-field/timer-field.component';
 @NgModule({
-    declarations: [FormComponent, PlayerNameFieldComponent, TimerFieldComponent, LevelFieldComponent],
+    declarations: [FormComponent, PlayerNameFieldComponent, TimerFieldComponent, LevelFieldComponent, RandomBonusComponent, DialogComponent],
     imports: [
         CommonModule,
         MatInputModule,
@@ -24,7 +26,9 @@ import { TimerFieldComponent } from './timer-field/timer-field.component';
         MatButtonModule,
         AppRoutingModule,
         SharedModule,
+        MatFormFieldModule,
     ],
     exports: [FormComponent],
+    entryComponents: [DialogComponent],
 })
 export class InitializeSoloGameModule {}

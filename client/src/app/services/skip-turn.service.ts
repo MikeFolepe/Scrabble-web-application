@@ -1,6 +1,6 @@
-/* eslint-disable no-invalid-this */
 import { Injectable } from '@angular/core';
 import { ONE_SECOND_TIME } from '@app/classes/constants';
+import { ClientSocketService } from '@app/services/client-socket.service';
 import { EndGameService } from '@app/services/end-game.service';
 import { GameSettingsService } from './game-settings.service';
 
@@ -16,27 +16,41 @@ export class SkipTurnService {
     intervalID: NodeJS.Timeout;
     private playAiTurn: () => void;
 
-    constructor(public gameSettingsService: GameSettingsService, public endGameService: EndGameService) {}
+    constructor(public gameSettingsService: GameSettingsService, public endGameService: EndGameService, private clientSocket: ClientSocketService) {
+        this.clientSocket.socket.on('turnSwitched', (turn: boolean) => {
+            this.isTurn = turn;
+        });
+        this.clientSocket.socket.on('startTimer', () => {
+            this.stopTimer();
+            this.startTimer();
+        });
+    }
 
     bindAiTurn(fn: () => void) {
         this.playAiTurn = fn;
     }
 
     switchTurn(): void {
+        // console.log('Switching TURN');
         if (this.endGameService.isEndGame) {
             return;
         }
         this.stopTimer();
-        setTimeout(() => {
-            if (this.isTurn) {
-                this.isTurn = false;
-                this.startTimer();
-                this.playAiTurn();
-            } else {
-                this.isTurn = true;
-                this.startTimer();
-            }
-        }, ONE_SECOND_TIME);
+        if (this.gameSettingsService.isSoloMode) {
+            setTimeout(() => {
+                if (this.isTurn) {
+                    this.isTurn = false;
+                    this.startTimer();
+                    this.playAiTurn();
+                } else {
+                    this.isTurn = true;
+                    this.startTimer();
+                }
+            }, ONE_SECOND_TIME);
+        } else {
+            this.clientSocket.socket.emit('switchTurn', this.isTurn, this.clientSocket.roomId);
+            this.isTurn = false;
+        }
     }
 
     startTimer(): void {
@@ -46,16 +60,15 @@ export class SkipTurnService {
         }
         this.minutes = parseInt(this.gameSettingsService.gameSettings.timeMinute, 10);
         this.seconds = parseInt(this.gameSettingsService.gameSettings.timeSecond, 10);
+        clearInterval(this.intervalID);
         this.intervalID = setInterval(() => {
             if (this.seconds === 0 && this.minutes !== 0) {
                 this.minutes = this.minutes - 1;
                 this.seconds = 59;
-            } else if (this.seconds === 0 && this.minutes === 0) {
-                this.stopTimer();
-                // Do not touch to setTimeout, it's gonna break everything
-                setTimeout(() => {
+            } else if (this.seconds === 0 - 1 && this.minutes === 0) {
+                if (this.isTurn) {
                     this.switchTurn();
-                }, ONE_SECOND_TIME);
+                }
             } else {
                 this.seconds = this.seconds - 1;
             }
