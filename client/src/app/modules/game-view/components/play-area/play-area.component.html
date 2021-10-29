@@ -12,8 +12,6 @@
                 Quitter
             </button>
         </div>
-        <button mat-raised-button color="primary" (click)="chatBox.executeSkipTurn()"[disabled]=!skipTurn.isTurn>
-            Passer son tour
-        </button>
+        <button mat-raised-button color="primary" (click)="chatBox.executeSkipTurn()" [disabled]="!skipTurn.isTurn">Passer son tour</button>
     </div>
 </div>
