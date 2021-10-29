@@ -1,0 +1,12 @@
+<div class="container">
+    <label>Taille de police : {{ fontSize }} px</label>
+    <div class="button-container">
+        <button mat-mini-fab color="white" (click)="decrement()" title="smaller">
+            <mat-icon>exposure_neg_1</mat-icon>
+        </button>
+        <button mat-mini-fab color="accent" (click)="increment()" title="bigger">
+            <mat-icon>exposure_plus_1</mat-icon>
+        </button>
+    </div>
+    <mat-slider min="10" max="20" step="1" [(ngModel)]="fontSize" (click)="this.sizeChange.emit(this.fontSize)"></mat-slider>
+</div>

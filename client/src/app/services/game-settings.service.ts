@@ -16,12 +16,4 @@ export class GameSettingsService {
     };
     isSoloMode: boolean;
     isRedirectedFromMultiplayerGame: boolean;
-
-    // initializeSettings(settings: GameSettings) {
-    //     this.gameSettings = settings;
-    // }
-
-    // getSettings(): GameSettings {
-    //     return this.gameSettings;
-    // }
 }

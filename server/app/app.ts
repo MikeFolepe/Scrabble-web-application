@@ -1,3 +1,4 @@
+import { WordValidationController } from './controllers/validate.controller';
 import { HttpException } from '@app/classes/http.exception';
 import { DateController } from '@app/controllers/date.controller';
 import * as cookieParser from 'cookie-parser';
@@ -16,7 +17,11 @@ export class Application {
     private readonly internalError: number = StatusCodes.INTERNAL_SERVER_ERROR;
     private readonly swaggerOptions: swaggerJSDoc.Options;
 
-    constructor(private readonly dateController: DateController, private exampleController: ExampleController) {
+    constructor(
+        private readonly exampleController: ExampleController,
+        private readonly dateController: DateController,
+        private readonly wordValidationController: WordValidationController,
+    ) {
         this.app = express();
 
         this.swaggerOptions = {
@@ -42,6 +47,7 @@ export class Application {
             res.redirect('/api/docs');
         });
         this.app.use('/api/date', this.dateController.router);
+        this.app.use('/api/validation', this.wordValidationController.router);
         this.app.use('/', (req, res) => {
             res.redirect('/api/docs');
         });

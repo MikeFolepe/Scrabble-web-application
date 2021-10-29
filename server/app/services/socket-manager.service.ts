@@ -9,6 +9,7 @@ import { RoomManager } from './room-manager.service';
 export class SocketManager {
     private sio: io.Server;
     private roomManager: RoomManager;
+    private intervalID: NodeJS.Timeout;
     constructor(server: http.Server, roomManager: RoomManager) {
         this.sio = new io.Server(server, { cors: { origin: '*', methods: ['GET', 'POST'] } });
         this.roomManager = roomManager;
@@ -44,6 +45,8 @@ export class SocketManager {
                 // block someone else entry from room selection
                 this.sio.emit('roomConfiguration', this.roomManager.rooms);
                 socket.join(roomId);
+                console.log('le joigneur a :' + roomId);
+                console.log('le joigneur a :' + socket.rooms);
                 // update roomID in the new filled room to allow the clients in this room
                 // to ask the server make some actions in their room later
                 this.sio.in(roomId).emit('yourRoomId', roomId);
@@ -73,6 +76,28 @@ export class SocketManager {
             socket.on('disconnect', (reason) => {
                 console.log(`Deconnexion par l'utilisateur avec id : ${socket.id}`);
                 console.log(`Raison de deconnexion : ${reason}`);
+            });
+
+            socket.on('sendRoomMessage', (message: string, roomId: string) => {
+                // this.sio.to(roomId).emit('receiveRoomMessage', `${socket.id} : ${message}`);
+                console.log(message);
+                console.log(socket.rooms);
+                // this.sio.to(roomId).emit('receiveRoomMessage', message);
+                socket.to(roomId).emit('receiveRoomMessage', message);
+            });
+
+            socket.on('startTimer', (roomId: string) => {
+                console.log('time');
+                this.intervalID = setInterval(() => {
+                    console.log('clock');
+                    this.sio.to(roomId).emit('startClock');
+                }, 1000);
+            });
+
+            socket.on('switchTurn', (roomId: string) => {
+                clearInterval(this.intervalID);
+                this.sio.to(roomId).emit('turnSwitched');
+                console.log('switch');
             });
         });
     }
