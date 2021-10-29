@@ -4,7 +4,7 @@ import { PageNotFoundComponent } from '@app/components/page-not-found/page-not-f
 import { JoinRoomComponent } from '@app/pages/join-room/join-room.component';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { WaitingRoomComponent } from '@app/pages/waiting-room/waiting-room.component';
-import { GameViewComponent } from './game-view/components/game-view/game-view.component';
+import { GameViewComponent } from './game-view/game-view/game-view.component';
 import { FormComponent } from './initialize-solo-game/form/form.component';
 
 const routes: Routes = [

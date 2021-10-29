@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-unused-vars */
 import { TestBed } from '@angular/core/testing';
-import { PlayerAIComponent } from '@app/modules/game-view/components/player-ai/player-ai.component';
+import { PlayerAIComponent } from '@app/modules/game-view/player-ai/player-ai.component';
 import { PlayerAI } from '@app/models/player-ai.model';
 import { SwapLetter } from '@app/models/swap-letter-strategy.model';
 import { RESERVE } from '@app/classes/constants';

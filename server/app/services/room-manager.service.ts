@@ -1,6 +1,6 @@
-/* eslint-disable no-restricted-imports */
 import { Room, State } from '@app/classes/room';
 import { Service } from 'typedi';
+// eslint-disable-next-line no-restricted-imports
 import { GameSettings } from '../classes/multiplayer-game-settings';
 
 @Service()
@@ -36,12 +36,12 @@ export class RoomManager {
         return true;
     }
 
-    setState(roomId: string, state: State): void {
+    setState(roomId: string, state: State) {
         const room = this.find(roomId) as Room;
         room.state = state;
     }
 
-    getGameSettings(roomId: string): GameSettings {
+    getGameSettings(roomId: string) {
         const room = this.find(roomId) as Room;
         return room.gameSettings;
     }
@@ -80,7 +80,7 @@ export class RoomManager {
         return room.state === State.Playing;
     }
 
-    find(roomId: string): Room | undefined {
+    private find(roomId: string): Room | undefined {
         return this.rooms.find((room) => room.id === roomId);
     }
 }

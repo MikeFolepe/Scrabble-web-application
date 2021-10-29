@@ -7,7 +7,7 @@ import { PlayerAI } from '@app/models/player-ai.model';
 import { SkipTurn } from '@app/models/skip-turn-strategy.model';
 import { SwapLetter } from '@app/models/swap-letter-strategy.model';
 import { RESERVE } from '@app/classes/constants';
-import { PlayerAIComponent } from '@app/modules/game-view/components/player-ai/player-ai.component';
+import { PlayerAIComponent } from '@app/modules/game-view/player-ai/player-ai.component';
 
 describe('PlayerAI', () => {
     const id = 1;
@@ -69,7 +69,7 @@ describe('PlayerAI', () => {
     });
 
     it('should call the right functions when calling play()', () => {
-        spyOn<any>(playerAI.strategy, 'execute');
+        spyOn(playerAI.strategy, 'execute');
         spyOn<any>(playerAI, 'setStrategy');
 
         playerAI.play();

@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { GameSettingsService } from '@app/services/game-settings.service';
 import { ClientSocketService } from '@app/services/client-socket.service';
-
+import { GameSettingsService } from '@app/services/game-settings.service';
 @Component({
     selector: 'app-waiting-room',
     templateUrl: './waiting-room.component.html',
@@ -12,9 +11,10 @@ import { ClientSocketService } from '@app/services/client-socket.service';
 export class WaitingRoomComponent implements OnInit {
     status: string;
     isWaiting: boolean;
-    router: Router;
 
-    constructor(public gameSettingsService: GameSettingsService, public clientSocket: ClientSocketService) {
+    constructor(private router: Router, public gameSettingsService: GameSettingsService, public clientSocket: ClientSocketService) {
+        this.status = '';
+        this.isWaiting = false;
         this.clientSocket.route();
     }
 
@@ -66,6 +66,5 @@ export class WaitingRoomComponent implements OnInit {
         this.gameSettingsService.isSoloMode = true;
         this.gameSettingsService.isRedirectedFromMultiplayerGame = true;
         this.router.navigate(['solo-game-ai']);
-        this.clientSocket.socket.emit('cancelMultiplayerparty', this.clientSocket.socket.id);
     }
 }

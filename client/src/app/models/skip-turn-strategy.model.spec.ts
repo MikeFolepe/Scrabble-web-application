@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { PlayerAIComponent } from '@app/modules/game-view/components/player-ai/player-ai.component';
+import { PlayerAIComponent } from '@app/modules/game-view/player-ai/player-ai.component';
 import { PlayerAI } from './player-ai.model';
 import { SkipTurn } from './skip-turn-strategy.model';
 import { RESERVE } from '@app/classes/constants';

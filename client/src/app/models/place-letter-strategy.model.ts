@@ -4,7 +4,7 @@ import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSITION_X, DICTIONARY, INDEX_P
 import { Range } from '@app/classes/range';
 import { BoardPattern, Orientation, PatternInfo, PossibleWords } from '@app/classes/scrabble-board-pattern';
 import { Vec2 } from '@app/classes/vec2';
-import { PlayerAIComponent } from '@app/modules/game-view/components/player-ai/player-ai.component';
+import { PlayerAIComponent } from '@app/modules/game-view/player-ai/player-ai.component';
 import { PlayStrategy } from './abstract-strategy.model';
 import { PlayerAI } from './player-ai.model';
 import { SwapLetter } from './swap-letter-strategy.model';

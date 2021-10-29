@@ -10,7 +10,7 @@ import { environment } from 'src/environments/environment';
 })
 export class CommunicationService {
     private readonly baseUrl: string = environment.serverUrl;
-
+    private wordsToValidate: string[] = [];
     constructor(private readonly http: HttpClient) {}
 
     basicGet(): Observable<Message> {
@@ -19,6 +19,16 @@ export class CommunicationService {
 
     basicPost(message: Message): Observable<void> {
         return this.http.post<void>(`${this.baseUrl}/example/send`, message).pipe(catchError(this.handleError<void>('basicPost')));
+    }
+
+    validationPost(newPlayedWords: Map<string, string[]>): Observable<boolean> {
+        this.wordsToValidate = [];
+        for (const word of newPlayedWords.keys()) {
+            this.wordsToValidate.push(word);
+        }
+        return this.http
+            .post<boolean>(`${this.baseUrl}/validation/words`, this.wordsToValidate)
+            .pipe(catchError(this.handleError<boolean>('validationPost')));
     }
 
     private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {

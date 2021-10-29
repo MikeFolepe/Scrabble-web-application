@@ -117,7 +117,6 @@ export class BoardHandlerService {
     confirmPlacement(): void {
         // Validation of the placement
         if (this.placeLetterService.validateKeyboardPlacement(this.firstCase, this.orientation, this.word, INDEX_REAL_PLAYER)) {
-            this.gridService.eraseLayer(this.gridService.gridContextPlacementLayer);
             const column = (this.firstCase.x + 1).toString();
             const row: string = String.fromCharCode(this.firstCase.y + 'a'.charCodeAt(0));
             this.sendMessageService.displayMessageByType('!placer ' + row + column + this.orientation + ' ' + this.word, 'player');
@@ -125,12 +124,13 @@ export class BoardHandlerService {
             this.placedLetters = [];
             this.isFirstCasePicked = false;
             this.isFirstCaseLocked = false;
-        } else {
             this.gridService.eraseLayer(this.gridService.gridContextPlacementLayer);
+        } else {
             this.word = '';
             this.placedLetters = [];
             this.isFirstCasePicked = false;
             this.isFirstCaseLocked = false;
+            this.gridService.eraseLayer(this.gridService.gridContextPlacementLayer);
         }
     }
 
