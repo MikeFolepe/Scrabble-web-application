@@ -8,14 +8,14 @@ export class WordValidationService {
     // eslint-disable-next-line no-invalid-this
     dictionaryData = fs.readFileSync('@../../../client/src/assets/dictionary.json');
     private dictionary: string[];
-    constructor(){
+    constructor() {
         // eslint-disable-next-line no-invalid-this
 
         this.dictionary = JSON.parse(this.dictionaryData.toString()).words;
         // console.log(this.dictionary);
     }
 
-    isValidInDictionary( words: string[] ): boolean {
+    isValidInDictionary(words: string[]): boolean {
         // eslint-disable-next-line @typescript-eslint/prefer-for-of
         let countValidWords = 0;
         // eslint-disable-next-line @typescript-eslint/prefer-for-of
@@ -27,7 +27,7 @@ export class WordValidationService {
             }
         }
 
-        if(countValidWords === words.length){
+        if (countValidWords === words.length) {
             return true;
         }
         return false;

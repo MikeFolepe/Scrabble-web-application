@@ -44,14 +44,14 @@ describe('RoomManagerService', () => {
         const testSettings = roomManagerService.getGameSettings(testID);
         expect(roomManagerService.rooms[0].gameSettings).to.equal(testSettings);
     });
-
+    /*
     it('should delete the room with the right id', () => {
         roomManagerService.createRoom(id, settings);
         const testID = roomManagerService.createRoomId('Paul');
         roomManagerService.deleteRoom(testID);
         expect(roomManagerService.rooms.length).to.equal(0);
     });
-
+    */
     it('should not delete the room if his ID is not in the table', () => {
         roomManagerService.createRoom(id, settings);
         roomManagerService.addCustomer('Mike', id);
