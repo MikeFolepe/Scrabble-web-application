@@ -16,7 +16,8 @@ import { PlayerAIService } from '@app/services/player-ia.service';
 import { PlayerService } from '@app/services/player.service';
 import { WordValidationService } from '@app/services/word-validation.service';
 import { SendMessageService } from './send-message.service';
-import { SkipTurnService } from './skip-turn.service';
+import { ClientSocketService } from './client-socket.service';
+// import { SkipTurnService } from './skip-turn.service';
 
 @Injectable({
     providedIn: 'root',
@@ -33,13 +34,17 @@ export class PlaceLetterService {
     numLettersUsedFromEasel: number = 0; // Number of letters used from the easel to form the word
     isRow: boolean = false;
 
+    private startPosition: Vec2;
+    private orientation: string;
+    private word: string;
+
     constructor(
         private playerService: PlayerService,
         private gridService: GridService,
         public playerAIService: PlayerAIService,
         private wordValidationService: WordValidationService,
-        private sendMessageService: SendMessageService,
-        private skipTurnService: SkipTurnService,
+        private sendMessageService: SendMessageService, // private skipTurnService: SkipTurnService,
+        private clientSocketService: ClientSocketService,
     ) {
         this.scrabbleBoard = []; // Initializes the array with empty letters
         for (let i = 0; i < BOARD_ROWS; i++) {
@@ -49,6 +54,13 @@ export class PlaceLetterService {
             }
         }
         this.playerService.updateScrabbleBoard(this.scrabbleBoard);
+        this.receivePlacement();
+    }
+
+    receivePlacement(): void {
+        this.clientSocketService.socket.on('receivePlacement', (startPosition: Vec2, orientation: string, word: string) => {
+            this.placeByOpponent(startPosition, orientation, word);
+        });
     }
 
     placeMethodAdapter(object: { start: Vec2; orientation: string; word: string; indexPlayer: number }) {
@@ -57,8 +69,28 @@ export class PlaceLetterService {
         this.playerAIService.isPlacementValid = isValid;
     }
 
+    placeByOpponent(startPosition: Vec2, orientation: string, word: string): void {
+        const currentPosition = { x: startPosition.x, y: startPosition.y };
+        for (const letter of word) {
+            this.scrabbleBoard[currentPosition.y][currentPosition.x] = letter;
+            this.gridService.drawLetter(
+                this.gridService.gridContextLettersLayer,
+                letter,
+                currentPosition.x,
+                currentPosition.y,
+                this.playerService.fontSize,
+            );
+            this.updatePosition(currentPosition, orientation);
+        }
+        // Redraw all board ?
+        this.isFirstRound = false;
+    }
+
     placeCommand(position: Vec2, orientation: string, word: string, indexPlayer = INDEX_PLAYER_AI): boolean {
         const currentPosition: Vec2 = { x: position.x, y: position.y };
+        this.startPosition = position;
+        this.orientation = orientation;
+        this.word = word;
         if (orientation === 'v') {
             this.isRow = false;
         } else if (orientation === 'h') {
@@ -96,6 +128,9 @@ export class PlaceLetterService {
     }
 
     placeWithKeyboard(position: Vec2, letter: string, orientation: string, indexLetterInWord: number, indexPlayer: number): boolean {
+        this.startPosition = position;
+        this.orientation = orientation;
+        this.word = letter;
         // If we are placing the first letter of the word
         if (indexLetterInWord === 0) {
             // Reset the array containing the valid letters
@@ -139,13 +174,13 @@ export class PlaceLetterService {
         const finalResult: ScoreValidation = this.wordValidationService.validateAllWordsOnBoard(this.scrabbleBoard, this.isEaselSize, this.isRow);
         if (finalResult.validation) {
             this.handleValidPlacement(finalResult, indexPlayer);
-            this.skipTurnService.switchTurn();
+            // this.skipTurnService.switchTurn();
             return true;
         }
         this.handleInvalidPlacement(position, orientation, word, indexPlayer);
         this.sendMessageService.displayMessageByType('ERREUR : Un ou des mots formés sont invalides', 'error');
         setTimeout(() => {
-            this.skipTurnService.switchTurn();
+            // this.skipTurnService.switchTurn();
         }, THREE_SECONDS_DELAY);
         return false;
     }
@@ -188,6 +223,8 @@ export class PlaceLetterService {
         this.playerService.refillEasel(indexPlayer); // Fill the easel with new letters from the reserve
         this.isFirstRound = false;
         this.playerAIService.isFirstRound = false;
+        // TODO: SERVER EMIT only on multiplayer mode
+        this.clientSocketService.socket.emit('sendPlacement', this.startPosition, this.orientation, this.word, this.clientSocketService.roomId);
     }
 
     removePlacedLetter(position: Vec2, letter: string, indexPlayer: number) {

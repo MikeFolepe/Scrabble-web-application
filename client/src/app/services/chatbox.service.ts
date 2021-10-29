@@ -10,6 +10,7 @@ import { SwapLetterService } from '@app/services/swap-letter.service';
 import { Subscription } from 'rxjs';
 import { DebugService } from './debug.service';
 import { SendMessageService } from './send-message.service';
+import { LetterService } from './letter.service';
 
 @Injectable({
     providedIn: 'root',
@@ -32,6 +33,7 @@ export class ChatboxService {
         private debugService: DebugService,
         private sendMessageService: SendMessageService,
         public endGameService: EndGameService,
+        public letterService: LetterService,
         public skipTurn: SkipTurnService,
     ) {}
 
@@ -58,6 +60,11 @@ export class ChatboxService {
                 this.executePlace();
                 break;
             }
+            case 'reserve': {
+                this.executeReserve();
+                break;
+            }
+
             default: {
                 break;
             }
@@ -81,6 +88,19 @@ export class ChatboxService {
             this.skipTurn.switchTurn();
         } else {
             this.sendMessageService.displayMessageByType("ERREUR : Ce n'est pas ton tour", 'error');
+        }
+    }
+
+    executeReserve(): void {
+        if (!this.debugService.isDebugActive) {
+            this.sendMessageService.displayMessageByType('Commande non réalisable', 'error');
+            this.message = '';
+            return;
+        }
+        for (const letter of this.letterService.reserve) {
+            this.message = 'system';
+            this.sendMessageService.displayMessageByType(letter.value + ':' + letter.quantity.toString(), 'system');
+            this.message = '';
         }
     }
 

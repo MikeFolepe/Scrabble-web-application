@@ -1,6 +1,6 @@
 export enum StartingPlayer {
-    Player1,
-    Player2,
+    Owner,
+    Customer,
 }
 
 export class GameSettings {

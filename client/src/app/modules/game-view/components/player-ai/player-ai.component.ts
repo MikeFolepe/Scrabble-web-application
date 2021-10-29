@@ -41,6 +41,7 @@ export class PlayerAIComponent implements OnInit {
     }
 
     play() {
+        if (!this.skipTurn.gameSettingsService.isSoloMode) return;
         if (!this.skipTurn.isTurn) {
             setTimeout(() => {
                 this.aiPlayer.play();
