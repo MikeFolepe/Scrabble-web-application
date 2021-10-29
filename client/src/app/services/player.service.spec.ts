@@ -243,8 +243,8 @@ describe('PlayerService', () => {
     it('should add letters when addLetterToEasel() is called', () => {
         service['players'].push(player);
         const expectedEasel = [letterA, letterB, letterD];
-        service.addLetterToEasel('B', 0);
-        service.addLetterToEasel('D', 0);
+        service.addLetterToEasel('b', 0);
+        service.addLetterToEasel('d', 0);
         expect(service['players'][0].letterTable).toEqual(expectedEasel);
     });
 
