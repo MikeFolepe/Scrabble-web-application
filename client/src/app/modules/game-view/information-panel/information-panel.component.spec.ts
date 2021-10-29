@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { GameSettings, StartingPlayer } from '@app/classes/game-settings';
 import { SkipTurnService } from '@app/services/skip-turn.service';
 import { InformationPanelComponent } from './information-panel.component';
 
@@ -22,7 +21,7 @@ describe('InformationPanelComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(InformationPanelComponent);
         component = fixture.componentInstance;
-        component.gameSettings = new GameSettings(['player1', 'player2'], StartingPlayer.Player1, '01', '00', 'facile', false, 'dictionary.json');
+        // component.gameSettings = new GameSettings(['player1', 'player2'], StartingPlayer.Player1, '01', '00', 'facile', false, 'dictionary.json');
         fixture.detectChanges();
     });
 

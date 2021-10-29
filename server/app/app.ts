@@ -1,6 +1,6 @@
 import { WordValidationController } from './controllers/validate.controller';
 import { HttpException } from '@app/classes/http.exception';
-import { DateController } from '@app/controllers/date.controller';
+import { DateController } from './controllers/date.controller';
 import * as cookieParser from 'cookie-parser';
 import * as cors from 'cors';
 import * as express from 'express';

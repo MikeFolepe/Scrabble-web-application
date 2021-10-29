@@ -1,14 +1,6 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable dot-notation */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-<<<<<<< HEAD:client/src/app/modules/game-view/player-ai/player-ai.component.spec.ts
-import { TestBed } from '@angular/core/testing';
-// import { PlaceLetters } from '@app/models/place-letter-strategy.model';
-import { PlayerAI } from '@app/models/player-ai.model';
-import { PlayerAIComponent } from '@app/modules/game-view/player-ai/player-ai.component';
-// import { SkipTurn } from '@app/models/skip-turn-strategy.model';
-// import { SwapLetter } from '@app/models/swap-letter-strategy.model';
-=======
 // import { ComponentFixture, TestBed } from '@angular/core/testing';
 // import { BOARD_COLUMNS, BOARD_ROWS } from '@app/classes/constants';
 // import { Letter } from '@app/classes/letter';
@@ -16,7 +8,6 @@ import { PlayerAIComponent } from '@app/modules/game-view/player-ai/player-ai.co
 // //import { PassTurnService } from '@app/services/pass-turn.service';
 // //import { TourService } from '@app/services/tour.service';
 // import { PlayerIAComponent } from './player-ia.component';
->>>>>>> 7ef0fddeffb8906076034cf5193c377cdcc4fceb:client/src/app/modules/game-view/components/player-ai/player-ai.component.spec.ts
 
 // fdescribe('PlayerIAComponent', () => {
 //     let component: PlayerIAComponent;

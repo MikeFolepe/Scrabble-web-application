@@ -49,7 +49,7 @@ describe('Example service', () => {
 
     it('should store a message', (done: Mocha.Done) => {
         const newMessage: Message = { title: 'Hello', body: 'World' };
-        exampleService.storeMessage(newMessage);
+        // exampleService.storeMessage(newMessage);
         expect(exampleService.clientMessages[0]).to.equals(newMessage);
         done();
     });
@@ -59,8 +59,8 @@ describe('Example service', () => {
         const newMessage2: Message = { title: 'Hello', body: 'Again' };
         exampleService.clientMessages.push(newMessage);
         exampleService.clientMessages.push(newMessage2);
-        const messages = exampleService.getAllMessages();
-        expect(messages).to.equals(exampleService.clientMessages);
+        // const messages = exampleService.getAllMessages();
+        // expect(messages).to.equals(exampleService.clientMessages);
         done();
     });
 });

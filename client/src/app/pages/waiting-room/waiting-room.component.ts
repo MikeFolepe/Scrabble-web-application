@@ -58,6 +58,10 @@ export class WaitingRoomComponent implements OnInit {
         }, waitingTime);
     }
 
+    // delete(): void {
+    //     this.clientSocket.socket.emit('cancelMultiplayerparty', this.gameSettingsService.gameSettings);
+    // }
+
     delete(roomId: string) {
         this.clientSocket.socket.emit('cancelMultiplayerparty', roomId);
     }
