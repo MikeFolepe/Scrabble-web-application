@@ -8,12 +8,10 @@ import { FormGroup, Validators } from '@angular/forms';
 })
 export class TimerFieldComponent implements OnInit {
     @Input() parentForm: FormGroup;
+
     // Time and Second value selection list for view
-    minuteSelectionList: string[] = ['00', '01', '02', '03', '04', '05'];
-    secondSelectionList: string[] = ['00', '30'];
-    // Min and Max value of timer in HHMM to allow string comparison
-    minTime: string = '0030';
-    maxTime: string = '0500';
+    readonly minuteSelectionList: string[] = ['00', '01', '02', '03', '04', '05'];
+    readonly secondSelectionList: string[] = ['00', '30'];
 
     ngOnInit(): void {
         // The Timer field is required for form submit
@@ -23,11 +21,12 @@ export class TimerFieldComponent implements OnInit {
 
     isValidTime(minuteInput: string, secondInput: string): boolean {
         // If one of the timer input is not initialized the timer field input should be in error
-        if (minuteInput === '' || secondInput === '') {
-            return false;
-        }
+        if (minuteInput === '' || secondInput === '') return false;
+
+        const MIN_TIME = '0030';
+        const MAX_TIME = '0500';
         // Checking if the inputs are in range
-        return minuteInput + secondInput <= this.maxTime && minuteInput + secondInput >= this.minTime;
+        return minuteInput + secondInput <= MAX_TIME && minuteInput + secondInput >= MIN_TIME;
     }
 
     setTimeValidity(): void {
