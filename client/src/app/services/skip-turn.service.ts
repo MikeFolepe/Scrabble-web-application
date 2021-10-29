@@ -16,13 +16,22 @@ export class SkipTurnService {
     intervalID: NodeJS.Timeout;
     private playAiTurn: () => void;
 
-    constructor(public gameSettingsService: GameSettingsService, public endGameService: EndGameService, private clientSocket: ClientSocketService) {}
+    constructor(public gameSettingsService: GameSettingsService, public endGameService: EndGameService, private clientSocket: ClientSocketService) {
+        this.clientSocket.socket.on('turnSwitched', (turn: boolean) => {
+            this.isTurn = turn;
+        });
+        this.clientSocket.socket.on('startTimer', () => {
+            this.stopTimer();
+            this.startTimer();
+        });
+    }
 
     bindAiTurn(fn: () => void) {
         this.playAiTurn = fn;
     }
 
     switchTurn(): void {
+        console.log('Switching TURN');
         if (this.endGameService.isEndGame) {
             return;
         }
@@ -40,11 +49,7 @@ export class SkipTurnService {
             }, ONE_SECOND_TIME);
         } else {
             this.clientSocket.socket.emit('switchTurn', this.isTurn, this.clientSocket.roomId);
-            setTimeout(() => {
-                this.clientSocket.socket.on('turnSwitched', (turn: boolean) => {
-                    this.isTurn = turn;
-                });
-            }, 500);
+            this.isTurn = false;
         }
     }
 
@@ -55,14 +60,15 @@ export class SkipTurnService {
         }
         this.minutes = parseInt(this.gameSettingsService.gameSettings.timeMinute, 10);
         this.seconds = parseInt(this.gameSettingsService.gameSettings.timeSecond, 10);
+        clearInterval(this.intervalID);
         this.intervalID = setInterval(() => {
             if (this.seconds === 0 && this.minutes !== 0) {
                 this.minutes = this.minutes - 1;
                 this.seconds = 59;
-            } else if (this.seconds === 0 && this.minutes === 0) {
-                setTimeout(() => {
+            } else if (this.seconds === 0 - 1 && this.minutes === 0) {
+                if (this.isTurn) {
                     this.switchTurn();
-                }, ONE_SECOND_TIME);
+                }
             } else {
                 this.seconds = this.seconds - 1;
             }

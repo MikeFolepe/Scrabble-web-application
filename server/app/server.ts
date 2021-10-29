@@ -30,7 +30,6 @@ export class Server {
 
         this.server = http.createServer(this.application.app);
         this.roomManager = new RoomManager();
-
         this.socketManager = new SocketManager(this.server, this.roomManager);
         this.socketManager.handleSockets();
 

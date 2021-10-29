@@ -49,7 +49,8 @@ export class SocketManager {
                 this.sio.in(roomId).emit('yourRoomId', roomId);
                 // send back to the joiner his game settings with his starting status
                 // and his name display position
-                socket.emit('yourGameSettings', this.roomManager.formatGameSettingsForCustomerIn(roomId));
+                const customerSettings = this.roomManager.formatGameSettingsForCustomerIn(roomId);
+                socket.emit('yourGameSettings', customerSettings);
                 // send back to the creator his game settings with his starting status
                 // and his name display position
                 socket.to(roomId).emit('yourGameSettings', this.roomManager.getGameSettings(roomId));
@@ -78,14 +79,11 @@ export class SocketManager {
             });
 
             socket.on('switchTurn', (turn: boolean, roomId: string) => {
-                socket.to(roomId).emit('turnSwitched', turn);
-                socket.on('switchTurn', (turn2: boolean, roomId2: string) => {
-                    socket.to(roomId2).emit('turnSwitched', turn2);
-                });
-                setTimeout(() => {
+                if (turn) {
+                    socket.to(roomId).emit('turnSwitched', turn);
                     this.sio.in(roomId).emit('startTimer');
                     console.log('time');
-                }, 1000);
+                }
             });
         });
     }
