@@ -47,8 +47,7 @@ export class SocketManager {
                 this.sio.in(roomId).emit('yourRoomId', roomId);
                 // send back to the joiner his game settings with his starting status
                 // and his name display position
-                const customerSettings = this.roomManager.formatGameSettingsForCustomerIn(roomId);
-                socket.emit('yourGameSettings', customerSettings);
+                socket.emit('yourGameSettings', this.roomManager.formatGameSettingsForCustomerIn(roomId));
                 // send back to the creator his game settings with his starting status
                 // and his name display position
                 socket.to(roomId).emit('yourGameSettings', this.roomManager.getGameSettings(roomId));
