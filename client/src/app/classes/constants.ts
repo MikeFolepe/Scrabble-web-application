@@ -1,20 +1,25 @@
 import { Letter } from '@app/classes/letter';
-// eslint-disable-next-line no-restricted-imports
-import dictionaryData from '../../../../assets/dictionary.json';
+import dictionaryData from '@src/../../assets/dictionary.json';
+import { AIStrategy, PlacingStrategy } from './enum';
+
 export const DEFAULT_WIDTH = 750;
 export const DEFAULT_HEIGHT = 750;
-export const ONE_SECOND_TIME = 1000;
 export const BOARD_SIZE = 16;
 export const CASE_SIZE = DEFAULT_WIDTH / BOARD_SIZE;
-export const EASEL_SIZE = 7;
-export const ALL_EASEL_BONUS = 50;
 export const BOARD_ROWS = 15;
 export const BOARD_COLUMNS = 15;
+
+export const EASEL_SIZE = 7;
+export const ALL_EASEL_BONUS = 50;
+
 export const MAX_NUMBER_OF_POSSIBILITY = 3;
 export const ONE_POSSIBILITY = 1;
 export const TWO_POSSIBILITY = 2;
-export const DELAY_TO_PLAY = 20000;
 export const NUMBER_OF_SKIP = 6;
+
+export const ONE_SECOND_TIME = 1000;
+export const DELAY_TO_PLAY = 20000;
+export const THREE_SECONDS_DELAY = 3000;
 
 export const CENTRAL_CASE_POSITION_X = 7;
 export const CENTRAL_CASE_POSITION_Y = 7;
@@ -35,21 +40,11 @@ export const TRIPLE_LETTER = 3;
 export const DOUBLE_LETTER = 2;
 export const MIN_RESERVE_SIZE_TO_SWAP = 7;
 
-export const THREE_SECONDS_DELAY = 3000;
+export const MAX_SOLUTION = 3;
 
-export enum MouseButton {
-    Left = 0,
-    Middle = 1,
-    Right = 2,
-    Back = 3,
-    Forward = 4,
-}
+export const AI_NAME_DATABASE: string[] = ['Mister_Bucky', 'Mister_Samy', 'Miss_Betty'];
 
-export enum AIStrategy {
-    Skip,
-    Swap,
-    Place,
-}
+export const DICTIONARY: string[] = JSON.parse(JSON.stringify(dictionaryData)).words;
 
 export const strategyBallotBox: AIStrategy[] = [
     AIStrategy.Place,
@@ -64,12 +59,6 @@ export const strategyBallotBox: AIStrategy[] = [
     AIStrategy.Place,
 ];
 
-export enum PlacingStrategy {
-    LessSix,
-    SevenToTwelve,
-    ThirteenToEighteen,
-}
-
 export const placingBallotBox: PlacingStrategy[] = [
     PlacingStrategy.LessSix,
     PlacingStrategy.SevenToTwelve,
@@ -82,10 +71,6 @@ export const placingBallotBox: PlacingStrategy[] = [
     PlacingStrategy.SevenToTwelve,
     PlacingStrategy.LessSix,
 ];
-
-export const AI_NAME_DATABASE: string[] = ['Mister_Bucky', 'Mister_Samy', 'Miss_Betty'];
-
-export const MAX_SOLUTION = 3;
 
 export const RESERVE: Letter[] = [
     {
@@ -279,8 +264,7 @@ export const RESERVE: Letter[] = [
     },
 ];
 
-// positions are used for keys
-// bonuses string are use for value
+// Positions are used for keys, bonuses string are used for value
 export const BONUSES_POSITIONS: Map<string, string> = new Map<string, string>([
     ['A1', 'tripleword'],
     ['A4', 'doubleletter'],
@@ -339,4 +323,3 @@ export const BONUSES_POSITIONS: Map<string, string> = new Map<string, string>([
     ['O12', 'doubleletter'],
     ['O15', 'tripleword'],
 ]);
-export const DICTIONARY: string[] = JSON.parse(JSON.stringify(dictionaryData)).words;

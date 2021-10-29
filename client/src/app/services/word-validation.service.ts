@@ -22,7 +22,6 @@ export class WordValidationService {
 
     isValidInDictionary(word: string): boolean {
         if (word.length >= 2) {
-            // eslint-disable-next-line prefer-const
             for (const item of DICTIONARY) {
                 if (word === item) {
                     return true;

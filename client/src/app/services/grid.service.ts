@@ -1,9 +1,6 @@
-/* eslint-disable no-invalid-this */
 import { Injectable } from '@angular/core';
 import { BOARD_SIZE, DEFAULT_HEIGHT, DEFAULT_WIDTH, RESERVE } from '@app/classes/constants';
 import { Vec2 } from '@app/classes/vec2';
-
-// TODO : Avoir un fichier séparé pour les constantes et ne pas les répéter!
 
 @Injectable({
     providedIn: 'root',
@@ -237,18 +234,23 @@ export class GridService {
         ctx.fillStyle = 'cadetBlue';
         // eslint-disable-next-line no-invalid-this
         ctx.fillRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
+        // eslint-disable-next-line no-invalid-this
         ctx.strokeRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
     };
 
     private doubleWord = (ctx: CanvasRenderingContext2D, startPosition: Vec2): void => {
         ctx.fillStyle = 'pink';
+        // eslint-disable-next-line no-invalid-this
         ctx.fillRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
+        // eslint-disable-next-line no-invalid-this
         ctx.strokeRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
     };
 
     private tripleWord = (ctx: CanvasRenderingContext2D, startPosition: Vec2): void => {
         ctx.fillStyle = 'red';
+        // eslint-disable-next-line no-invalid-this
         ctx.fillRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
+        // eslint-disable-next-line no-invalid-this
         ctx.strokeRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
     };
 }

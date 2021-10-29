@@ -11,6 +11,7 @@ export class SkipTurnService {
     isTurn: boolean;
     minutes: number;
     seconds: number;
+    // Next line is mandatory, it is an eslint issue
     // eslint-disable-next-line no-undef
     intervalID: NodeJS.Timeout;
     private playAiTurn: () => void;

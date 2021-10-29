@@ -7,8 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { AppRoutingModule } from '@app/modules/app-routing.module';
-// eslint-disable-next-line no-restricted-imports
-import { SharedModule } from '../shared/shared/shared.module';
+import { SharedModule } from '@app/modules/shared/shared.module';
 import { FormComponent } from './form/form.component';
 import { LevelFieldComponent } from './level-field/level-field.component';
 import { PlayerNameFieldComponent } from './player-name-field/player-name-field.component';

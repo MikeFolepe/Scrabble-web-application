@@ -1,5 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/naming-convention
-export enum board {
+export enum Board {
     'H8' = 'star',
     'A4' = 'doubleletter',
     'A12' = 'doubleletter',
