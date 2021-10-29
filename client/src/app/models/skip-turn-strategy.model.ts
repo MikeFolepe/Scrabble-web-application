@@ -1,4 +1,4 @@
-import { PlayerAIComponent } from '@app/modules/game-view/components/player-ai/player-ai.component';
+import { PlayerAIComponent } from '@app/modules/game-view/player-ai/player-ai.component';
 import { PlayStrategy } from './abstract-strategy.model';
 import { PlayerAI } from './player-ai.model';
 export class SkipTurn extends PlayStrategy {

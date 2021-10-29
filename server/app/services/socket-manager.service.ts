@@ -77,6 +77,13 @@ export class SocketManager {
                 // console.log(socket.rooms);
                 socket.to(roomId).emit('receiveRoomMessage', message);
             });
+
+            socket.on('sendRoomMessage', (message: string, roomId: string) => {
+                // this.sio.to(roomId).emit('receiveRoomMessage', `${socket.id} : ${message}`);
+                // console.log(message);
+                // console.log(socket.rooms);
+                socket.to(roomId).emit('receiveRoomMessage', message);
+            });
         });
     }
 }
