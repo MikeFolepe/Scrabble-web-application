@@ -1,0 +1,50 @@
+.container {
+    display: flex;
+    //height: 90vh;
+    //width: 75vw;
+    //min-height: 35em;
+    //min-width: 18em;
+    flex-direction: column;
+    margin: 1vh;
+    justify-content: space-around;
+    gap: 1vh;
+    //border: 1px solid black;
+}
+
+.wrapper {
+    height: 90vh;
+    width: 40vw;
+    min-height: 800px;
+    min-width: 800px;
+}
+
+.container-canvas {
+    border-radius: 6px;
+    padding: 0 2vh 2vh 0;
+    height: 750px;
+    width: 750px;
+    min-height: 35em;
+    background-color: teal;
+    position: relative;
+}
+
+#layer1 {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    z-index: 0;
+}
+
+#layer2 {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    z-index: 1;
+}
+
+#layer3 {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    z-index: 2;
+}

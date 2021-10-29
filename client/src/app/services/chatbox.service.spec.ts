@@ -1,20 +1,28 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
 import { TestBed } from '@angular/core/testing';
+import { INDEX_REAL_PLAYER, RESERVE } from '@app/classes/constants';
+import { Orientation, PossibleWords } from '@app/classes/scrabble-board-pattern';
 import { Player } from '@app/models/player.model';
 import { ChatboxService } from './chatbox.service';
-import { Orientation, PossibleWords } from '@app/classes/scrabble-board-pattern';
-import { INDEX_REAL_PLAYER, RESERVE } from '@app/classes/constants';
+import { RouterTestingModule } from '@angular/router/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('ChatboxService', () => {
     let service: ChatboxService;
     let possibleWord: PossibleWords;
 
     beforeEach(() => {
-        TestBed.configureTestingModule({});
+        TestBed.configureTestingModule({
+            imports: [HttpClientTestingModule, RouterTestingModule],
+        });
         service = TestBed.inject(ChatboxService);
 
-        const firstPlayerEasel = [RESERVE[0], RESERVE[0], RESERVE[1], RESERVE[1], RESERVE[2], RESERVE[2], RESERVE[0]];
+        const letterA = RESERVE[0];
+        const letterB = RESERVE[1];
+        const letterC = RESERVE[2];
+
+        const firstPlayerEasel = [letterA, letterA, letterB, letterB, letterC, letterC, letterA];
         const firstPlayer = new Player(1, 'Player 1', firstPlayerEasel);
         service['playerService'].addPlayer(firstPlayer);
         possibleWord = { word: 'test', orientation: Orientation.HorizontalOrientation, line: 0, startIdx: 0, point: 1 };
@@ -36,6 +44,13 @@ describe('ChatboxService', () => {
         spyOn(service, 'isValid').and.returnValue(true);
 
         service.message = '';
+        service.sendPlayerMessage(service.message);
+        expect(service.typeMessage).toEqual('player');
+    });
+
+    it('should have type player if command is valid', () => {
+        spyOn(service, 'isValid').and.returnValue(true);
+
         service.sendPlayerMessage(service.message);
         expect(service.typeMessage).toEqual('player');
         expect(service.command).toEqual('');
@@ -84,20 +99,6 @@ describe('ChatboxService', () => {
         expect(spy).toHaveBeenCalled();
     });
 
-    it('using command !passer should display the respective message', () => {
-        service.command = 'passer';
-        service.skipTurn.isTurn = true;
-        spyOn(service, 'executeDebug');
-        service.command = 'debug';
-        const word = 'message de debug';
-        const nbPt = 1;
-        const table: { word: string; nbPt: number }[] = [];
-        table.push({ word, nbPt });
-
-        service.sendPlayerMessage('!debug');
-        expect(service.executeDebug).toHaveBeenCalled();
-    });
-
     it('using command !debug without debug messages should display the respective message', () => {
         service.command = 'debug';
         service['debugService'].isDebugActive = false;
@@ -116,11 +117,10 @@ describe('ChatboxService', () => {
     });
 
     it('using a valid command !placer should display the respective message', () => {
-        spyOn(service['placeLetterService'], 'place').and.returnValue(true);
         spyOn(service['skipTurn'], 'switchTurn');
-
+        service['skipTurn'].isTurn = true;
+        spyOn(service['placeLetterService'], 'placeCommand').and.returnValue(true);
         service.command = 'placer';
-        service.skipTurn.isTurn = true;
         service.sendPlayerMessage('!placer h8h hello');
         expect(service.message).toEqual('!placer h8h hello');
     });
@@ -135,6 +135,8 @@ describe('ChatboxService', () => {
     });
 
     it('deactivating debug should display the respective message', () => {
+        spyOn<any>(service, 'displayDebugMessage');
+
         service.command = 'debug';
         const table: { word: string; orientation: Orientation; line: number; startIdx: number; point: number }[] = [
             { word: 'message de debug', orientation: Orientation.HorizontalOrientation, line: 0, startIdx: 0, point: 1 },
@@ -206,7 +208,7 @@ describe('ChatboxService', () => {
     it('should not display message if place is false when executePlace() is called', () => {
         service['skipTurn'].isTurn = true;
         const spy = spyOn(service['skipTurn'], 'switchTurn');
-        spyOn(service['placeLetterService'], 'place').and.returnValue(false);
+        spyOn(service['placeLetterService'], 'placeCommand').and.returnValue(false);
         service.message = '!placer h8h test';
         service.executePlace();
         expect(spy).not.toHaveBeenCalled();

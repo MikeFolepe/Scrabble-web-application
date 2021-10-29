@@ -10,6 +10,7 @@ import { SwapLetterService } from '@app/services/swap-letter.service';
 import { Subscription } from 'rxjs';
 import { DebugService } from './debug.service';
 import { SendMessageService } from './send-message.service';
+import { LetterService } from './letter.service';
 
 @Injectable({
     providedIn: 'root',
@@ -32,6 +33,7 @@ export class ChatboxService {
         private debugService: DebugService,
         private sendMessageService: SendMessageService,
         public endGameService: EndGameService,
+        public letterService: LetterService,
         public skipTurn: SkipTurnService,
     ) {}
 
@@ -58,11 +60,86 @@ export class ChatboxService {
                 this.executePlace();
                 break;
             }
+            case 'reserve': {
+                this.executeReserve();
+                break;
+            }
+
             default: {
                 break;
             }
         }
         this.command = ''; // reset value for next message
+    }
+
+    executeDebug() {
+        this.debugService.switchDebugMode();
+        if (this.debugService.isDebugActive) {
+            this.sendMessageService.displayMessageByType('affichages de débogage activés', 'system');
+            this.displayDebugMessage();
+        } else {
+            this.sendMessageService.displayMessageByType('affichages de débogage désactivés', 'system');
+        }
+    }
+
+    executeSkipTurn() {
+        if (this.skipTurn.isTurn) {
+            this.endGameService.actionsLog.push('passer');
+            this.sendMessageService.displayMessageByType(this.message, this.typeMessage);
+            this.skipTurn.switchTurn();
+        } else {
+            this.sendMessageService.displayMessageByType("ERREUR : Ce n'est pas ton tour", 'error');
+        }
+    }
+
+    executeReserve(): void {
+        if (!this.debugService.isDebugActive) {
+            this.sendMessageService.displayMessageByType('Commande non réalisable', 'error');
+            this.message = '';
+            return;
+        }
+        for (const letter of this.letterService.reserve) {
+            this.message = 'system';
+            this.sendMessageService.displayMessageByType(letter.value + ':' + letter.quantity.toString(), 'system');
+            this.message = '';
+        }
+    }
+
+    executeSwap() {
+        if (this.skipTurn.isTurn) {
+            this.endGameService.actionsLog.push('echanger');
+            const messageSplitted = this.message.split(/\s/);
+
+            if (this.swapLetterService.swapCommand(messageSplitted[1], INDEX_REAL_PLAYER)) {
+                this.message = this.playerService.players[INDEX_REAL_PLAYER].name + ' : ' + this.message;
+                this.sendMessageService.displayMessageByType(this.message, this.typeMessage);
+                this.skipTurn.switchTurn();
+            }
+        } else {
+            this.sendMessageService.displayMessageByType("ERREUR : Ce n'est pas ton tour", 'error');
+        }
+    }
+
+    executePlace() {
+        if (this.skipTurn.isTurn) {
+            this.endGameService.actionsLog.push('placer');
+            const messageSplitted = this.message.split(/\s/);
+            const positionSplitted = messageSplitted[1].split(/([0-9]+)/);
+
+            // Vector containing start position of the word to place
+            const position: Vec2 = {
+                x: Number(positionSplitted[1]) - 1,
+                y: positionSplitted[0].charCodeAt(0) - 'a'.charCodeAt(0),
+            };
+            const orientation = positionSplitted[2];
+
+            if (this.placeLetterService.placeCommand(position, orientation, messageSplitted[2], INDEX_REAL_PLAYER)) {
+                this.sendMessageService.displayMessageByType(this.message, this.typeMessage);
+            }
+        } else {
+            this.typeMessage = 'error';
+            this.message = "ERREUR : Ce n'est pas ton tour";
+        }
     }
 
     isValid(): boolean {
@@ -111,65 +188,7 @@ export class ChatboxService {
         return isSyntaxValid;
     }
 
-    executeDebug() {
-        this.debugService.switchDebugMode();
-        if (this.debugService.isDebugActive) {
-            this.sendMessageService.displayMessageByType('affichages de débogage activés', 'system');
-            this.displayDebugMessage();
-        } else {
-            this.sendMessageService.displayMessageByType('affichages de débogage désactivés', 'system');
-        }
-    }
-
-    executeSkipTurn() {
-        if (this.skipTurn.isTurn) {
-            this.endGameService.actionsLog.push('passer');
-            this.sendMessageService.displayMessageByType(this.message, this.typeMessage);
-            this.skipTurn.switchTurn();
-        } else {
-            this.sendMessageService.displayMessageByType("ERREUR : Ce n'est pas ton tour", 'error');
-        }
-    }
-
-    executeSwap() {
-        if (this.skipTurn.isTurn) {
-            this.endGameService.actionsLog.push('echanger');
-            const messageSplitted = this.message.split(/\s/);
-
-            if (this.swapLetterService.swapCommand(messageSplitted[1], INDEX_REAL_PLAYER)) {
-                this.message = this.playerService.players[INDEX_REAL_PLAYER].name + ' : ' + this.message;
-                this.sendMessageService.displayMessageByType(this.message, this.typeMessage);
-                this.skipTurn.switchTurn();
-            }
-        } else {
-            this.sendMessageService.displayMessageByType("ERREUR : Ce n'est pas ton tour", 'error');
-        }
-    }
-
-    executePlace() {
-        if (this.skipTurn.isTurn) {
-            this.endGameService.actionsLog.push('placer');
-            const messageSplitted = this.message.split(/\s/);
-            const positionSplitted = messageSplitted[1].split(/([0-9]+)/);
-
-            // Vector containing start position of the word to place
-            const position: Vec2 = {
-                x: positionSplitted[0].charCodeAt(0) - 'a'.charCodeAt(0),
-                y: Number(positionSplitted[1]) - 1,
-            };
-            const orientation = positionSplitted[2];
-
-            if (this.placeLetterService.place(position, orientation, messageSplitted[2], INDEX_REAL_PLAYER)) {
-                this.sendMessageService.displayMessageByType(this.message, this.typeMessage);
-                this.skipTurn.switchTurn();
-            }
-        } else {
-            this.typeMessage = 'error';
-            this.message = "ERREUR : Ce n'est pas ton tour";
-        }
-    }
-
-    // Method that checks the different size of table of possibility for the debug
+    // Method which check the different size of table of possibility for the debug
     displayDebugMessage(): void {
         const nbPossibilities = this.debugService.debugServiceMessage.length;
         if (nbPossibilities === 0) {

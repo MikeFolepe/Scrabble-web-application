@@ -1,5 +1,5 @@
+import { WordValidationController } from './controllers/validate.controller';
 import { HttpException } from '@app/classes/http.exception';
-import { DateController } from '@app/controllers/date.controller';
 import * as cookieParser from 'cookie-parser';
 import * as cors from 'cors';
 import * as express from 'express';
@@ -8,7 +8,6 @@ import * as logger from 'morgan';
 import * as swaggerJSDoc from 'swagger-jsdoc';
 import * as swaggerUi from 'swagger-ui-express';
 import { Service } from 'typedi';
-import { ExampleController } from './controllers/example.controller';
 
 @Service()
 export class Application {
@@ -16,7 +15,7 @@ export class Application {
     private readonly internalError: number = StatusCodes.INTERNAL_SERVER_ERROR;
     private readonly swaggerOptions: swaggerJSDoc.Options;
 
-    constructor(private readonly dateController: DateController, private exampleController: ExampleController) {
+    constructor(private readonly wordValidationController: WordValidationController) {
         this.app = express();
 
         this.swaggerOptions = {
@@ -37,11 +36,10 @@ export class Application {
 
     bindRoutes(): void {
         this.app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerJSDoc(this.swaggerOptions)));
-        this.app.use('/api/example', this.exampleController.router);
         this.app.use('/socket.io', (req, res) => {
             res.redirect('/api/docs');
         });
-        this.app.use('/api/date', this.dateController.router);
+        this.app.use('/api/validation', this.wordValidationController.router);
         this.app.use('/', (req, res) => {
             res.redirect('/api/docs');
         });

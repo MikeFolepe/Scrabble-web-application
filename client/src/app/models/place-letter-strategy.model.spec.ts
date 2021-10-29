@@ -4,8 +4,10 @@ import { Letter } from '@app/classes/letter';
 import { BoardPattern, Orientation, PatternInfo, PossibleWords } from '@app/classes/scrabble-board-pattern';
 import { PlaceLetters } from '@app/models/place-letter-strategy.model';
 import { PlayerAI } from '@app/models/player-ai.model';
-import { PlayerAIComponent } from '@app/modules/game-view/components/player-ai/player-ai.component';
+import { PlayerAIComponent } from '@app/modules/game-view/player-ai/player-ai.component';
 import { LetterService } from '@app/services/letter.service';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('Place Letter', () => {
     let playerAI: PlayerAI;
@@ -14,6 +16,12 @@ describe('Place Letter', () => {
     const scrabbleBoard: string[][] = [];
     let letterTable: Letter[] = [];
     let letterService: LetterService;
+
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [HttpClientTestingModule, RouterTestingModule],
+        }).compileComponents();
+    });
 
     beforeEach(() => {
         const id = 1;

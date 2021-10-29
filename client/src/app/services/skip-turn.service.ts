@@ -1,4 +1,3 @@
-/* eslint-disable no-invalid-this */
 import { Injectable } from '@angular/core';
 import { ONE_SECOND_TIME } from '@app/classes/constants';
 import { EndGameService } from '@app/services/end-game.service';
