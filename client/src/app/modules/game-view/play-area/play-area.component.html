@@ -1,5 +1,7 @@
 <div class="container">
-    <app-scrabble-board></app-scrabble-board>
+    <app-scrabble-board class="board-container" tabindex="0"></app-scrabble-board>
+    <button mat-raised-button color="primary" id="pass-button" [disabled]="!skipTurnService.isTurn" (click)="passButton()">Passer son tour</button>
+    <button mat-raised-button color="primary" id="play-button" [disabled]="!isPlayButtonActive()" (click)="playButton()">Jouer</button>
     <div style="display: flex; width: 15vw; height: 85vh; justify-content: flex-start; flex-direction: column; flex-wrap: wrap; gap: 5vh">
         <app-letter-easel></app-letter-easel>
         <div *ngIf="!this.endGameService.isEndGame">
@@ -12,8 +14,5 @@
                 Quitter
             </button>
         </div>
-        <button mat-raised-button color="primary" (click)="chatBox.executeSkipTurn()"[disabled]=!skipTurn.isTurn>
-            Passer son tour
-        </button>
     </div>
 </div>

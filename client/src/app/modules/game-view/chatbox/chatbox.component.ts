@@ -1,8 +1,10 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { INDEX_PLAYER_AI, INDEX_REAL_PLAYER, ONE_SECOND_TIME } from '@app/classes/constants';
+import { BoardHandlerService } from '@app/services/board-handler.service';
 import { ChatboxService } from '@app/services/chatbox.service';
 import { DebugService } from '@app/services/debug.service';
 import { EndGameService } from '@app/services/end-game.service';
+import { SendMessageService } from '@app/services/send-message.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { ClientSocketService } from './../../../services/client-socket.service';
 
@@ -25,13 +27,22 @@ export class ChatboxComponent implements OnInit, AfterViewInit {
     constructor(
         private chatBoxService: ChatboxService,
         public debugService: DebugService,
+        private sendMessageService: SendMessageService,
         public endGameService: EndGameService,
+        private boardHandlerService: BoardHandlerService,
         private clientSocketService: ClientSocketService,
         private gameSettingsService: GameSettingsService,
     ) {}
 
+    // Disable the current placement on the board when a click occurs in the chatbox
+    @HostListener('mouseup', ['$event'])
+    @HostListener('contextmenu', ['$event'])
+    clickInChatBox() {
+        this.boardHandlerService.cancelPlacement();
+    }
+
     ngOnInit(): void {
-        this.chatBoxService.bindDisplay(this.displayAnyMessageByType.bind(this));
+        this.sendMessageService.displayBound(this.displayMessageByType.bind(this));
         this.receiveMessageFromOpponent();
     }
 
@@ -42,16 +53,14 @@ export class ChatboxComponent implements OnInit, AfterViewInit {
             this.sendMessageToOpponent(this.message, this.gameSettingsService.gameSettings.playersName[0]);
             this.message = ''; // Clear input
 
-            setTimeout(() => {
-                // Timeout is used to update the scroll after the last element added
-                this.scrollToBottom();
-            }, 1);
+            this.scrollToBottom();
         }
     }
 
-    displayAnyMessageByType() {
-        this.listTypes.push(this.chatBoxService.typeMessage);
-        this.listMessages.push(this.chatBoxService.message);
+    displayMessageByType() {
+        this.listTypes.push(this.sendMessageService.typeMessage);
+        this.listMessages.push(this.sendMessageService.message);
+        this.scrollToBottom();
     }
 
     sendSystemMessage(systemMessage: string) {
@@ -77,7 +86,10 @@ export class ChatboxComponent implements OnInit, AfterViewInit {
     }
 
     scrollToBottom(): void {
-        this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
+        setTimeout(() => {
+            // Timeout is used to update the scroll after the last element added
+            this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
+        }, 1);
     }
 
     ngAfterViewInit() {

@@ -6,22 +6,29 @@ import { PlaceLetters } from '@app/models/place-letter-strategy.model';
 import { PlayerAI } from '@app/models/player-ai.model';
 import { SkipTurn } from '@app/models/skip-turn-strategy.model';
 import { SwapLetter } from '@app/models/swap-letter-strategy.model';
+import { RESERVE } from '@app/classes/constants';
 import { PlayerAIComponent } from '@app/modules/game-view/player-ai/player-ai.component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('PlayerAI', () => {
     const id = 1;
     const name = 'PlayerAI';
-    const letterTable = [
-        { value: 'A', quantity: 0, points: 0 },
-        { value: 'B', quantity: 0, points: 0 },
-        { value: 'C', quantity: 0, points: 0 },
-        { value: 'E', quantity: 0, points: 0 },
-        { value: 'E', quantity: 0, points: 0 },
-        { value: 'E', quantity: 0, points: 0 },
-        { value: 'G', quantity: 0, points: 0 },
-    ];
+
+    const letterA = RESERVE[0];
+    const letterB = RESERVE[1];
+    const letterC = RESERVE[2];
+    const letterE = RESERVE[4];
+    const letterG = RESERVE[6];
+    const letterTable = [letterA, letterB, letterC, letterE, letterE, letterE, letterG];
 
     let playerAI: PlayerAI;
+
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [HttpClientTestingModule, RouterTestingModule],
+        }).compileComponents();
+    });
 
     beforeEach(() => {
         playerAI = new PlayerAI(id, name, letterTable);

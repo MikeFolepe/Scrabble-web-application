@@ -38,7 +38,6 @@ export class PlaceLetters extends PlayStrategy {
         matchingPointingRangeWords = context.playerAIService.filterByRange(allPossibleWords, this.pointingRange);
 
         this.computeResults(allPossibleWords, matchingPointingRangeWords, context);
-        context.switchTurn();
     }
 
     computeResults(allPossibleWords: PossibleWords[], matchingPointingRangeWords: PossibleWords[], context: PlayerAIComponent): void {
@@ -71,6 +70,7 @@ export class PlaceLetters extends PlayStrategy {
             }
             context.placeLetterService.placeMethodAdapter({ start, orientation, word: word.word, indexPlayer: INDEX_PLAYER_AI });
             attempt++;
+            // !!! skip turn after each placement that called validation !!!
         } while (attempt < possibilities.length && context.playerAIService.isFirstRound === false);
         return context.playerAIService.isPlacementValid;
     }

@@ -8,6 +8,7 @@ import { LetterService } from '@app/services/letter.service';
 import { PlaceLetterService } from '@app/services/place-letter.service';
 import { PlayerAIService } from '@app/services/player-ia.service';
 import { PlayerService } from '@app/services/player.service';
+import { SendMessageService } from '@app/services/send-message.service';
 import { SkipTurnService } from '@app/services/skip-turn.service';
 import { EndGameService } from '@app/services/end-game.service';
 
@@ -27,6 +28,7 @@ export class PlayerAIComponent implements OnInit {
         public debugService: DebugService,
         public skipTurn: SkipTurnService,
         public endGameService: EndGameService,
+        public sendMessageService: SendMessageService,
         public playerAIService: PlayerAIService,
     ) {}
 
@@ -53,7 +55,7 @@ export class PlayerAIComponent implements OnInit {
                 this.skipTurn.switchTurn();
             }, DELAY_TO_PLAY);
             this.endGameService.actionsLog.push('passer');
-            this.chatBoxService.displayMessageByType('joueur virtuel passe', 'opponent');
+            this.sendMessageService.displayMessageByType('passer', 'opponent');
         }
     }
 
@@ -63,7 +65,7 @@ export class PlayerAIComponent implements OnInit {
                 this.skipTurn.switchTurn();
             }, DELAY_TO_PLAY);
             this.endGameService.actionsLog.push('echanger');
-            this.chatBoxService.displayMessageByType('joueur virtuel echange', 'opponent');
+            this.sendMessageService.displayMessageByType('joueur virtuel echange', 'opponent');
         }
     }
 

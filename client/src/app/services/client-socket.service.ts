@@ -3,9 +3,9 @@
 // Explication: Afin d'avoir le type any associé à la variable socket
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { io } from 'node_modules/socket.io-client/build/esm';
 import { GameSettings } from '../classes/game-settings';
 import { Room } from '../classes/room';
+import { io } from 'node_modules/socket.io-client/build/esm';
 import { GameSettingsService } from './game-settings.service';
 
 @Injectable({

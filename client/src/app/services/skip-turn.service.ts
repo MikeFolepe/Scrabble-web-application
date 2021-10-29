@@ -1,4 +1,3 @@
-/* eslint-disable no-invalid-this */
 import { Injectable } from '@angular/core';
 import { ONE_SECOND_TIME } from '@app/classes/constants';
 import { ClientSocketService } from '@app/services/client-socket.service';
@@ -31,7 +30,7 @@ export class SkipTurnService {
     }
 
     switchTurn(): void {
-        console.log('Switching TURN');
+        // console.log('Switching TURN');
         if (this.endGameService.isEndGame) {
             return;
         }

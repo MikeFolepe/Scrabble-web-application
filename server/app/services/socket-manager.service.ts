@@ -42,8 +42,6 @@ export class SocketManager {
                 // block someone else entry from room selection
                 this.sio.emit('roomConfiguration', this.roomManager.rooms);
                 socket.join(roomId);
-                console.log('le joigneur a :' + roomId);
-                console.log('le joigneur a :' + socket.rooms);
                 // update roomID in the new filled room to allow the clients in this room
                 // to ask the server make some actions in their room later
                 this.sio.in(roomId).emit('yourRoomId', roomId);
@@ -59,21 +57,26 @@ export class SocketManager {
                 this.sio.in(roomId).emit('startTimer');
             });
 
+            socket.on('sendPlacement', (startPosition: unknown, orientation: string, word: string, roomId: string) => {
+                socket.to(roomId).emit('receivePlacement', startPosition, orientation, word);
+            });
+
             // Delete  the room and uodate the client view
             socket.on('cancelMultiplayerparty', (roomId: string) => {
                 this.roomManager.deleteRoom(roomId);
                 this.sio.emit('roomConfiguration', this.roomManager.rooms);
             });
-
+            /*
             socket.on('disconnect', (reason) => {
                 console.log(`Deconnexion par l'utilisateur avec id : ${socket.id}`);
                 console.log(`Raison de deconnexion : ${reason}`);
             });
+            */
 
             socket.on('sendRoomMessage', (message: string, roomId: string) => {
                 // this.sio.to(roomId).emit('receiveRoomMessage', `${socket.id} : ${message}`);
-                console.log(message);
-                console.log(socket.rooms);
+                // console.log(message);
+                // console.log(socket.rooms);
                 // this.sio.to(roomId).emit('receiveRoomMessage', message);
                 socket.to(roomId).emit('receiveRoomMessage', message);
             });
@@ -82,7 +85,7 @@ export class SocketManager {
                 if (turn) {
                     socket.to(roomId).emit('turnSwitched', turn);
                     this.sio.in(roomId).emit('startTimer');
-                    console.log('time');
+                    // console.log('time');
                 }
             });
         });
