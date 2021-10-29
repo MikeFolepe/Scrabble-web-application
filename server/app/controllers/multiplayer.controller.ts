@@ -1,5 +1,6 @@
 import { WordValidationService } from '@app/services/word-validation.service';
 import { Request, Response, Router } from 'express';
+import { StatusCodes } from 'http-status-codes';
 import { Service } from 'typedi';
 
 @Service()
@@ -27,8 +28,10 @@ export class MultiplayerController {
          *           $ref: '#/definitions/Message'
          *
          */
-        this.router.post('/validateWords', (req: Request, res: Response) => {
-            res.send(this.wordValidator.isValidInDictionary(req.body));
+        this.router.post('/validateWords', async (req: Request, res: Response) => {
+            await this.wordValidator.isValidInDictionary(req.body).then((validation: boolean) => {
+                res.status(StatusCodes.OK).send(validation);
+            });
         });
     }
 }
