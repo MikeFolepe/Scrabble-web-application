@@ -5,7 +5,7 @@ import { PossibleWords } from '@app/classes/scrabble-board-pattern';
     providedIn: 'root',
 })
 export class DebugService {
-    debugServiceMessage: PossibleWords[] = new Array(0);
+    debugServiceMessage: PossibleWords[] = [];
     debugActivate: string[] = [];
     isDebugActive: boolean = false;
 
