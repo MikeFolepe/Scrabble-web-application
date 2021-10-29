@@ -1,7 +1,6 @@
 <app-background></app-background>
 
-<mat-paginator id="paginator" [length]="rooms.length" [pageSize]="pageSize" (page)="onPageChange($event)"
-    aria-label="Select page">
+<mat-paginator id="paginator" [length]="rooms.length" [pageSize]="pageSize" (page)="onPageChange($event)">
 </mat-paginator>
 
 <div *ngIf="isNameValid && isRoomStillAvailable">
@@ -29,11 +28,13 @@
 </div>
 
 <div *ngIf="!isNameValid">
-    <mat-card id='error-message'><span id='warning'>Erreur</span> : Ce nom de joueur est déjà utilisé dans cette partie
+    <mat-card class='error-message'><span class='warning'>Erreur</span> : Ce nom de joueur est déjà utilisé dans cette
+        partie
     </mat-card>
 </div>
 
 <div *ngIf="!isRoomStillAvailable">
-    <mat-card id='error-message'><span id='warning'>Erreur</span> : Cette partie n'existe plus ou vient d'être rejointe
+    <mat-card class='error-message'><span class='warning'>Erreur</span> : Cette partie n'existe plus ou vient d'être
+        rejointe
     </mat-card>
 </div>

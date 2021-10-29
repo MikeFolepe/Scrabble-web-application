@@ -1,7 +1,6 @@
 /* eslint-disable sort-imports */
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { INDEX_PLAYER_AI, INDEX_REAL_PLAYER } from '@app/classes/constants';
-import { GameSettings } from '@app/classes/game-settings';
 import { PlayerAI } from '@app/models/player-ai.model';
 import { Player } from '@app/models/player.model';
 import { EndGameService } from '@app/services/end-game.service';
@@ -9,6 +8,7 @@ import { GameSettingsService } from '@app/services/game-settings.service';
 import { LetterService } from '@app/services/letter.service';
 import { PlayerService } from '@app/services/player.service';
 import { SkipTurnService } from '@app/services/skip-turn.service';
+import { GameSettings } from '@common/game-settings';
 
 @Component({
     selector: 'app-information-panel',

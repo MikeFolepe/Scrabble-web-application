@@ -33,6 +33,7 @@ export class JoinRoomComponent implements OnInit {
         });
 
         this.clientSocketService.socket.on('roomAlreadyToken', () => {
+            console.log('ok');
             this.isRoomStillAvailable = false;
             setTimeout(() => {
                 this.isRoomStillAvailable = true;
