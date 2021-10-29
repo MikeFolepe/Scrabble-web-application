@@ -30,9 +30,7 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
         this.initializePlayers();
         this.initializeFirstTurn();
         this.skipTurn.startTimer();
-        // console.log('info');
     }
-
     initializePlayers(): void {
         let player = new Player(1, this.gameSettings.playersName[INDEX_REAL_PLAYER], this.letterService.getRandomLetters());
         this.playerService.addPlayer(player);
