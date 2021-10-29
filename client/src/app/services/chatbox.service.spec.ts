@@ -2,7 +2,7 @@
 /* eslint-disable dot-notation */
 import { TestBed } from '@angular/core/testing';
 import { INDEX_REAL_PLAYER, RESERVE } from '@app/classes/constants';
-import { Orientation } from '@app/classes/scrabble-board-pattern';
+import { Orientation, PossibleWords } from '@app/classes/scrabble-board-pattern';
 import { Player } from '@app/models/player.model';
 import { ChatboxService } from './chatbox.service';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -10,6 +10,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('ChatboxService', () => {
     let service: ChatboxService;
+    let possibleWord: PossibleWords;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
@@ -24,6 +25,7 @@ describe('ChatboxService', () => {
         const firstPlayerEasel = [letterA, letterA, letterB, letterB, letterC, letterC, letterA];
         const firstPlayer = new Player(1, 'Player 1', firstPlayerEasel);
         service['playerService'].addPlayer(firstPlayer);
+        possibleWord = { word: 'test', orientation: Orientation.HorizontalOrientation, line: 0, startIdx: 0, point: 1 };
 
         spyOn(service['sendMessageService'], 'displayMessageByType');
     });
@@ -85,15 +87,16 @@ describe('ChatboxService', () => {
     });
 
     it('using command !debug should call executeDebug()', () => {
-        spyOn(service, 'executeDebug');
+        const spy = spyOn(service, 'executeDebug');
         service.command = 'debug';
-        const word = 'message de debug';
-        const nbPt = 1;
-        const table: { word: string; nbPt: number }[] = [];
-        table.push({ word, nbPt });
+        const table: PossibleWords[] = [];
+        table.push(possibleWord);
 
+        service['debugService'].receiveAIDebugPossibilities(table);
         service.sendPlayerMessage('!debug');
-        expect(service.executeDebug).toHaveBeenCalled();
+        expect(spy).toHaveBeenCalled();
+        service.sendPlayerMessage('!debug');
+        expect(spy).toHaveBeenCalled();
     });
 
     it('using command !debug without debug messages should display the respective message', () => {

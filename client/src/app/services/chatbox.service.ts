@@ -81,6 +81,7 @@ export class ChatboxService {
             this.sendMessageService.displayMessageByType('affichages de débogage désactivés', 'system');
         }
     }
+
     executeSkipTurn() {
         if (this.skipTurn.isTurn) {
             this.endGameService.actionsLog.push('passer');
