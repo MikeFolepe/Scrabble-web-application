@@ -6,7 +6,9 @@ import { By } from '@angular/platform-browser';
 import { INDEX_REAL_PLAYER } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { Player } from '@app/models/player.model';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { LetterEaselComponent } from './letter-easel.component';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('LetterEaselComponent', () => {
     let component: LetterEaselComponent;
@@ -16,6 +18,7 @@ describe('LetterEaselComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [LetterEaselComponent],
+            imports: [HttpClientTestingModule, RouterTestingModule],
         }).compileComponents();
     });
 

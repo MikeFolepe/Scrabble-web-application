@@ -8,6 +8,8 @@ import { PlayerAI } from '@app/models/player-ai.model';
 import { SwapLetter } from '@app/models/swap-letter-strategy.model';
 import { RESERVE } from '@app/classes/constants';
 import { LetterService } from '@app/services/letter.service';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('SwapLetter', () => {
     const id = 0;
@@ -26,6 +28,12 @@ describe('SwapLetter', () => {
     let swapStrategy: SwapLetter;
     let context: PlayerAIComponent;
     let letterService: LetterService;
+
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [HttpClientTestingModule, RouterTestingModule],
+        }).compileComponents();
+    });
 
     beforeEach(() => {
         // Create all dependencies

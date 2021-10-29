@@ -5,7 +5,8 @@ import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
 import { Player } from '@app/models/player.model';
 import { GridService } from '@app/services/grid.service';
-
+import { RouterTestingModule } from '@angular/router/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { PlaceLetterService } from './place-letter.service';
 
 describe('PlaceLetterService', () => {
@@ -18,6 +19,7 @@ describe('PlaceLetterService', () => {
     beforeEach(() => {
         TestBed.configureTestingModule({
             providers: [{ provide: GridService, useValue: gridServiceSpy }],
+            imports: [HttpClientTestingModule, RouterTestingModule],
         });
         service = TestBed.inject(PlaceLetterService);
     });

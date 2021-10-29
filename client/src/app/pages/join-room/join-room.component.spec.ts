@@ -1,5 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { JoinRoomComponent } from './join-room.component';
+import { RouterTestingModule } from '@angular/router/testing';
+import { MatDialog } from '@angular/material/dialog';
 
 describe('JoinRoomComponent', () => {
     let component: JoinRoomComponent;
@@ -8,6 +10,13 @@ describe('JoinRoomComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [JoinRoomComponent],
+            imports: [RouterTestingModule],
+            providers: [
+                {
+                    provide: MatDialog,
+                    useValue: {},
+                },
+            ],
         }).compileComponents();
     });
 

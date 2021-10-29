@@ -5,12 +5,16 @@ import { INDEX_REAL_PLAYER, RESERVE } from '@app/classes/constants';
 import { Orientation } from '@app/classes/scrabble-board-pattern';
 import { Player } from '@app/models/player.model';
 import { ChatboxService } from './chatbox.service';
+import { RouterTestingModule } from '@angular/router/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('ChatboxService', () => {
     let service: ChatboxService;
 
     beforeEach(() => {
-        TestBed.configureTestingModule({});
+        TestBed.configureTestingModule({
+            imports: [HttpClientTestingModule, RouterTestingModule],
+        });
         service = TestBed.inject(ChatboxService);
 
         const letterA = RESERVE[0];

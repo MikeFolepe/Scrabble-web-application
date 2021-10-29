@@ -10,7 +10,7 @@ describe('InformationPanelComponent', () => {
     let skipTurnSpy: unknown;
 
     beforeEach(() => {
-        skipTurnSpy = jasmine.createSpyObj('SkipTurnService', ['startTimer']);
+        skipTurnSpy = jasmine.createSpyObj('SkipTurnService', ['startTimer', 'stopTimer']);
     });
 
     beforeEach(async () => {

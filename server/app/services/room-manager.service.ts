@@ -80,7 +80,7 @@ export class RoomManager {
         return room.state === State.Playing;
     }
 
-    private find(roomId: string): Room | undefined {
+    find(roomId: string): Room | undefined {
         return this.rooms.find((room) => room.id === roomId);
     }
 }

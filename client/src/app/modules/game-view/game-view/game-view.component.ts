@@ -9,9 +9,9 @@ import { ClientSocketService } from '@app/services/client-socket.service';
 export class GameViewComponent implements OnInit {
     constructor(public clientSocketService: ClientSocketService) {}
     ngOnInit() {
-        setTimeout(() => {
-            console.log('roomId : ' + this.clientSocketService.roomId);
-        }, 1000);
+        // setTimeout(() => {
+        // console.log('roomId : ' + this.clientSocketService.roomId);
+        // }, 1000);
         return;
     }
 }

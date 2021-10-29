@@ -55,7 +55,7 @@ export class SocketManager {
                 this.sio.in(roomId).emit('goToGameView');
             });
 
-            socket.on('sendPlacement', (startPosition: any, orientation: string, word: string, roomId: string) => {
+            socket.on('sendPlacement', (startPosition: unknown, orientation: string, word: string, roomId: string) => {
                 socket.to(roomId).emit('receivePlacement', startPosition, orientation, word);
             });
 

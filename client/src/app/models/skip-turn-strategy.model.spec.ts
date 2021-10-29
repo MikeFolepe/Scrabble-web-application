@@ -3,6 +3,8 @@ import { PlayerAIComponent } from '@app/modules/game-view/player-ai/player-ai.co
 import { PlayerAI } from './player-ai.model';
 import { SkipTurn } from './skip-turn-strategy.model';
 import { RESERVE } from '@app/classes/constants';
+import { RouterTestingModule } from '@angular/router/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('SkipTurn', () => {
     const id = 0;
@@ -19,6 +21,12 @@ describe('SkipTurn', () => {
 
     let playerAI: PlayerAI;
     let skipStrategy: SkipTurn;
+
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [RouterTestingModule, HttpClientTestingModule],
+        }).compileComponents();
+    });
 
     beforeEach(() => {
         playerAI = new PlayerAI(id, name, letterTable);

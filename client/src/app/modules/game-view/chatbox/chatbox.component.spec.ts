@@ -3,6 +3,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { ChatboxComponent } from './chatbox.component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('ChatBoxComponent', () => {
     let component: ChatboxComponent;
@@ -11,7 +13,7 @@ describe('ChatBoxComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [ChatboxComponent],
-            imports: [FormsModule],
+            imports: [FormsModule, HttpClientTestingModule, RouterTestingModule],
         }).compileComponents();
     });
 
