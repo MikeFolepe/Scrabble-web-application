@@ -58,7 +58,8 @@ export class SocketManager {
             });
 
             // Delete  the room and uodate the client view
-            socket.on('cancelMultiplayerparty', (roomId: string) => {
+            socket.on('cancelMultiplayerparty', (gameSettings: GameSettings) => {
+                const roomId = this.roomManager.createRoomId(gameSettings.playersName[0]);
                 this.roomManager.deleteRoom(roomId);
                 // Delete the room inside th socket
                 // socket.leave(roomId);
