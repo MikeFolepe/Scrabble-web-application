@@ -179,7 +179,7 @@ export class BoardHandlerService {
         if (this.orientation === 'h') {
             this.goToNextHorizontalCase();
         } else if (this.orientation === 'v') {
-            this.goToNextVerticallCase();
+            this.goToNextVerticalCase();
         }
     }
 
@@ -194,7 +194,7 @@ export class BoardHandlerService {
         }
     }
 
-    goToNextVerticallCase(): void {
+    goToNextVerticalCase(): void {
         this.currentCase.y++;
         if (this.currentCase.y + 1 > BOARD_ROWS) return;
         while (this.placeLetterService.scrabbleBoard[this.currentCase.y][this.currentCase.x] !== '') {

@@ -6,6 +6,7 @@ import { PlayerService } from '@app/services/player.service';
 import { SwapLetterService } from '@app/services/swap-letter.service';
 import { BoardHandlerService } from '@app/services/board-handler.service';
 import { SendMessageService } from '@app/services/send-message.service';
+import { ManipulateService } from '@app/services/manipulate.service';
 import { SkipTurnService } from '@app/services/skip-turn.service';
 
 @Component({
@@ -25,6 +26,7 @@ export class LetterEaselComponent implements OnInit {
         private swapLetterService: SwapLetterService,
         private boardHandlerService: BoardHandlerService,
         private sendMessageService: SendMessageService,
+        private manipulateService: ManipulateService,
         private skipTurnService: SkipTurnService,
     ) {}
 
@@ -37,12 +39,29 @@ export class LetterEaselComponent implements OnInit {
         for (const letterEasel of this.letterEaselTab) {
             letterEasel.isSelectedForSwap = false;
             letterEasel.isSelectedForManipulation = false;
+            this.manipulateService.usedLetters.fill(false, 0, this.manipulateService.usedLetters.length);
+        }
+        this.manipulateService.enableScrolling();
+    }
+
+    @HostListener('keydown', ['$event'])
+    onKeyPress(event: KeyboardEvent) {
+        if (this.easel.nativeElement.contains(event.target)) {
+            this.manipulateService.onKeyPress(event);
+        }
+    }
+
+    @HostListener('document:wheel', ['$event'])
+    onMouseWheelTick(event: WheelEvent) {
+        if (this.letterEaselTab.some((letter) => letter.isSelectedForManipulation)) {
+            this.manipulateService.onMouseWheelTick(event);
         }
     }
 
     ngOnInit(): void {
         this.playerService.bindUpdateEasel(this.update.bind(this));
         this.update();
+        this.manipulateService.sendEasel(this.letterEaselTab);
     }
 
     update(): void {
@@ -56,7 +75,7 @@ export class LetterEaselComponent implements OnInit {
 
     onLeftClick(event: MouseEvent, indexLetter: number) {
         event.preventDefault();
-        this.handleManipulationSelection(indexLetter);
+        this.manipulateService.selectWithClick(indexLetter);
     }
 
     onEaselClick() {
@@ -70,16 +89,6 @@ export class LetterEaselComponent implements OnInit {
         } // Select to swap if the letter isn't selected for swap or manipulation
         else if (!this.letterEaselTab[indexLetter].isSelectedForManipulation) {
             this.letterEaselTab[indexLetter].isSelectedForSwap = true;
-        }
-    }
-
-    handleManipulationSelection(indexLetter: number) {
-        // Unselect manipulation
-        if (this.letterEaselTab[indexLetter].isSelectedForManipulation) {
-            this.letterEaselTab[indexLetter].isSelectedForManipulation = false;
-        } // Select to manipulate if the letter isn't selected for swap or manipulation
-        else if (!this.letterEaselTab[indexLetter].isSelectedForSwap) {
-            this.letterEaselTab[indexLetter].isSelectedForManipulation = true;
         }
     }
 
