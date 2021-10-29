@@ -5,6 +5,7 @@ import { Player } from '@app/models/player.model';
 import { ChatboxService } from './chatbox.service';
 import { Orientation, PossibleWords } from '@app/classes/scrabble-board-pattern';
 import { INDEX_REAL_PLAYER, RESERVE } from '@app/classes/constants';
+import { TypeMessage } from '@app/classes/enum';
 
 describe('ChatboxService', () => {
     let service: ChatboxService;
@@ -37,7 +38,7 @@ describe('ChatboxService', () => {
 
         service.message = '';
         service.sendPlayerMessage(service.message);
-        expect(service.typeMessage).toEqual('player');
+        expect(service.typeMessage).toEqual(TypeMessage.Player);
         expect(service.command).toEqual('');
     });
 
@@ -104,7 +105,10 @@ describe('ChatboxService', () => {
         service['debugService'].clearDebugMessage();
 
         service.sendPlayerMessage('!debug');
-        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('Aucune possibilité de placement trouvée!', 'system');
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith(
+            'Aucune possibilité de placement trouvée!',
+            TypeMessage.System,
+        );
     });
 
     it('using command !passer should display the respective message', () => {
@@ -144,21 +148,21 @@ describe('ChatboxService', () => {
         service['debugService'].isDebugActive = true;
 
         service.sendPlayerMessage('!debug');
-        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('affichages de débogage désactivés', 'system');
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('affichages de débogage désactivés', TypeMessage.System);
     });
 
     it('using command !passer while it is not your turn should display an error', () => {
         service['skipTurn'].isTurn = false;
         service.command = 'passer';
         service.sendPlayerMessage('!passer');
-        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith("ERREUR : Ce n'est pas ton tour", 'error');
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith("ERREUR : Ce n'est pas ton tour", TypeMessage.Error);
     });
 
     it('using command !échanger while it is not your turn should display an error', () => {
         service['skipTurn'].isTurn = false;
         service.command = 'echanger';
         service.sendPlayerMessage('!échanger');
-        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith("ERREUR : Ce n'est pas ton tour", 'error');
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith("ERREUR : Ce n'est pas ton tour", TypeMessage.Error);
     });
 
     it('using command !placer while it is not your turn should display an error', () => {
@@ -171,7 +175,10 @@ describe('ChatboxService', () => {
     it('should display the right debug message if no possibility has been found', () => {
         service['debugService'].debugServiceMessage = [];
         service.displayDebugMessage();
-        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('Aucune possibilité de placement trouvée!', 'system');
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith(
+            'Aucune possibilité de placement trouvée!',
+            TypeMessage.System,
+        );
     });
 
     it('should display the right debug message if at least one possibility has been found', () => {
@@ -185,7 +192,7 @@ describe('ChatboxService', () => {
     it('calling displayFinalMessage should send the respective message to the chatbox', () => {
         service['endGameService'].isEndGame = true;
         service.displayFinalMessage(INDEX_REAL_PLAYER);
-        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('Player 1 : AABBCCA', 'system');
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('Player 1 : AABBCCA', TypeMessage.System);
     });
 
     it('should not write a message if swapCommand is false in executeSwap()', () => {

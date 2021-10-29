@@ -6,6 +6,7 @@ import { PlayerService } from '@app/services/player.service';
 import { SwapLetterService } from '@app/services/swap-letter.service';
 import { SendMessageService } from '@app/services/send-message.service';
 import { SkipTurnService } from '@app/services/skip-turn.service';
+import { TypeMessage } from '@app/classes/enum';
 
 @Component({
     selector: 'app-letter-easel',
@@ -29,7 +30,7 @@ export class LetterEaselComponent implements OnInit {
     // Disable all selections made when a click occurs outside the easel
     @HostListener('document:click', ['$event'])
     @HostListener('document:contextmenu', ['$event'])
-    clickOut(event: MouseEvent) {
+    clickOut(event: MouseEvent): void {
         if (this.easelContainer.nativeElement.contains(event.target)) return;
         for (const letterEasel of this.letterEaselTab) {
             letterEasel.isSelectedForSwap = false;
@@ -42,46 +43,22 @@ export class LetterEaselComponent implements OnInit {
         this.update();
     }
 
-    update(): void {
-        this.letterEaselTab = this.playerService.getEasel(INDEX_REAL_PLAYER);
-    }
-
-    onRightClick(event: MouseEvent, indexLetter: number) {
+    onRightClick(event: MouseEvent, indexLetter: number): void {
         event.preventDefault();
         this.handleSwapSelection(indexLetter);
     }
 
-    onLeftClick(event: MouseEvent, indexLetter: number) {
+    onLeftClick(event: MouseEvent, indexLetter: number): void {
         event.preventDefault();
         this.handleManipulationSelection(indexLetter);
     }
 
-    handleSwapSelection(indexLetter: number) {
-        // Unselect swap
-        if (this.letterEaselTab[indexLetter].isSelectedForSwap) {
-            this.letterEaselTab[indexLetter].isSelectedForSwap = false;
-        } // Select to swap if the letter isn't selected for swap or manipulation
-        else if (!this.letterEaselTab[indexLetter].isSelectedForManipulation) {
-            this.letterEaselTab[indexLetter].isSelectedForSwap = true;
-        }
-    }
-
-    handleManipulationSelection(indexLetter: number) {
-        // Unselect manipulation
-        if (this.letterEaselTab[indexLetter].isSelectedForManipulation) {
-            this.letterEaselTab[indexLetter].isSelectedForManipulation = false;
-        } // Select to manipulate if the letter isn't selected for swap or manipulation
-        else if (!this.letterEaselTab[indexLetter].isSelectedForSwap) {
-            this.letterEaselTab[indexLetter].isSelectedForManipulation = true;
-        }
-    }
-
-    handleFontSizeEvent(fontSizeEvent: number) {
+    handleFontSizeEvent(fontSizeEvent: number): void {
         this.fontSize = fontSizeEvent;
         this.playerService.updateFontSize(this.fontSize);
     }
 
-    swap() {
+    swap(): void {
         let lettersToSwap = '';
         for (let i = 0; i < this.letterEaselTab.length; i++) {
             if (this.letterEaselTab[i].isSelectedForSwap) {
@@ -91,11 +68,11 @@ export class LetterEaselComponent implements OnInit {
         }
         // Display the respective message into the chatBox and pass the turn
         const message = this.playerService.players[INDEX_REAL_PLAYER].name + ' : !échanger ' + lettersToSwap;
-        this.sendMessageService.displayMessageByType(message, 'player');
+        this.sendMessageService.displayMessageByType(message, TypeMessage.Player);
         this.skipTurnService.switchTurn();
     }
 
-    cancelSelection() {
+    cancelSelection(): void {
         for (const letter of this.letterEaselTab) {
             letter.isSelectedForSwap = false;
             letter.isSelectedForManipulation = false;
@@ -104,11 +81,11 @@ export class LetterEaselComponent implements OnInit {
 
     isSwapButtonActive(): boolean {
         let isButtonActive = false;
-        // Desactivated if it is not your turn
+        // Deactivated if it is not your turn
         if (!this.skipTurnService.isTurn) {
             return isButtonActive;
         }
-        // Desactivated if there's less than 7 letters in the reserve
+        // Deactivated if there's less than 7 letters in the reserve
         if (this.letterService.reserveSize < EASEL_SIZE) {
             return isButtonActive;
         }
@@ -121,7 +98,7 @@ export class LetterEaselComponent implements OnInit {
         return isButtonActive;
     }
 
-    isCancelButtonActive() {
+    isCancelButtonActive(): boolean {
         // Activated if at least one letter is selected to swap or to manipulate
         for (const letter of this.letterEaselTab) {
             if (letter.isSelectedForSwap || letter.isSelectedForManipulation) {
@@ -129,5 +106,29 @@ export class LetterEaselComponent implements OnInit {
             }
         }
         return false;
+    }
+
+    private update(): void {
+        this.letterEaselTab = this.playerService.getEasel(INDEX_REAL_PLAYER);
+    }
+
+    private handleSwapSelection(indexLetter: number): void {
+        // Unselect swap
+        if (this.letterEaselTab[indexLetter].isSelectedForSwap) {
+            this.letterEaselTab[indexLetter].isSelectedForSwap = false;
+        } // Select to swap if the letter isn't selected for swap or manipulation
+        else if (!this.letterEaselTab[indexLetter].isSelectedForManipulation) {
+            this.letterEaselTab[indexLetter].isSelectedForSwap = true;
+        }
+    }
+
+    private handleManipulationSelection(indexLetter: number): void {
+        // Unselect manipulation
+        if (this.letterEaselTab[indexLetter].isSelectedForManipulation) {
+            this.letterEaselTab[indexLetter].isSelectedForManipulation = false;
+        } // Select to manipulate if the letter isn't selected for swap or manipulation
+        else if (!this.letterEaselTab[indexLetter].isSelectedForSwap) {
+            this.letterEaselTab[indexLetter].isSelectedForManipulation = true;
+        }
     }
 }

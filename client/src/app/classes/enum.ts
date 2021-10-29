@@ -17,3 +17,10 @@ export enum PlacingStrategy {
     SevenToTwelve,
     ThirteenToEighteen,
 }
+
+export enum TypeMessage {
+    System,
+    Opponent,
+    Player,
+    Error,
+}

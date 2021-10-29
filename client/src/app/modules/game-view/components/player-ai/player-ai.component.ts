@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DELAY_TO_PLAY, INDEX_PLAYER_AI } from '@app/classes/constants';
+import { TypeMessage } from '@app/classes/enum';
 import { PossibleWords } from '@app/classes/scrabble-board-pattern';
 import { PlayerAI } from '@app/models/player-ai.model';
 import { ChatboxService } from '@app/services/chatbox.service';
@@ -54,7 +55,7 @@ export class PlayerAIComponent implements OnInit {
                 this.skipTurn.switchTurn();
             }, DELAY_TO_PLAY);
             this.endGameService.actionsLog.push('passer');
-            this.sendMessageService.displayMessageByType('passer', 'opponent');
+            this.sendMessageService.displayMessageByType('passer', TypeMessage.Opponent);
         }
     }
 
@@ -64,7 +65,7 @@ export class PlayerAIComponent implements OnInit {
                 this.skipTurn.switchTurn();
             }, DELAY_TO_PLAY);
             this.endGameService.actionsLog.push('echanger');
-            this.sendMessageService.displayMessageByType('joueur virtuel echange', 'opponent');
+            this.sendMessageService.displayMessageByType('joueur virtuel echange', TypeMessage.Opponent);
         }
     }
 

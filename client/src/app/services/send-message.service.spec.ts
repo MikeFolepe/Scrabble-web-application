@@ -1,5 +1,6 @@
 /* eslint-disable dot-notation */
 import { TestBed } from '@angular/core/testing';
+import { TypeMessage } from '@app/classes/enum';
 
 import { SendMessageService } from './send-message.service';
 
@@ -21,8 +22,8 @@ describe('SendMessageService', () => {
     });
 
     it('displaying a message should display the respective message and its type', () => {
-        service.displayMessageByType('I am the player', 'player');
+        service.displayMessageByType('I am the player', TypeMessage.Player);
         expect(service.message).toEqual('I am the player');
-        expect(service.typeMessage).toEqual('player');
+        expect(service.typeMessage).toEqual(TypeMessage.Player);
     });
 });

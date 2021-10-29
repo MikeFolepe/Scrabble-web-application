@@ -116,7 +116,7 @@ describe('LetterEaselComponent', () => {
         expect(swapSpy).toHaveBeenCalledOnceWith(0, INDEX_REAL_PLAYER);
     });
 
-    it('cancelling selection should unselect all letters and disactivate the cancel button', () => {
+    it('cancelling selection should unselect all letters and disable cancel button', () => {
         for (const letters of component.letterEaselTab) {
             letters.isSelectedForSwap = true;
         }
@@ -129,18 +129,18 @@ describe('LetterEaselComponent', () => {
         expect(component.isCancelButtonActive()).toBeTrue();
     });
 
-    it('swap button should be disactive if it is not your turn', () => {
+    it('swap button should be disabled if it is not your turn', () => {
         component['skipTurnService'].isTurn = false;
         expect(component.isSwapButtonActive()).toBeFalse();
     });
 
-    it('swap button should be disactive if there is less than 7 letters in the reserve', () => {
+    it('swap button should be disabled if there is less than 7 letters in the reserve', () => {
         component['skipTurnService'].isTurn = true;
         component['letterService'].reserveSize = 6;
         expect(component.isSwapButtonActive()).toBeFalse();
     });
 
-    it('swap button should be disactive if none letters are selected for swapping', () => {
+    it('swap button should be disabled if none letters are selected for swapping', () => {
         component['skipTurnService'].isTurn = true;
         component['letterService'].reserveSize = 7;
         expect(component.isSwapButtonActive()).toBeFalse();

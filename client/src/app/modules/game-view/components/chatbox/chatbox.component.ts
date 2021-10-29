@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { INDEX_PLAYER_AI, INDEX_REAL_PLAYER, ONE_SECOND_TIME } from '@app/classes/constants';
+import { TypeMessage } from '@app/classes/enum';
 import { ChatboxService } from '@app/services/chatbox.service';
 import { EndGameService } from '@app/services/end-game.service';
 import { SendMessageService } from '@app/services/send-message.service';
@@ -14,9 +15,9 @@ export class ChatboxComponent implements OnInit, AfterViewInit {
 
     message: string = '';
     listMessages: string[] = [];
-    listTypes: string[] = [];
+    listTypes: TypeMessage[] = [];
 
-    private typeMessage: string = '';
+    private typeMessage: TypeMessage;
 
     constructor(private endGameService: EndGameService, private chatBoxService: ChatboxService, private sendMessageService: SendMessageService) {}
 
@@ -48,13 +49,13 @@ export class ChatboxComponent implements OnInit, AfterViewInit {
     }
 
     sendSystemMessage(systemMessage: string) {
-        this.typeMessage = 'system';
+        this.typeMessage = TypeMessage.System;
         this.listTypes.push(this.typeMessage);
         this.listMessages.push(systemMessage);
     }
 
     sendOpponentMessage(opponentMessage: string) {
-        this.typeMessage = 'opponent';
+        this.typeMessage = TypeMessage.Opponent;
         this.listTypes.push(this.typeMessage);
         this.listMessages.push(opponentMessage);
     }

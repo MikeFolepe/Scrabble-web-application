@@ -3,6 +3,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { ONE_SECOND_TIME } from '@app/classes/constants';
+import { TypeMessage } from '@app/classes/enum';
 import { ChatboxComponent } from './chatbox.component';
 
 describe('ChatBoxComponent', () => {
@@ -72,7 +73,7 @@ describe('ChatBoxComponent', () => {
         component.sendSystemMessage('Second system message');
         expect(component.listTypes).toHaveSize(2);
         expect(component.listMessages).toHaveSize(2);
-        expect(component.listTypes[0]).toEqual('system');
+        expect(component.listTypes[0]).toEqual(TypeMessage.System);
     });
 
     it('should send message as opponent when sendOpponentMessage() is called', () => {
@@ -80,12 +81,12 @@ describe('ChatBoxComponent', () => {
         component.sendOpponentMessage('Opponent system message');
         expect(component.listTypes).toHaveSize(2);
         expect(component.listMessages).toHaveSize(2);
-        expect(component.listTypes[0]).toEqual('opponent');
+        expect(component.listTypes[0]).toEqual(TypeMessage.Opponent);
     });
 
     it('should use the message and the type from chatBoxService when we display a message', () => {
         component['sendMessageService'].message = 'Service message';
-        component['sendMessageService'].typeMessage = 'system';
+        component['sendMessageService'].typeMessage = TypeMessage.System;
         component.displayMessageByType();
         expect(component.listMessages.pop()).toEqual(component['sendMessageService'].message);
         expect(component.listTypes.pop()).toEqual(component['sendMessageService'].typeMessage);

@@ -9,6 +9,7 @@ import {
     INDEX_PLAYER_AI,
     THREE_SECONDS_DELAY,
 } from '@app/classes/constants';
+import { TypeMessage } from '@app/classes/enum';
 import { ScoreValidation } from '@app/classes/validation-score';
 import { Vec2 } from '@app/classes/vec2';
 import { GridService } from '@app/services/grid.service';
@@ -65,7 +66,7 @@ export class PlaceLetterService {
         const wordNoAccents = word.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
         // If the command is possible according to the parameters
         if (!this.isPossible(position, orientation, wordNoAccents, indexPlayer)) {
-            this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', 'error');
+            this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', TypeMessage.Error);
             return false;
         }
         this.invalidLetters = []; // Reset the array containing the invalid letters
@@ -74,7 +75,7 @@ export class PlaceLetterService {
         // Placing all letters of the word
         if (!this.placeAllLetters(position, orientation, wordNoAccents, indexPlayer)) {
             this.handleInvalidPlacement(position, orientation, wordNoAccents, indexPlayer);
-            this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', 'error');
+            this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', TypeMessage.Error);
             return false;
         }
         this.isAIPlacementValid = true;
@@ -87,7 +88,7 @@ export class PlaceLetterService {
             return true;
         }
         this.handleInvalidPlacement(position, orientation, wordNoAccents, indexPlayer);
-        this.sendMessageService.displayMessageByType('ERREUR : Un ou des mots formés sont invalides', 'error');
+        this.sendMessageService.displayMessageByType('ERREUR : Un ou des mots formés sont invalides', TypeMessage.Error);
         return false;
     }
 
