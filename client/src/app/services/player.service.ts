@@ -155,4 +155,8 @@ export class PlayerService {
     getScore(indexPlayer: number): number {
         return this.players[indexPlayer].score;
     }
+
+    isEaselEmpty(indexPlayer: number): boolean {
+        return this.players[indexPlayer].letterTable.length === 0;
+    }
 }

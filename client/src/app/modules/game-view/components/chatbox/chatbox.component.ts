@@ -1,7 +1,6 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { INDEX_PLAYER_AI, INDEX_REAL_PLAYER, ONE_SECOND_TIME } from '@app/classes/constants';
 import { ChatboxService } from '@app/services/chatbox.service';
-import { DebugService } from '@app/services/debug.service';
 import { EndGameService } from '@app/services/end-game.service';
 import { SendMessageService } from '@app/services/send-message.service';
 
@@ -13,19 +12,13 @@ import { SendMessageService } from '@app/services/send-message.service';
 export class ChatboxComponent implements OnInit, AfterViewInit {
     @ViewChild('scrollMe') private myScrollContainer: ElementRef;
 
-    typeMessage: string = '';
     message: string = '';
-
     listMessages: string[] = [];
     listTypes: string[] = [];
-    debugMessage: { word: string; nbPt: number }[] = [];
 
-    constructor(
-        private chatBoxService: ChatboxService,
-        public debugService: DebugService,
-        private sendMessageService: SendMessageService,
-        public endGameService: EndGameService,
-    ) {}
+    private typeMessage: string = '';
+
+    constructor(private endGameService: EndGameService, private chatBoxService: ChatboxService, private sendMessageService: SendMessageService) {}
 
     ngOnInit(): void {
         this.sendMessageService.displayBound(this.displayMessageByType.bind(this));

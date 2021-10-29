@@ -102,10 +102,10 @@ describe('ChatBoxComponent', () => {
     });
 
     it('should set interval for all required functions', () => {
-        const spy1 = spyOn(component.endGameService, 'checkEndGame');
+        const spy1 = spyOn(component['endGameService'], 'checkEndGame');
         const spy2 = spyOn(component['chatBoxService'], 'displayFinalMessage');
-        const spy3 = spyOn(component.endGameService, 'getFinalScore');
-        component.endGameService.isEndGame = true;
+        const spy3 = spyOn(component['endGameService'], 'getFinalScore');
+        component['endGameService'].isEndGame = true;
         component.ngAfterViewInit();
         jasmine.clock().tick(ONE_SECOND_TIME + 1);
         expect(spy1).toHaveBeenCalled();
