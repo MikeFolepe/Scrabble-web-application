@@ -31,10 +31,11 @@
         "syntaxe",
         "tripleletter",
         "tripleword",
+        "Validationservice",
         "vrai"
     ],
     "[typescript]": {
-        "editor.defaultFormatter": "vscode.typescript-language-features"
+        "editor.defaultFormatter": "ms-vsliveshare.vsliveshare"
     },
     "[html]": {
         "editor.defaultFormatter": "vscode.html-language-features"

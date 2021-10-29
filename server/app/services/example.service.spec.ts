@@ -1,10 +1,11 @@
+/*
 import { Message } from '@app/message';
 import { DateService } from '@app/services/date.service';
 import { ExampleService } from '@app/services/example.service';
 import { expect } from 'chai';
 import { createStubInstance, SinonStubbedInstance } from 'sinon';
 
-describe('Example service', () => {
+xdescribe('Example service', () => {
     let exampleService: ExampleService;
     let dateService: SinonStubbedInstance<DateService>;
 
@@ -64,3 +65,4 @@ describe('Example service', () => {
         done();
     });
 });
+*/

@@ -11,7 +11,6 @@ import {
 } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { Player } from '@app/models/player.model';
-import { Subject } from 'rxjs';
 import { GridService } from './grid.service';
 import { LetterService } from './letter.service';
 
@@ -19,32 +18,30 @@ import { LetterService } from './letter.service';
     providedIn: 'root',
 })
 export class PlayerService {
-    playerSubject = new Subject<Player[]>();
     scrabbleBoard: string[][];
     fontSize = DEFAULT_FONT_SIZE;
-
     players: Player[] = new Array<Player>();
-    private myFunc: () => void;
+
+    private updateEasel: () => void;
+
     constructor(private letterService: LetterService, private gridService: GridService) {
         this.fontSize = DEFAULT_FONT_SIZE;
     }
 
-    updateLettersEasel(fn: () => void) {
-        this.myFunc = fn;
-        // from now on, call myFunc wherever you want inside this service
-    }
-
-    emitPlayers(): void {
-        this.playerSubject.next(this.players.slice());
+    bindUpdateEasel(fn: () => void) {
+        this.updateEasel = fn;
     }
 
     addPlayer(user: Player) {
         this.players.push(user);
-        this.emitPlayers();
     }
 
     clearPlayers(): void {
         this.players = [];
+    }
+
+    getEasel(indexPlayer: number): Letter[] {
+        return this.players[indexPlayer].letterTable;
     }
 
     updateScrabbleBoard(scrabbleBoard: string[][]): void {
@@ -59,14 +56,6 @@ export class PlayerService {
         }
         this.fontSize = fontSize;
         this.updateGridFontSize();
-    }
-
-    getLettersEasel(indexPlayer: number): Letter[] {
-        return this.players[indexPlayer].letterTable;
-    }
-
-    getPlayers(): Player[] {
-        return this.players;
     }
 
     // Update the font size of the letters placed on the grid
@@ -92,13 +81,13 @@ export class PlayerService {
             isSelectedForManipulation: letterFromReserve.isSelectedForManipulation,
         };
         this.players[indexPlayer].letterTable.splice(indexToSwap, 1, letterToAdd);
-        this.myFunc();
+        this.updateEasel();
     }
 
     // Remove one letter from easel
     removeLetter(indexToRemove: number, indexPlayer: number): void {
         this.players[indexPlayer].letterTable.splice(indexToRemove, 1);
-        this.myFunc();
+        this.updateEasel();
     }
 
     addLetterToEasel(letterToAdd: string, indexPlayer: number): void {
@@ -131,7 +120,7 @@ export class PlayerService {
     }
 
     addEaselLetterToReserve(indexInEasel: number, indexPlayer: number) {
-        this.letterService.addLetterToReserve(this.getLettersEasel(indexPlayer)[indexInEasel].value);
+        this.letterService.addLetterToReserve(this.getEasel(indexPlayer)[indexInEasel].value);
     }
 
     refillEasel(indexPlayer: number): void {
@@ -150,7 +139,6 @@ export class PlayerService {
                 isSelectedForManipulation: letterToAdd.isSelectedForManipulation,
             };
         }
-        this.myFunc();
     }
 
     // Return the index of the letter found in the easel

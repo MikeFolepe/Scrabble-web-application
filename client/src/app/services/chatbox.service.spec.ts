@@ -2,14 +2,20 @@
 /* eslint-disable dot-notation */
 import { TestBed } from '@angular/core/testing';
 import { INDEX_REAL_PLAYER, RESERVE } from '@app/classes/constants';
+import { Orientation, PossibleWords } from '@app/classes/scrabble-board-pattern';
 import { Player } from '@app/models/player.model';
 import { ChatboxService } from './chatbox.service';
+import { RouterTestingModule } from '@angular/router/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('ChatboxService', () => {
     let service: ChatboxService;
+    let possibleWord: PossibleWords;
 
     beforeEach(() => {
-        TestBed.configureTestingModule({});
+        TestBed.configureTestingModule({
+            imports: [HttpClientTestingModule, RouterTestingModule],
+        });
         service = TestBed.inject(ChatboxService);
 
         const letterA = RESERVE[0];
@@ -19,6 +25,7 @@ describe('ChatboxService', () => {
         const firstPlayerEasel = [letterA, letterA, letterB, letterB, letterC, letterC, letterA];
         const firstPlayer = new Player(1, 'Player 1', firstPlayerEasel);
         service['playerService'].addPlayer(firstPlayer);
+        possibleWord = { word: 'test', orientation: Orientation.HorizontalOrientation, line: 0, startIdx: 0, point: 1 };
 
         spyOn(service['sendMessageService'], 'displayMessageByType');
     });
@@ -80,15 +87,16 @@ describe('ChatboxService', () => {
     });
 
     it('using command !debug should call executeDebug()', () => {
-        spyOn(service, 'executeDebug');
+        const spy = spyOn(service, 'executeDebug');
         service.command = 'debug';
-        const word = 'message de debug';
-        const nbPt = 1;
-        const table: { word: string; nbPt: number }[] = [];
-        table.push({ word, nbPt });
+        const table: PossibleWords[] = [];
+        table.push(possibleWord);
 
+        service['debugService'].receiveAIDebugPossibilities(table);
         service.sendPlayerMessage('!debug');
-        expect(service.executeDebug).toHaveBeenCalled();
+        expect(spy).toHaveBeenCalled();
+        service.sendPlayerMessage('!debug');
+        expect(spy).toHaveBeenCalled();
     });
 
     it('using command !debug without debug messages should display the respective message', () => {
@@ -101,16 +109,16 @@ describe('ChatboxService', () => {
     });
 
     it('using command !passer should display the respective message', () => {
-        spyOn(service['passTourService'], 'writeMessage');
-        spyOn(service['tourService'], 'getTour').and.returnValue(true);
+        spyOn(service['skipTurn'], 'switchTurn');
+        service['skipTurn'].isTurn = true;
         service.command = 'passer';
         service.sendPlayerMessage('!passer');
         expect(service.message).toEqual('!passer');
     });
 
     it('using a valid command !placer should display the respective message', () => {
-        spyOn(service['passTourService'], 'writeMessage');
-        spyOn(service['tourService'], 'getTour').and.returnValue(true);
+        spyOn(service['skipTurn'], 'switchTurn');
+        service['skipTurn'].isTurn = true;
         spyOn(service['placeLetterService'], 'placeCommand').and.returnValue(true);
         service.command = 'placer';
         service.sendPlayerMessage('!placer h8h hello');
@@ -118,8 +126,8 @@ describe('ChatboxService', () => {
     });
 
     it('using a valid command !échanger should display the respective message', () => {
-        spyOn(service['passTourService'], 'writeMessage');
-        spyOn(service['tourService'], 'getTour').and.returnValue(true);
+        spyOn(service['skipTurn'], 'switchTurn');
+        service['skipTurn'].isTurn = true;
         spyOn(service['swapLetterService'], 'swapCommand').and.returnValue(true);
         service.command = 'echanger';
         service.sendPlayerMessage('!échanger abc');
@@ -130,9 +138,9 @@ describe('ChatboxService', () => {
         spyOn<any>(service, 'displayDebugMessage');
 
         service.command = 'debug';
-        const word = 'message de debug';
-        const nbPt = 1;
-        const table: { word: string; nbPt: number }[] = [{ word, nbPt }];
+        const table: { word: string; orientation: Orientation; line: number; startIdx: number; point: number }[] = [
+            { word: 'message de debug', orientation: Orientation.HorizontalOrientation, line: 0, startIdx: 0, point: 1 },
+        ];
 
         service['debugService'].debugServiceMessage = table;
         service['debugService'].isDebugActive = true;
@@ -142,30 +150,24 @@ describe('ChatboxService', () => {
     });
 
     it('using command !passer while it is not your turn should display an error', () => {
-        spyOn(service['tourService'], 'getTour').and.returnValue(false);
+        service['skipTurn'].isTurn = false;
         service.command = 'passer';
         service.sendPlayerMessage('!passer');
         expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith("ERREUR : Ce n'est pas ton tour", 'error');
     });
 
     it('using command !échanger while it is not your turn should display an error', () => {
-        spyOn(service['tourService'], 'getTour').and.returnValue(false);
+        service['skipTurn'].isTurn = false;
         service.command = 'echanger';
         service.sendPlayerMessage('!échanger');
         expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith("ERREUR : Ce n'est pas ton tour", 'error');
     });
 
     it('using command !placer while it is not your turn should display an error', () => {
-        spyOn(service['tourService'], 'getTour').and.returnValue(false);
+        service['skipTurn'].isTurn = false;
         service.command = 'placer';
         service.sendPlayerMessage('!placer');
         expect(service.message).toEqual("ERREUR : Ce n'est pas ton tour");
-    });
-
-    it('ngOnDestroy should call unsubscribe', () => {
-        const spyUnsubscribe = spyOn(service.tourSubscription, 'unsubscribe').and.callThrough();
-        service.ngOnDestroy();
-        expect(spyUnsubscribe).toHaveBeenCalled();
     });
 
     it('should display the right debug message if no possibility has been found', () => {
@@ -175,7 +177,9 @@ describe('ChatboxService', () => {
     });
 
     it('should display the right debug message if at least one possibility has been found', () => {
-        service['debugService'].debugServiceMessage = [{ word: 'test', nbPt: 3 }];
+        service['debugService'].debugServiceMessage = [
+            { word: 'test', orientation: Orientation.HorizontalOrientation, line: 0, startIdx: 0, point: 3 },
+        ];
         service.displayDebugMessage();
         expect(service.message).toEqual('test: -- 3');
     });
@@ -187,8 +191,8 @@ describe('ChatboxService', () => {
     });
 
     it('should not write a message if swapCommand is false in executeSwap()', () => {
-        spyOn(service['tourService'], 'getTour').and.returnValue(true);
-        const spy = spyOn(service['passTourService'], 'writeMessage');
+        service['skipTurn'].isTurn = true;
+        const spy = spyOn(service['skipTurn'], 'switchTurn');
         spyOn(service['swapLetterService'], 'swapCommand').and.returnValue(false);
         service.message = '!échanger *s';
         service.executeSwap();
@@ -202,8 +206,8 @@ describe('ChatboxService', () => {
     });
 
     it('should not display message if place is false when executePlace() is called', () => {
-        spyOn(service['tourService'], 'getTour').and.returnValue(true);
-        const spy = spyOn(service['passTourService'], 'writeMessage');
+        service['skipTurn'].isTurn = true;
+        const spy = spyOn(service['skipTurn'], 'switchTurn');
         spyOn(service['placeLetterService'], 'placeCommand').and.returnValue(false);
         service.message = '!placer h8h test';
         service.executePlace();

@@ -1,7 +1,7 @@
 import { AIStrategy, placingBallotBox, PlacingStrategy, strategyBallotBox } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { Range } from '@app/classes/range';
-import { PlayerAIComponent } from '@app/modules/game-view/components/player-ai/player-ai.component';
+import { PlayerAIComponent } from '@app/modules/game-view/player-ai/player-ai.component';
 import { PlayStrategy } from './abstract-strategy.model';
 import { PlaceLetters } from './place-letter-strategy.model';
 import { Player } from './player.model';
@@ -11,22 +11,49 @@ import { SwapLetter } from './swap-letter-strategy.model';
 export class PlayerAI extends Player {
     context: PlayerAIComponent;
     strategy: PlayStrategy;
-    constructor(public id: number, public name: string, public letterTable: Letter[]) {
+    constructor(id: number, name: string, letterTable: Letter[]) {
         super(id, name, letterTable);
         // Initialize the first concrete strategy to be executed later
-        this.setStrategy();
+        this.strategy = new SkipTurn();
     }
 
     play() {
         // Allow the ai to execute the current strategy whoever it is
         this.strategy.execute(this, this.context);
-        // Set the next strategy for next turn
+        // Set the next strategy for next tour
         this.setStrategy();
     }
+    setContext(context: PlayerAIComponent) {
+        this.context = context;
+    }
 
-    setStrategy() {
+    replaceStrategy(strategy: PlayStrategy) {
+        this.strategy = strategy;
+        this.play();
+    }
+
+    getHand(): string {
+        let hand = '[';
+        for (const letter of this.letterTable) {
+            hand += letter.value;
+        }
+
+        return hand + ']';
+    }
+
+    playerQuantityOf(character: string): number {
+        let quantity = 0;
+
+        for (const letter of this.letterTable) {
+            if (letter.value === character.toUpperCase()) {
+                quantity++;
+            }
+        }
+
+        return quantity;
+    }
+    private setStrategy() {
         const randomNumber = this.generateRandomNumber(strategyBallotBox.length);
-
         switch (strategyBallotBox[randomNumber]) {
             case AIStrategy.Skip:
                 this.strategy = new SkipTurn();
@@ -44,14 +71,14 @@ export class PlayerAI extends Player {
         }
     }
 
-    pointingRange(): Range {
+    private pointingRange(): Range {
         let pointingRange: Range;
 
         const randomNumber = this.generateRandomNumber(placingBallotBox.length);
 
         switch (placingBallotBox[randomNumber]) {
             case PlacingStrategy.LessSix:
-                pointingRange = { min: 0, max: 6 };
+                pointingRange = { min: 1, max: 6 };
                 break;
             case PlacingStrategy.SevenToTwelve:
                 pointingRange = { min: 7, max: 12 };
@@ -63,20 +90,10 @@ export class PlayerAI extends Player {
                 pointingRange = { min: 0, max: 0 };
                 break;
         }
-
         return pointingRange;
     }
 
-    setContext(context: PlayerAIComponent) {
-        this.context = context;
-    }
-
-    replaceStrategy(strategy: PlayStrategy) {
-        this.strategy = strategy;
-        this.play();
-    }
-
-    generateRandomNumber(maxValue: number): number {
+    private generateRandomNumber(maxValue: number): number {
         return Math.floor(Number(Math.random()) * maxValue);
     }
 }

@@ -286,6 +286,7 @@ export class GridService {
 
     private tripleLetter = (ctx: CanvasRenderingContext2D, startPosition: Vec2): void => {
         ctx.fillStyle = 'cadetBlue';
+        // eslint-disable-next-line no-invalid-this
         ctx.fillRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
         ctx.strokeRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
     };

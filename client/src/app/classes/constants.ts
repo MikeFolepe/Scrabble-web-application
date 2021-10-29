@@ -1,8 +1,6 @@
-/* eslint-disable max-lines */
 import { Letter } from '@app/classes/letter';
 // eslint-disable-next-line no-restricted-imports
-import dictionaryData from '../../assets/dictionnary.json';
-
+import dictionaryData from '../../assets/dictionary.json';
 export const DEFAULT_WIDTH = 750;
 export const DEFAULT_HEIGHT = 750;
 export const BOARD_SIZE = 16;
@@ -38,12 +36,11 @@ export const TRIPLE_WORD = 3;
 export const DOUBLE_WORD = 2;
 export const TRIPLE_LETTER = 3;
 export const DOUBLE_LETTER = 2;
-
-export const MIN_RESERVE_SIZE_TOSWAP = 7;
+export const MIN_RESERVE_SIZE_TO_SWAP = 7;
 
 export const DELAY_TO_PLAY = 5000;
 export const THREE_SECONDS_DELAY = 3000;
-export const ONESECOND_TIME = 1000;
+export const ONE_SECOND_TIME = 1000;
 
 export enum MouseButton {
     Left = 0,
@@ -347,4 +344,4 @@ export const BONUSES_POSITIONS: Map<string, string> = new Map<string, string>([
     ['O12', 'doubleletter'],
     ['O15', 'tripleword'],
 ]);
-export const dictionary: string[] = JSON.parse(JSON.stringify(dictionaryData)).words;
+export const DICTIONARY: string[] = JSON.parse(JSON.stringify(dictionaryData)).words;

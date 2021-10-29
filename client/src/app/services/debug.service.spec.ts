@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { PossibleWords, Orientation } from '@app/classes/scrabble-board-pattern';
 import { DebugService } from './debug.service';
 
 describe('DebugService', () => {
@@ -16,9 +17,9 @@ describe('DebugService', () => {
 
     it('right debugAiPossibilities should be received', () => {
         service.debugServiceMessage = [];
-        const possibilities = [
-            { word: 'Banane', nbPt: 10 },
-            { word: 'Bob', nbPt: 5 },
+        const possibilities: PossibleWords[] = [
+            { word: 'test', orientation: Orientation.HorizontalOrientation, line: 0, startIdx: 0, point: 1 },
+            { word: 'test2', orientation: Orientation.VerticalOrientation, line: 1, startIdx: 1, point: 0 },
         ];
         service.receiveAIDebugPossibilities(possibilities);
         expect(service.debugServiceMessage).toEqual(possibilities);
@@ -26,12 +27,11 @@ describe('DebugService', () => {
 
     it('should clear DebugServiceMessage', () => {
         service.debugServiceMessage = [
-            { word: 'Banane', nbPt: 10 },
-            { word: 'Bob', nbPt: 5 },
+            { word: 'test', orientation: Orientation.HorizontalOrientation, line: 0, startIdx: 0, point: 1 },
+            { word: 'test2', orientation: Orientation.VerticalOrientation, line: 1, startIdx: 1, point: 0 },
         ];
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const emptyDebugMessage: any = [];
+        const emptyDebugMessage: PossibleWords[] = [];
         service.clearDebugMessage();
         expect(service.debugServiceMessage).toEqual(emptyDebugMessage);
     });

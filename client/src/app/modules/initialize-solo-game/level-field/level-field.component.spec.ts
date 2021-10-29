@@ -1,3 +1,4 @@
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { LevelFieldComponent } from './level-field.component';
@@ -9,6 +10,7 @@ describe('LevelFieldComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [LevelFieldComponent],
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
     });
 

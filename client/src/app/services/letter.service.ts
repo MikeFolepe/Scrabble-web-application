@@ -11,19 +11,12 @@ export class LetterService {
     randomElement: number;
     // Deep copy
     reserve: Letter[] = JSON.parse(JSON.stringify(RESERVE));
+    reserveSize: number;
     messageSource = new BehaviorSubject('default message');
     // eslint-disable-next-line no-invalid-this
-    currentMessage = this.messageSource.asObservable();
-    private func: () => void;
 
-    updateView(fn: () => void) {
-        this.func = fn;
-        // from now on, call func wherever you want inside this service
-    }
-
-    writeMessage(message: string) {
-        this.messageSource.next(message);
-        this.func();
+    constructor() {
+        this.updateReserveSize();
     }
 
     // Returns a random letter from the reserve if reserve is not empty
@@ -47,6 +40,7 @@ export class LetterService {
 
         // Update reserve
         letter.quantity--;
+        this.updateReserveSize();
         return letter;
     }
 
@@ -59,18 +53,21 @@ export class LetterService {
         return true;
     }
 
-    getReserveSize(): number {
+    updateReserveSize(): void {
         let size = 0;
         for (const letter of this.reserve) {
             size += letter.quantity;
         }
-        return size;
+        this.reserveSize = size;
     }
 
     addLetterToReserve(letter: string): void {
-        const letterReserve = this.reserve.find((letterSearched) => letter.toUpperCase() === letterSearched.value);
-        if (letterReserve) {
-            letterReserve.quantity++;
+        for (const letterReserve of this.reserve) {
+            if (letter.toUpperCase() === letterReserve.value) {
+                letterReserve.quantity++;
+                this.updateReserveSize();
+                return;
+            }
         }
     }
 
