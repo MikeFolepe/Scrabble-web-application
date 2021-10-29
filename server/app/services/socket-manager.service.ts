@@ -1,10 +1,10 @@
-import { GameSettings } from '@app/classes/multiplayer-game-settings';
-import { State } from '@app/classes/room';
+import { GameSettings } from '@common/game-settings';
+import { PlayerIndex } from '@common/PlayerIndex';
+import { State } from '@common/room';
 import * as http from 'http';
 import * as io from 'socket.io';
 import { Service } from 'typedi';
 import { RoomManager } from './room-manager.service';
-
 @Service()
 export class SocketManager {
     private sio: io.Server;
@@ -16,12 +16,13 @@ export class SocketManager {
 
     handleSockets(): void {
         this.sio.on('connection', (socket) => {
+            console.log(this.sio.sockets);
             socket.on('createRoom', (gameSettings: GameSettings) => {
-                const roomId = this.roomManager.createRoomId(gameSettings.playersName[0]);
-                // TODO: trouver une solution definitive au roomId
-                this.roomManager.createRoom(roomId, gameSettings);
-                // Each room created will have the creator's socket id as roomId
+                const roomId = this.roomManager.createRoomId(gameSettings.playersName[PlayerIndex.OWNER]);
+                this.roomManager.createRoom(socket.id, roomId, gameSettings);
                 socket.join(roomId);
+                // give the client his roomId to communicate later with server
+                socket.emit('yourRoomId', roomId);
                 // room creation alerts all clients on the new rooms configurations
                 this.sio.emit('roomConfiguration', this.roomManager.rooms);
             });
@@ -55,15 +56,26 @@ export class SocketManager {
                 this.sio.in(roomId).emit('goToGameView');
             });
 
-            // Delete  the room and uodate the client view
-            socket.on('cancelMultiplayerparty', (roomId: string) => {
+            socket.on('deleteGame', (roomId: string) => {
                 this.roomManager.deleteRoom(roomId);
                 this.sio.emit('roomConfiguration', this.roomManager.rooms);
+                socket.disconnect();
+                console.log(roomId);
             });
 
-            socket.on('disconnect', (reason) => {
-                console.log(`Deconnexion par l'utilisateur avec id : ${socket.id}`);
-                console.log(`Raison de deconnexion : ${reason}`);
+            socket.on('disconnect', () => {
+                const roomId = this.roomManager.findRoomIdOf(socket.id);
+                this.roomManager.deleteRoom(roomId);
+                this.sio.emit('roomConfiguration', this.roomManager.rooms);
+                socket.disconnect();
+                // route les joueurs vers le debut avec un message d'erreur
+            });
+
+            socket.on('sendRoomMessage', (message: string, roomId: string) => {
+                // this.sio.to(roomId).emit('receiveRoomMessage', `${socket.id} : ${message}`);
+                // console.log(message);
+                // console.log(socket.rooms);
+                socket.to(roomId).emit('receiveRoomMessage', message);
             });
         });
     }

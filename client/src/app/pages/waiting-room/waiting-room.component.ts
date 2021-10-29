@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ClientSocketService } from '@app/services/client-socket.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
+import { PlayerIndex } from '@common/PlayerIndex';
 @Component({
     selector: 'app-waiting-room',
     templateUrl: './waiting-room.component.html',
@@ -44,7 +45,7 @@ export class WaitingRoomComponent implements OnInit {
     }
 
     handleReloadErrors() {
-        if (this.gameSettingsService.gameSettings.playersName[0] === '') {
+        if (this.gameSettingsService.gameSettings.playersName[PlayerIndex.OWNER] === '') {
             const errorMessage = 'Une erreur est survenue';
             this.waitBeforeChangeStatus(1000, errorMessage);
             this.router.navigate(['home']);
@@ -58,13 +59,14 @@ export class WaitingRoomComponent implements OnInit {
         }, waitingTime);
     }
 
-    delete(roomId: string) {
-        this.clientSocket.socket.emit('cancelMultiplayerparty', roomId);
+    delete() {
+        this.clientSocket.socket.emit('deleteGame', this.clientSocket.roomId);
     }
 
     route() {
         this.gameSettingsService.isSoloMode = true;
         this.gameSettingsService.isRedirectedFromMultiplayerGame = true;
+        this.clientSocket.socket.emit('deleteGame', this.clientSocket.roomId);
         this.router.navigate(['solo-game-ai']);
     }
 }

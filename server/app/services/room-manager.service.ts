@@ -1,7 +1,7 @@
-import { Room, State } from '@app/classes/room';
+import { GameSettings, StartingPlayer } from '@common/game-settings';
+import { PlayerIndex } from '@common/PlayerIndex';
+import { Room, State } from '@common/room';
 import { Service } from 'typedi';
-// eslint-disable-next-line no-restricted-imports
-import { GameSettings } from '../classes/multiplayer-game-settings';
 
 @Service()
 export class RoomManager {
@@ -11,8 +11,8 @@ export class RoomManager {
         this.rooms = [];
     }
 
-    createRoom(roomId: string, gameSettings: GameSettings) {
-        this.rooms.push(new Room(this.createRoomId(gameSettings.playersName[0]), gameSettings));
+    createRoom(socketId: string, roomId: string, gameSettings: GameSettings) {
+        this.rooms.push(new Room(roomId, socketId, gameSettings));
     }
 
     createRoomId(playerName: string) {
@@ -49,8 +49,8 @@ export class RoomManager {
     formatGameSettingsForCustomerIn(roomId: string): GameSettings {
         const room = this.find(roomId) as Room;
         const gameSettings = room.gameSettings;
-        const playerNames: string[] = [gameSettings.playersName[1], gameSettings.playersName[0]];
-        const startingPlayer = gameSettings.startingPlayer ? 0 : 1;
+        const playerNames: string[] = [gameSettings.playersName[PlayerIndex.CUSTOMER], gameSettings.playersName[PlayerIndex.OWNER]];
+        const startingPlayer = gameSettings.startingPlayer ? StartingPlayer.Player1 : StartingPlayer.Player2;
         const formattedGameSettings = new GameSettings(
             playerNames,
             startingPlayer,
@@ -66,8 +66,23 @@ export class RoomManager {
 
     deleteRoom(roomId: string) {
         this.rooms.forEach((room, roomIndex) => {
-            if (room.id === roomId) this.rooms.splice(roomIndex, 1);
+            if (room.roomId === roomId) this.rooms.splice(roomIndex, 1);
         });
+    }
+
+    findRoomIdOf(socketID: string): string {
+        const room = this.rooms.find((rooms) => {
+            for (const socketId of rooms.socketIds) {
+                if (socketId === socketID) return true;
+            }
+            return false;
+        });
+
+        if (room !== undefined) {
+            return room.roomId;
+        }
+        // Impossible case
+        return '';
     }
 
     isNotAvailable(roomId: string): boolean {
@@ -80,7 +95,7 @@ export class RoomManager {
         return room.state === State.Playing;
     }
 
-    private find(roomId: string): Room | undefined {
-        return this.rooms.find((room) => room.id === roomId);
+    find(roomId: string): Room | undefined {
+        return this.rooms.find((room) => room.roomId === roomId);
     }
 }
