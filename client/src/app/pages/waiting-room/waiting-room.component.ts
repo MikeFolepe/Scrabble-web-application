@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ClientSocketService } from '@app/services/client-socket.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
+import { SkipTurnService } from '@app/services/skip-turn.service';
 @Component({
     selector: 'app-waiting-room',
     templateUrl: './waiting-room.component.html',
@@ -12,7 +13,12 @@ export class WaitingRoomComponent implements OnInit {
     status: string;
     isWaiting: boolean;
 
-    constructor(private router: Router, public gameSettingsService: GameSettingsService, public clientSocket: ClientSocketService) {
+    constructor(
+        private router: Router,
+        public gameSettingsService: GameSettingsService,
+        public clientSocket: ClientSocketService,
+        private skipTurn: SkipTurnService,
+    ) {
         this.status = '';
         this.isWaiting = false;
         this.clientSocket.route();
@@ -20,6 +26,11 @@ export class WaitingRoomComponent implements OnInit {
 
     ngOnInit() {
         this.playAnimation();
+        setTimeout(() => {
+            this.clientSocket.socket.on('startTimer', () => {
+                this.skipTurn.startTimer();
+            });
+        }, 2000);
     }
 
     playAnimation() {

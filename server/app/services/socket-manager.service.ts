@@ -9,7 +9,6 @@ import { RoomManager } from './room-manager.service';
 export class SocketManager {
     private sio: io.Server;
     private roomManager: RoomManager;
-    private intervalID: NodeJS.Timeout;
     constructor(server: http.Server, roomManager: RoomManager) {
         this.sio = new io.Server(server, { cors: { origin: '*', methods: ['GET', 'POST'] } });
         this.roomManager = roomManager;
@@ -56,6 +55,7 @@ export class SocketManager {
                 socket.to(roomId).emit('yourGameSettings', this.roomManager.getGameSettings(roomId));
                 // redirect the clients in the new filled room to game view
                 this.sio.in(roomId).emit('goToGameView');
+                this.sio.in(roomId).emit('startTimer');
             });
 
             // Delete  the room and uodate the client view
@@ -75,6 +75,17 @@ export class SocketManager {
                 console.log(socket.rooms);
                 // this.sio.to(roomId).emit('receiveRoomMessage', message);
                 socket.to(roomId).emit('receiveRoomMessage', message);
+            });
+
+            socket.on('switchTurn', (turn: boolean, roomId: string) => {
+                socket.to(roomId).emit('turnSwitched', turn);
+                socket.on('switchTurn', (turn2: boolean, roomId2: string) => {
+                    socket.to(roomId2).emit('turnSwitched', turn2);
+                });
+                setTimeout(() => {
+                    this.sio.in(roomId).emit('startTimer');
+                    console.log('time');
+                }, 1000);
             });
         });
     }

@@ -6,6 +6,7 @@ import { PageEvent } from '@angular/material/paginator';
 import { Room, State } from '@app/classes/room';
 import { DialogComponent } from '@app/modules/initialize-solo-game/dialog/dialog.component';
 import { ClientSocketService } from '@app/services/client-socket.service';
+import { SkipTurnService } from '@app/services/skip-turn.service';
 @Component({
     selector: 'app-join-room',
     templateUrl: './join-room.component.html',
@@ -18,7 +19,7 @@ export class JoinRoomComponent implements OnInit {
     isNameValid: boolean;
     isRoomStillAvailable: boolean;
 
-    constructor(private clientSocketService: ClientSocketService, public dialog: MatDialog) {
+    constructor(private clientSocketService: ClientSocketService, public dialog: MatDialog, private skipTurn: SkipTurnService) {
         this.isNameValid = true;
         this.isRoomStillAvailable = true;
         this.startIdx = 0;
@@ -40,6 +41,11 @@ export class JoinRoomComponent implements OnInit {
             }, 4000);
             return;
         });
+        setTimeout(() => {
+            this.clientSocketService.socket.on('startTimer', () => {
+                this.skipTurn.startTimer();
+            });
+        }, 2000);
     }
 
     onPageChange(event: PageEvent) {

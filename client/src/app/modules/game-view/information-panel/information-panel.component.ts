@@ -29,7 +29,9 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         this.initializePlayers();
         this.initializeFirstTurn();
-        this.skipTurn.startTimer();
+        if (this.gameSettingsService.isSoloMode) {
+            this.skipTurn.startTimer();
+        }
     }
     initializePlayers(): void {
         let player = new Player(1, this.gameSettings.playersName[INDEX_REAL_PLAYER], this.letterService.getRandomLetters());
