@@ -1,13 +1,11 @@
 /* eslint-disable dot-notation */
 import { expect } from 'chai';
-// import { createStubInstance, SinonStubbedInstance } from 'sinon';
 import { WordValidationService } from './word-validation.service';
 
 describe('WordValidation service', () => {
     let wordValidationService: WordValidationService;
     beforeEach(() => {
         wordValidationService = new WordValidationService();
-        // const dictionary = wordValidationService['dictionary'];
     });
 
     it('should return false when finding an invalid word ( a word which is not in the dictionary', () => {
