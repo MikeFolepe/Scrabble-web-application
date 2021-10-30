@@ -1,3 +1,4 @@
+/* eslint-disable sort-imports */
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 /* eslint-disable @typescript-eslint/quotes */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
@@ -5,7 +6,7 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { GameSettings } from '@app/classes/game-settings';
+import { GameSettings } from '@common/game-settings';
 import { ClientSocketService } from '@app/services/client-socket.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { WaitingRoomComponent } from './waiting-room.component';

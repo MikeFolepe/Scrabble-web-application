@@ -1,10 +1,10 @@
-import { GameSettings } from '@app/classes/multiplayer-game-settings';
-import { State } from '@app/classes/room';
 import * as http from 'http';
 import * as io from 'socket.io';
-import { Service } from 'typedi';
+import { GameSettings } from '@common/game-settings';
+import { PlayerIndex } from '@common/PlayerIndex';
 import { RoomManager } from './room-manager.service';
-
+import { Service } from 'typedi';
+import { State } from '@common/room';
 @Service()
 export class SocketManager {
     private sio: io.Server;
@@ -17,12 +17,10 @@ export class SocketManager {
     handleSockets(): void {
         this.sio.on('connection', (socket) => {
             socket.on('createRoom', (gameSettings: GameSettings) => {
-                const roomId = this.roomManager.createRoomId(gameSettings.playersName[0]);
-                // TODO: trouver une solution definitive au roomId
+                const roomId = this.roomManager.createRoomId(gameSettings.playersName[PlayerIndex.OWNER]);
                 this.roomManager.createRoom(socket.id, roomId, gameSettings);
-
-                // Each room created will have the creator's socket id as roomId
                 socket.join(roomId);
+                // give the client his roomId to communicate later with server
                 socket.emit('yourRoomId', roomId);
                 // room creation alerts all clients on the new rooms configurations
                 this.sio.emit('roomConfiguration', this.roomManager.rooms);
@@ -39,6 +37,7 @@ export class SocketManager {
                     socket.emit('roomAlreadyToken');
                     return;
                 }
+                // console.log(this.roomManager.rooms);
                 this.roomManager.addCustomer(playerName, roomId);
                 // Search the good room and set the custommer ID
                 const myroom = this.roomManager.find(roomId);
@@ -50,6 +49,7 @@ export class SocketManager {
                 this.roomManager.setState(roomId, State.Playing);
                 // block someone else entry from room selection
                 this.sio.emit('roomConfiguration', this.roomManager.rooms);
+                console.log(this.roomManager.rooms);
                 socket.join(roomId);
                 // update roomID in the new filled room to allow the clients in this room
                 // to ask the server make some actions in their room later
@@ -64,9 +64,11 @@ export class SocketManager {
                 this.sio.in(roomId).emit('goToGameView');
             });
 
-            socket.on('cancelMultiplayerparty', (roomId: string) => {
+            socket.on('deleteGame', (roomId: string) => {
                 this.roomManager.deleteRoom(roomId);
                 this.sio.emit('roomConfiguration', this.roomManager.rooms);
+                socket.disconnect();
+                console.log(roomId);
             });
 
             socket.on('disconnect', () => {
@@ -75,6 +77,9 @@ export class SocketManager {
                 this.sio.emit('roomConfiguration', this.roomManager.rooms);
                 // console.log(`Deconnexion par l'utilisateur avec id : ${socket.id}`);
                 // console.log(`Raison de deconnexion : ${reason}`);
+                this.sio.in(roomId).emit('goToMainMenu');
+                socket.disconnect();
+                // route les joueurs vers le debut avec un message d'erreur
             });
 
             socket.on('sendRoomMessage', (message: string, roomId: string) => {

@@ -2,14 +2,7 @@
     "root": false,
     "extends": "eslint:recommended",
     "ignorePatterns": ["projects/**/*"],
-    "plugins": [
-        "deprecation",
-        "prettier",
-        "import",
-        "eslint-plugin-jsdoc",
-        "eslint-plugin-prefer-arrow",
-        "eslint-plugin-unicorn"
-    ],
+    "plugins": ["deprecation", "prettier", "import", "eslint-plugin-jsdoc", "eslint-plugin-prefer-arrow", "eslint-plugin-unicorn"],
     "overrides": [
         {
             "files": ["*.ts"],
@@ -211,6 +204,12 @@
                     "error",
                     {
                         "patterns": ["../*"] // Replacement of the buggy import/no-relative-parent-imports
+                    }
+                ],
+                "sort-imports": [
+                    "error",
+                    {
+                        "allowSeparatedGroups": true
                     }
                 ],
                 "no-throw-literal": "error",

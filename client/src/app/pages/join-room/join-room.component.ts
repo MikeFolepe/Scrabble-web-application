@@ -1,11 +1,10 @@
-/* eslint-disable no-restricted-imports */
-/* eslint-disable @typescript-eslint/no-magic-numbers */
 import { Component, OnInit } from '@angular/core';
+import { Room, State } from '@common/room';
+import { ClientSocketService } from '@app/services/client-socket.service';
+import { DialogComponent } from '@app/modules/initialize-solo-game/dialog/dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
-import { Room, State } from '@app/classes/room';
-import { DialogComponent } from '@app/modules/initialize-solo-game/dialog/dialog.component';
-import { ClientSocketService } from '@app/services/client-socket.service';
+import { PlayerIndex } from '@common/PlayerIndex';
 @Component({
     selector: 'app-join-room',
     templateUrl: './join-room.component.html',
@@ -34,6 +33,7 @@ export class JoinRoomComponent implements OnInit {
         });
 
         this.clientSocketService.socket.on('roomAlreadyToken', () => {
+            console.log('ok');
             this.isRoomStillAvailable = false;
             setTimeout(() => {
                 this.isRoomStillAvailable = true;
@@ -62,7 +62,7 @@ export class JoinRoomComponent implements OnInit {
             // if user closes the dialog box without input nothing
             if (playerName === null) return;
             // if names are equals
-            if (room.gameSettings.playersName[0] === playerName) {
+            if (room.gameSettings.playersName[PlayerIndex.OWNER] === playerName) {
                 this.isNameValid = false;
                 setTimeout(() => {
                     this.isNameValid = true;

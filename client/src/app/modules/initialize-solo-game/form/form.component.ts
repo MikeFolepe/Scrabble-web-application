@@ -1,9 +1,10 @@
+/* eslint-disable sort-imports */
 import { Component, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AI_NAME_DATABASE } from '@app/classes/constants';
-import { GameSettings, StartingPlayer } from '@app/classes/game-settings';
 import { GameSettingsService } from '@app/services/game-settings.service';
+import { GameSettings, StartingPlayer } from '@common/game-settings';
 @Component({
     selector: 'app-form',
     templateUrl: './form.component.html',

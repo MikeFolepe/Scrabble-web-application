@@ -11,10 +11,10 @@
     Virtuel
 </button>
 
-<button mat-raised-button color="warn" id="submit-button-1" (click) = "delete(this.clientSocket.roomId)" routerLink="/home">
-    Annuler la partie multijoueur
+<button mat-raised-button color="warn" id="submit-button-1" (click)="delete()" routerLink="/solo-game-ai">
+    Annuler
 </button>
 <br>
 <br>
 <br>
-{{gameSettingsService | json}}
+<!-- {{gameSettingsService | json}} -->

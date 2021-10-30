@@ -1,7 +1,7 @@
-import { Room, State } from '@app/classes/room';
+import { GameSettings, StartingPlayer } from '@common/game-settings';
+import { Room, State } from '@common/room';
+import { PlayerIndex } from '@common/PlayerIndex';
 import { Service } from 'typedi';
-// eslint-disable-next-line no-restricted-imports
-import { GameSettings } from '../classes/multiplayer-game-settings';
 
 @Service()
 export class RoomManager {
@@ -53,8 +53,8 @@ export class RoomManager {
     formatGameSettingsForCustomerIn(roomId: string): GameSettings {
         const room = this.find(roomId) as Room;
         const gameSettings = room.gameSettings;
-        const playerNames: string[] = [gameSettings.playersName[1], gameSettings.playersName[0]];
-        const startingPlayer = gameSettings.startingPlayer ? 0 : 1;
+        const playerNames: string[] = [gameSettings.playersName[PlayerIndex.CUSTOMER], gameSettings.playersName[PlayerIndex.OWNER]];
+        const startingPlayer = gameSettings.startingPlayer ? StartingPlayer.Player1 : StartingPlayer.Player2;
         const formattedGameSettings = new GameSettings(
             playerNames,
             startingPlayer,
@@ -87,7 +87,6 @@ export class RoomManager {
         }
         return '';
     }
-
     isNotAvailable(roomId: string): boolean {
         const room = this.find(roomId);
 

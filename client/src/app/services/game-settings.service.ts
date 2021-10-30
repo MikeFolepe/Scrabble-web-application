@@ -1,5 +1,5 @@
+import { GameSettings, StartingPlayer } from '@common/game-settings';
 import { Injectable } from '@angular/core';
-import { GameSettings, StartingPlayer } from '@app/classes/game-settings';
 
 @Injectable({
     providedIn: 'root',

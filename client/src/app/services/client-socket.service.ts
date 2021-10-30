@@ -1,12 +1,12 @@
-/* eslint-disable no-restricted-imports */
+/* eslint-disable sort-imports */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Explication: Afin d'avoir le type any associé à la variable socket
+import { GameSettings } from '@common/game-settings';
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { io } from 'node_modules/socket.io-client/build/esm';
-import { GameSettings } from '../classes/game-settings';
-import { Room } from '../classes/room';
-import { GameSettingsService } from './game-settings.service';
+import { GameSettingsService } from '@app/services/game-settings.service';
+import { Room } from '@common/room';
+import { Router } from '@angular/router';
 
 @Injectable({
     providedIn: 'root',
@@ -41,6 +41,10 @@ export class ClientSocketService {
         this.socket.on('yourGameSettings', (gameSettingsFromServer: GameSettings) => {
             this.gameSettingsService.gameSettings = gameSettingsFromServer;
         });
+    }
+
+    delete() {
+        this.socket.emit('deleteGame', this.roomId);
     }
 
     // les methodes de reception des commandes de jeu sont définies ici

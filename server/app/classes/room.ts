@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-restricted-imports
-import { GameSettings } from './multiplayer-game-settings';
+import { GameSettings } from '@common/game-settings';
 
 export enum State {
     Playing,
