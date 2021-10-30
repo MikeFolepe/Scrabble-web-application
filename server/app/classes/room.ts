@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 // eslint-disable-next-line no-restricted-imports
 import { GameSettings } from './multiplayer-game-settings';
 
@@ -8,17 +7,23 @@ export enum State {
 }
 
 export class Room {
-    id: string;
+    roomId: string;
     gameSettings: GameSettings;
     state: State;
+    socketIds: string[] = [];
 
-    constructor(id: string, gameSettings: GameSettings, state: State = State.Waiting) {
-        this.id = id;
+    constructor(roomId: string, socketID: string, gameSettings: GameSettings, state: State = State.Waiting) {
+        this.roomId = roomId;
         this.gameSettings = gameSettings;
         this.state = state;
+        this.socketIds.push(socketID);
     }
 
     addCustomer(customerName: string) {
         this.gameSettings.playersName[1] = customerName;
+    }
+
+    setSocketId(customerSocketID: string) {
+        this.socketIds.push(customerSocketID);
     }
 }

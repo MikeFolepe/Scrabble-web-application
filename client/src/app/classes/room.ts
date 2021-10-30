@@ -7,14 +7,16 @@ export enum State {
 }
 
 export class Room {
-    id: string;
+    roomId: string;
     gameSettings: GameSettings;
     state: State;
+    socketIds: string[];
 
-    constructor(id: string, gameSettings: GameSettings, state: State = State.Waiting) {
-        this.id = id;
+    constructor(roomId: string, socketID: string, gameSettings: GameSettings, state: State = State.Waiting) {
+        this.roomId = roomId;
         this.gameSettings = gameSettings;
         this.state = state;
+        this.socketIds[0] = socketID;
     }
 
     addCustomer(customerName: string) {

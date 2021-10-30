@@ -12,6 +12,7 @@ import { GameSettingsService } from './game-settings.service';
     providedIn: 'root',
 })
 export class ClientSocketService {
+    // TODO À cheker pour le type de socket
     socket: any;
     rooms: Room[] = [];
     roomId: string;

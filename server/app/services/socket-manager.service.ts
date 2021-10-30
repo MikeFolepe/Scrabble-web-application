@@ -19,12 +19,11 @@ export class SocketManager {
             socket.on('createRoom', (gameSettings: GameSettings) => {
                 const roomId = this.roomManager.createRoomId(gameSettings.playersName[0]);
                 // TODO: trouver une solution definitive au roomId
-                this.roomManager.createRoom(roomId, gameSettings);
-                // ICi check
-                console.log(roomId);
+                this.roomManager.createRoom(socket.id, roomId, gameSettings);
 
                 // Each room created will have the creator's socket id as roomId
                 socket.join(roomId);
+                socket.emit('yourRoomId', roomId);
                 // room creation alerts all clients on the new rooms configurations
                 this.sio.emit('roomConfiguration', this.roomManager.rooms);
             });
@@ -41,6 +40,13 @@ export class SocketManager {
                     return;
                 }
                 this.roomManager.addCustomer(playerName, roomId);
+                // Search the good room and set the custommer ID
+                const myroom = this.roomManager.find(roomId);
+                // On s'assure de pas avoir une room indéfinie
+                if (myroom !== undefined) {
+                    this.roomManager.setSocket(myroom);
+                }
+
                 this.roomManager.setState(roomId, State.Playing);
                 // block someone else entry from room selection
                 this.sio.emit('roomConfiguration', this.roomManager.rooms);
@@ -58,24 +64,17 @@ export class SocketManager {
                 this.sio.in(roomId).emit('goToGameView');
             });
 
-            // Delete  the room and uodate the client view
-            // socket.on('cancelMultiplayerparty', (gameSettings: GameSettings) => {
-            //     const roomId = this.roomManager.createRoomId(gameSettings.playersName[0]);
-            //     this.roomManager.deleteRoom(roomId);
-            //     this.sio.emit('roomConfiguration', this.roomManager.rooms);
-            //     // Check ici
-            //     console.log(roomId);
-            // });
-
             socket.on('cancelMultiplayerparty', (roomId: string) => {
                 this.roomManager.deleteRoom(roomId);
                 this.sio.emit('roomConfiguration', this.roomManager.rooms);
-                console.log(roomId);
             });
 
-            socket.on('disconnect', (reason) => {
-                console.log(`Deconnexion par l'utilisateur avec id : ${socket.id}`);
-                console.log(`Raison de deconnexion : ${reason}`);
+            socket.on('disconnect', () => {
+                const roomId = this.roomManager.findRoomIdOf(socket.id);
+                this.roomManager.deleteRoom(roomId);
+                this.sio.emit('roomConfiguration', this.roomManager.rooms);
+                // console.log(`Deconnexion par l'utilisateur avec id : ${socket.id}`);
+                // console.log(`Raison de deconnexion : ${reason}`);
             });
 
             socket.on('sendRoomMessage', (message: string, roomId: string) => {

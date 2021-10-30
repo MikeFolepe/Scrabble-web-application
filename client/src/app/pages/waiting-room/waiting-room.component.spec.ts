@@ -1,13 +1,18 @@
+/* eslint-disable prefer-arrow/prefer-arrow-functions */
+/* eslint-disable @typescript-eslint/quotes */
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable prettier/prettier */
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
+import { GameSettings } from '@app/classes/game-settings';
 import { ClientSocketService } from '@app/services/client-socket.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { WaitingRoomComponent } from './waiting-room.component';
-// import { Router } from '@angular/router';
+
 
 describe('WaitingRoomComponent', () => {
+    
     let component: WaitingRoomComponent;
     let fixture: ComponentFixture<WaitingRoomComponent>;
     let clientSocketServiceSpyjob: jasmine.SpyObj<ClientSocketService>;
@@ -15,9 +20,11 @@ describe('WaitingRoomComponent', () => {
 
     beforeEach(() => {
         clientSocketServiceSpyjob = jasmine.createSpyObj('ClientSocketService', ['route']);
-        gameSettingsServiceSpyjob = jasmine.createSpyObj('GameSettingsServices', ['rogetSettingsute']);
+        // TODO Regarder bien comment reinjecter les bails
+        // clientSocketServiceSpyjob.socket = jasmine.createSpyObj('SOCKETIO', ['conne']);
+        gameSettingsServiceSpyjob = jasmine.createSpyObj('GameSettingsServices', ['']);
+        
     });
-
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [WaitingRoomComponent],
@@ -29,41 +36,63 @@ describe('WaitingRoomComponent', () => {
         }).compileComponents();
     });
 
+      
     beforeEach(() => {
         fixture = TestBed.createComponent(WaitingRoomComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });
 
+   
     beforeEach(() => {
         fixture = TestBed.createComponent(WaitingRoomComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });
-
-    beforeEach(() => {
-        fixture = TestBed.createComponent(WaitingRoomComponent);
-        component = fixture.componentInstance;
-        fixture.detectChanges();
-    });
-
+    
+    
     it('should create', () => {
         expect(component).toBeTruthy();
     });
+    
+   
+    it('should redirect to home page if the Ownername is empty', () => {
+         jasmine.clock().install();
+        component.gameSettingsService.gameSettings = new GameSettings(['',''],1,'01','00','Facile','oui','francais');
+        component.handleReloadErrors();
+         jasmine.clock().tick(3000);
+        expect(component.status).toEqual('Une erreur est survenue');
+        jasmine.clock().uninstall();
+    });
 
-    // it('should redirect to home page if the Ownername is empty', () => {
-    //     gameSettingsServiceSpyjob.gameSettings(['',''],);
-    //     // eslint-disable-next-line no-console
-    //     console.log(gameSettingsServiceSpyjob.gameSettings.playersName[0]);
-    //     expect(component.status).toEqual('Une erreur est survenu');
-    //     // expect(component.router.navigate).toHaveBeenCalled();
-    // });
+    it('should redirect to home page if the Ownername is not empty', () => {
+        jasmine.clock().install();
+       component.gameSettingsService.gameSettings = new GameSettings(['Mike',''],1,'01','00','Facile','oui','francais');
+       component.handleReloadErrors();
+        jasmine.clock().tick(3000);
+       expect(component.status).toEqual('');
+       jasmine.clock().uninstall();
+   });
+    
+    it('should set the message after the time out', fakeAsync(() => {
+        jasmine.clock().install();
+        component.waitBeforeChangeStatus(1000,'');
+        jasmine.clock().tick(3000);
+        expect(component.status).toEqual('');
+        jasmine.clock().uninstall();
+    }));
+    
+    it('should route the user a the view on init',() => {
+        component.gameSettingsService.gameSettings = new GameSettings(['Mike',''],1,'01','00','Facile','oui','francais'); 
+        component.gameSettingsService.isRedirectedFromMultiplayerGame= false;
+        component.gameSettingsService.isSoloMode= false;
+        component.route();
+        expect( component.gameSettingsService.isRedirectedFromMultiplayerGame).toEqual(true);
+        expect( component.gameSettingsService.isSoloMode).toEqual(true);
+        // expect(component.router.navigate).toEqual(['solo-game-ai']);
+        
+    });
+    
 
-    // it('should dislplay the corrct message if the socket is not ', () => {
-    //     // eslint-disable-next-line no-console
-    //     clientSocketServiceSpyjob.socket.connect();
-    //     console.log(clientSocketServiceSpyjob.socket.connected);
-    //     expect(component.status).toEqual('Erreur de connexion...veuillez réessayer');
-    //     expect(component.isWaiting).toEqual(false);
-    // });
 });
+ 

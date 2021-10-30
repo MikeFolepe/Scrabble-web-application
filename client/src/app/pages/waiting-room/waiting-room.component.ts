@@ -12,7 +12,7 @@ export class WaitingRoomComponent implements OnInit {
     status: string;
     isWaiting: boolean;
 
-    constructor(private router: Router, public gameSettingsService: GameSettingsService, public clientSocket: ClientSocketService) {
+    constructor(public router: Router, public gameSettingsService: GameSettingsService, public clientSocket: ClientSocketService) {
         this.status = '';
         this.isWaiting = false;
         this.clientSocket.route();
@@ -57,10 +57,6 @@ export class WaitingRoomComponent implements OnInit {
             this.status = message;
         }, waitingTime);
     }
-
-    // delete(): void {
-    //     this.clientSocket.socket.emit('cancelMultiplayerparty', this.gameSettingsService.gameSettings);
-    // }
 
     delete(roomId: string) {
         this.clientSocket.socket.emit('cancelMultiplayerparty', roomId);

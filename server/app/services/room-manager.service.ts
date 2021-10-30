@@ -11,8 +11,8 @@ export class RoomManager {
         this.rooms = [];
     }
 
-    createRoom(roomId: string, gameSettings: GameSettings) {
-        this.rooms.push(new Room(this.createRoomId(gameSettings.playersName[0]), gameSettings));
+    createRoom(socketId: string, roomId: string, gameSettings: GameSettings) {
+        this.rooms.push(new Room(roomId, socketId, gameSettings));
     }
 
     createRoomId(playerName: string) {
@@ -41,6 +41,10 @@ export class RoomManager {
         room.state = state;
     }
 
+    setSocket(room: Room) {
+        room.setSocketId(room.roomId);
+    }
+
     getGameSettings(roomId: string) {
         const room = this.find(roomId) as Room;
         return room.gameSettings;
@@ -66,8 +70,22 @@ export class RoomManager {
 
     deleteRoom(roomId: string) {
         this.rooms.forEach((room, roomIndex) => {
-            if (room.id === roomId) this.rooms.splice(roomIndex, 1);
+            if (room.roomId === roomId) this.rooms.splice(roomIndex, 1);
         });
+    }
+
+    findRoomIdOf(socketID: string): string {
+        const room = this.rooms.find((rooms) => {
+            for (const socketId of rooms.socketIds) {
+                if (socketId === socketID) return true;
+            }
+            return false;
+        });
+
+        if (room !== undefined) {
+            return room.roomId;
+        }
+        return '';
     }
 
     isNotAvailable(roomId: string): boolean {
@@ -81,6 +99,6 @@ export class RoomManager {
     }
 
     find(roomId: string): Room | undefined {
-        return this.rooms.find((room) => room.id === roomId);
+        return this.rooms.find((room) => room.roomId === roomId);
     }
 }

@@ -69,7 +69,7 @@ export class JoinRoomComponent implements OnInit {
                 }, 4000);
                 return;
             }
-            this.clientSocketService.socket.emit('newRoomCustomer', playerName, room.id);
+            this.clientSocketService.socket.emit('newRoomCustomer', playerName, room.roomId);
         });
     }
 }
