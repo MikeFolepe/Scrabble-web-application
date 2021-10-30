@@ -6,6 +6,7 @@ import { Player } from '@app/models/player.model';
 import { EndGameService } from '@app/services/end-game.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { LetterService } from '@app/services/letter.service';
+import { PlayerAIService } from '@app/services/player-ia.service';
 import { PlayerService } from '@app/services/player.service';
 import { SkipTurnService } from '@app/services/skip-turn.service';
 import { GameSettings } from '@common/game-settings';
@@ -23,6 +24,7 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
         public playerService: PlayerService,
         public skipTurn: SkipTurnService,
         public endGameService: EndGameService,
+        public playerAiService: PlayerAIService,
     ) {
         this.gameSettings = gameSettingsService.gameSettings;
     }
@@ -37,7 +39,7 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
     initializePlayers(): void {
         let player = new Player(1, this.gameSettings.playersName[INDEX_REAL_PLAYER], this.letterService.getRandomLetters());
         this.playerService.addPlayer(player);
-        player = new PlayerAI(2, this.gameSettings.playersName[INDEX_PLAYER_AI], this.letterService.getRandomLetters());
+        player = new PlayerAI(2, this.gameSettings.playersName[INDEX_PLAYER_AI], this.letterService.getRandomLetters(), this.playerAiService);
         this.playerService.addPlayer(player);
     }
 

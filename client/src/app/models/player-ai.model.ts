@@ -1,7 +1,8 @@
+/* eslint-disable sort-imports */
 import { AIStrategy, placingBallotBox, PlacingStrategy, strategyBallotBox } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { Range } from '@app/classes/range';
-import { PlayerAIComponent } from '@app/modules/game-view/player-ai/player-ai.component';
+import { PlayerAIService } from '@app/services/player-ia.service';
 import { PlayStrategy } from './abstract-strategy.model';
 import { PlaceLetters } from './place-letter-strategy.model';
 import { Player } from './player.model';
@@ -9,22 +10,18 @@ import { SkipTurn } from './skip-turn-strategy.model';
 import { SwapLetter } from './swap-letter-strategy.model';
 
 export class PlayerAI extends Player {
-    context: PlayerAIComponent;
     strategy: PlayStrategy;
-    constructor(id: number, name: string, letterTable: Letter[]) {
+    constructor(id: number, name: string, letterTable: Letter[], public playerAiService: PlayerAIService) {
         super(id, name, letterTable);
         // Initialize the first concrete strategy to be executed later
-        this.strategy = new SkipTurn();
+        this.setStrategy();
     }
 
     play() {
         // Allow the ai to execute the current strategy whoever it is
-        this.strategy.execute(this, this.context);
+        this.strategy.execute(this.playerAiService);
         // Set the next strategy for next tour
         this.setStrategy();
-    }
-    setContext(context: PlayerAIComponent) {
-        this.context = context;
     }
 
     replaceStrategy(strategy: PlayStrategy) {
@@ -52,6 +49,7 @@ export class PlayerAI extends Player {
 
         return quantity;
     }
+
     private setStrategy() {
         const randomNumber = this.generateRandomNumber(strategyBallotBox.length);
         switch (strategyBallotBox[randomNumber]) {
@@ -62,7 +60,6 @@ export class PlayerAI extends Player {
                 this.strategy = new SwapLetter();
                 break;
             case AIStrategy.Place:
-                // Get a pointing range object which extends PlaceLetters
                 this.strategy = new PlaceLetters(this.pointingRange());
                 break;
             default:
@@ -94,6 +91,6 @@ export class PlayerAI extends Player {
     }
 
     private generateRandomNumber(maxValue: number): number {
-        return Math.floor(Number(Math.random()) * maxValue);
+        return Math.floor(Math.random() * maxValue);
     }
 }

@@ -2,7 +2,7 @@
 import { Injectable } from '@angular/core';
 import { ALL_EASEL_BONUS, BOARD_COLUMNS, BOARD_ROWS, BONUSES_POSITIONS, RESERVE } from '@app/classes/constants';
 import { ScoreValidation } from '@app/classes/validation-score';
-import { CommunicationService } from '@app/services/communication.service';
+// import { CommunicationService } from '@app/services/communication.service';
 @Injectable({
     providedIn: 'root',
 })
@@ -14,7 +14,7 @@ export class WordValidationService {
     bonusesPositions: Map<string, string>;
     private validationState = false;
 
-    constructor(private httpServer: CommunicationService) {
+    constructor(/* private httpServer: CommunicationService*/) {
         this.playedWords = new Map<string, string[]>();
         this.newPlayedWords = new Map<string, string[]>();
         this.newWords = new Array<string>();
@@ -195,7 +195,7 @@ export class WordValidationService {
     //     return this.http.get<ScoreValidation>(wordValidationUrl);
     // }
 
-    validateAllWordsOnBoard(scrabbleBoard: string[][], isEaselSize: boolean, isRow: boolean): ScoreValidation {
+    validateAllWordsOnBoard(scrabbleBoard: string[][], isEaselSize: boolean, isRow: boolean, iaAsked: boolean = false): ScoreValidation {
         let scoreTotal = 0;
         this.passThroughAllRowsOrColumns(scrabbleBoard, isRow);
         this.passThroughAllRowsOrColumns(scrabbleBoard, !isRow);
@@ -207,17 +207,18 @@ export class WordValidationService {
         //     }
         // }
 
-        this.httpServer.validationPost(this.newPlayedWords).subscribe((validation) => (this.validationState = validation));
-        if (!this.validationState) {
-            this.newPlayedWords.clear();
-            return { validation: this.validationState, score: scoreTotal };
-        }
+        // this.httpServer.validationPost(this.newPlayedWords).subscribe((validation) => (this.validationState = validation));
+        // if (!this.validationState) {
+        //     this.newPlayedWords.clear();
+        //     return { validation: this.validationState, score: scoreTotal };
+        // }
         scoreTotal += this.calculateTotalScore(scoreTotal, this.newPlayedWords);
 
         if (isEaselSize) {
             scoreTotal += ALL_EASEL_BONUS;
         }
-        this.removeBonuses(this.newPlayedWords);
+
+        if (iaAsked === false) this.removeBonuses(this.newPlayedWords);
 
         for (const word of this.newPlayedWords.keys()) {
             this.addToPlayedWords(word, this.newPlayedWords.get(word) as string[], this.playedWords);

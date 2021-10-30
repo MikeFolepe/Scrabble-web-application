@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { ONE_SECOND_TIME } from '@app/classes/constants';
+import { PlayerAI } from '@app/models/player-ai.model';
 import { EndGameService } from '@app/services/end-game.service';
 import { GameSettingsService } from './game-settings.service';
+import { PlayerService } from './player.service';
 
 @Injectable({
     providedIn: 'root',
@@ -12,13 +14,13 @@ export class SkipTurnService {
     seconds: number;
     // eslint-disable-next-line no-undef
     intervalID: NodeJS.Timeout;
-    private playAiTurn: () => void;
+    // private playAiTurn: () => void;
 
-    constructor(public gameSettingsService: GameSettingsService, public endGameService: EndGameService) {}
+    constructor(public gameSettingsService: GameSettingsService, public endGameService: EndGameService, public playerService: PlayerService) {}
 
-    bindAiTurn(fn: () => void) {
-        this.playAiTurn = fn;
-    }
+    // bindAiTurn(fn: () => void) {
+    //     this.playAiTurn = fn;
+    // }
 
     switchTurn(): void {
         if (this.endGameService.isEndGame) {
@@ -29,7 +31,10 @@ export class SkipTurnService {
             if (this.isTurn) {
                 this.isTurn = false;
                 this.startTimer();
-                this.playAiTurn();
+                const playerAi = this.playerService.players[1] as PlayerAI;
+                debugger;
+                playerAi.play();
+                // this.playAiTurn();
             } else {
                 this.isTurn = true;
                 this.startTimer();

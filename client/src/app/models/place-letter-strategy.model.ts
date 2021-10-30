@@ -1,13 +1,12 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
-/* eslint-disable max-lines */
-import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSITION_X, DICTIONARY, INDEX_PLAYER_AI } from '@app/classes/constants';
+/* eslint-disable sort-imports */
+import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSITION_X, DICTIONARY } from '@app/classes/constants';
 import { Range } from '@app/classes/range';
 import { BoardPattern, Orientation, PatternInfo, PossibleWords } from '@app/classes/scrabble-board-pattern';
 import { Vec2 } from '@app/classes/vec2';
-import { PlayerAIComponent } from '@app/modules/game-view/player-ai/player-ai.component';
+import { PlayerAIService } from '@app/services/player-ia.service';
 import { PlayStrategy } from './abstract-strategy.model';
 import { PlayerAI } from './player-ai.model';
-import { SwapLetter } from './swap-letter-strategy.model';
 
 export class PlaceLetters extends PlayStrategy {
     dictionary: string[];
@@ -18,48 +17,56 @@ export class PlaceLetters extends PlayStrategy {
         this.board = [];
     }
 
-    execute(player: PlayerAI, context: PlayerAIComponent): void {
-        this.initializeArray(context.placeLetterService.scrabbleBoard);
+    execute(playerAiService: PlayerAIService): void {
+        const playerAi = playerAiService.playerService.players[1] as PlayerAI;
+        const isFirstRound = playerAiService.placeLetterService.isFirstRound;
+        const scrabbleBoard = playerAiService.placeLetterService.scrabbleBoard;
+
+        this.initializeArray(scrabbleBoard);
         let allPossibleWords: PossibleWords[];
         let matchingPointingRangeWords: PossibleWords[] = [];
 
-        const patterns = this.generateAllPatterns(player.getHand(), context.playerAIService.isFirstRound);
+        const patterns = this.generateAllPatterns(playerAi.getHand(), isFirstRound);
         allPossibleWords = this.generateAllWords(this.dictionary, patterns);
-        allPossibleWords = this.removeIfNotEnoughLetter(allPossibleWords, context.aiPlayer);
+        allPossibleWords = this.removeIfNotEnoughLetter(allPossibleWords, playerAi);
 
-        if (context.playerAIService.isFirstRound) {
+        if (isFirstRound) {
             allPossibleWords.forEach((word) => (word.startIdx = CENTRAL_CASE_POSITION_X));
         } else {
             allPossibleWords = this.removeIfNotDisposable(allPossibleWords);
         }
 
-        context.playerAIService.calculatePoints(allPossibleWords, context.placeLetterService.scrabbleBoard);
-        context.playerAIService.sortDecreasingPoints(allPossibleWords);
-        matchingPointingRangeWords = context.playerAIService.filterByRange(allPossibleWords, this.pointingRange);
+        playerAiService.calculatePoints(allPossibleWords, scrabbleBoard);
+        playerAiService.sortDecreasingPoints(allPossibleWords);
+        matchingPointingRangeWords = playerAiService.filterByRange(allPossibleWords, this.pointingRange);
 
-        this.computeResults(allPossibleWords, matchingPointingRangeWords, context);
-        context.switchTurn();
+        this.computeResults(allPossibleWords, matchingPointingRangeWords, playerAiService);
+        // context.switchTurn();
     }
 
-    computeResults(allPossibleWords: PossibleWords[], matchingPointingRangeWords: PossibleWords[], context: PlayerAIComponent): void {
-        if (matchingPointingRangeWords.length !== 0 && this.attempt(matchingPointingRangeWords, context)) {
-            context.playerService.refillEasel(1);
-            context.sendPossibilities(matchingPointingRangeWords);
+    computeResults(allPossibleWords: PossibleWords[], matchingPointingRangeWords: PossibleWords[], playerAiService: PlayerAIService): void {
+        if (matchingPointingRangeWords.length !== 0 && this.attempt(matchingPointingRangeWords, playerAiService)) {
+            // context.playerService.refillEasel(1);
+            // context.sendPossibilities(matchingPointingRangeWords);
+            console.log('trouvé pour ' + this.pointingRange + ' pts : ');
+            console.log(matchingPointingRangeWords);
             return;
-        } else if (allPossibleWords.length !== 0 && this.attempt(allPossibleWords, context)) {
-            context.playerService.refillEasel(1);
-            context.sendPossibilities(allPossibleWords);
+        } else if (allPossibleWords.length !== 0 && this.attempt(allPossibleWords, playerAiService)) {
+            // context.playerService.refillEasel(1);
+            // context.sendPossibilities(allPossibleWords);
+            console.log('trouvé pour : ');
+            console.log(allPossibleWords);
             return;
         } else {
-            context.aiPlayer.replaceStrategy(new SwapLetter());
+            // context.aiPlayer.replaceStrategy(new SwapLetter());
         }
     }
 
-    attempt(possibilities: PossibleWords[], context: PlayerAIComponent): boolean {
+    attempt(possibilities: PossibleWords[], playerAiService: PlayerAIService): boolean {
         let attempt = 0;
         do {
-            const randomIdx = Math.floor(Math.random() * possibilities.length);
-            const word = possibilities[randomIdx];
+            // const randomIdx = Math.floor(Math.random() * possibilities.length);
+            const word = possibilities[attempt];
             let start: Vec2;
             let orientation: string;
             if (word.orientation === Orientation.HorizontalOrientation) {
@@ -69,10 +76,12 @@ export class PlaceLetters extends PlayStrategy {
                 start = { x: word.startIdx, y: word.line };
                 orientation = 'v';
             }
-            context.placeLetterService.placeMethodAdapter({ start, orientation, word: word.word, indexPlayer: INDEX_PLAYER_AI });
+            let scrabbleBoard: string[][] = [...playerAiService.placeLetterService.scrabbleBoard];
+            scrabbleBoard = playerAiService.placeWordOnBoard(scrabbleBoard, word.word, start, orientation);
+            // context.placeLetterService.placeMethodAdapter({ start, orientation, word: word.word, indexPlayer: INDEX_PLAYER_AI });
             attempt++;
-        } while (attempt < possibilities.length && context.playerAIService.isFirstRound === false);
-        return context.playerAIService.isPlacementValid;
+        } while (attempt < possibilities.length);
+        return attempt < possibilities.length;
     }
 
     initializeArray(scrabbleBoard: string[][]) {

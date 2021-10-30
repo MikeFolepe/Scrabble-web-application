@@ -1,9 +1,16 @@
+/* eslint-disable @typescript-eslint/no-shadow */
+/* eslint-disable sort-imports */
 import { Injectable } from '@angular/core';
 import { RESERVE } from '@app/classes/constants';
 import { Range } from '@app/classes/range';
 import { board, Earning } from '@app/classes/scrabble-board';
 import { Orientation, PossibleWords } from '@app/classes/scrabble-board-pattern';
 import { Vec2 } from '@app/classes/vec2';
+import { LetterService } from './letter.service';
+import { PlaceLetterService } from './place-letter.service';
+import { PlayerService } from './player.service';
+import { SkipTurnService } from './skip-turn.service';
+import { WordValidationService } from './word-validation.service';
 
 const ROW_OFFSET = 65;
 const COLUMN_OFFSET = 1;
@@ -15,6 +22,28 @@ const MULTIPLICATION_NEUTRAL = 1;
 export class PlayerAIService {
     isFirstRound: boolean = true;
     isPlacementValid: boolean;
+
+    constructor(
+        // All services needed for AI Player functionnalities
+        public placeLetterService: PlaceLetterService,
+        public wordValidation: WordValidationService,
+        public skipTurnService: SkipTurnService,
+        public playerService: PlayerService,
+        public letterService: LetterService,
+    ) {}
+
+    placeWordOnBoard(scrabbleBoard: string[][], word: string, start: Vec2, orientation: string) {
+        for (let j = 0; orientation === 'h' && j < word.length; j++) {
+            scrabbleBoard[start.x][j] = word[j];
+        }
+
+        for (let i = 0; orientation === 'h' && i < word.length; i++) {
+            scrabbleBoard[i][start.y] = word[i];
+        }
+
+        return scrabbleBoard;
+    }
+
     sortDecreasing = (word1: PossibleWords, word2: PossibleWords) => {
         // eslint-disable-next-line @typescript-eslint/no-magic-numbers
         if (word1.point > word2.point) return -1;
