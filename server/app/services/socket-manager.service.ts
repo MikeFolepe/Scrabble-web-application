@@ -37,7 +37,6 @@ export class SocketManager {
                     socket.emit('roomAlreadyToken');
                     return;
                 }
-                // console.log(this.roomManager.rooms);
                 this.roomManager.addCustomer(playerName, roomId);
                 // Search the good room and set the custommer ID
                 const myroom = this.roomManager.find(roomId);
@@ -45,11 +44,9 @@ export class SocketManager {
                 if (myroom !== undefined) {
                     this.roomManager.setSocket(myroom);
                 }
-
                 this.roomManager.setState(roomId, State.Playing);
                 // block someone else entry from room selection
                 this.sio.emit('roomConfiguration', this.roomManager.rooms);
-                console.log(this.roomManager.rooms);
                 socket.join(roomId);
                 // update roomID in the new filled room to allow the clients in this room
                 // to ask the server make some actions in their room later
@@ -68,7 +65,6 @@ export class SocketManager {
                 this.roomManager.deleteRoom(roomId);
                 this.sio.emit('roomConfiguration', this.roomManager.rooms);
                 socket.disconnect();
-                console.log(roomId);
             });
 
             socket.on('disconnect', () => {

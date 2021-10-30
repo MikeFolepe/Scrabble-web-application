@@ -2,11 +2,11 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ClientSocketService } from '@app/services/client-socket.service';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { MatDialogModule } from '@angular/material/dialog';
+import { RouterTestingModule } from '@angular/router/testing';
 // import { PageEvent } from '@angular/material/paginator';
 import { JoinRoomComponent } from './join-room.component';
-import { RouterTestingModule } from '@angular/router/testing';
 
-fdescribe('JoinRoomComponent', () => {
+describe('JoinRoomComponent', () => {
     let component: JoinRoomComponent;
     let fixture: ComponentFixture<JoinRoomComponent>;
     let clientSocketServiceSpyjob: jasmine.SpyObj<ClientSocketService>;

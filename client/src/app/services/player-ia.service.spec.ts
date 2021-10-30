@@ -1,3 +1,4 @@
+/* eslint-disable sort-imports */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 import { TestBed } from '@angular/core/testing';
 import { BOARD_COLUMNS, BOARD_ROWS } from '@app/classes/constants';

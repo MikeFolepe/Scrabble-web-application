@@ -1,4 +1,4 @@
-// import { Observable } from 'rxjs';
+/* eslint-disable sort-imports */
 import { Injectable } from '@angular/core';
 import { ALL_EASEL_BONUS, BOARD_COLUMNS, BOARD_ROWS, BONUSES_POSITIONS, RESERVE } from '@app/classes/constants';
 import { ScoreValidation } from '@app/classes/validation-score';

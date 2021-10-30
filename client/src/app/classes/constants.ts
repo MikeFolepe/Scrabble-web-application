@@ -14,6 +14,7 @@ export const MAX_NUMBER_OF_POSSIBILITY = 3;
 export const ONE_POSSIBILITY = 1;
 export const TWO_POSSIBILITY = 2;
 export const DELAY_TO_PLAY = 5000;
+export const DELAY_OF_LOGIN = 4000;
 export const NUMBER_OF_SKIP = 6;
 
 export const CENTRAL_CASE_POSITION_X = 7;

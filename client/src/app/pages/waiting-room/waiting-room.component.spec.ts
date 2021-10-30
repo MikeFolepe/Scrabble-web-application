@@ -1,14 +1,13 @@
 /* eslint-disable sort-imports */
-/* eslint-disable prefer-arrow/prefer-arrow-functions */
 /* eslint-disable @typescript-eslint/quotes */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable prettier/prettier */
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { GameSettings } from '@common/game-settings';
 import { ClientSocketService } from '@app/services/client-socket.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
+import { GameSettings } from '@common/game-settings';
 import { WaitingRoomComponent } from './waiting-room.component';
 
 
@@ -21,7 +20,7 @@ describe('WaitingRoomComponent', () => {
 
     beforeEach(() => {
         clientSocketServiceSpyjob = jasmine.createSpyObj('ClientSocketService', ['route']);
-        // TODO Regarder bien comment reinjecter les bails
+        // TODO Regarder bien comment reinjecter les informations 
         // clientSocketServiceSpyjob.socket = jasmine.createSpyObj('SOCKETIO', ['conne']);
         gameSettingsServiceSpyjob = jasmine.createSpyObj('GameSettingsServices', ['']);
         

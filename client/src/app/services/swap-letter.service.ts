@@ -1,3 +1,4 @@
+/* eslint-disable sort-imports */
 import { Injectable } from '@angular/core';
 import { INDEX_INVALID, MIN_RESERVE_SIZE_TO_SWAP } from '@app/classes/constants';
 import { LetterService } from '@app/services/letter.service';

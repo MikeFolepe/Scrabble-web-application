@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Room, State } from '@common/room';
 import { ClientSocketService } from '@app/services/client-socket.service';
+import { DELAY_OF_LOGIN } from '@app/classes/constants';
 import { DialogComponent } from '@app/modules/initialize-solo-game/dialog/dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
@@ -33,11 +34,10 @@ export class JoinRoomComponent implements OnInit {
         });
 
         this.clientSocketService.socket.on('roomAlreadyToken', () => {
-            console.log('ok');
             this.isRoomStillAvailable = false;
             setTimeout(() => {
                 this.isRoomStillAvailable = true;
-            }, 4000);
+            }, DELAY_OF_LOGIN);
             return;
         });
     }
@@ -66,7 +66,7 @@ export class JoinRoomComponent implements OnInit {
                 this.isNameValid = false;
                 setTimeout(() => {
                     this.isNameValid = true;
-                }, 4000);
+                }, DELAY_OF_LOGIN);
                 return;
             }
             this.clientSocketService.socket.emit('newRoomCustomer', playerName, room.roomId);

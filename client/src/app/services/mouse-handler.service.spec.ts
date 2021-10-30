@@ -1,6 +1,6 @@
+import { MouseHandlerService } from './mouse-handler.service';
 import { TestBed } from '@angular/core/testing';
 import { Vec2 } from '@app/classes/vec2';
-import { MouseHandlerService } from './mouse-handler.service';
 
 describe('MouseHandlerService', () => {
     let service: MouseHandlerService;
