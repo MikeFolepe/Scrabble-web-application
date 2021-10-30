@@ -20,6 +20,9 @@ export class ChatboxComponent implements OnInit, AfterViewInit {
     listMessages: string[] = [];
     listTypes: TypeMessage[] = [];
 
+    // Used to access TypeMessage enum in the HTML
+    htmlTypeMessage = TypeMessage;
+
     private typeMessage: TypeMessage;
 
     constructor(
