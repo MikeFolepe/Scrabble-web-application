@@ -1,3 +1,4 @@
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { RandomBonusComponent } from './random-bonus.component';
@@ -9,6 +10,7 @@ describe('RandomBonusComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [RandomBonusComponent],
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
     });
 

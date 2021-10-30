@@ -9,6 +9,7 @@ import { Player } from '@app/models/player.model';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { LetterEaselComponent } from './letter-easel.component';
 import { RouterTestingModule } from '@angular/router/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 describe('LetterEaselComponent', () => {
     let component: LetterEaselComponent;
@@ -19,6 +20,7 @@ describe('LetterEaselComponent', () => {
         await TestBed.configureTestingModule({
             declarations: [LetterEaselComponent],
             imports: [HttpClientTestingModule, RouterTestingModule],
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
     });
 
