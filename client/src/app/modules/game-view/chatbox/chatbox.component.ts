@@ -1,3 +1,4 @@
+/* eslint-disable sort-imports */
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { INDEX_PLAYER_AI, INDEX_REAL_PLAYER, ONE_SECOND_TIME } from '@app/classes/constants';
 import { ChatboxService } from '@app/services/chatbox.service';

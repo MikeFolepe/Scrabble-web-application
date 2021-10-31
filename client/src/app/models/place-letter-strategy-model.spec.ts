@@ -1,3 +1,4 @@
+/* eslint-disable sort-imports */
 import { TestBed } from '@angular/core/testing';
 import { BOARD_COLUMNS, BOARD_ROWS } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';

@@ -1,3 +1,4 @@
+/* eslint-disable sort-imports */
 import { EASEL_SIZE, MIN_RESERVE_SIZE_TO_SWAP } from '@app/classes/constants';
 import { PlayerAIComponent } from '@app/modules/game-view/player-ai/player-ai.component';
 import { PlayStrategy } from './abstract-strategy.model';
