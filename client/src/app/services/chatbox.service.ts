@@ -120,7 +120,7 @@ export class ChatboxService {
         }
     }
 
-    executePlace() {
+    async executePlace() {
         if (this.skipTurn.isTurn) {
             this.endGameService.actionsLog.push('placer');
             const messageSplitted = this.message.split(/\s/);
@@ -133,7 +133,7 @@ export class ChatboxService {
             };
             const orientation = positionSplitted[2];
 
-            if (this.placeLetterService.placeCommand(position, orientation, messageSplitted[2], INDEX_REAL_PLAYER)) {
+            if (await this.placeLetterService.placeCommand(position, orientation, messageSplitted[2], INDEX_REAL_PLAYER)) {
                 this.sendMessageService.displayMessageByType(this.message, this.typeMessage);
             }
         } else {

@@ -67,9 +67,9 @@ export class PlaceLetterService {
         });
     }
 
-    placeMethodAdapter(object: { start: Vec2; orientation: string; word: string; indexPlayer: number }) {
+    async placeMethodAdapter(object: { start: Vec2; orientation: string; word: string; indexPlayer: number }): Promise<void> {
         this.playerAIService.isPlacementValid = false;
-        const isValid = this.placeCommand(object.start, object.orientation, object.word, object.indexPlayer);
+        const isValid = await this.placeCommand(object.start, object.orientation, object.word, object.indexPlayer);
         this.playerAIService.isPlacementValid = isValid;
     }
 
@@ -89,16 +89,12 @@ export class PlaceLetterService {
         this.isFirstRound = false;
     }
 
-    placeCommand(position: Vec2, orientation: string, word: string, indexPlayer = INDEX_PLAYER_AI): boolean {
+    async placeCommand(position: Vec2, orientation: string, word: string, indexPlayer = INDEX_PLAYER_AI): Promise<boolean> {
         const currentPosition: Vec2 = { x: position.x, y: position.y };
         this.startPosition = position;
         this.orientation = orientation;
         this.word = word;
-        if (orientation === 'v') {
-            this.isRow = false;
-        } else if (orientation === 'h') {
-            this.isRow = true;
-        }
+        this.isRow = orientation === 'v' ? false : true;
         // Remove accents from the word to place
         const wordNoAccents = word.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
         // Reset the array containing the valid letters by making them all valid
@@ -130,7 +126,7 @@ export class PlaceLetterService {
         return this.validatePlacement(position, orientation, wordNoAccents, indexPlayer);
     }
 
-    placeWithKeyboard(position: Vec2, letter: string, orientation: string, indexLetterInWord: number, indexPlayer: number): boolean {
+    async placeWithKeyboard(position: Vec2, letter: string, orientation: string, indexLetterInWord: number, indexPlayer: number): Promise<boolean> {
         // If we are placing the first letter of the word
         if (indexLetterInWord === 0) {
             // Reset the array containing the valid letters
@@ -169,9 +165,13 @@ export class PlaceLetterService {
         return true;
     }
 
-    validatePlacement(position: Vec2, orientation: string, word: string, indexPlayer: number): boolean {
+    async validatePlacement(position: Vec2, orientation: string, word: string, indexPlayer: number): Promise<boolean> {
         // Validation of the placement
-        const finalResult: ScoreValidation = this.wordValidationService.validateAllWordsOnBoard(this.scrabbleBoard, this.isEaselSize, this.isRow);
+        const finalResult: ScoreValidation = await this.wordValidationService.validateAllWordsOnBoard(
+            this.scrabbleBoard,
+            this.isEaselSize,
+            this.isRow,
+        );
         if (finalResult.validation) {
             this.handleValidPlacement(finalResult, indexPlayer);
             this.skipTurnService.switchTurn();
@@ -186,7 +186,7 @@ export class PlaceLetterService {
         return false;
     }
 
-    validateKeyboardPlacement(position: Vec2, orientation: string, word: string, indexPlayer: number): boolean {
+    async validateKeyboardPlacement(position: Vec2, orientation: string, word: string, indexPlayer: number): Promise<boolean> {
         this.startPosition = position;
         this.orientation = orientation;
         this.word = word;

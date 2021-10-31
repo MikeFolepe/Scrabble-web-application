@@ -71,10 +71,10 @@ export class BoardHandlerService {
         }
     }
 
-    placeLetter(letter: string): void {
+    async placeLetter(letter: string): Promise<void> {
         if (this.isFirstCasePicked && !this.isFirstCaseLocked) {
             // Placing the 1st letter
-            if (this.placeLetterService.placeWithKeyboard(this.currentCase, letter, this.orientation, this.word.length, INDEX_REAL_PLAYER)) {
+            if (await this.placeLetterService.placeWithKeyboard(this.currentCase, letter, this.orientation, this.word.length, INDEX_REAL_PLAYER)) {
                 this.placedLetters[this.word.length] = true;
                 this.word += letter;
                 this.isFirstCaseLocked = true;
@@ -83,7 +83,7 @@ export class BoardHandlerService {
         } else if (this.isFirstCaseLocked) {
             // Placing following letters
             this.goToNextCase();
-            if (this.placeLetterService.placeWithKeyboard(this.currentCase, letter, this.orientation, this.word.length, INDEX_REAL_PLAYER)) {
+            if (await this.placeLetterService.placeWithKeyboard(this.currentCase, letter, this.orientation, this.word.length, INDEX_REAL_PLAYER)) {
                 this.placedLetters[this.word.length] = true;
                 this.word += letter;
                 this.updateCaseDisplay();
@@ -114,9 +114,9 @@ export class BoardHandlerService {
         }
     }
 
-    confirmPlacement(): void {
+    async confirmPlacement(): Promise<void> {
         // Validation of the placement
-        if (this.placeLetterService.validateKeyboardPlacement(this.firstCase, this.orientation, this.word, INDEX_REAL_PLAYER)) {
+        if (await this.placeLetterService.validateKeyboardPlacement(this.firstCase, this.orientation, this.word, INDEX_REAL_PLAYER)) {
             const column = (this.firstCase.x + 1).toString();
             const row: string = String.fromCharCode(this.firstCase.y + 'a'.charCodeAt(0));
             this.sendMessageService.displayMessageByType('!placer ' + row + column + this.orientation + ' ' + this.word, 'player');
