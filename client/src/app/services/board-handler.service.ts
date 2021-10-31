@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { CASE_SIZE, INDEX_INVALID, INDEX_REAL_PLAYER, MouseButton, LAST_INDEX, BOARD_ROWS, BOARD_COLUMNS } from '@app/classes/constants';
+import { CASE_SIZE, INDEX_INVALID, INDEX_REAL_PLAYER, LAST_INDEX, BOARD_ROWS, BOARD_COLUMNS } from '@app/classes/constants';
+import { MouseButton, TypeMessage } from '@app/classes/enum';
 import { Vec2 } from '@app/classes/vec2';
 import { GridService } from './grid.service';
 import { PlaceLetterService } from './place-letter.service';
@@ -119,7 +120,7 @@ export class BoardHandlerService {
         if (this.placeLetterService.validateKeyboardPlacement(this.firstCase, this.orientation, this.word, INDEX_REAL_PLAYER)) {
             const column = (this.firstCase.x + 1).toString();
             const row: string = String.fromCharCode(this.firstCase.y + 'a'.charCodeAt(0));
-            this.sendMessageService.displayMessageByType('!placer ' + row + column + this.orientation + ' ' + this.word, 'player');
+            this.sendMessageService.displayMessageByType('!placer ' + row + column + this.orientation + ' ' + this.word, TypeMessage.Player);
             this.word = '';
             this.placedLetters = [];
             this.isFirstCasePicked = false;

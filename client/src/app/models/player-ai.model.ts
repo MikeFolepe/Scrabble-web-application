@@ -1,4 +1,5 @@
-import { AIStrategy, placingBallotBox, PlacingStrategy, strategyBallotBox } from '@app/classes/constants';
+import { placingBallotBox, strategyBallotBox } from '@app/classes/constants';
+import { AIStrategy, PlacingStrategy } from '@app/classes/enum';
 import { Letter } from '@app/classes/letter';
 import { Range } from '@app/classes/range';
 import { PlayerAIComponent } from '@app/modules/game-view/player-ai/player-ai.component';

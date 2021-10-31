@@ -1,20 +1,22 @@
-/* eslint-disable prettier/prettier */
-// import { expect } from 'chai';
-// import { describe } from 'mocha';
-// import { GameSettingsService } from '@app/services/game-settings.service';
 import { GameSettings } from './game-settings';
 import { Room, State } from './room';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
 
 describe('Room', () => {
     const id = 'LOG2990';
-    // const ownerName = 'Paul';
-    // const customerName = 'Mike';
     const settings: GameSettings = new GameSettings(['Paul', 'Mike'], 1, '00', '30', 'facile', 'non', 'français');
     const state = State.Waiting;
     let room: Room;
 
     beforeEach(async () => {
         room = new Room(id, settings, state.valueOf());
+    });
+
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            schemas: [NO_ERRORS_SCHEMA],
+        }).compileComponents();
     });
 
     it('should create an instance', () => {

@@ -317,4 +317,16 @@ describe('PlayerService', () => {
         service.addEaselLetterToReserve(0, 0);
         expect(spy).toHaveBeenCalledOnceWith('A');
     });
+
+    it('should return easel when getEasel() is called', () => {
+        const easel = [letterA, letterB, letterD, letterC, letterD, letterA, letterA];
+        player.letterTable = easel;
+        service['players'].push(player);
+        const easelAI = [letterC, letterD];
+        playerAI.letterTable = easelAI;
+        service['players'].push(playerAI);
+
+        expect(service.getEasel(0)).toEqual(easel);
+        expect(service.getEasel(1)).toEqual(easelAI);
+    });
 });

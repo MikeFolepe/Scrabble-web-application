@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ONE_SECOND_TIME } from '@app/classes/constants';
+import { ONE_SECOND_DELAY } from '@app/classes/constants';
 import { ClientSocketService } from '@app/services/client-socket.service';
 import { EndGameService } from '@app/services/end-game.service';
 import { GameSettingsService } from './game-settings.service';
@@ -11,6 +11,7 @@ export class SkipTurnService {
     isTurn: boolean;
     minutes: number;
     seconds: number;
+    // Next line is mandatory, it is an eslint issue
     // eslint-disable-next-line no-undef
     intervalID: NodeJS.Timeout;
     private playAiTurn: () => void;
@@ -45,7 +46,7 @@ export class SkipTurnService {
                     this.isTurn = true;
                     this.startTimer();
                 }
-            }, ONE_SECOND_TIME);
+            }, ONE_SECOND_DELAY);
         } else {
             this.clientSocket.socket.emit('switchTurn', this.isTurn, this.clientSocket.roomId);
             this.isTurn = false;
@@ -71,7 +72,7 @@ export class SkipTurnService {
             } else {
                 this.seconds = this.seconds - 1;
             }
-        }, ONE_SECOND_TIME);
+        }, ONE_SECOND_DELAY);
     }
 
     stopTimer(): void {

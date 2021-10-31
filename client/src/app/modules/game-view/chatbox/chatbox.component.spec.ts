@@ -1,11 +1,12 @@
 /* eslint-disable dot-notation */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
-import { ONE_SECOND_TIME } from '@app/classes/constants';
-import { ChatboxComponent } from './chatbox.component';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
+import { ONE_SECOND_DELAY } from '@app/classes/constants';
+import { TypeMessage } from '@app/classes/enum';
+import { ChatboxComponent } from './chatbox.component';
 
 describe('ChatBoxComponent', () => {
     let component: ChatboxComponent;
@@ -23,7 +24,7 @@ describe('ChatBoxComponent', () => {
         jasmine.clock().install();
         component = fixture.componentInstance;
         component.ngAfterViewInit();
-        jasmine.clock().tick(ONE_SECOND_TIME + 1);
+        jasmine.clock().tick(ONE_SECOND_DELAY + 1);
         fixture.detectChanges();
     });
 
@@ -74,7 +75,7 @@ describe('ChatBoxComponent', () => {
         component.sendSystemMessage('Second system message');
         expect(component.listTypes).toHaveSize(2);
         expect(component.listMessages).toHaveSize(2);
-        expect(component.listTypes[0]).toEqual('system');
+        expect(component.listTypes[0]).toEqual(TypeMessage.System);
     });
 
     it('should send message as opponent when sendOpponentMessage() is called', () => {
@@ -82,12 +83,12 @@ describe('ChatBoxComponent', () => {
         component.sendOpponentMessage('Opponent system message');
         expect(component.listTypes).toHaveSize(2);
         expect(component.listMessages).toHaveSize(2);
-        expect(component.listTypes[0]).toEqual('opponent');
+        expect(component.listTypes[0]).toEqual(TypeMessage.Opponent);
     });
 
     it('should use the message and the type from sendMessageService when we display a message', () => {
         component['sendMessageService'].message = 'Service message';
-        component['sendMessageService'].typeMessage = 'system';
+        component['sendMessageService'].typeMessage = TypeMessage.System;
         component.displayMessageByType();
         expect(component.listMessages.pop()).toEqual(component['sendMessageService'].message);
         expect(component.listTypes.pop()).toEqual(component['sendMessageService'].typeMessage);
@@ -101,12 +102,12 @@ describe('ChatBoxComponent', () => {
     });
 
     it('should set interval for all required functions', () => {
-        const spy1 = spyOn(component.endGameService, 'checkEndGame');
+        const spy1 = spyOn(component['endGameService'], 'checkEndGame');
         const spy2 = spyOn(component['chatBoxService'], 'displayFinalMessage');
-        const spy3 = spyOn(component.endGameService, 'getFinalScore');
-        component.endGameService.isEndGame = true;
+        const spy3 = spyOn(component['endGameService'], 'getFinalScore');
+        component['endGameService'].isEndGame = true;
         component.ngAfterViewInit();
-        jasmine.clock().tick(ONE_SECOND_TIME + 1);
+        jasmine.clock().tick(ONE_SECOND_DELAY + 1);
         expect(spy1).toHaveBeenCalled();
         expect(spy2).toHaveBeenCalled();
         expect(spy3).toHaveBeenCalled();

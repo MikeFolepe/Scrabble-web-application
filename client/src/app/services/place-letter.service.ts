@@ -10,6 +10,7 @@ import {
     INDEX_REAL_PLAYER,
     THREE_SECONDS_DELAY,
 } from '@app/classes/constants';
+import { TypeMessage } from '@app/classes/enum';
 import { ScoreValidation } from '@app/classes/validation-score';
 import { Vec2 } from '@app/classes/vec2';
 import { GridService } from '@app/services/grid.service';
@@ -109,7 +110,7 @@ export class PlaceLetterService {
 
         // If the command is possible according to the parameters
         if (!this.isPossible(position, orientation, wordNoAccents, indexPlayer)) {
-            this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', 'error');
+            this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', TypeMessage.Error);
             return false;
         }
 
@@ -118,7 +119,7 @@ export class PlaceLetterService {
             if (!this.placeLetter(currentPosition, wordNoAccents[i], orientation, i, indexPlayer)) {
                 // If the placement of one letter is invalid, we erase all letters placed
                 this.handleInvalidPlacement(position, orientation, wordNoAccents, indexPlayer);
-                this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', 'error');
+                this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', TypeMessage.Error);
                 return false;
             }
             this.updatePosition(currentPosition, orientation);
@@ -178,7 +179,7 @@ export class PlaceLetterService {
             return true;
         }
         this.handleInvalidPlacement(position, orientation, word, indexPlayer);
-        this.sendMessageService.displayMessageByType('ERREUR : Un ou des mots formés sont invalides', 'error');
+        this.sendMessageService.displayMessageByType('ERREUR : Un ou des mots formés sont invalides', TypeMessage.Error);
         setTimeout(() => {
             if (this.gameSettingsService.isSoloMode && indexPlayer === INDEX_REAL_PLAYER) this.skipTurnService.switchTurn();
             else if (!this.gameSettingsService.isSoloMode) this.skipTurnService.switchTurn();
@@ -196,14 +197,14 @@ export class PlaceLetterService {
                 return this.validatePlacement(position, orientation, word, indexPlayer);
             }
             this.handleInvalidPlacement(position, orientation, word, indexPlayer);
-            this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', 'error');
+            this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', TypeMessage.Error);
             return false;
         } // Placing the following words
         if (this.isWordTouchingOthers(position, orientation, word)) {
             return this.validatePlacement(position, orientation, word, indexPlayer);
         }
         this.handleInvalidPlacement(position, orientation, word, indexPlayer);
-        this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', 'error');
+        this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', TypeMessage.Error);
         return false;
     }
 

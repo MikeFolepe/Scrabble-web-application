@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { JoinRoomComponent } from './join-room.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import { MatDialog } from '@angular/material/dialog';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 describe('JoinRoomComponent', () => {
     let component: JoinRoomComponent;
@@ -17,6 +18,7 @@ describe('JoinRoomComponent', () => {
                     useValue: {},
                 },
             ],
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
     });
 

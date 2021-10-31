@@ -7,6 +7,7 @@ import { BoardHandlerService } from './board-handler.service';
 import { GridService } from './grid.service';
 import { RouterTestingModule } from '@angular/router/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { TypeMessage } from '@app/classes/enum';
 
 describe('BoardHandlerService', () => {
     let service: BoardHandlerService;
@@ -165,7 +166,7 @@ describe('BoardHandlerService', () => {
         keyboardEvent = new KeyboardEvent('keydown', { key: 'Enter' });
         service.buttonDetect(keyboardEvent);
 
-        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('!placer h8h Frite', 'player');
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('!placer h8h Frite', TypeMessage.Player);
     });
 
     it('pressing Enter with an unvalid word placed should cancel the placement', () => {
@@ -205,7 +206,7 @@ describe('BoardHandlerService', () => {
         keyboardEvent = new KeyboardEvent('keydown', { key: 'Enter' });
         service.buttonDetect(keyboardEvent);
 
-        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('!placer h7h elite', 'player');
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('!placer h7h elite', TypeMessage.Player);
     });
 
     it('placing horizontally out of bounds letters following already placed letters should not be placed', () => {
@@ -233,7 +234,7 @@ describe('BoardHandlerService', () => {
         keyboardEvent = new KeyboardEvent('keydown', { key: 'Enter' });
         service.buttonDetect(keyboardEvent);
 
-        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('!placer h11h e', 'player');
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('!placer h11h e', TypeMessage.Player);
     });
 
     it('placing vertically out of bounds letters following already placed letters should not be placed', () => {
@@ -262,6 +263,6 @@ describe('BoardHandlerService', () => {
         keyboardEvent = new KeyboardEvent('keydown', { key: 'Enter' });
         service.buttonDetect(keyboardEvent);
 
-        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('!placer k8v e', 'player');
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('!placer k8v e', TypeMessage.Player);
     });
 });
