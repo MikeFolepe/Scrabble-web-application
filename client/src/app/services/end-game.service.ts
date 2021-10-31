@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { NUMBER_OF_SKIP, RESERVE, INDEX_PLAYER_AI, INDEX_REAL_PLAYER } from '@app/classes/constants';
+import { INDEX_PLAYER_AI, INDEX_REAL_PLAYER, NUMBER_OF_SKIP, RESERVE } from '@app/classes/constants';
+import { ClientSocketService } from './client-socket.service';
 import { DebugService } from './debug.service';
 import { LetterService } from './letter.service';
 import { PlayerService } from './player.service';
@@ -11,7 +12,19 @@ export class EndGameService {
     actionsLog: string[] = [];
     isEndGame: boolean = false;
 
-    constructor(public letterService: LetterService, public playerService: PlayerService, public debugService: DebugService) {}
+    constructor(
+        public letterService: LetterService,
+        public playerService: PlayerService,
+        public debugService: DebugService,
+        private clientSocketService: ClientSocketService,
+    ) {
+        this.clientSocketService.socket.on('receiveActions', (actionsLog: string[]) => {
+            this.actionsLog = actionsLog;
+        });
+        this.clientSocketService.socket.on('receiveEndGame', (isEndGame: boolean) => {
+            this.isEndGame = isEndGame;
+        });
+    }
 
     getWinnerName(): string {
         if (this.playerService.players[0].score > this.playerService.players[1].score) {
@@ -22,9 +35,16 @@ export class EndGameService {
             return this.playerService.players[0].name + '  ' + this.playerService.players[1].name;
         }
     }
+    addActionsLog(actionLog: string): void {
+        this.actionsLog.push(actionLog);
+        this.clientSocketService.socket.emit('sendActions', this.actionsLog, this.clientSocketService.roomId);
+    }
 
     checkEndGame(): void {
         this.isEndGame = this.isEndGameByActions() || this.isEndGameByEasel();
+        if (this.isEndGame) {
+            this.clientSocketService.socket.emit('sendEndGame', this.isEndGame, this.clientSocketService.roomId);
+        }
     }
 
     getFinalScore(indexPlayer: number): void {

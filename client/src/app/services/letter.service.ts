@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { EASEL_SIZE, RESERVE } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { BehaviorSubject } from 'rxjs';
+import { ClientSocketService } from '@app/services/client-socket.service';
 
 @Injectable({
     providedIn: 'root',
@@ -15,7 +16,11 @@ export class LetterService {
     messageSource = new BehaviorSubject('default message');
     // eslint-disable-next-line no-invalid-this
 
-    constructor() {
+    constructor(private clientSocketService: ClientSocketService) {
+        this.clientSocketService.socket.on('receiveReserve', (reserve: Letter[], reserveSize: number) => {
+            this.reserve = reserve;
+            this.reserveSize = reserveSize;
+        });
         this.updateReserveSize();
     }
 
@@ -59,6 +64,7 @@ export class LetterService {
             size += letter.quantity;
         }
         this.reserveSize = size;
+        this.clientSocketService.socket.emit('sendReserve', this.reserve, this.reserveSize, this.clientSocketService.roomId);
     }
 
     addLetterToReserve(letter: string): void {

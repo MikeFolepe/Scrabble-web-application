@@ -282,17 +282,6 @@ describe('PlayerService', () => {
         expect(service['players'][0].score).toEqual(INITIAL_SCORE + ADDED_SCORE);
     });
 
-    it("should return player's score", () => {
-        const playerScore = 40;
-        player.score = playerScore;
-        service['players'].push(player);
-        const playerAIScore = 60;
-        playerAI.score = playerAIScore;
-        service['players'].push(playerAI);
-        expect(service.getScore(0)).toEqual(playerScore);
-        expect(service.getScore(1)).toEqual(playerAIScore);
-    });
-
     it('should replace a letter from player easel when swap() is called', () => {
         spyOn(service['letterService'], 'getRandomLetter').and.returnValue(letterC);
         let number = 1;

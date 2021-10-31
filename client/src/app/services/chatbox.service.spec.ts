@@ -119,7 +119,7 @@ describe('ChatboxService', () => {
     it('using a valid command !placer should display the respective message', () => {
         spyOn(service['skipTurn'], 'switchTurn');
         service['skipTurn'].isTurn = true;
-        spyOn(service['placeLetterService'], 'placeCommand').and.returnValue(true);
+        spyOn(service['placeLetterService'], 'placeCommand').and.returnValue(Promise.resolve(true));
         service.command = 'placer';
         service.sendPlayerMessage('!placer h8h hello');
         expect(service.message).toEqual('!placer h8h hello');
@@ -208,7 +208,7 @@ describe('ChatboxService', () => {
     it('should not display message if place is false when executePlace() is called', () => {
         service['skipTurn'].isTurn = true;
         const spy = spyOn(service['skipTurn'], 'switchTurn');
-        spyOn(service['placeLetterService'], 'placeCommand').and.returnValue(false);
+        spyOn(service['placeLetterService'], 'placeCommand').and.returnValue(Promise.resolve(false));
         service.message = '!placer h8h test';
         service.executePlace();
         expect(spy).not.toHaveBeenCalled();

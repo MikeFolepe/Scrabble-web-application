@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ONE_SECOND_TIME } from '@app/classes/constants';
+import { ONE_SECOND_TIME, THREE_SECONDS_DELAY } from '@app/classes/constants';
 import { ClientSocketService } from '@app/services/client-socket.service';
 import { EndGameService } from '@app/services/end-game.service';
 import { GameSettingsService } from './game-settings.service';
@@ -35,21 +35,23 @@ export class SkipTurnService {
             return;
         }
         this.stopTimer();
-        if (this.gameSettingsService.isSoloMode) {
-            setTimeout(() => {
-                if (this.isTurn) {
-                    this.isTurn = false;
-                    this.startTimer();
-                    this.playAiTurn();
-                } else {
-                    this.isTurn = true;
-                    this.startTimer();
-                }
-            }, ONE_SECOND_TIME);
-        } else {
-            this.clientSocket.socket.emit('switchTurn', this.isTurn, this.clientSocket.roomId);
-            this.isTurn = false;
-        }
+        setTimeout(() => {
+            if (this.gameSettingsService.isSoloMode) {
+                setTimeout(() => {
+                    if (this.isTurn) {
+                        this.isTurn = false;
+                        this.startTimer();
+                        this.playAiTurn();
+                    } else {
+                        this.isTurn = true;
+                        this.startTimer();
+                    }
+                }, ONE_SECOND_TIME);
+            } else {
+                this.clientSocket.socket.emit('switchTurn', this.isTurn, this.clientSocket.roomId);
+                this.isTurn = false;
+            }
+        }, THREE_SECONDS_DELAY);
     }
 
     startTimer(): void {
@@ -64,7 +66,7 @@ export class SkipTurnService {
             if (this.seconds === 0 && this.minutes !== 0) {
                 this.minutes = this.minutes - 1;
                 this.seconds = 59;
-            } else if (this.seconds === 0 - 1 && this.minutes === 0) {
+            } else if (this.seconds === 0 && this.minutes === 0) {
                 if (this.isTurn) {
                     this.switchTurn();
                 }

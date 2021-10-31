@@ -20,6 +20,7 @@ import { SendMessageService } from './send-message.service';
 import { ClientSocketService } from './client-socket.service';
 import { GameSettingsService } from './game-settings.service';
 import { SkipTurnService } from './skip-turn.service';
+import { EndGameService } from './end-game.service';
 
 @Injectable({
     providedIn: 'root',
@@ -49,6 +50,7 @@ export class PlaceLetterService {
         private skipTurnService: SkipTurnService,
         private clientSocketService: ClientSocketService,
         private gameSettingsService: GameSettingsService,
+        private endGameService: EndGameService,
     ) {
         this.scrabbleBoard = []; // Initializes the array with empty letters
         for (let i = 0; i < BOARD_ROWS; i++) {
@@ -62,9 +64,12 @@ export class PlaceLetterService {
     }
 
     receivePlacement(): void {
-        this.clientSocketService.socket.on('receivePlacement', (startPosition: Vec2, orientation: string, word: string) => {
-            this.placeByOpponent(startPosition, orientation, word);
-        });
+        this.clientSocketService.socket.on(
+            'receivePlacement',
+            (scrabbleBoard: string[][], startPosition: Vec2, orientation: string, word: string) => {
+                this.placeByOpponent(scrabbleBoard, startPosition, orientation, word);
+            },
+        );
     }
 
     async placeMethodAdapter(object: { start: Vec2; orientation: string; word: string; indexPlayer: number }): Promise<void> {
@@ -73,10 +78,10 @@ export class PlaceLetterService {
         this.playerAIService.isPlacementValid = isValid;
     }
 
-    placeByOpponent(startPosition: Vec2, orientation: string, word: string): void {
+    placeByOpponent(scrabbleBoard: string[][], startPosition: Vec2, orientation: string, word: string): void {
         const currentPosition = { x: startPosition.x, y: startPosition.y };
+        this.scrabbleBoard = scrabbleBoard;
         for (const letter of word) {
-            this.scrabbleBoard[currentPosition.y][currentPosition.x] = letter;
             this.gridService.drawLetter(
                 this.gridService.gridContextLettersLayer,
                 letter,
@@ -166,6 +171,7 @@ export class PlaceLetterService {
     }
 
     async validatePlacement(position: Vec2, orientation: string, word: string, indexPlayer: number): Promise<boolean> {
+        this.endGameService.addActionsLog('placer');
         // Validation of the placement
         const finalResult: ScoreValidation = await this.wordValidationService.validateAllWordsOnBoard(
             this.scrabbleBoard,
@@ -229,7 +235,14 @@ export class PlaceLetterService {
         this.playerAIService.isFirstRound = false;
         // Emit to server on multiplayer mode
         if (!this.gameSettingsService.isSoloMode) {
-            this.clientSocketService.socket.emit('sendPlacement', this.startPosition, this.orientation, this.word, this.clientSocketService.roomId);
+            this.clientSocketService.socket.emit(
+                'sendPlacement',
+                this.scrabbleBoard,
+                this.startPosition,
+                this.orientation,
+                this.word,
+                this.clientSocketService.roomId,
+            );
         }
     }
 

@@ -8,6 +8,7 @@ import { BoardHandlerService } from '@app/services/board-handler.service';
 import { SendMessageService } from '@app/services/send-message.service';
 import { ManipulateService } from '@app/services/manipulate.service';
 import { SkipTurnService } from '@app/services/skip-turn.service';
+import { EndGameService } from '@app/services/end-game.service';
 
 @Component({
     selector: 'app-letter-easel',
@@ -28,6 +29,7 @@ export class LetterEaselComponent implements OnInit {
         private sendMessageService: SendMessageService,
         private manipulateService: ManipulateService,
         private skipTurnService: SkipTurnService,
+        private endGameService: EndGameService,
     ) {}
 
     // TODO Changer le font size ne deselect pas ?
@@ -108,6 +110,7 @@ export class LetterEaselComponent implements OnInit {
         // Display the respective message into the chatBox and pass the turn
         const message = this.playerService.players[INDEX_REAL_PLAYER].name + ' : !échanger ' + lettersToSwap;
         this.sendMessageService.displayMessageByType(message, 'player');
+        this.endGameService.addActionsLog('echanger');
         this.skipTurnService.switchTurn();
     }
 

@@ -5,8 +5,6 @@ import { ChatboxService } from '@app/services/chatbox.service';
 import { DebugService } from '@app/services/debug.service';
 import { EndGameService } from '@app/services/end-game.service';
 import { SendMessageService } from '@app/services/send-message.service';
-import { GameSettingsService } from '@app/services/game-settings.service';
-import { ClientSocketService } from './../../../services/client-socket.service';
 
 @Component({
     selector: 'app-chatbox',
@@ -30,8 +28,6 @@ export class ChatboxComponent implements OnInit, AfterViewInit {
         private sendMessageService: SendMessageService,
         public endGameService: EndGameService,
         private boardHandlerService: BoardHandlerService,
-        private clientSocketService: ClientSocketService,
-        private gameSettingsService: GameSettingsService,
     ) {}
 
     // Disable the current placement on the board when a click occurs in the chatbox
@@ -43,14 +39,12 @@ export class ChatboxComponent implements OnInit, AfterViewInit {
 
     ngOnInit(): void {
         this.sendMessageService.displayBound(this.displayMessageByType.bind(this));
-        this.receiveMessageFromOpponent();
     }
 
     handleKeyEvent(event: KeyboardEvent) {
         if (event.key === 'Enter') {
             event.preventDefault();
             this.chatBoxService.sendPlayerMessage(this.message);
-            this.sendMessageToOpponent(this.message, this.gameSettingsService.gameSettings.playersName[0]);
             this.message = ''; // Clear input
 
             this.scrollToBottom();
@@ -67,22 +61,6 @@ export class ChatboxComponent implements OnInit, AfterViewInit {
         this.typeMessage = 'system';
         this.listTypes.push(this.typeMessage);
         this.listMessages.push(systemMessage);
-    }
-
-    sendMessageToOpponent(message: string, myName: string) {
-        this.clientSocketService.socket.emit('sendRoomMessage', 'Message de ' + myName + ' : ' + message, this.clientSocketService.roomId);
-    }
-
-    receiveMessageFromOpponent() {
-        this.clientSocketService.socket.on('receiveRoomMessage', (message: string) => {
-            this.sendOpponentMessage(message);
-        });
-    }
-
-    sendOpponentMessage(opponentMessage: string) {
-        this.typeMessage = 'opponent';
-        this.listTypes.push(this.typeMessage);
-        this.listMessages.push(opponentMessage);
     }
 
     scrollToBottom(): void {

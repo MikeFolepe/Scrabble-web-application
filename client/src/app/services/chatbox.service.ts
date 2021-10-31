@@ -11,7 +11,6 @@ import { Subscription } from 'rxjs';
 import { DebugService } from './debug.service';
 import { SendMessageService } from './send-message.service';
 import { LetterService } from './letter.service';
-
 @Injectable({
     providedIn: 'root',
 })
@@ -84,7 +83,7 @@ export class ChatboxService {
 
     executeSkipTurn() {
         if (this.skipTurn.isTurn) {
-            this.endGameService.actionsLog.push('passer');
+            this.endGameService.addActionsLog('passer');
             this.sendMessageService.displayMessageByType(this.message, this.typeMessage);
             this.skipTurn.switchTurn();
         } else {
@@ -107,7 +106,6 @@ export class ChatboxService {
 
     executeSwap() {
         if (this.skipTurn.isTurn) {
-            this.endGameService.actionsLog.push('echanger');
             const messageSplitted = this.message.split(/\s/);
 
             if (this.swapLetterService.swapCommand(messageSplitted[1], INDEX_REAL_PLAYER)) {
@@ -122,7 +120,6 @@ export class ChatboxService {
 
     async executePlace() {
         if (this.skipTurn.isTurn) {
-            this.endGameService.actionsLog.push('placer');
             const messageSplitted = this.message.split(/\s/);
             const positionSplitted = messageSplitted[1].split(/([0-9]+)/);
 
@@ -137,8 +134,7 @@ export class ChatboxService {
                 this.sendMessageService.displayMessageByType(this.message, this.typeMessage);
             }
         } else {
-            this.typeMessage = 'error';
-            this.message = "ERREUR : Ce n'est pas ton tour";
+            this.sendMessageService.displayMessageByType("ERREUR : Ce n'est pas ton tour", 'error');
         }
     }
 
