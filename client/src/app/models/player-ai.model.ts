@@ -7,7 +7,6 @@ import { PlayStrategy } from './abstract-strategy.model';
 import { PlaceLetters } from './place-letter-strategy.model';
 import { Player } from './player.model';
 import { SkipTurn } from './skip-turn-strategy.model';
-import { SwapLetter } from './swap-letter-strategy.model';
 
 export class PlayerAI extends Player {
     strategy: PlayStrategy;
@@ -54,10 +53,10 @@ export class PlayerAI extends Player {
         const randomNumber = this.generateRandomNumber(strategyBallotBox.length);
         switch (strategyBallotBox[randomNumber]) {
             case AIStrategy.Skip:
-                this.strategy = new SkipTurn();
+                this.strategy = new PlaceLetters(this.pointingRange());
                 break;
             case AIStrategy.Swap:
-                this.strategy = new SwapLetter();
+                this.strategy = new PlaceLetters(this.pointingRange());
                 break;
             case AIStrategy.Place:
                 this.strategy = new PlaceLetters(this.pointingRange());

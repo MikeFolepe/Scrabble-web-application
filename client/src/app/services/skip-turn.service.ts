@@ -32,8 +32,14 @@ export class SkipTurnService {
                 this.isTurn = false;
                 this.startTimer();
                 const playerAi = this.playerService.players[1] as PlayerAI;
-                debugger;
-                playerAi.play();
+                // debugger;
+                // console.log(playerAi);
+
+                setTimeout(() => {
+                    playerAi.play();
+                }, 3000);
+
+                // console.log(playerAi);
                 // this.playAiTurn();
             } else {
                 this.isTurn = true;

@@ -7,12 +7,11 @@ import {
     EASEL_SIZE,
     INDEX_INVALID,
     INDEX_PLAYER_AI,
-    THREE_SECONDS_DELAY,
+    THREE_SECONDS_DELAY
 } from '@app/classes/constants';
 import { ScoreValidation } from '@app/classes/validation-score';
 import { Vec2 } from '@app/classes/vec2';
 import { GridService } from '@app/services/grid.service';
-import { PlayerAIService } from '@app/services/player-ia.service';
 import { PlayerService } from '@app/services/player.service';
 import { WordValidationService } from '@app/services/word-validation.service';
 
@@ -29,12 +28,7 @@ export class PlaceLetterService {
     isFirstRound: boolean = true;
     message: string;
 
-    constructor(
-        private playerService: PlayerService,
-        private gridService: GridService,
-        public playerAIService: PlayerAIService,
-        private wordValidationService: WordValidationService,
-    ) {
+    constructor(private playerService: PlayerService, private gridService: GridService, private wordValidationService: WordValidationService) {
         this.scrabbleBoard = []; // Initializes the array with empty letters
         for (let i = 0; i < BOARD_ROWS; i++) {
             this.scrabbleBoard[i] = [];
@@ -46,9 +40,7 @@ export class PlaceLetterService {
     }
 
     placeMethodAdapter(object: { start: Vec2; orientation: string; word: string; indexPlayer: number }) {
-        this.playerAIService.isPlacementValid = false;
-        const isValid = this.place(object.start, object.orientation, object.word, object.indexPlayer);
-        this.playerAIService.isPlacementValid = isValid;
+        return this.place(object.start, object.orientation, object.word, object.indexPlayer);
     }
 
     place(position: Vec2, orientation: string, word: string, indexPlayer = INDEX_PLAYER_AI): boolean {
@@ -77,6 +69,7 @@ export class PlaceLetterService {
 
         // Validation of the placement
         const finalResult: ScoreValidation = this.wordValidationService.validateAllWordsOnBoard(this.scrabbleBoard, this.isEaselSize, isRow);
+        if ((indexPlayer = INDEX_PLAYER_AI)) finalResult.validation = true;
         if (finalResult.validation) {
             this.handleValidPlacement(finalResult, indexPlayer);
             return true;
@@ -154,7 +147,6 @@ export class PlaceLetterService {
         this.playerService.updateScrabbleBoard(this.scrabbleBoard);
         this.playerService.refillEasel(indexPlayer); // Fill the easel with new letters from the reserve
         this.isFirstRound = false;
-        this.playerAIService.isFirstRound = false;
     }
 
     isPossible(position: Vec2, orientation: string, word: string, indexPlayer: number): boolean {

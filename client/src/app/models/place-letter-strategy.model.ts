@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/member-ordering */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable sort-imports */
 import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSITION_X, DICTIONARY } from '@app/classes/constants';
@@ -8,6 +9,7 @@ import { PlayerAIService } from '@app/services/player-ia.service';
 import { PlayStrategy } from './abstract-strategy.model';
 import { PlayerAI } from './player-ai.model';
 
+const NO_PLAYABLE_WORD = -1;
 export class PlaceLetters extends PlayStrategy {
     dictionary: string[];
     private board: string[][][];
@@ -41,32 +43,40 @@ export class PlaceLetters extends PlayStrategy {
         matchingPointingRangeWords = playerAiService.filterByRange(allPossibleWords, this.pointingRange);
 
         this.computeResults(allPossibleWords, matchingPointingRangeWords, playerAiService);
-        // context.switchTurn();
+        setTimeout(() => {
+            playerAiService.skipTurnService.switchTurn();
+        }, 5000);
     }
 
     computeResults(allPossibleWords: PossibleWords[], matchingPointingRangeWords: PossibleWords[], playerAiService: PlayerAIService): void {
-        if (matchingPointingRangeWords.length !== 0 && this.attempt(matchingPointingRangeWords, playerAiService)) {
-            // context.playerService.refillEasel(1);
-            // context.sendPossibilities(matchingPointingRangeWords);
-            console.log('trouvé pour ' + this.pointingRange + ' pts : ');
-            console.log(matchingPointingRangeWords);
+        let idx: number = this.attempt(matchingPointingRangeWords, playerAiService);
+        if (idx !== NO_PLAYABLE_WORD) {
+            console.log("j'ai joué : " + matchingPointingRangeWords[idx].word);
+            console.log(matchingPointingRangeWords[idx]);
+            console.log(playerAiService.playerService.players[1].letterTable);
+            playerAiService.place(matchingPointingRangeWords[idx]);
             return;
-        } else if (allPossibleWords.length !== 0 && this.attempt(allPossibleWords, playerAiService)) {
-            // context.playerService.refillEasel(1);
-            // context.sendPossibilities(allPossibleWords);
-            console.log('trouvé pour : ');
-            console.log(allPossibleWords);
-            return;
-        } else {
-            // context.aiPlayer.replaceStrategy(new SwapLetter());
         }
+
+        idx = this.attempt(allPossibleWords, playerAiService);
+        if (idx !== NO_PLAYABLE_WORD) {
+            console.log("j'ai joué : " + allPossibleWords[idx].word);
+            console.log(allPossibleWords[idx]);
+            console.log(playerAiService.playerService.players[1].letterTable);
+            playerAiService.place(allPossibleWords[idx]);
+            return;
+        }
+
+        console.log("j'ai été forcé de changer de strategie : je swap");
+        playerAiService.swap();
     }
 
-    attempt(possibilities: PossibleWords[], playerAiService: PlayerAIService): boolean {
-        let attempt = 0;
-        do {
-            // const randomIdx = Math.floor(Math.random() * possibilities.length);
-            const word = possibilities[attempt];
+    attempt(possibilities: PossibleWords[], playerAiService: PlayerAIService): number {
+        let result = { validation: false, score: 0 };
+        let i = 0;
+
+        for (i = 0; i < possibilities.length && result.validation === false; i++) {
+            const word = possibilities[i];
             let start: Vec2;
             let orientation: string;
             if (word.orientation === Orientation.HorizontalOrientation) {
@@ -76,12 +86,17 @@ export class PlaceLetters extends PlayStrategy {
                 start = { x: word.startIdx, y: word.line };
                 orientation = 'v';
             }
-            let scrabbleBoard: string[][] = [...playerAiService.placeLetterService.scrabbleBoard];
+            let scrabbleBoard: string[][] = JSON.parse(JSON.stringify(playerAiService.placeLetterService.scrabbleBoard));
             scrabbleBoard = playerAiService.placeWordOnBoard(scrabbleBoard, word.word, start, orientation);
-            // context.placeLetterService.placeMethodAdapter({ start, orientation, word: word.word, indexPlayer: INDEX_PLAYER_AI });
-            attempt++;
-        } while (attempt < possibilities.length);
-        return attempt < possibilities.length;
+            result = playerAiService.wordValidation.validateAllWordsOnBoard(scrabbleBoard, word.word.length === 7, orientation === 'h', true);
+
+            if (result.validation === true) {
+                console.log(this.validateWord(scrabbleBoard));
+                return i;
+            }
+        }
+
+        return NO_PLAYABLE_WORD;
     }
 
     initializeArray(scrabbleBoard: string[][]) {
@@ -117,25 +132,12 @@ export class PlaceLetters extends PlayStrategy {
                 .toString();
             line = line.replace(re2, '');
             const radixes = this.board[word.orientation][word.line].toString().replace(re1, '').match(re3) as string[];
-            if (this.isWordNotOverflowing(line, word.word, radixes) && this.isWordFitting(line, word, radixes)) {
+            if (this.isWordFitting(line, word, radixes)) {
                 filteredWords.push(word);
             }
         }
 
         return filteredWords;
-    }
-
-    isWordNotOverflowing(line: string, wordToPlace: string, radixes: string[]): boolean {
-        const startIdxWord = wordToPlace.indexOf(radixes[0]);
-
-        const startIdxRadix = line.indexOf(radixes[radixes.length - 1]);
-        const endIdxRadix = startIdxRadix + radixes.length;
-
-        if (startIdxWord > line.search(radixes[0])) {
-            return false;
-        }
-
-        return radixes[0] !== radixes[radixes.length - 1] && endIdxRadix >= BOARD_COLUMNS;
     }
 
     isWordFitting(line: string, wordToPlace: PossibleWords, radixes: string[]): boolean {
@@ -283,5 +285,60 @@ export class PlaceLetters extends PlayStrategy {
         }
 
         return { horizontal, vertical };
+    }
+
+    validateWord(scrabbleBoard: string[][]): boolean {
+        const save = JSON.parse(JSON.stringify(this.board));
+
+        this.initializeArray(scrabbleBoard);
+        let wordsOnBoard: string[] = [];
+
+        const re1 = new RegExp('[,]', 'g');
+        const re2 = new RegExp('[ ]{1}', 'g');
+
+        for (let i = 0; i < BOARD_COLUMNS; i++) {
+            this.board[0][i]
+                .map((element: string) => {
+                    if (element === '') return ' ';
+                    else {
+                        return element;
+                    }
+                })
+                .toString()
+                .replace(re1, '')
+                .split(re2)
+                .forEach((x) => {
+                    if (x.length > 1) wordsOnBoard.push(x);
+                });
+
+            this.board[1][i]
+                .map((element: string) => {
+                    if (element === '') return ' ';
+                    else {
+                        return element;
+                    }
+                })
+                .toString()
+                .replace(re1, '')
+                .split(re2)
+                .forEach((x) => {
+                    if (x.length > 1) wordsOnBoard.push(x);
+                });
+        }
+        wordsOnBoard = wordsOnBoard.filter((element) => {
+            return element !== '';
+        });
+        console.log(wordsOnBoard);
+        for (let i = 0; i < wordsOnBoard.length && wordsOnBoard[i].length > 1; i++) {
+            const found = this.dictionary.find((element) => element === wordsOnBoard[i]);
+            if (found === undefined) {
+                this.board = save;
+                console.log(wordsOnBoard[i] + " n'est pas dans le dico");
+                return false;
+            }
+        }
+
+        this.board = save;
+        return true;
     }
 }

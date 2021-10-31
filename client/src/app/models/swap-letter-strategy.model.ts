@@ -32,5 +32,8 @@ export class SwapLetter extends PlayStrategy {
         }
         // Alert the context that AI Player swapped
         console.log('jai swap');
+        setTimeout(() => {
+            playerAiService.skipTurnService.switchTurn();
+        }, 5000);
     }
 }
