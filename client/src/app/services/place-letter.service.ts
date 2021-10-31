@@ -7,7 +7,7 @@ import {
     EASEL_SIZE,
     INDEX_INVALID,
     INDEX_PLAYER_AI,
-    THREE_SECONDS_DELAY,
+    THREE_SECONDS_DELAY
 } from '@app/classes/constants';
 import { ScoreValidation } from '@app/classes/validation-score';
 import { Vec2 } from '@app/classes/vec2';
@@ -27,7 +27,6 @@ export class PlaceLetterService {
     isAIPlacementValid: boolean = false;
     numLettersUsedFromEasel: number = 0; // Number of letters used from the easel to from 1 word
     isEaselSize: boolean = false; // If the bonus to form a word with all the letters from the easel applies
-    message: string;
 
     constructor(private playerService: PlayerService, private gridService: GridService, private wordValidationService: WordValidationService) {
         this.scrabbleBoard = []; // Initializes the array with empty letters
@@ -44,14 +43,9 @@ export class PlaceLetterService {
         this.place(object.start, object.orientation, object.word, INDEX_PLAYER_AI);
     }
 
-    place(position: Vec2, orientation: string, word: string, indexPlayer = INDEX_PLAYER_AI): boolean {
+    async place(position: Vec2, orientation: string, word: string, indexPlayer = INDEX_PLAYER_AI): Promise<boolean> {
         // Remove accents from the word to place
         let isRow = false;
-        // if (orientation === 'v') {
-        //     isRow = false;
-        // } else if (orientation === 'h') {
-        //     isRow = true;
-        // }
         isRow = orientation === 'v' ? false : true;
         const wordNoAccents = word.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
         // If the command is possible according to the parameters
@@ -70,7 +64,7 @@ export class PlaceLetterService {
         if (this.numLettersUsedFromEasel === EASEL_SIZE) this.isEaselSize = true;
 
         // Validation of the placement
-        const finalResult: ScoreValidation = this.wordValidationService.validateAllWordsOnBoard(this.scrabbleBoard, this.isEaselSize, isRow);
+        const finalResult: ScoreValidation = await this.wordValidationService.validateAllWordsOnBoard(this.scrabbleBoard, this.isEaselSize, isRow);
         if (finalResult.validation) {
             this.handleValidPlacement(finalResult, indexPlayer);
             return true;

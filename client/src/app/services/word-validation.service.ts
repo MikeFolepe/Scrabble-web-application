@@ -76,16 +76,6 @@ export class WordValidationService {
         return positions;
     }
 
-    // getWordVerticalPositions(word: string, index: number): string[] {
-    //     const positions: string[] = new Array<string>();
-    //     for (const char of word) {
-    //         const indexChar = this.newWords.indexOf(char);
-    //         const column = index + 1;
-    //         positions.push(this.getCharPosition(indexChar) + column.toString());
-    //     }
-    //     return positions;
-    // }
-
     passThroughAllRowsOrColumns(scrabbleBoard: string[][], isRow: boolean) {
         let x = 0;
         let y = 0;
@@ -183,13 +173,11 @@ export class WordValidationService {
         return score;
     }
 
-    validateAllWordsOnBoard(scrabbleBoard: string[][], isEaselSize: boolean, isRow: boolean): ScoreValidation {
+    async validateAllWordsOnBoard(scrabbleBoard: string[][], isEaselSize: boolean, isRow: boolean): Promise<ScoreValidation> {
         let scoreTotal = 0;
         this.passThroughAllRowsOrColumns(scrabbleBoard, isRow);
         this.passThroughAllRowsOrColumns(scrabbleBoard, !isRow);
-
-        this.httpServer.validationPost(this.newPlayedWords).subscribe((validation) => (this.validationState = validation));
-
+        this.validationState = await this.httpServer.validationPost(this.newPlayedWords).toPromise();
         if (!this.validationState) {
             this.newPlayedWords.clear();
             return { validation: this.validationState, score: scoreTotal };

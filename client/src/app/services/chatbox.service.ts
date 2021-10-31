@@ -162,7 +162,7 @@ export class ChatboxService {
         this.displayMessage();
     }
 
-    executePlace() {
+    async executePlace() {
         if (this.skipTurn.isTurn) {
             this.endGameService.actionsLog.push('placer');
             const messageSplitted = this.message.split(/\s/);
@@ -175,7 +175,7 @@ export class ChatboxService {
             };
             const orientation = positionSplitted[2];
 
-            if (this.placeLetterService.place(position, orientation, messageSplitted[2], INDEX_REAL_PLAYER) === false) {
+            if ((await this.placeLetterService.place(position, orientation, messageSplitted[2], INDEX_REAL_PLAYER)) === false) {
                 this.typeMessage = 'error';
                 this.message = 'ERREUR : Le placement est invalide';
             }

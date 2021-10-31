@@ -6,10 +6,10 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { TestBed } from '@angular/core/testing';
 import { ALL_EASEL_BONUS, BOARD_COLUMNS, BOARD_ROWS } from '@app/classes/constants';
 import { ScoreValidation } from '@app/classes/validation-score';
-import { CommunicationService } from './communication.service';
-import { WordValidationService } from './word-validation.service';
+import { CommunicationService } from '@app/services/communication.service';
+import { WordValidationService } from '@app/services/word-validation.service';
 
-fdescribe('WordValidationService', () => {
+describe('WordValidationService', () => {
     let httpMock: HttpTestingController;
     let service: WordValidationService;
     const scrabbleBoard: string[][] = [];
@@ -68,12 +68,12 @@ fdescribe('WordValidationService', () => {
         // TODO : stop forcing this value
         service['validationState'] = true;
         const expectedResult: ScoreValidation = { validation: true, score: 7 };
-        const result = service.validateAllWordsOnBoard(scrabbleBoard, easelSize, isRow);
+        service.validateAllWordsOnBoard(scrabbleBoard, easelSize, isRow).then((validation) => {
+            expect(validation.score).toEqual(expectedResult.score);
+            expect(validation.validation).toEqual(expectedResult.validation);
+        });
         const req = httpMock.expectOne(`${service['httpServer']['baseUrl']}/multiplayer/validateWords`);
         expect(req.request.method).toBe('POST');
-
-        expect(result.score).toEqual(expectedResult.score);
-        expect(result.validation).toEqual(expectedResult.validation);
     });
 
     it('should double word score if word is placed on a double word case', () => {
@@ -93,12 +93,11 @@ fdescribe('WordValidationService', () => {
     it('should add easel bonus when condition encountered and validateAllWordsOnBoard() is called', () => {
         const initialScore = 100;
         spyOn(service, 'calculateTotalScore').and.returnValue(initialScore);
-        // TODO : stop forcing this value
-        service['validationState'] = true;
-        const result = service.validateAllWordsOnBoard(scrabbleBoard, true, true);
+        service.validateAllWordsOnBoard(scrabbleBoard, true, true).then((validation) => {
+            expect(validation.score).toEqual(initialScore + ALL_EASEL_BONUS);
+        });
         const req = httpMock.expectOne(`${service['httpServer']['baseUrl']}/multiplayer/validateWords`);
         expect(req.request.method).toBe('POST');
-        expect(result.score).toEqual(initialScore + ALL_EASEL_BONUS);
     });
 
     it('should call the right functions in case word is greater than two letters in passThroughAllRowsOrColumns()', () => {
@@ -121,15 +120,15 @@ fdescribe('WordValidationService', () => {
         service['playedWords'].set('ma', ['B1', 'B2']);
         const isEaselSize = true;
         const isRow = true;
-        // TODO: Verify the return of the request
+        service['validationState'] = false;
         const expectedResult: ScoreValidation = { validation: false, score: 0 };
-        // const spyToServer = spyOn(service['httpServer'], 'validationPost');
-        const result = service.validateAllWordsOnBoard(scrabbleBoard, isEaselSize, isRow);
+        const spyToServer = spyOn(service['httpServer'], 'validationPost').and.callThrough();
+        service.validateAllWordsOnBoard(scrabbleBoard, isEaselSize, isRow).then((result) => {
+            expect(result).toEqual(expectedResult);
+        });
+        expect(spyToServer).toHaveBeenCalled();
         const req = httpMock.expectOne(`${service['httpServer']['baseUrl']}/multiplayer/validateWords`);
         expect(req.request.method).toBe('POST');
-        expect(result).toEqual(expectedResult);
-        // expect(spyToServer).toHaveBeenCalled();
-        // m has 2 points and a has 1 point
     });
 
     it('check if played should return false if there is no matching played word', () => {
@@ -145,13 +144,14 @@ fdescribe('WordValidationService', () => {
     });
 
     it('should not add the already played word when passing through lines and columns', () => {
-        service['playedWords'].set('test', ['H8', 'H9', 'H10', 'H11']);
-        // service['newWords'] = ['', '', '', '', 't', 'e', 's', 't', '', '', '', '', '', '', ''];
-        service['newPositions'] = ['H8', 'H9', 'H10', 'H11'];
-        const isRow = true;
         const checkOn = spyOn(service, 'checkIfPlayed');
-        service.passThroughAllRowsOrColumns(scrabbleBoard, isRow);
-        service.passThroughAllRowsOrColumns(scrabbleBoard, !isRow);
+        service['playedWords'] = new Map<string, string[]>([['test', ['H8', 'H9', 'H10', 'H11']]]);
+        service['newWords'] = ['', '', '', '', 't', 'e', 's', 't', '', '', '', '', '', '', ''];
+        service['newPositions'] = ['H8', 'H9', 'H10', 'H11'];
+        service.passThroughAllRowsOrColumns(scrabbleBoard, true);
+        service['newWords'] = ['', '', '', '', 't', 'e', 's', 't', '', '', '', '', '', '', ''];
+        service['newPositions'] = ['H8', 'H9', 'H10', 'H11'];
+        service.passThroughAllRowsOrColumns(scrabbleBoard, false);
         expect(checkOn).toHaveBeenCalled();
         expect(checkOn).toEqual(true);
         expect(service['newPlayedWords'].size).toEqual(0);

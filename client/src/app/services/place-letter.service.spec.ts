@@ -1,4 +1,3 @@
-import { CommunicationService } from './communication.service';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 /* eslint-disable dot-notation */
 import { TestBed } from '@angular/core/testing';
@@ -7,9 +6,10 @@ import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
 import { Player } from '@app/models/player.model';
 import { GridService } from '@app/services/grid.service';
+import { CommunicationService } from './communication.service';
 import { PlaceLetterService } from './place-letter.service';
 
-describe('PlaceLetterService', () => {
+fdescribe('PlaceLetterService', () => {
     let service: PlaceLetterService;
     let gridServiceSpy: unknown;
     beforeEach(() => {
@@ -69,7 +69,7 @@ describe('PlaceLetterService', () => {
         // Fake these methods to be able to call place()
         spyOn(service['playerService'], 'removeLetter');
         spyOn(service['playerService'], 'refillEasel');
-        spyOn(service['wordValidationService'], 'validateAllWordsOnBoard').and.returnValue({ validation: true, score: 0 });
+        spyOn(service['wordValidationService'], 'validateAllWordsOnBoard').and.returnValue(Promise.resolve({ validation: true, score: 0 }));
     });
 
     it('should create', () => {
@@ -147,7 +147,9 @@ describe('PlaceLetterService', () => {
         const position: Vec2 = { x: 7, y: 7 };
         const orientation = 'h';
         const word = 'fil';
-        expect(service.place(position, orientation, word, INDEX_REAL_PLAYER)).toEqual(false);
+        service.place(position, orientation, word, INDEX_REAL_PLAYER).then((result) => {
+            expect(result).toEqual(false);
+        });
     });
 
     it('placing letters present in the easel or the scrabbleboard should be valid', () => {
@@ -182,7 +184,9 @@ describe('PlaceLetterService', () => {
         const position: Vec2 = { x: 7, y: 7 };
         const orientation = 'h';
         const word = 'abcd';
-        expect(service.place(position, orientation, word, INDEX_REAL_PLAYER)).toEqual(false);
+        service.place(position, orientation, word, INDEX_REAL_PLAYER).then((result) => {
+            expect(result).toEqual(false);
+        });
     });
 
     it('only the invalid letters that we just placed should be removed from scrabbleBoard', () => {
@@ -199,16 +203,18 @@ describe('PlaceLetterService', () => {
         position = { x: 7, y: 7 };
         orientation = 'h';
         word = 'bacchaV';
-        let lettersRemoved = service.place(position, orientation, word, INDEX_PLAYER_AI);
+        service.place(position, orientation, word, INDEX_REAL_PLAYER).then((result) => {
+            expect(result).toEqual(false);
+        });
         jasmine.clock().tick(THREE_SECONDS_DELAY + 1);
-        expect(lettersRemoved).toEqual(false);
         // Vertically
         position = { x: 7, y: 7 };
         orientation = 'v';
         word = 'bEcchaa';
-        lettersRemoved = service.place(position, orientation, word, INDEX_PLAYER_AI);
         jasmine.clock().tick(THREE_SECONDS_DELAY + 1);
-        expect(lettersRemoved).toEqual(false);
+        service.place(position, orientation, word, INDEX_REAL_PLAYER).then((result) => {
+            expect(result).toEqual(false);
+        });
         jasmine.clock().uninstall();
     });
 
@@ -223,7 +229,9 @@ describe('PlaceLetterService', () => {
         // Player 1 horizontally places a second word on top of the 1st word that has different letters
         word = 'ccaa';
         jasmine.clock().tick(THREE_SECONDS_DELAY + 1);
-        expect(service.place(position, orientation, word, INDEX_REAL_PLAYER)).toEqual(false);
+        service.place(position, orientation, word, INDEX_REAL_PLAYER).then((result) => {
+            expect(result).toEqual(false);
+        });
         jasmine.clock().uninstall();
     });
 
