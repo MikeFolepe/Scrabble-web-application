@@ -1,9 +1,11 @@
+/* eslint-disable import/no-deprecated */
+/* eslint-disable sort-imports */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-unused-vars */
 import { TestBed } from '@angular/core/testing';
-import { PlayerAIComponent } from '@app/modules/game-view/components/player-ai/player-ai.component';
+import { PlayerAIComponent } from '@app/modules/game-view/player-ai/player-ai.component';
 import { LetterService } from '@app/services/letter.service';
 import { PlayerAI } from './player-ai.model';
 import { SwapLetter } from './swap-letter-strategy.model';

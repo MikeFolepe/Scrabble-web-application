@@ -1,7 +1,9 @@
+/* eslint-disable sort-imports */
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AI_NAME_DATABASE } from '@app/classes/constants';
-import { StartingPlayer } from '@app/classes/game-settings';
 import { GameSettingsService } from '@app/services/game-settings.service';
+import { StartingPlayer } from '@common/game-settings';
 import { FormComponent } from './form.component';
 
 describe('FormComponent', () => {
@@ -17,6 +19,7 @@ describe('FormComponent', () => {
         await TestBed.configureTestingModule({
             declarations: [FormComponent],
             providers: [{ provide: GameSettingsService, useValue: gameSettingsServiceSpy }],
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
     });
 

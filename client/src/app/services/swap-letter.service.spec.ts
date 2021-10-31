@@ -1,4 +1,5 @@
 /* eslint-disable dot-notation */
+/* eslint-disable sort-imports */
 import { TestBed } from '@angular/core/testing';
 import { INDEX_REAL_PLAYER, RESERVE } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';

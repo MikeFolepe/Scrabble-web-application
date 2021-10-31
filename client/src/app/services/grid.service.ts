@@ -156,6 +156,7 @@ export class GridService {
         ctx.strokeRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
     }
 
+<<<<<<< HEAD
     //functions used by placeLetterService to place a word
     drawLetter(ctx: CanvasRenderingContext2D, letter: string, position: Vec2, fontSize: number) {
         // Grid case style
@@ -163,6 +164,14 @@ export class GridService {
         ctx.fillRect(position.x + DEFAULT_HEIGHT / 2, position.y + DEFAULT_HEIGHT / 2, this.caseWidth, this.caseWidth);
         ctx.strokeStyle = 'black';
         ctx.strokeRect(position.x + DEFAULT_HEIGHT / 2, position.y + DEFAULT_HEIGHT / 2, this.caseWidth, this.caseWidth);
+=======
+    private tripleLetter = (ctx: CanvasRenderingContext2D, startPosition: Vec2): void => {
+        ctx.fillStyle = 'cadetBlue';
+        // eslint-disable-next-line no-invalid-this
+        ctx.fillRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
+        ctx.strokeRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
+    };
+>>>>>>> b7bc76bb223ef4674011ed696c8d797922f78013
 
         // Score of the letter placed
         let letterScore = 0;

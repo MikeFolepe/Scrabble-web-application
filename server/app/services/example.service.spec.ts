@@ -1,8 +1,18 @@
+<<<<<<< HEAD
 // import { Message } from '@app/message';
 // import { DateService } from '@app/services/date.service';
 // import { ExampleService } from '@app/services/example.service';
 // import { expect } from 'chai';
 // import { createStubInstance, SinonStubbedInstance } from 'sinon';
+=======
+/* eslint-disable sort-imports */
+// import { Observable } from 'rxjs';
+import { Message } from '@app/message';
+import { DateService } from '@app/services/date.service';
+import { ExampleService } from '@app/services/example.service';
+import { expect } from 'chai';
+import { createStubInstance, SinonStubbedInstance } from 'sinon';
+>>>>>>> b7bc76bb223ef4674011ed696c8d797922f78013
 
 // describe('Example service', () => {
 //     let exampleService: ExampleService;
@@ -47,6 +57,7 @@
 //         expect(message.title).to.equals('Error');
 //     });
 
+<<<<<<< HEAD
 //     it('should store a message', (done: Mocha.Done) => {
 //         const newMessage: Message = { title: 'Hello', body: 'World' };
 //         exampleService.storeMessage(newMessage);
@@ -64,3 +75,22 @@
 //         done();
 //     });
 // });
+=======
+    it('should store a message', (done: Mocha.Done) => {
+        const newMessage: Message = { title: 'Hello', body: 'World' };
+        // exampleService.storeMessage(newMessage);
+        expect(exampleService.clientMessages[0]).to.equals(newMessage);
+        done();
+    });
+
+    it('should get all messages', (done: Mocha.Done) => {
+        const newMessage: Message = { title: 'Hello', body: 'World' };
+        const newMessage2: Message = { title: 'Hello', body: 'Again' };
+        exampleService.clientMessages.push(newMessage);
+        exampleService.clientMessages.push(newMessage2);
+        // const messages = exampleService.getAllMessages();
+        // expect(messages).to.equals(exampleService.clientMessages);
+        done();
+    });
+});
+>>>>>>> b7bc76bb223ef4674011ed696c8d797922f78013

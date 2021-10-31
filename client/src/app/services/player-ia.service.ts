@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+/* eslint-disable sort-imports */
+>>>>>>> b7bc76bb223ef4674011ed696c8d797922f78013
 import { Injectable } from '@angular/core';
 import { RESERVE } from '@app/classes/constants';
 import { Range } from '@app/classes/range';
@@ -30,7 +34,11 @@ export class PlayerAIService {
             for (let i = 0; i < word.word.length; i++) {
                 let key: string;
 
+<<<<<<< HEAD
                 if (word.orientation === Orientation.horizontal) {
+=======
+                if (word.orientation === Orientation.HorizontalOrientation) {
+>>>>>>> b7bc76bb223ef4674011ed696c8d797922f78013
                     key = String.fromCharCode(word.line + ROW_OFFSET) + (word.startIdx + COLUMN_OFFSET + i).toString();
                     matrixPos = { x: word.line, y: word.startIdx + i };
                 } else {

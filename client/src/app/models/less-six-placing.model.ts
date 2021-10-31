@@ -3,11 +3,11 @@
 // import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSX, CENTRAL_CASE_POSY, dictionary } from '@app/classes/constants';
 // import { Letter } from '@app/classes/letter';
 // import { Vec2 } from '@app/classes/vec2';
-// import { PlayerAIComponent } from '@app/modules/game-view/components/player-ai/player-ai.component';
+// import { PlayerIAComponent } from '@app/modules/game-view/components/player-ia/player-ia.component';
 // import { PlaceLetters } from './place-letter-strategy.model';
-// import { PlayerAI } from './player-ai.model';
+// import { PlayerIA } from './player-ia.model';
 // export class LessSix extends PlaceLetters {
-//     execute(player: PlayerAI, context: PlayerAIComponent): void {
+//     execute(player: PlayerIA, context: PlayerIAComponent): void {
 //         // get the player's hand to generate a pattern containing
 //         // only player's disponible letters
 //         let pattern: string = this.pattern(player.letterTable);
@@ -33,7 +33,7 @@
 //         this.choosePossibility(possibleWord, context, { x: randomX, y: randomY });
 //     }
 
-//     choosePossibility(possibleWord: string[], context: PlayerAIComponent, startPos: Vec2): void {
+//     choosePossibility(possibleWord: string[], context: PlayerIAComponent, startPos: Vec2): void {
 //         const MAX_POINTING = 6;
 //         const randomPointing = new Date().getTime() % MAX_POINTING;
 //         const randomOrientation: string = ['h', 'v'][new Date().getTime() % ['h', 'v'].length];
@@ -45,11 +45,11 @@
 //         // Whitin all the possible words separate those who matches this tour randomPointing
 //         // from those who doesn't matches the randomPointing but are in range min < x < max
 //         for (let i = 0; i < possibleWord.length; i++) {
-//             const point = this.calculatePoint(startPos, randomOrientation, possibleWord[i], context.scrabbleBoard);
-//             if (point === randomPointing) {
+//             const nbPt = this.calculatePoint(startPos, randomOrientation, possibleWord[i], context.scrabbleBoard);
+//             if (nbPt === randomPointing) {
 //                 randomPointingFound = true;
 //                 priorityPossibilities.push(possibleWord[i]);
-//             } else if (point < MAX_POINTING && point > 0) {
+//             } else if (nbPt < MAX_POINTING && nbPt > 0) {
 //                 alternativePointingFound = true;
 //                 alternativePossibilities.push(possibleWord[i]);
 //             }
@@ -107,7 +107,7 @@
 //         return allPossibleWord;
 //     }
 
-//     generatePossibilities(allPossibleWord: string[], player: PlayerAI): string[] {
+//     generatePossibilities(allPossibleWord: string[], player: PlayerIA): string[] {
 //         const possibleWord: string[] = [];
 //         // Into all possible word...
 //         for (let i = 0; i < allPossibleWord.length; i++) {
@@ -131,7 +131,7 @@
 //         return possibleWord;
 //     }
 
-//     playerQuantityOf(letter: string, player: PlayerAI): number {
+//     playerQuantityOf(letter: string, player: PlayerIA): number {
 //         let quantity = 0;
 
 //         for (let i = 0; i < player.letterTable.length; i++) {

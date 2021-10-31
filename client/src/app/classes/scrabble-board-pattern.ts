@@ -9,10 +9,8 @@ export interface PatternInfo {
 }
 
 export enum Orientation {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    horizontal,
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    vertical,
+    HorizontalOrientation,
+    VerticalOrientation,
 }
 
 export interface PossibleWords {

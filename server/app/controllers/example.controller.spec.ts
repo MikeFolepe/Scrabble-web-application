@@ -15,6 +15,7 @@
 //     let exampleService: SinonStubbedInstance<ExampleService>;
 //     let expressApp: Express.Application;
 
+<<<<<<< HEAD
 //     beforeEach(async () => {
 //         exampleService = createStubInstance(ExampleService);
 //         exampleService.helloWorld.resolves(baseMessage);
@@ -25,6 +26,18 @@
 //         Object.defineProperty(app['exampleController'], 'exampleService', { value: exampleService });
 //         expressApp = app.app;
 //     });
+=======
+    beforeEach(async () => {
+        exampleService = createStubInstance(ExampleService);
+        exampleService.helloWorld.resolves(baseMessage);
+        exampleService.about.returns(baseMessage);
+        // exampleService.getAllMessages.returns([baseMessage, baseMessage]);
+        const app = Container.get(Application);
+        // eslint-disable-next-line dot-notation
+        Object.defineProperty(app['exampleController'], 'exampleService', { value: exampleService });
+        expressApp = app.app;
+    });
+>>>>>>> b7bc76bb223ef4674011ed696c8d797922f78013
 
 //     it('should return message from example service on valid get request to root', async () => {
 //         return supertest(expressApp)
@@ -51,6 +64,7 @@
 //         return supertest(expressApp).post('/api/example/send').send(message).set('Accept', 'application/json').expect(HTTP_STATUS_CREATED);
 //     });
 
+<<<<<<< HEAD
 //     it('should return an array of messages on valid get request to /all', async () => {
 //         exampleService.getAllMessages.returns([baseMessage, baseMessage]);
 //         return supertest(expressApp)
@@ -61,3 +75,15 @@
 //             });
 //     });
 // });
+=======
+    it('should return an array of messages on valid get request to /all', async () => {
+        // exampleService.getAllMessages.returns([baseMessage, baseMessage]);
+        return supertest(expressApp)
+            .get('/api/example/all')
+            .expect(HTTP_STATUS_OK)
+            .then((response) => {
+                expect(response.body).to.deep.equal([baseMessage, baseMessage]);
+            });
+    });
+});
+>>>>>>> b7bc76bb223ef4674011ed696c8d797922f78013

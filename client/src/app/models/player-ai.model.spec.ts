@@ -1,12 +1,13 @@
+/* eslint-disable sort-imports */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable dot-notation */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { TestBed } from '@angular/core/testing';
-import { PlayerAIComponent } from '@app/modules/game-view/components/player-ai/player-ai.component';
-import { PlaceLetters } from './place-letter-strategy.model';
-import { PlayerAI } from './player-ai.model';
-import { SkipTurn } from './skip-turn-strategy.model';
-import { SwapLetter } from './swap-letter-strategy.model';
+import { PlaceLetters } from '@app/models/place-letter-strategy.model';
+import { PlayerAI } from '@app/models/player-ai.model';
+import { SkipTurn } from '@app/models/skip-turn-strategy.model';
+import { SwapLetter } from '@app/models/swap-letter-strategy.model';
+import { PlayerAIComponent } from '@app/modules/game-view/player-ai/player-ai.component';
 
 describe('PlayerAI', () => {
     const id = 1;
@@ -70,7 +71,7 @@ describe('PlayerAI', () => {
     });
 
     it('should call the right functions when calling play()', () => {
-        spyOn<any>(playerAI.strategy, 'execute');
+        spyOn(playerAI.strategy, 'execute');
         spyOn<any>(playerAI, 'setStrategy');
 
         playerAI.play();

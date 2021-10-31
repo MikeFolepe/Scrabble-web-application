@@ -1,5 +1,9 @@
+<<<<<<< HEAD
 import { TestBed } from '@angular/core/testing';
+=======
+>>>>>>> b7bc76bb223ef4674011ed696c8d797922f78013
 import { GameSettingsService } from './game-settings.service';
+import { TestBed } from '@angular/core/testing';
 
 describe('GameSettingsService', () => {
     let service: GameSettingsService;

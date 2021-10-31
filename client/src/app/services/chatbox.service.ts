@@ -9,6 +9,7 @@ import { SkipTurnService } from '@app/services/skip-turn.service';
 import { SwapLetterService } from '@app/services/swap-letter.service';
 import { Subscription } from 'rxjs';
 import { DebugService } from './debug.service';
+import { LetterService } from './letter.service';
 
 @Injectable({
     providedIn: 'root',
@@ -31,6 +32,10 @@ export class ChatboxService {
         private placeLetterService: PlaceLetterService,
         private debugService: DebugService,
         public endGameService: EndGameService,
+<<<<<<< HEAD
+=======
+        public letterService: LetterService,
+>>>>>>> b7bc76bb223ef4674011ed696c8d797922f78013
         public skipTurn: SkipTurnService,
     ) {}
 
@@ -67,6 +72,11 @@ export class ChatboxService {
                 this.executePlace();
                 break;
             }
+            case 'reserve': {
+                this.executeReserve();
+                break;
+            }
+
             default: {
                 this.displayMessage();
                 break;
@@ -88,8 +98,14 @@ export class ChatboxService {
         const regexPasser = /^!passer/g;
         const regexEchanger = /^!échanger/g;
         const regexPlacer = /^!placer/g;
-
-        if (regexDebug.test(this.message) || regexPasser.test(this.message) || regexEchanger.test(this.message) || regexPlacer.test(this.message)) {
+        const regexReserve = /^!reserve$/g;
+        if (
+            regexDebug.test(this.message) ||
+            regexPasser.test(this.message) ||
+            regexEchanger.test(this.message) ||
+            regexPlacer.test(this.message) ||
+            regexReserve.test(this.message)
+        ) {
             return true;
         }
 
@@ -98,6 +114,7 @@ export class ChatboxService {
     }
 
     isSyntaxValid(): boolean {
+        const regexReserve = /^!reserve$/g;
         const regexDebug = /^!debug$/g;
         const regexPasser = /^!passer$/g;
         const regexEchanger = /^!échanger\s([a-z]|[*]){1,7}$/g;
@@ -113,6 +130,8 @@ export class ChatboxService {
             this.command = 'echanger';
         } else if (regexPlacer.test(this.message)) {
             this.command = 'placer';
+        } else if (regexReserve.test(this.message)) {
+            this.command = 'reserve';
         } else {
             isSyntaxValid = false;
             this.message = 'ERREUR : La syntaxe est invalide';
@@ -120,7 +139,7 @@ export class ChatboxService {
         return isSyntaxValid;
     }
 
-    executeDebug() {
+    executeDebug(): void {
         this.debugService.switchDebugMode();
         if (this.debugService.isDebugActive) {
             this.typeMessage = 'system';
@@ -142,6 +161,22 @@ export class ChatboxService {
             this.message = "ERREUR : Ce n'est pas ton tour";
         }
         this.displayMessage();
+<<<<<<< HEAD
+=======
+    }
+
+    executeReserve(): void {
+        if (!this.debugService.isDebugActive) {
+            this.displayMessageByType('Commande non réalisable', 'error');
+            this.message = '';
+            return;
+        }
+        for (const letter of this.letterService.reserve) {
+            this.message = 'system';
+            this.displayMessageByType(letter.value + ':' + letter.quantity.toString(), 'system');
+            this.message = '';
+        }
+>>>>>>> b7bc76bb223ef4674011ed696c8d797922f78013
     }
 
     executeSwap() {

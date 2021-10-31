@@ -1,3 +1,4 @@
+/* eslint-disable sort-imports */
 /* eslint-disable dot-notation */
 import { TestBed } from '@angular/core/testing';
 import { INDEX_PLAYER_AI, INDEX_REAL_PLAYER, THREE_SECONDS_DELAY } from '@app/classes/constants';

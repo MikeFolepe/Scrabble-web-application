@@ -1,37 +1,53 @@
-/* eslint-disable no-restricted-imports */
+/* eslint-disable import/namespace */
+/* eslint-disable import/no-deprecated */
+/* eslint-disable sort-imports */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Explication: Afin d'avoir le type any associé à la variable socket
+import { GameSettings } from '@common/game-settings';
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { io } from 'node_modules/socket.io-client/build/esm';
-//import { GameSettings } from '../classes/game-settings';
-//import { GameSettingsService } from './game-settings.service';
-import { SkipTurnService } from './skip-turn.service';
+import { GameSettingsService } from '@app/services/game-settings.service';
+import { Room } from '@common/room';
+import { Router } from '@angular/router';
 
 @Injectable({
     providedIn: 'root',
 })
-export class ClientSocketService{
+export class ClientSocketService {
+    // TODO À cheker pour le type de socket
     socket: any;
+    rooms: Room[] = [];
     roomId: string;
-    time: string;
     private urlString: string;
 
-    constructor(private router: Router, /*private gameSettingsService: GameSettingsService,*/ private skipTurnService: SkipTurnService) {
+    constructor(private router: Router, private gameSettingsService: GameSettingsService) {
         this.urlString = `http://${window.location.hostname}:3000`;
         this.socket = io(this.urlString);
+        this.initializeRoomId();
+        this.initializeGameSettings();
     }
 
-    route() {
+    route(): void {
         this.socket.on('goToGameView', () => {
-            console.log("gone to game view client");
-            //this.gameSettingsService.gameSettings = gameSettings;
-            this.router.navigate(['game']); 
-        });
-
-        this.socket.on('switchTurn', () => {
-            console.log("client has switched turn");
-            this.skipTurnService.switchTurn();
+            this.router.navigate(['game']);
         });
     }
+
+    initializeRoomId(): void {
+        this.socket.on('yourRoomId', (roomIdFromServer: string) => {
+            this.roomId = roomIdFromServer;
+        });
+    }
+
+    initializeGameSettings(): void {
+        this.socket.on('yourGameSettings', (gameSettingsFromServer: GameSettings) => {
+            this.gameSettingsService.gameSettings = gameSettingsFromServer;
+        });
+    }
+
+    delete() {
+        this.socket.emit('deleteGame', this.roomId);
+    }
+
+    // les methodes de reception des commandes de jeu sont définies ici
 }

@@ -1,5 +1,6 @@
+/* eslint-disable sort-imports */
 import { EASEL_SIZE, MIN_RESERVE_SIZE_TO_SWAP } from '@app/classes/constants';
-import { PlayerAIComponent } from '@app/modules/game-view/components/player-ai/player-ai.component';
+import { PlayerAIComponent } from '@app/modules/game-view/player-ai/player-ai.component';
 import { PlayStrategy } from './abstract-strategy.model';
 import { PlayerAI } from './player-ai.model';
 import { SkipTurn } from './skip-turn-strategy.model';
