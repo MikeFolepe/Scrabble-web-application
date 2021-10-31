@@ -5,23 +5,6 @@ import { Service } from 'typedi';
 
 @Service()
 export class WordValidationService {
-<<<<<<< HEAD
-
-    private dictionaryData = fs.readFileSync('../../../assets/dictionary.json');
-    // eslint-disable-next-line no-invalid-this
-    private dictionary: string[] = JSON.parse(JSON.stringify(this.dictionaryData)).words;
-
-    isValidInDictionary(word: string): boolean {
-        if (word.length >= 2) {
-            for (const item of this.dictionary) {
-                if (word === item) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        return false;
-=======
     // eslint-disable-next-line no-invalid-this
     dictionaryData = fs.readFileSync('@../../../client/src/assets/dictionary.json');
     private dictionary: string[];
@@ -50,6 +33,5 @@ export class WordValidationService {
         return false;
 
         // return this.dictionary.find((word)=)
->>>>>>> b7bc76bb223ef4674011ed696c8d797922f78013
     }
 }

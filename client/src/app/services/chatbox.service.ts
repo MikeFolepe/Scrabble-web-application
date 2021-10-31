@@ -1,3 +1,4 @@
+/* eslint-disable sort-imports */
 import { Injectable } from '@angular/core';
 import { INDEX_REAL_PLAYER, MAX_NUMBER_OF_POSSIBILITY } from '@app/classes/constants';
 import { PossibleWords } from '@app/classes/scrabble-board-pattern';
@@ -32,10 +33,7 @@ export class ChatboxService {
         private placeLetterService: PlaceLetterService,
         private debugService: DebugService,
         public endGameService: EndGameService,
-<<<<<<< HEAD
-=======
         public letterService: LetterService,
->>>>>>> b7bc76bb223ef4674011ed696c8d797922f78013
         public skipTurn: SkipTurnService,
     ) {}
 
@@ -161,8 +159,6 @@ export class ChatboxService {
             this.message = "ERREUR : Ce n'est pas ton tour";
         }
         this.displayMessage();
-<<<<<<< HEAD
-=======
     }
 
     executeReserve(): void {
@@ -176,7 +172,6 @@ export class ChatboxService {
             this.displayMessageByType(letter.value + ':' + letter.quantity.toString(), 'system');
             this.message = '';
         }
->>>>>>> b7bc76bb223ef4674011ed696c8d797922f78013
     }
 
     executeSwap() {

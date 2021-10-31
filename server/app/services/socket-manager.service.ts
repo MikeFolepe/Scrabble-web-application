@@ -1,16 +1,5 @@
 import * as http from 'http';
 import * as io from 'socket.io';
-<<<<<<< HEAD
-import { clearInterval } from 'timers';
-import { Service } from 'typedi';
-
-@Service()
-export class SocketManagerService {
-    private sio: io.Server;
-    intervalID: NodeJS.Timeout;
-    constructor(server: http.Server) {
-        this.sio = new io.Server(server, { cors: { origin: '*', methods: ['GET', 'POST'] } });
-=======
 import { GameSettings } from '@common/game-settings';
 import { PlayerIndex } from '@common/PlayerIndex';
 import { RoomManager } from './room-manager.service';
@@ -23,33 +12,10 @@ export class SocketManager {
     constructor(server: http.Server, roomManager: RoomManager) {
         this.sio = new io.Server(server, { cors: { origin: '*', methods: ['GET', 'POST'] } });
         this.roomManager = roomManager;
->>>>>>> b7bc76bb223ef4674011ed696c8d797922f78013
     }
 
     handleSockets(): void {
         this.sio.on('connection', (socket) => {
-<<<<<<< HEAD
-            console.log(`connexion par l'utilisateur avec id : ${socket.id}`);
-
-            this.sio.emit('goToGameView');
-            console.log("gone to game view server");
-
-            socket.on('disconnect', (reason) => {
-                console.log(`Deconnexion par l'utilisateur avec id : ${socket.id}`);
-                console.log(`Raison de deconnexion : ${reason}`);
-            });
-
-            socket.on('startTimer', () => {
-                console.log("timer started");
-                this.intervalID = setInterval(() => {
-                    this.sio.emit('clock');
-                }, 1000);
-            });
-
-            socket.on('stopTimer', () => {
-                clearInterval(this.intervalID);
-                socket.emit('switchTurn');
-=======
             socket.on('createRoom', (gameSettings: GameSettings) => {
                 const roomId = this.roomManager.createRoomId(gameSettings.playersName[PlayerIndex.OWNER]);
                 this.roomManager.createRoom(socket.id, roomId, gameSettings);
@@ -82,6 +48,7 @@ export class SocketManager {
                 // block someone else entry from room selection
                 this.sio.emit('roomConfiguration', this.roomManager.rooms);
                 socket.join(roomId);
+                console.log(this.roomManager.rooms);
                 // update roomID in the new filled room to allow the clients in this room
                 // to ask the server make some actions in their room later
                 this.sio.in(roomId).emit('yourRoomId', roomId);
@@ -103,6 +70,7 @@ export class SocketManager {
 
             socket.on('disconnect', () => {
                 const roomId = this.roomManager.findRoomIdOf(socket.id);
+                console.log(roomId);
                 this.roomManager.deleteRoom(roomId);
                 this.sio.emit('roomConfiguration', this.roomManager.rooms);
                 // console.log(`Deconnexion par l'utilisateur avec id : ${socket.id}`);
@@ -117,7 +85,6 @@ export class SocketManager {
                 // console.log(message);
                 // console.log(socket.rooms);
                 socket.to(roomId).emit('receiveRoomMessage', message);
->>>>>>> b7bc76bb223ef4674011ed696c8d797922f78013
             });
         });
     }

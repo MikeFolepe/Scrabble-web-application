@@ -26,10 +26,6 @@ export class PlayerService {
     scrabbleBoard: string[][];
     fontSize = DEFAULT_FONT_SIZE;
     players: Player[] = new Array<Player>();
-<<<<<<< HEAD
-
-=======
->>>>>>> b7bc76bb223ef4674011ed696c8d797922f78013
     constructor(private letterService: LetterService, private gridService: GridService) {
         this.fontSize = DEFAULT_FONT_SIZE;
     }

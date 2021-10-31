@@ -1,35 +1,15 @@
 /* eslint-disable sort-imports */
 import { Component, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-<<<<<<< HEAD
-import { AI_NAME_DATABASE } from '@app/classes/constants';
-import { GameSettings, StartingPlayer } from '@app/classes/game-settings';
-import { GameSettingsService } from '@app/services/game-settings.service';
-import { RandomBonusesService } from '@app/services/random-bonuses.service';
-
-=======
 import { Router } from '@angular/router';
 import { AI_NAME_DATABASE } from '@app/classes/constants';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { GameSettings, StartingPlayer } from '@common/game-settings';
->>>>>>> b7bc76bb223ef4674011ed696c8d797922f78013
 @Component({
     selector: 'app-form',
     templateUrl: './form.component.html',
     styleUrls: ['./form.component.scss'],
 })
-<<<<<<< HEAD
-export class FormComponent {
-    form = new FormGroup({
-        playerName: new FormControl(''),
-        minuteInput: new FormControl('01'),
-        secondInput: new FormControl('00'),
-        levelInput: new FormControl('Facile'),
-        randomBonus: new FormControl('Désactiver')
-    });
-
-    constructor(private gameSettingsService: GameSettingsService, private randomBonusesService: RandomBonusesService) {}
-=======
 export class FormComponent implements OnDestroy {
     form: FormGroup;
 
@@ -42,7 +22,6 @@ export class FormComponent implements OnDestroy {
             randomBonus: new FormControl(this.gameSettingsService.gameSettings.randomBonus),
         });
     }
->>>>>>> b7bc76bb223ef4674011ed696c8d797922f78013
 
     // Generates a random name for the AI
     chooseRandomAIName(): string {
@@ -91,12 +70,6 @@ export class FormComponent implements OnDestroy {
             this.form.controls.secondInput.value,
             this.form.controls.levelInput.value,
             this.form.controls.randomBonus.value,
-<<<<<<< HEAD
-            'DICTIONARY.json',
-        );
-        //this.gameSettingsService.initializeSettings(settings);
-        if (this.gameSettingsService.gameSettings.randomBonus === 'Activer') this.randomBonusesService.shuffleBonusesPositions();
-=======
             'dictionary.json',
         );
     }
@@ -108,6 +81,5 @@ export class FormComponent implements OnDestroy {
     ngOnDestroy(): void {
         this.gameSettingsService.isRedirectedFromMultiplayerGame = false;
         return;
->>>>>>> b7bc76bb223ef4674011ed696c8d797922f78013
     }
 }

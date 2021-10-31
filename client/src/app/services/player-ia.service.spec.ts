@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-=======
 /* eslint-disable sort-imports */
->>>>>>> b7bc76bb223ef4674011ed696c8d797922f78013
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 import { TestBed } from '@angular/core/testing';
 import { BOARD_COLUMNS, BOARD_ROWS } from '@app/classes/constants';
@@ -80,11 +77,7 @@ describe('PlayerAIService', () => {
 
     it('should calculate the total amount of a word horizontally with empty bonus word and letter', () => {
         const possWord: PossibleWords[] = [];
-<<<<<<< HEAD
-        possWord.push({ word: 'MAJID', orientation: Orientation.horizontal, line: 14, startIdx: 0, point: 0 });
-=======
         possWord.push({ word: 'MAJID', orientation: Orientation.HorizontalOrientation, line: 14, startIdx: 0, point: 0 });
->>>>>>> b7bc76bb223ef4674011ed696c8d797922f78013
         const expectedEarning = 45;
 
         service.calculatePoints(possWord, scrabbleBoard);
@@ -93,11 +86,7 @@ describe('PlayerAIService', () => {
 
     it('should calculate the total amount of a word vertically with bonus word and letter', () => {
         const possWord: PossibleWords[] = [];
-<<<<<<< HEAD
-        possWord.push({ word: 'MAJID', orientation: Orientation.vertical, line: 5, startIdx: 13, point: 0 });
-=======
         possWord.push({ word: 'MAJID', orientation: Orientation.VerticalOrientation, line: 5, startIdx: 13, point: 0 });
->>>>>>> b7bc76bb223ef4674011ed696c8d797922f78013
         const expectedEarning = 18;
 
         service.calculatePoints(possWord, scrabbleBoard);

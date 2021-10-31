@@ -1,18 +1,21 @@
 <div class="container">
     <app-scrabble-board></app-scrabble-board>
-    <div style="display: flex; width: 15vw; height: 85vh; justify-content: flex-start; flex-direction: column; flex-wrap: wrap; gap: 5vh">
+    <div
+        style="display: flex; width: 15vw; height: 85vh; justify-content: flex-start; flex-direction: column; flex-wrap: wrap; gap: 5vh">
         <app-letter-easel></app-letter-easel>
-        <div *ngIf="!this.endGameService.isEndGame">
-            <button mat-raised-button color="primary" id="Pass-button" (click)="this.endGameService.clearAllData()" routerLink="/home">
+        <div *ngIf="!this.endGameService.isEndGame ">
+            <button mat-raised-button color="primary" id="Pass-button" (click)="this.endGameService.clearAllData()"
+                routerLink="/home">
                 Abandonner
             </button>
         </div>
         <div *ngIf="this.endGameService.isEndGame">
-            <button mat-raised-button color="primary" id="Pass-button" (click)="this.endGameService.clearAllData()" routerLink="/home">
+            <button mat-raised-button color="primary" id="Pass-button" (click)="this.endGameService.clearAllData()"
+                routerLink="/home">
                 Quitter
             </button>
         </div>
-        <button mat-raised-button color="primary" (click)="chatBox.executeSkipTurn()"[disabled]=!skipTurn.isTurn>
+        <button mat-raised-button color="primary" (click)="chatBox.executeSkipTurn()" [disabled]=!skipTurn.isTurn>
             Passer son tour
         </button>
     </div>

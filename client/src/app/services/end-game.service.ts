@@ -1,3 +1,4 @@
+/* eslint-disable sort-imports */
 import { Injectable } from '@angular/core';
 import { NUMBER_OF_SKIP, RESERVE, INDEX_PLAYER_AI, INDEX_REAL_PLAYER } from '@app/classes/constants';
 import { DebugService } from './debug.service';

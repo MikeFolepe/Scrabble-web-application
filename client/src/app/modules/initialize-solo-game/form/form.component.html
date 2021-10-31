@@ -19,11 +19,7 @@
             <legend>Difficulté de l'IA</legend>
             <app-level-field [formGroup]="form" [parentForm]="form"></app-level-field>
         </fieldset>
-<<<<<<< HEAD
-        <fieldset class="form-section">
-=======
         <fieldset *ngIf="!gameSettingsService.isRedirectedFromMultiplayerGame" class="form-section">
->>>>>>> b7bc76bb223ef4674011ed696c8d797922f78013
             <legend>Bonus Aléatoire</legend>
             <app-random-bonus [formGroup]="form" [parentForm]="form"></app-random-bonus>
         </fieldset>

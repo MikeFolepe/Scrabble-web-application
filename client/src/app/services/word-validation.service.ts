@@ -1,56 +1,27 @@
-<<<<<<< HEAD
-// import { Observable } from 'rxjs';
-import { Injectable } from '@angular/core';
-import { ALL_EASEL_BONUS, BOARD_COLUMNS, BOARD_ROWS, DICTIONARY, RESERVE } from '@app/classes/constants';
-import { ScoreValidation } from '@app/classes/validation-score';
-import { RandomBonusesService } from './random-bonuses.service';
-
-=======
 /* eslint-disable sort-imports */
 import { Injectable } from '@angular/core';
 import { ALL_EASEL_BONUS, BOARD_COLUMNS, BOARD_ROWS, BONUSES_POSITIONS, RESERVE } from '@app/classes/constants';
 import { ScoreValidation } from '@app/classes/validation-score';
 import { CommunicationService } from '@app/services/communication.service';
->>>>>>> b7bc76bb223ef4674011ed696c8d797922f78013
 @Injectable({
     providedIn: 'root',
 })
-
 export class WordValidationService {
     newWords: string[];
     playedWords: Map<string, string[]>;
     newPlayedWords: Map<string, string[]>;
     newPositions: string[];
     bonusesPositions: Map<string, string>;
-<<<<<<< HEAD
-
-    constructor(private randomBonusesService: RandomBonusesService) {
-=======
     private validationState = false;
 
     constructor(private httpServer: CommunicationService) {
->>>>>>> b7bc76bb223ef4674011ed696c8d797922f78013
         this.playedWords = new Map<string, string[]>();
         this.newPlayedWords = new Map<string, string[]>();
         this.newWords = new Array<string>();
         this.newPositions = new Array<string>();
-        this.bonusesPositions = new Map<string, string>(this.randomBonusesService.bonusesPositions);
+        this.bonusesPositions = new Map<string, string>(BONUSES_POSITIONS);
     }
 
-<<<<<<< HEAD
-    isValidInDictionary(word: string): boolean {
-        if (word.length >= 2) {
-            // eslint-disable-next-line prefer-const
-            for (const item of DICTIONARY) {
-                if (word === item) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        return false;
-    }
-=======
     // isValidInDictionary(word: string): boolean {
     //     if (word.length >= 2) {
     //         // eslint-disable-next-line prefer-const
@@ -63,7 +34,6 @@ export class WordValidationService {
     //     }
     //     return false;
     // }
->>>>>>> b7bc76bb223ef4674011ed696c8d797922f78013
 
     findWords(words: string[]): string[] {
         return words
@@ -220,26 +190,15 @@ export class WordValidationService {
         return score;
     }
 
-<<<<<<< HEAD
-=======
     // getServerValidation(scrabbleBoard: string[][], isEaselSize: boolean, isRow: boolean): Observable<ScoreValidation> {
     //     const wordValidationUrl = 'api/validation/:scrabbleBoard/:isEaselSize/:boolean';
     //     return this.http.get<ScoreValidation>(wordValidationUrl);
     // }
 
->>>>>>> b7bc76bb223ef4674011ed696c8d797922f78013
     validateAllWordsOnBoard(scrabbleBoard: string[][], isEaselSize: boolean, isRow: boolean): ScoreValidation {
         let scoreTotal = 0;
         this.passThroughAllRowsOrColumns(scrabbleBoard, isRow);
         this.passThroughAllRowsOrColumns(scrabbleBoard, !isRow);
-<<<<<<< HEAD
-        for (const word of this.newPlayedWords.keys()) {
-            const lowerCaseWord = word.toLowerCase();
-            if (!this.isValidInDictionary(lowerCaseWord)) {
-                this.newPlayedWords.clear();
-                return { validation: false, score: scoreTotal };
-            }
-=======
         // for (const word of this.newPlayedWords.keys()) {
         //     const lowerCaseWord = word.toLowerCase();
         //     if (!this.isValidInDictionary(lowerCaseWord)) {
@@ -252,7 +211,6 @@ export class WordValidationService {
         if (!this.validationState) {
             this.newPlayedWords.clear();
             return { validation: this.validationState, score: scoreTotal };
->>>>>>> b7bc76bb223ef4674011ed696c8d797922f78013
         }
         scoreTotal += this.calculateTotalScore(scoreTotal, this.newPlayedWords);
 

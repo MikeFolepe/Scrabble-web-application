@@ -1,7 +1,5 @@
-<<<<<<< HEAD
-=======
+/* eslint-disable import/no-deprecated */
 /* eslint-disable sort-imports */
->>>>>>> b7bc76bb223ef4674011ed696c8d797922f78013
 import { Injectable } from '@angular/core';
 import {
     BOARD_COLUMNS,
