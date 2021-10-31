@@ -1,11 +1,11 @@
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
-import { INDEX_PLAYER_AI, INDEX_REAL_PLAYER, ONE_SECOND_TIME } from '@app/classes/constants';
+import { INDEX_PLAYER_AI, INDEX_REAL_PLAYER, ONE_SECOND_DELAY } from '@app/classes/constants';
 import { TypeMessage } from '@app/classes/enum';
 import { BoardHandlerService } from '@app/services/board-handler.service';
 import { ChatboxService } from '@app/services/chatbox.service';
 import { EndGameService } from '@app/services/end-game.service';
-import { SendMessageService } from '@app/services/send-message.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
+import { SendMessageService } from '@app/services/send-message.service';
 import { ClientSocketService } from './../../../services/client-socket.service';
 
 @Component({
@@ -102,6 +102,6 @@ export class ChatboxComponent implements OnInit, AfterViewInit {
             if (this.endGameService.isEndGame) {
                 clearInterval(findEnd);
             }
-        }, ONE_SECOND_TIME);
+        }, ONE_SECOND_DELAY);
     }
 }

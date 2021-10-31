@@ -18,7 +18,7 @@ export const ONE_POSSIBILITY = 1;
 export const TWO_POSSIBILITY = 2;
 export const NUMBER_OF_SKIP = 6;
 
-export const ONE_SECOND_TIME = 1000;
+export const ONE_SECOND_DELAY = 1000;
 export const DELAY_TO_PLAY = 20000;
 export const THREE_SECONDS_DELAY = 3000;
 

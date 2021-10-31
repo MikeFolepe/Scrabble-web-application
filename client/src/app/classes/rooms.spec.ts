@@ -5,8 +5,6 @@ import { TestBed } from '@angular/core/testing';
 
 describe('Room', () => {
     const id = 'LOG2990';
-    // const ownerName = 'Paul';
-    // const customerName = 'Mike';
     const settings: GameSettings = new GameSettings(['Paul', 'Mike'], 1, '00', '30', 'facile', 'non', 'français');
     const state = State.Waiting;
     let room: Room;
