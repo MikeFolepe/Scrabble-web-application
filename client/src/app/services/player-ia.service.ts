@@ -42,7 +42,7 @@ export class PlayerAIService {
                 const letterContribution: number = RESERVE[word.word[i].toUpperCase().charCodeAt(0) - ROW_OFFSET].points;
                 // total earning for the letter (word[i]) at position (x, y)
                 const earning: Earning = this.computeCell(key, letterContribution, matrixPos, scrabbleBoard);
-                totalPoint += earning.letterPt;
+                totalPoint += earning.letterPoint;
                 wordFactor *= earning.wordFactor;
             }
 
@@ -69,28 +69,28 @@ export class PlayerAIService {
 
     private computeCell(keyCell: string, letterValue: number, matrixPos: Vec2, scrabbleBoard: string[][]): Earning {
         // compute the earning (in letterFactor and wordFactor) of the cell at matrixPox
-        let letterPt = 0;
+        let letterPoint = 0;
         let wordFactor = 1;
         switch (board[keyCell as keyof typeof board]) {
             case 'doubleletter':
-                letterPt = letterValue * this.bonusFactor(2, matrixPos, scrabbleBoard);
+                letterPoint = letterValue * this.bonusFactor(2, matrixPos, scrabbleBoard);
                 break;
             case 'tripleletter':
-                letterPt = letterValue * this.bonusFactor(3, matrixPos, scrabbleBoard);
+                letterPoint = letterValue * this.bonusFactor(3, matrixPos, scrabbleBoard);
                 break;
             case 'doubleword':
-                letterPt = letterValue;
+                letterPoint = letterValue;
                 wordFactor *= this.bonusFactor(2, matrixPos, scrabbleBoard);
                 break;
             case 'tripleword':
-                letterPt = letterValue;
+                letterPoint = letterValue;
                 wordFactor *= this.bonusFactor(3, matrixPos, scrabbleBoard);
                 break;
             default:
-                letterPt += letterValue;
+                letterPoint += letterValue;
                 break;
         }
 
-        return { letterPt, wordFactor };
+        return { letterPoint, wordFactor };
     }
 }

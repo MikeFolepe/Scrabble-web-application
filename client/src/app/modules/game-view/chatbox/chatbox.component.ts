@@ -2,7 +2,6 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { INDEX_PLAYER_AI, INDEX_REAL_PLAYER, ONE_SECOND_TIME } from '@app/classes/constants';
 import { ChatboxService } from '@app/services/chatbox.service';
-import { DebugService } from '@app/services/debug.service';
 import { EndGameService } from '@app/services/end-game.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { ClientSocketService } from './../../../services/client-socket.service';
@@ -25,7 +24,6 @@ export class ChatboxComponent implements OnInit, AfterViewInit {
 
     constructor(
         private chatBoxService: ChatboxService,
-        public debugService: DebugService,
         public endGameService: EndGameService,
         private clientSocketService: ClientSocketService,
         private gameSettingsService: GameSettingsService,

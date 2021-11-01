@@ -11,7 +11,7 @@ describe('GridService', () => {
         TestBed.configureTestingModule({});
         service = TestBed.inject(GridService);
         ctxStub = CanvasTestHelper.createCanvas(DEFAULT_WIDTH, DEFAULT_HEIGHT).getContext('2d') as CanvasRenderingContext2D;
-        service.gridContextBoardLayer = ctxStub;
+        service.gridContext = ctxStub;
     });
 
     it('should be created', () => {
@@ -27,36 +27,32 @@ describe('GridService', () => {
     });
 
     it(' drawLetter should call fillText on the canvas', () => {
-        const fillTextSpy = spyOn(service.gridContextBoardLayer, 'fillText').and.callThrough();
-        service.drawLetter(service.gridContextBoardLayer, 'L', 1, 5, 13);
+        const fillTextSpy = spyOn(service.gridContext, 'fillText').and.callThrough();
+        service.drawLetter(service.gridContext, 'L', {x:1, y:5}, 13);
         expect(fillTextSpy).toHaveBeenCalled();
     });
 
     it(' drawLetter should color pixels on the canvas', () => {
-        let imageData = service.gridContextBoardLayer.getImageData(0, 0, service.width, service.height).data;
+        let imageData = service.gridContext.getImageData(0, 0, service.width, service.height).data;
         const beforeSize = imageData.filter((x) => x !== 0).length;
-        service.drawLetter(service.gridContextBoardLayer, 'L',1, 5, 13);
-        imageData = service.gridContextBoardLayer.getImageData(0, 0, service.width, service.height).data;
+        service.drawLetter(service.gridContext, 'L', {x:1, y:5}, 13);
+        imageData = service.gridContext.getImageData(0, 0, service.width, service.height).data;
         const afterSize = imageData.filter((x) => x !== 0).length;
         expect(afterSize).toBeGreaterThan(beforeSize);
     });
 
     it('drawGrid should color pixels on the canvas', () => {
-<<<<<<< Updated upstream
         let imageData = service.gridContext.getImageData(0, 0, service.width, service.height).data;
-=======
-        let imageData = service.gridContextBoardLayer.getImageData(0, 0, service.width, service.height).data;
->>>>>>> Stashed changes
         const beforeSize = imageData.filter((x) => x !== 0).length;
         service.drawGrid();
-        imageData = service.gridContextBoardLayer.getImageData(0, 0, service.width, service.height).data;
+        imageData = service.gridContext.getImageData(0, 0, service.width, service.height).data;
         const afterSize = imageData.filter((x) => x !== 0).length;
         expect(afterSize).toBeGreaterThan(beforeSize);
     });
     
     it('eraseLetter should call clearRect on the canvas', () => {
-        const clearRectSpy = spyOn(service.gridContextBoardLayer, 'clearRect').and.callThrough();
-        service.eraseLetter(service.gridContextBoardLayer, 1, 5);
+        const clearRectSpy = spyOn(service.gridContext, 'clearRect').and.callThrough();
+        service.eraseLetter(service.gridContext, {x:1, y:5});
         expect(clearRectSpy).toHaveBeenCalled();
     });
 
@@ -70,13 +66,13 @@ describe('GridService', () => {
         ]);
         const colorBonusBoxSpy = spyOn(service, 'colorBonusBox').and.callThrough();
         const writeBonusNameSpy = spyOn(service, 'writeBonusName').and.callThrough();
-        service.drawBonusesBoxes(bonusPositionsStub);
+        service.drawBonusBoxes(bonusPositionsStub);
         expect(colorBonusBoxSpy).toHaveBeenCalled();
         expect(writeBonusNameSpy).toHaveBeenCalled();
     });
 
     it('should set grid context', () => {
         service.setGridContext(ctxStub);
-        expect(service.gridContextBoardLayer).toBe(ctxStub);
+        expect(service.gridContext).toBe(ctxStub);
     });
 });

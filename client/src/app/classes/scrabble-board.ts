@@ -64,6 +64,6 @@ export enum board {
 }
 
 export interface Earning {
-    letterPt: number;
+    letterPoint: number;
     wordFactor: number;
 }

@@ -37,7 +37,7 @@ export class GridService {
     drawGrid() {
         this.writeGridIndexes(this.gridContext, this.gridLength);
         this.drawSimpleGrid(this.gridContext);
-        this.drawBonusesBoxes(this.bonusPositions);
+        this.drawBonusBoxes(this.bonusPositions);
         this.drawCenterBoxe();
     }
 
@@ -66,7 +66,7 @@ export class GridService {
     }
 
     //specify bonuses boxes on the grid by adding colors and bonuses names
-    drawBonusesBoxes(bonusPositions: Map<string, string>) {
+    drawBonusBoxes(bonusPositions: Map<string, string>) {
         bonusPositions.forEach((bonus: string, position: string) => {
             const positionSplitted = position.split(/([0-9]+)/)
             let convertedPositon = {x: (positionSplitted[0].charCodeAt(0) - 'A'.charCodeAt(0)+1)*this.caseWidth, y: Number(positionSplitted[1])*this.caseWidth};
