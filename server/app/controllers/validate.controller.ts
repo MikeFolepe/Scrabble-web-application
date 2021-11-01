@@ -1,6 +1,10 @@
 // import { ScoreValidation } from './../../../client/src/app/classes/validation-score';
 // import { WordValidationService } from '@app/services/word-validation.service';
+<<<<<<< HEAD
 import { WordValidationService } from '@app/services/word-validation.service';
+=======
+// import { WordValidationService } from '@app/services/word-validation.service';
+>>>>>>> 3c80325cd43795ec63297c53dad2ed3ce46d0f4a
 import { Request, Response, Router } from 'express';
 // Request, Response,
 import { Service } from 'typedi';
@@ -9,7 +13,11 @@ import { Service } from 'typedi';
 export class WordValidationController {
     router: Router;
     // private wordValidationService: WordValidationService
+<<<<<<< HEAD
     constructor(private wordValidator: WordValidationService) {
+=======
+    constructor() {
+>>>>>>> 3c80325cd43795ec63297c53dad2ed3ce46d0f4a
         this.configureRouter();
     }
 
