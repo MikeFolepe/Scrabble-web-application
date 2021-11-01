@@ -12,7 +12,6 @@ export class WordValidationService {
         // eslint-disable-next-line no-invalid-this
 
         this.dictionary = JSON.parse(this.dictionaryData.toString()).words;
-        // console.log(this.dictionary);
     }
 
     isValidInDictionary( words: string[] ): boolean {
@@ -31,7 +30,5 @@ export class WordValidationService {
             return true;
         }
         return false;
-
-        // return this.dictionary.find((word)=)
     }
 }

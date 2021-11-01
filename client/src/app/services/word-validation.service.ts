@@ -1,6 +1,6 @@
 /* eslint-disable sort-imports */
 import { Injectable } from '@angular/core';
-import { ALL_EASEL_BONUS, BOARD_COLUMNS, BOARD_ROWS, BONUSES_POSITIONS, RESERVE } from '@app/classes/constants';
+import { ALL_EASEL_BONUS, BOARD_COLUMNS, BOARD_ROWS, BONUS_POSITIONS, RESERVE } from '@app/classes/constants';
 import { ScoreValidation } from '@app/classes/validation-score';
 import { CommunicationService } from '@app/services/communication.service';
 @Injectable({
@@ -19,7 +19,7 @@ export class WordValidationService {
         this.newPlayedWords = new Map<string, string[]>();
         this.newWords = new Array<string>();
         this.newPositions = new Array<string>();
-        this.bonusesPositions = new Map<string, string>(BONUSES_POSITIONS);
+        this.bonusesPositions = new Map<string, string>(BONUS_POSITIONS);
     }
 
     // isValidInDictionary(word: string): boolean {

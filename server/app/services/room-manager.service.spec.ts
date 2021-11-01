@@ -12,7 +12,7 @@
 // describe('RoomManagerService', () => {
 //     let roomManagerService: RoomManager;
 //     const id = 'LOG2990';
-//     const settings: GameSettings = new GameSettings(['Paul', 'Mike'], StartingPlayer.Owner, '00', '30', 'facile', 'non', 'français');
+//     const settings: GameSettings = new GameSettings(['Paul', 'Mike'], StartingPlayer.Owner, '00', '30', 'facile', 'Désactiver', 'français');
 
 //     beforeEach(() => {
 //         roomManagerService = new RoomManager();
@@ -92,7 +92,7 @@
 //         roomManagerService.createRoom(id, settings);
 //         const testID = roomManagerService.createRoomId('Paul');
 //         // const testTable = ['Mike', 'Paul'];
-//         // const testFormatSettings = new GameSettings(testTable, 1, '00', '30', 'non', 'non', 'français');
+//         // const testFormatSettings = new GameSettings(testTable, 1, '00', '30', 'Désactiver', 'Désactiver', 'français');
 //         expect(roomManagerService.formatGameSettingsForCustomerIn(testID));
 //     });
 

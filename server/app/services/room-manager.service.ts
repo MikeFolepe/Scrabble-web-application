@@ -60,8 +60,9 @@ export class RoomManager {
             startingPlayer,
             gameSettings.timeMinute,
             gameSettings.timeSecond,
+            gameSettings.level,
             gameSettings.randomBonus,
-            gameSettings.randomBonus,
+            gameSettings.bonusPositions,
             gameSettings.dictionary,
         );
 

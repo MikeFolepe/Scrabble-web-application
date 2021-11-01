@@ -228,7 +228,7 @@ export const RESERVE: Letter[] = [
 
 // positions are used for keys
 // bonuses string are use for value
-export const BONUSES_POSITIONS: Map<string, string> = new Map<string, string>([
+export const BONUS_POSITIONS: Map<string, string> = new Map<string, string>([
     ['A1', 'tripleword'],
     ['A4', 'doubleletter'],
     ['A8', 'tripleword'],

@@ -1,24 +1,23 @@
 /* eslint-disable prettier/prettier */
 import { expect } from 'chai';
 import { describe } from 'mocha';
-import { GameSettings, StartingPlayer } from './multiplayer-game-settings';
+import { GameSettings, StartingPlayer } from '@common/game-settings';
 import { Room, State } from './room';
 
 describe('Room', () => {
     const id = 'LOG2990';
-    // const ownerName = 'Paul';
-    // const customerName = 'Mike';
-    const settings: GameSettings = new GameSettings(['Paul', 'Mike'], StartingPlayer.Owner, '00', '30', 'facile', 'non', 'français');
+    const socketId  = 'socket1';
+    const settings: GameSettings = new GameSettings(['Paul', 'Mike'], StartingPlayer.Player1, '00', '30', 'facile', 'Désactiver', "[['A1', 'tripleword'], ['A4', 'doubleletter'], ['A8', 'tripleword'], ['A12', 'doubleletter']]", 'français');
     const state = State.Waiting;
     let room: Room;
 
     beforeEach(async () => {
-        room = new Room(id, settings, state.valueOf());
+        room = new Room(id, socketId, settings, state.valueOf());
     });
 
     it('should create an instance', () => {
-        room = new Room(id, settings, state.valueOf());
-        expect(room.id).to.equal('LOG2990');
+        room = new Room(id, socketId, settings, state.valueOf());
+        expect(room.roomId).to.equal('LOG2990');
         expect(room.gameSettings).to.equals(settings);
         expect(room.state).to.equal(1);
     });

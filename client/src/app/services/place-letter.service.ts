@@ -1,4 +1,3 @@
-/* eslint-disable sort-imports */
 import { Injectable } from '@angular/core';
 import {
     BOARD_COLUMNS,

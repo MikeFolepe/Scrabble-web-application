@@ -5,6 +5,7 @@ import { PlayerIndex } from '@common/PlayerIndex';
 import { RoomManager } from './room-manager.service';
 import { Service } from 'typedi';
 import { State } from '@common/room';
+
 @Service()
 export class SocketManager {
     private sio: io.Server;
@@ -71,17 +72,12 @@ export class SocketManager {
                 const roomId = this.roomManager.findRoomIdOf(socket.id);
                 this.roomManager.deleteRoom(roomId);
                 this.sio.emit('roomConfiguration', this.roomManager.rooms);
-                // console.log(`Deconnexion par l'utilisateur avec id : ${socket.id}`);
-                // console.log(`Raison de deconnexion : ${reason}`);
                 this.sio.in(roomId).emit('goToMainMenu');
                 socket.disconnect();
                 // route les joueurs vers le debut avec un message d'erreur
             });
 
             socket.on('sendRoomMessage', (message: string, roomId: string) => {
-                // this.sio.to(roomId).emit('receiveRoomMessage', `${socket.id} : ${message}`);
-                // console.log(message);
-                // console.log(socket.rooms);
                 socket.to(roomId).emit('receiveRoomMessage', message);
             });
         });

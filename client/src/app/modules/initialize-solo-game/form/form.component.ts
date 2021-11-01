@@ -2,9 +2,10 @@
 import { Component, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AI_NAME_DATABASE } from '@app/classes/constants';
+import { AI_NAME_DATABASE,BONUS_POSITIONS } from '@app/classes/constants';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { GameSettings, StartingPlayer } from '@common/game-settings';
+import { RandomBonusesService } from '@app/services/random-bonuses.service';
 @Component({
     selector: 'app-form',
     templateUrl: './form.component.html',
@@ -13,7 +14,7 @@ import { GameSettings, StartingPlayer } from '@common/game-settings';
 export class FormComponent implements OnDestroy {
     form: FormGroup;
 
-    constructor(public gameSettingsService: GameSettingsService, private router: Router) {
+    constructor(public gameSettingsService: GameSettingsService, private router: Router, private randomBonusService: RandomBonusesService) {
         this.form = new FormGroup({
             playerName: new FormControl(this.gameSettingsService.gameSettings.playersName[0]),
             minuteInput: new FormControl(this.gameSettingsService.gameSettings.timeMinute),
@@ -48,6 +49,16 @@ export class FormComponent implements OnDestroy {
         return randomNumber % enumLength;
     }
 
+    getRightBonusPositions(): string {
+        let bonusPositions;
+        if (this.form.controls.randomBonus.value === 'Activer'){
+            bonusPositions = this.randomBonusService.shuffleBonusesPositions();
+        } else{
+            bonusPositions = BONUS_POSITIONS;
+        }
+        return JSON.stringify(Array.from(bonusPositions));
+    }
+
     // Initializes the game with its settings
     initGame(): void {
         if (this.gameSettingsService.isSoloMode) {
@@ -57,12 +68,13 @@ export class FormComponent implements OnDestroy {
         }
         this.initSoloGame();
         this.initMultiplayerGame();
-        this.initSoloGame();
+        //this.initSoloGame();
         this.router.navigate(['multiplayer-mode-waiting-room']);
     }
 
     initSoloGame(): void {
         const playersName: string[] = [this.form.controls.playerName.value, this.chooseRandomAIName()];
+        const bonusTests = this.getRightBonusPositions();
         this.gameSettingsService.gameSettings = new GameSettings(
             playersName,
             this.chooseStartingPlayer(),
@@ -70,6 +82,8 @@ export class FormComponent implements OnDestroy {
             this.form.controls.secondInput.value,
             this.form.controls.levelInput.value,
             this.form.controls.randomBonus.value,
+            //this.getRightBonusPositions(),
+            bonusTests,
             'dictionary.json',
         );
     }
