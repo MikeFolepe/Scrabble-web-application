@@ -10,7 +10,7 @@ import { GameSettingsService } from '@app/services/game-settings.service';
 import { GameSettings } from '@common/game-settings';
 import { WaitingRoomComponent } from './waiting-room.component';
 
-fdescribe('WaitingRoomComponent', () => {
+describe('WaitingRoomComponent', () => {
 
     let component: WaitingRoomComponent;
     let fixture: ComponentFixture<WaitingRoomComponent>;
