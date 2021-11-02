@@ -6,7 +6,6 @@ import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
 import { Player } from '@app/models/player.model';
 import { GridService } from '@app/services/grid.service';
-
 import { PlaceLetterService } from './place-letter.service';
 
 describe('PlaceLetterService', () => {

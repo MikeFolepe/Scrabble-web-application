@@ -1,7 +1,9 @@
-import { HttpClientModule } from '@angular/common/http';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClientModule } from '@angular/common/http';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('MainPageComponent', () => {
     let component: MainPageComponent;
@@ -10,7 +12,7 @@ describe('MainPageComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [HttpClientModule],
-            declarations: [MainPageComponent],
+            declarations: [MainPageComponent, HttpClientTestingModule, RouterTestingModule],
             schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
     });
