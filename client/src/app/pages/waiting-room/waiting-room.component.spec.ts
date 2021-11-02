@@ -10,7 +10,7 @@ import { GameSettingsService } from '@app/services/game-settings.service';
 import { GameSettings } from '@common/game-settings';
 import { WaitingRoomComponent } from './waiting-room.component';
 
-describe('WaitingRoomComponent', () => {
+fdescribe('WaitingRoomComponent', () => {
 
     let component: WaitingRoomComponent;
     let fixture: ComponentFixture<WaitingRoomComponent>;
@@ -20,7 +20,7 @@ describe('WaitingRoomComponent', () => {
     beforeEach(() => {
         clientSocketServiceSpyjob = jasmine.createSpyObj('ClientSocketService', ['route']);
         // TODO Regarder bien comment reinjecter les informations
-        // clientSocketServiceSpyjob.socket = jasmine.createSpyObj('SOCKETIO', ['conne']);
+        clientSocketServiceSpyjob.socket = jasmine.createSpyObj('Socket', ['connect','on','disconnect']);
         gameSettingsServiceSpyjob = jasmine.createSpyObj('GameSettingsServices', ['']);
 
     });
@@ -78,7 +78,7 @@ describe('WaitingRoomComponent', () => {
     }));
 
     it('should route the user a the view on init',() => {
-        component.gameSettingsService.gameSettings = new GameSettings(['Mike',''],1,'01','00','Facile','Activer','francais','ooo');
+        component.gameSettingsService.gameSettings = new GameSettings(['Mike',''],1,'01','00','Facile','Activer','null','francais');
         component.gameSettingsService.isRedirectedFromMultiplayerGame= false;
         component.gameSettingsService.isSoloMode= false;
         component.route();
@@ -87,5 +87,21 @@ describe('WaitingRoomComponent', () => {
         // expect(component.router.navigate).toEqual(['solo-game-ai']);
 
     });
+
+    it('should play the animation on waitin page ',() => {
+        jasmine.clock().install();
+        const spy1 = spyOn(component,'waitBeforeChangeStatus');
+        const spy2 = spyOn(component,'handleReloadErrors');
+ 
+        component.playAnimation();
+        expect(spy1).toHaveBeenCalled();
+        jasmine.clock().tick(2001);
+        expect(spy2).toHaveBeenCalled();
+        jasmine.clock().uninstall();
+        // clientSocketServiceSpyjob.socket.on();
+        clientSocketServiceSpyjob.socket.connected =true;
+        expect(clientSocketServiceSpyjob.socket.connected).toEqual(true);
+    });
+
 
 });

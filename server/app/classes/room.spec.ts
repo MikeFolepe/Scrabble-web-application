@@ -1,3 +1,5 @@
+/* eslint-disable max-len */
+/* eslint-disable sort-imports */
 /* eslint-disable prettier/prettier */
 import { expect } from 'chai';
 import { describe } from 'mocha';

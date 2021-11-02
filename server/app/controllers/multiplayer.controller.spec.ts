@@ -1,10 +1,10 @@
+/* eslint-disable sort-imports */
 import { Application } from '@app/app';
 import * as chai from 'chai';
-import { StatusCodes } from 'http-status-codes';
+import { expect } from 'chai';
 import { Container } from 'typedi';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 import chaiHttp = require('chai-http');
-const HTTP_STATUS_OK = StatusCodes.OK;
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 describe('MultiPlayerController', () => {
     let expressApp: Express.Application;
@@ -12,17 +12,25 @@ describe('MultiPlayerController', () => {
 
     beforeEach(async () => {
         const app = Container.get(Application);
-        // eslint-disable-next-line dot-notation
         expressApp = app.app;
     });
 
     it('should return the result of a validation from a valid post request from the client', (done) => {
         chai.request(expressApp)
             .post('/api/multiplayer/validateWords')
+            .send(new Array<string>('mdmd'))
             .end((err, response) => {
-                response.should.have.status(HTTP_STATUS_OK);
-                response.body.should.be.a('boolean');
-                response.body.should.be.eq(true || false);
+                expect(response.body).to.equal(false);
+                done();
+            });
+    });
+
+    it('should return the result of a validation from a valid post request from the client', (done) => {
+        chai.request(expressApp)
+            .post('/api/multiplayer/validateWords')
+            .send(new Array<string>('sud'))
+            .end((err, response) => {
+                expect(response.body).to.equal(true);
                 done();
             });
     });

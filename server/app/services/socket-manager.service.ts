@@ -1,10 +1,11 @@
-import * as http from 'http';
-import * as io from 'socket.io';
+/* eslint-disable sort-imports */
 import { GameSettings } from '@common/game-settings';
 import { PlayerIndex } from '@common/PlayerIndex';
-import { RoomManager } from './room-manager.service';
-import { Service } from 'typedi';
 import { State } from '@common/room';
+import * as http from 'http';
+import * as io from 'socket.io';
+import { Service } from 'typedi';
+import { RoomManager } from './room-manager.service';
 
 @Service()
 export class SocketManager {
@@ -33,7 +34,9 @@ export class SocketManager {
             });
 
             socket.on('newRoomCustomer', (playerName: string, roomId: string) => {
+                console.log('new custom');
                 if (this.roomManager.isNotAvailable(roomId)) {
+                    console.log('isNotAvaible');
                     // block someone else entry from dialog window
                     socket.emit('roomAlreadyToken');
                     return;
@@ -72,9 +75,9 @@ export class SocketManager {
                 const roomId = this.roomManager.findRoomIdOf(socket.id);
                 this.roomManager.deleteRoom(roomId);
                 this.sio.emit('roomConfiguration', this.roomManager.rooms);
-                this.sio.in(roomId).emit('goToMainMenu');
-                socket.disconnect();
                 // route les joueurs vers le debut avec un message d'erreur
+                this.sio.in(roomId).emit('goToMainMenu');
+                // socket.disconnect();
             });
 
             socket.on('sendRoomMessage', (message: string, roomId: string) => {
