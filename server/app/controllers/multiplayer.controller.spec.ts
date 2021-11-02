@@ -1,26 +1,29 @@
 import { Application } from '@app/app';
-import { WordValidationService } from '@app/services/word-validation.service';
+import * as chai from 'chai';
 import { StatusCodes } from 'http-status-codes';
-import { createStubInstance, SinonStubbedInstance } from 'sinon';
-import * as supertest from 'supertest';
 import { Container } from 'typedi';
-
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+import chaiHttp = require('chai-http');
 const HTTP_STATUS_OK = StatusCodes.OK;
-// const HTTP_STATUS_CREATED = StatusCodes.CREATED;
-
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 describe('MultiPlayerController', () => {
-    let wordValidationService: SinonStubbedInstance<WordValidationService>;
     let expressApp: Express.Application;
+    chai.use(chaiHttp);
 
     beforeEach(async () => {
-        wordValidationService = createStubInstance(WordValidationService);
         const app = Container.get(Application);
         // eslint-disable-next-line dot-notation
-        Object.defineProperty(app['MultiPlayerController'], 'wordValidationService', { value: wordValidationService });
         expressApp = app.app;
     });
 
-    it('should return the result of a validation from a valid post request from the client', async () => {
-        return supertest(expressApp).post('/api/multiplayer/validateWords').expect(HTTP_STATUS_OK);
+    it('should return the result of a validation from a valid post request from the client', (done) => {
+        chai.request(expressApp)
+            .post('/api/multiplayer/validateWords')
+            .end((err, response) => {
+                response.should.have.status(HTTP_STATUS_OK);
+                response.body.should.be.a('boolean');
+                response.body.should.be.eq(true || false);
+                done();
+            });
     });
 });

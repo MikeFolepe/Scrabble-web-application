@@ -9,7 +9,7 @@ import { GridService } from '@app/services/grid.service';
 import { CommunicationService } from './communication.service';
 import { PlaceLetterService } from './place-letter.service';
 
-fdescribe('PlaceLetterService', () => {
+describe('PlaceLetterService', () => {
     let service: PlaceLetterService;
     let gridServiceSpy: unknown;
     beforeEach(() => {

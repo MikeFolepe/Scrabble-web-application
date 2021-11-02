@@ -51,7 +51,6 @@ export class SkipTurnService {
                 this.seconds = 59;
             } else if (this.seconds === 0 && this.minutes === 0) {
                 this.stopTimer();
-                // Do not touch to setTimeout, it's gonna break everything
                 setTimeout(() => {
                     this.switchTurn();
                 }, ONE_SECOND_TIME);

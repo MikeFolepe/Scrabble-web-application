@@ -28,10 +28,9 @@ export class MultiplayerController {
          *           $ref: '#/definitions/Message'
          *
          */
-        this.router.post('/validateWords', async (req: Request, res: Response) => {
-            await this.wordValidator.isValidInDictionary(req.body).then((validation: boolean) => {
-                res.status(StatusCodes.OK).send(validation);
-            });
+        this.router.post('/validateWords', (req: Request, res: Response) => {
+            const validation = this.wordValidator.isValidInDictionary(req.body);
+            res.status(StatusCodes.OK).send(validation);
         });
     }
 }

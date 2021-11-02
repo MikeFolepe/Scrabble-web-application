@@ -9,7 +9,7 @@ export class WordValidationService {
         this.dictionary = JSON.parse(this.dictionaryData.toString()).words;
     }
 
-    async isValidInDictionary(words: string[]): Promise<boolean> {
+    isValidInDictionary(words: string[]): boolean {
         let countValidWords = 0;
         // the server console returns that words is not of type Iteratable<string>
         // eslint-disable-next-line @typescript-eslint/prefer-for-of
@@ -21,9 +21,6 @@ export class WordValidationService {
             }
         }
 
-        if (countValidWords === words.length) {
-            return true;
-        }
-        return false;
+        return countValidWords === words.length;
     }
 }
