@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { AI_NAME_DATABASE } from '@app/classes/constants';
 import { GameSettings, StartingPlayer } from '@app/classes/game-settings';
 import { GameSettingsService } from '@app/services/game-settings.service';
+
 @Component({
     selector: 'app-form',
     templateUrl: './form.component.html',
@@ -22,32 +23,6 @@ export class FormComponent implements OnDestroy {
         });
     }
 
-    // Generates a random name for the AI
-    chooseRandomAIName(): string {
-        let randomName: string;
-        do {
-            // Number of seconds since 1st january 1970
-            let randomNumber = new Date().getTime();
-            // Multiplication by a random number [0,1[, which we get the floor
-            randomNumber = Math.floor(Math.random() * randomNumber);
-            // Random value [0, aiNameDatabase.length[
-            randomName = AI_NAME_DATABASE[randomNumber % AI_NAME_DATABASE.length];
-        } while (randomName === this.form.controls.playerName.value);
-        return randomName;
-    }
-
-    // Chooses randomly the player that will play first
-    chooseStartingPlayer(): StartingPlayer {
-        const enumLength = Object.keys(StartingPlayer).length / 2;
-        // Number of seconds since 1st january 1970
-        let randomNumber = new Date().getTime();
-        // Multiplication by a random number [0,1[, which we get the floor
-        randomNumber = Math.floor(Math.random() * randomNumber);
-        // Random value [0, enum.length[
-        return randomNumber % enumLength;
-    }
-
-    // Initializes the game with its settings
     initGame(): void {
         if (this.gameSettingsService.isSoloMode) {
             this.initSoloGame();
@@ -56,7 +31,7 @@ export class FormComponent implements OnDestroy {
         }
         this.initSoloGame();
         this.initMultiplayerGame();
-        this.initSoloGame();
+        // this.initSoloGame();
         this.router.navigate(['multiplayer-mode-waiting-room']);
     }
 
@@ -80,5 +55,19 @@ export class FormComponent implements OnDestroy {
     ngOnDestroy(): void {
         this.gameSettingsService.isRedirectedFromMultiplayerGame = false;
         return;
+    }
+
+    private chooseStartingPlayer(): StartingPlayer {
+        return Math.floor((Math.random() * Object.keys(StartingPlayer).length) / 2);
+    }
+
+    private chooseRandomAIName(): string {
+        let randomName: string;
+        do {
+            // Random value [0, AI_NAME_DATABASE.length[
+            const randomNumber = Math.floor(Math.random() * AI_NAME_DATABASE.length);
+            randomName = AI_NAME_DATABASE[randomNumber];
+        } while (randomName === this.form.controls.playerName.value);
+        return randomName;
     }
 }

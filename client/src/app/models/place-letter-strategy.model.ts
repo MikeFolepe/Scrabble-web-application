@@ -1,5 +1,5 @@
 /* eslint-disable max-lines */
-import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSITION_X, DICTIONARY, INDEX_PLAYER_AI } from '@app/classes/constants';
+import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSITION_X, DICTIONARY, INDEX_INVALID, INDEX_PLAYER_AI } from '@app/classes/constants';
 import { Range } from '@app/classes/range';
 import { BoardPattern, Orientation, PatternInfo, PossibleWords } from '@app/classes/scrabble-board-pattern';
 import { Vec2 } from '@app/classes/vec2';
@@ -149,9 +149,7 @@ export class PlaceLetters extends PlayStrategy {
         const start = line.search(pattern);
         const end = start + wordToPlace.word.length - 1;
 
-        // search function returns -1 if not found so as we are only calling -1 a single time, we decided to keep it like this
-        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-        if (start === -1) {
+        if (start === INDEX_INVALID) {
             return false;
         }
 

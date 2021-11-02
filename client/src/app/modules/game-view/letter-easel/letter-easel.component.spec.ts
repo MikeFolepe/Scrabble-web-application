@@ -180,4 +180,16 @@ describe('LetterEaselComponent', () => {
         document.dispatchEvent(event);
         expect(component['manipulateService'].onMouseWheelTick).toHaveBeenCalled();
     });
+
+    it('should be selected to be swapped only if the letter is not already selected for swap or manipulation', () => {
+        component.letterEaselTab[0].isSelectedForSwap = false;
+        component.letterEaselTab[0].isSelectedForManipulation = false;
+        component['handleSwapSelection'](0);
+        expect(component.letterEaselTab[0].isSelectedForSwap).toBeTrue();
+
+        component.letterEaselTab[0].isSelectedForSwap = false;
+        component.letterEaselTab[0].isSelectedForManipulation = true;
+        component['handleSwapSelection'](0);
+        expect(component.letterEaselTab[0].isSelectedForSwap).toBeFalse();
+    });
 });

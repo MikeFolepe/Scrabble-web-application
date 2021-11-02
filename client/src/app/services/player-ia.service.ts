@@ -7,7 +7,6 @@ import { Vec2 } from '@app/classes/vec2';
 
 const ROW_OFFSET = 65;
 const COLUMN_OFFSET = 1;
-const MULTIPLICATION_NEUTRAL = 1;
 
 @Injectable({
     providedIn: 'root',
@@ -15,20 +14,14 @@ const MULTIPLICATION_NEUTRAL = 1;
 export class PlayerAIService {
     isFirstRound: boolean = true;
     isPlacementValid: boolean;
-    sortDecreasing = (word1: PossibleWords, word2: PossibleWords) => {
-        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-        if (word1.point > word2.point) return -1; // used to sort
-        if (word1.point < word2.point) return 1;
-        return 0;
-    };
 
     calculatePoints(allPossibleWords: PossibleWords[], scrabbleBoard: string[][]) {
         for (const word of allPossibleWords) {
             let totalPoint = 0;
             let wordFactor = 1;
-            let matrixPos: Vec2;
             for (let i = 0; i < word.word.length; i++) {
                 let key: string;
+                let matrixPos: Vec2;
 
                 if (word.orientation === Orientation.HorizontalOrientation) {
                     key = String.fromCharCode(word.line + ROW_OFFSET) + (word.startIdx + COLUMN_OFFSET + i).toString();
@@ -37,14 +30,13 @@ export class PlayerAIService {
                     key = String.fromCharCode(word.startIdx + ROW_OFFSET + i) + (word.line + COLUMN_OFFSET).toString();
                     matrixPos = { x: word.startIdx + i, y: word.line };
                 }
-                // letter value : A = 1, B = 3, C = 3 ...etc
+                // Letter value : A = 1, B = 3, C = 3 ...etc
                 const letterContribution: number = RESERVE[word.word[i].toUpperCase().charCodeAt(0) - ROW_OFFSET].points;
-                // total earning for the letter (word[i]) at position (x, y)
+                // Total earning for the letter (word[i]) at position (x, y)
                 const earning: Earning = this.computeCell(key, letterContribution, matrixPos, scrabbleBoard);
                 totalPoint += earning.letterPt;
                 wordFactor *= earning.wordFactor;
             }
-
             word.point = totalPoint * wordFactor;
         }
     }
@@ -58,16 +50,13 @@ export class PlayerAIService {
     }
 
     private bonusFactor(bonusFactor: number, matrixPos: Vec2, scrabbleBoard: string[][]): number {
-        // check if there is a word on the matrixPos
-        if (scrabbleBoard[matrixPos.x][matrixPos.y] === '') {
-            return bonusFactor;
-        }
-
-        return MULTIPLICATION_NEUTRAL;
+        const MULTIPLICATION_NEUTRAL = 1;
+        // Check if there is a word on the matrixPos
+        return scrabbleBoard[matrixPos.x][matrixPos.y] === '' ? bonusFactor : MULTIPLICATION_NEUTRAL;
     }
 
     private computeCell(keyCell: string, letterValue: number, matrixPos: Vec2, scrabbleBoard: string[][]): Earning {
-        // compute the earning (in letterFactor and wordFactor) of the cell at matrixPox
+        // Compute the earning (in letterFactor and wordFactor) of the cell at matrixPox
         let letterPt = 0;
         let wordFactor = 1;
         switch (Board[keyCell as keyof typeof Board]) {
@@ -89,7 +78,15 @@ export class PlayerAIService {
                 letterPt += letterValue;
                 break;
         }
-
         return { letterPt, wordFactor };
     }
+
+    private sortDecreasing = (word1: PossibleWords, word2: PossibleWords) => {
+        const EQUAL_SORT_NUMBER = 0;
+        const BIGGER_SORT_NUMBER = 1;
+        const SMALLER_SORT_NUMBER = -1;
+
+        if (word1.point === word2.point) return EQUAL_SORT_NUMBER;
+        return word1.point < word2.point ? BIGGER_SORT_NUMBER : SMALLER_SORT_NUMBER;
+    };
 }
