@@ -6,6 +6,8 @@ import { Letter } from '@app/classes/letter';
 import { PlayerAI } from '@app/models/player-ai.model';
 import { Player } from '@app/models/player.model';
 import { PlayerService } from './player.service';
+import { RouterTestingModule } from '@angular/router/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('PlayerService', () => {
     let letterA: Letter;
@@ -18,7 +20,9 @@ describe('PlayerService', () => {
     let playerAI: PlayerAI;
 
     beforeEach(() => {
-        TestBed.configureTestingModule({});
+        TestBed.configureTestingModule({
+            imports: [HttpClientTestingModule, RouterTestingModule],
+        });
         service = TestBed.inject(PlayerService);
 
         letterA = RESERVE[0];
@@ -305,5 +309,17 @@ describe('PlayerService', () => {
         spyOn(service, 'getEasel').and.returnValue([letterA]);
         service.addEaselLetterToReserve(0, 0);
         expect(spy).toHaveBeenCalledOnceWith('A');
+    });
+
+    it('should return easel when getEasel() is called', () => {
+        const easel = [letterA, letterB, letterD, letterC, letterD, letterA, letterA];
+        player.letterTable = easel;
+        service['players'].push(player);
+        const easelAI = [letterC, letterD];
+        playerAI.letterTable = easelAI;
+        service['players'].push(playerAI);
+
+        expect(service.getEasel(0)).toEqual(easel);
+        expect(service.getEasel(1)).toEqual(easelAI);
     });
 });

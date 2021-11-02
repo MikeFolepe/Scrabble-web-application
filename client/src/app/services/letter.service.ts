@@ -14,30 +14,32 @@ export class LetterService {
     reserve: Letter[] = JSON.parse(JSON.stringify(RESERVE));
     reserveSize: number;
     messageSource = new BehaviorSubject('default message');
-    // eslint-disable-next-line no-invalid-this
 
     constructor(private clientSocketService: ClientSocketService) {
         this.clientSocketService.socket.on('receiveReserve', (reserve: Letter[], reserveSize: number) => {
             this.reserve = reserve;
             this.reserveSize = reserveSize;
         });
-        this.updateReserveSize();
+        let size = 0;
+        for (const letter of this.reserve) {
+            size += letter.quantity;
+        }
+        this.reserveSize = size;
     }
 
     // Returns a random letter from the reserve if reserve is not empty
     getRandomLetter(): Letter {
-        const letterEmpty: Letter = {
-            value: '',
-            quantity: 0,
-            points: 0,
-            isSelectedForSwap: false,
-            isSelectedForManipulation: false,
-        };
-        let letter: Letter;
-
-        if (this.isReserveEmpty()) {
-            return letterEmpty;
+        if (this.reserveSize === 0) {
+            // Return an empty letter
+            return {
+                value: '',
+                quantity: 0,
+                points: 0,
+                isSelectedForSwap: false,
+                isSelectedForManipulation: false,
+            };
         }
+        let letter: Letter;
         do {
             this.randomElement = Math.floor(Math.random() * this.reserve.length);
             letter = this.reserve[this.randomElement];
@@ -45,33 +47,17 @@ export class LetterService {
 
         // Update reserve
         letter.quantity--;
-        this.updateReserveSize();
-        return letter;
-    }
-
-    isReserveEmpty(): boolean {
-        for (const letter of this.reserve) {
-            if (letter.quantity > 0) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    updateReserveSize(): void {
-        let size = 0;
-        for (const letter of this.reserve) {
-            size += letter.quantity;
-        }
-        this.reserveSize = size;
+        this.reserveSize--;
         this.clientSocketService.socket.emit('sendReserve', this.reserve, this.reserveSize, this.clientSocketService.roomId);
+        return letter;
     }
 
     addLetterToReserve(letter: string): void {
         for (const letterReserve of this.reserve) {
             if (letter.toUpperCase() === letterReserve.value) {
                 letterReserve.quantity++;
-                this.updateReserveSize();
+                this.reserveSize++;
+                this.clientSocketService.socket.emit('sendReserve', this.reserve, this.reserveSize, this.clientSocketService.roomId);
                 return;
             }
         }

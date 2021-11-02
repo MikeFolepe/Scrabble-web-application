@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { RESERVE } from '@app/classes/constants';
 import { Range } from '@app/classes/range';
-import { board, Earning } from '@app/classes/scrabble-board';
+import { Board, Earning } from '@app/classes/scrabble-board';
 import { Orientation, PossibleWords } from '@app/classes/scrabble-board-pattern';
 import { Vec2 } from '@app/classes/vec2';
 
@@ -17,7 +17,7 @@ export class PlayerAIService {
     isPlacementValid: boolean;
     sortDecreasing = (word1: PossibleWords, word2: PossibleWords) => {
         // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-        if (word1.point > word2.point) return -1;
+        if (word1.point > word2.point) return -1; // used to sort
         if (word1.point < word2.point) return 1;
         return 0;
     };
@@ -70,7 +70,7 @@ export class PlayerAIService {
         // compute the earning (in letterFactor and wordFactor) of the cell at matrixPox
         let letterPt = 0;
         let wordFactor = 1;
-        switch (board[keyCell as keyof typeof board]) {
+        switch (Board[keyCell as keyof typeof Board]) {
             case 'doubleletter':
                 letterPt = letterValue * this.bonusFactor(2, matrixPos, scrabbleBoard);
                 break;

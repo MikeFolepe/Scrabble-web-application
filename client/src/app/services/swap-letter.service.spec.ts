@@ -4,12 +4,16 @@ import { INDEX_REAL_PLAYER, RESERVE } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { Player } from '@app/models/player.model';
 import { SwapLetterService } from './swap-letter.service';
+import { RouterTestingModule } from '@angular/router/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('SwapLetterService', () => {
     let service: SwapLetterService;
 
     beforeEach(() => {
-        TestBed.configureTestingModule({});
+        TestBed.configureTestingModule({
+            imports: [HttpClientTestingModule, RouterTestingModule],
+        });
         service = TestBed.inject(SwapLetterService);
 
         const letterA: Letter = RESERVE[0];

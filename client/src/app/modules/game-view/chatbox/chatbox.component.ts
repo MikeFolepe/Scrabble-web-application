@@ -1,8 +1,8 @@
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
-import { INDEX_PLAYER_AI, INDEX_REAL_PLAYER, ONE_SECOND_TIME } from '@app/classes/constants';
+import { INDEX_PLAYER_AI, INDEX_REAL_PLAYER, ONE_SECOND_DELAY } from '@app/classes/constants';
+import { TypeMessage } from '@app/classes/enum';
 import { BoardHandlerService } from '@app/services/board-handler.service';
 import { ChatboxService } from '@app/services/chatbox.service';
-import { DebugService } from '@app/services/debug.service';
 import { EndGameService } from '@app/services/end-game.service';
 import { SendMessageService } from '@app/services/send-message.service';
 
@@ -14,17 +14,17 @@ import { SendMessageService } from '@app/services/send-message.service';
 export class ChatboxComponent implements OnInit, AfterViewInit {
     @ViewChild('scrollMe') private myScrollContainer: ElementRef;
 
-    typeMessage: string = '';
     message: string = '';
-
     listMessages: string[] = [];
-    listTypes: string[] = [];
-    debugMessage: { word: string; nbPt: number }[] = [];
-    // Table to stock debug message from IA test avec des strings aléatoires
+    listTypes: TypeMessage[] = [];
+
+    // Used to access TypeMessage enum in the HTML
+    htmlTypeMessage = TypeMessage;
+
+    private typeMessage: TypeMessage;
 
     constructor(
         private chatBoxService: ChatboxService,
-        public debugService: DebugService,
         private sendMessageService: SendMessageService,
         public endGameService: EndGameService,
         private boardHandlerService: BoardHandlerService,
@@ -58,7 +58,7 @@ export class ChatboxComponent implements OnInit, AfterViewInit {
     }
 
     sendSystemMessage(systemMessage: string) {
-        this.typeMessage = 'system';
+        this.typeMessage = TypeMessage.System;
         this.listTypes.push(this.typeMessage);
         this.listMessages.push(systemMessage);
     }
@@ -80,6 +80,6 @@ export class ChatboxComponent implements OnInit, AfterViewInit {
             if (this.endGameService.isEndGame) {
                 clearInterval(findEnd);
             }
-        }, ONE_SECOND_TIME);
+        }, ONE_SECOND_DELAY);
     }
 }

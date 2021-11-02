@@ -29,11 +29,11 @@ export class EndGameService {
     getWinnerName(): string {
         if (this.playerService.players[0].score > this.playerService.players[1].score) {
             return this.playerService.players[0].name;
-        } else if (this.playerService.players[0].score < this.playerService.players[1].score) {
-            return this.playerService.players[1].name;
-        } else {
-            return this.playerService.players[0].name + '  ' + this.playerService.players[1].name;
         }
+        if (this.playerService.players[0].score < this.playerService.players[1].score) {
+            return this.playerService.players[1].name;
+        }
+        return this.playerService.players[0].name + '  ' + this.playerService.players[1].name;
     }
     addActionsLog(actionLog: string): void {
         this.actionsLog.push(actionLog);
@@ -53,7 +53,7 @@ export class EndGameService {
         }
         for (const letter of this.playerService.players[indexPlayer].letterTable) {
             this.playerService.players[indexPlayer].score -= letter.points;
-            // Check if score decrease under 0 after soustraction
+            // Check if score decrease under 0 after subtraction
             if (this.playerService.players[indexPlayer].score < 0) {
                 this.playerService.players[indexPlayer].score = 0;
                 return;
@@ -68,6 +68,7 @@ export class EndGameService {
         this.actionsLog = [];
         this.debugService.debugServiceMessage = [];
     }
+
     private isEndGameByActions(): boolean {
         if (this.actionsLog.length < NUMBER_OF_SKIP) {
             return false;
@@ -84,8 +85,7 @@ export class EndGameService {
     private isEndGameByEasel(): boolean {
         return (
             this.letterService.reserveSize === 0 &&
-            (this.playerService.players[INDEX_REAL_PLAYER].letterTable.length === 0 ||
-                this.playerService.players[INDEX_PLAYER_AI].letterTable.length === 0)
+            (this.playerService.isEaselEmpty(INDEX_REAL_PLAYER) || this.playerService.isEaselEmpty(INDEX_PLAYER_AI))
         );
     }
 }

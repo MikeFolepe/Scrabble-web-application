@@ -1,4 +1,3 @@
-/* eslint-disable no-invalid-this */
 import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { Range } from '@app/classes/range';
@@ -16,15 +15,15 @@ export class PlayerNameFieldComponent implements OnInit {
     };
     // Special character that are allowed
     specialChar: string = '@#$%^&*_';
-    // Validation pattern which is combination of required pattern and special char
-    // eslint-disable-next-line no-invalid-this
-    validationPattern: string = '^([A-Za-z][A-Za-z][A-Za-z][A-Za-z])[A-Za-z0-9' + this.specialChar + ']*';
 
     ngOnInit(): void {
+        // Validation pattern which is combination of required pattern and special char
+        const validationPattern: string = '^([A-Za-z][A-Za-z][A-Za-z][A-Za-z])[A-Za-z0-9' + this.specialChar + ']*';
+
         // The playerName field is required for form submit
         this.parentForm.controls.playerName.setValidators([
             Validators.required,
-            Validators.pattern(this.validationPattern),
+            Validators.pattern(validationPattern),
             Validators.minLength(this.charRange.min),
             Validators.maxLength(this.charRange.max),
         ]);

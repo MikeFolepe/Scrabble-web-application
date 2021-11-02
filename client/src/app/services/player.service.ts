@@ -164,4 +164,8 @@ export class PlayerService {
         this.players[indexPlayer].score += score;
         this.clientSocketService.socket.emit('updateScoreInfo', this.players[indexPlayer].score, 1, this.clientSocketService.roomId);
     }
+
+    isEaselEmpty(indexPlayer: number): boolean {
+        return this.players[indexPlayer].letterTable.length === 0;
+    }
 }

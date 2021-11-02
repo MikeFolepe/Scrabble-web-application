@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { TypeMessage } from '@app/classes/enum';
 import { ClientSocketService } from './client-socket.service';
 import { GameSettingsService } from './game-settings.service';
 
@@ -7,7 +8,7 @@ import { GameSettingsService } from './game-settings.service';
 })
 export class SendMessageService {
     message: string = '';
-    typeMessage: string = '';
+    typeMessage: TypeMessage;
     private displayMessage: () => void;
 
     constructor(private clientSocketService: ClientSocketService, private gameSettingsService: GameSettingsService) {
@@ -19,11 +20,11 @@ export class SendMessageService {
         this.displayMessage = fn;
     }
 
-    displayMessageByType(message: string, typeMessage: string) {
+    displayMessageByType(message: string, typeMessage: TypeMessage) {
         this.message = message;
         this.typeMessage = typeMessage;
         // TODO Switch case by command
-        if (this.typeMessage === 'player') {
+        if (this.typeMessage === TypeMessage.Player) {
             this.sendMessageToOpponent(this.message, this.gameSettingsService.gameSettings.playersName[0]);
         }
         this.displayMessage();
@@ -40,7 +41,7 @@ export class SendMessageService {
     }
 
     sendOpponentMessage(opponentMessage: string) {
-        this.typeMessage = 'opponent';
+        this.typeMessage = TypeMessage.Opponent;
         this.message = opponentMessage;
         this.displayMessage();
     }
