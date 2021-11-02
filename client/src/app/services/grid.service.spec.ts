@@ -28,14 +28,14 @@ describe('GridService', () => {
 
     it(' drawLetter should call fillText on the canvas', () => {
         const fillTextSpy = spyOn(service.gridContext, 'fillText').and.callThrough();
-        service.drawLetter(service.gridContext, 'L', {x:1, y:5}, 13);
+        service.drawLetter(service.gridContext, 'L', { x: 1, y: 5 }, 13);
         expect(fillTextSpy).toHaveBeenCalled();
     });
 
     it(' drawLetter should color pixels on the canvas', () => {
         let imageData = service.gridContext.getImageData(0, 0, service.width, service.height).data;
         const beforeSize = imageData.filter((x) => x !== 0).length;
-        service.drawLetter(service.gridContext, 'L', {x:1, y:5}, 13);
+        service.drawLetter(service.gridContext, 'L', { x: 1, y: 5 }, 13);
         imageData = service.gridContext.getImageData(0, 0, service.width, service.height).data;
         const afterSize = imageData.filter((x) => x !== 0).length;
         expect(afterSize).toBeGreaterThan(beforeSize);
@@ -49,10 +49,10 @@ describe('GridService', () => {
         const afterSize = imageData.filter((x) => x !== 0).length;
         expect(afterSize).toBeGreaterThan(beforeSize);
     });
-    
+
     it('eraseLetter should call clearRect on the canvas', () => {
         const clearRectSpy = spyOn(service.gridContext, 'clearRect').and.callThrough();
-        service.eraseLetter(service.gridContext, {x:1, y:5});
+        service.eraseLetter(service.gridContext, { x: 1, y: 5 });
         expect(clearRectSpy).toHaveBeenCalled();
     });
 
@@ -62,7 +62,7 @@ describe('GridService', () => {
             ['A4', 'doubleletter'],
             ['A8', 'tripleLetter'],
             ['A12', 'doubleWord'],
-            ['A15', 'tripleword']
+            ['A15', 'tripleword'],
         ]);
         const colorBonusBoxSpy = spyOn(service, 'colorBonusBox').and.callThrough();
         const writeBonusNameSpy = spyOn(service, 'writeBonusName').and.callThrough();

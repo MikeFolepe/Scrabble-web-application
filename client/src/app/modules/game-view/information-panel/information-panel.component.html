@@ -8,13 +8,11 @@
     <h2 class="header-item">Panneau d'information</h2>
     <ul id="playersList">
         <!-- Give reserve number -->
-        <p>Nombres de lettres dans la Reserve: {{letterService.reserveSize }}</p>
+        <p>Nombres de lettres dans la Reserve: {{ letterService.reserveSize }}</p>
         <li *ngFor="let player of playerService.players">
             <p>Nom : {{ player.name }}</p>
             <p>Score : {{ player.score }}</p>
-            <div *ngIf="player.letterTable.length !== 7 ">
-                Nombre de lettres sur le chevalet: {{player.letterTable.length}}
-            </div>
+            <div *ngIf="player.letterTable.length !== 7">Nombre de lettres sur le chevalet: {{ player.letterTable.length }}</div>
             <div *ngIf="skipTurn.isTurn && player.id === 1">
                 <div id="info-timer">
                     <p>Joueur actif</p>

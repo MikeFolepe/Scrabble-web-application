@@ -7,7 +7,6 @@ import { RandomBonusesService } from './random-bonuses.service';
 @Injectable({
     providedIn: 'root',
 })
-
 export class WordValidationService {
     newWords: string[];
     playedWords: Map<string, string[]>;

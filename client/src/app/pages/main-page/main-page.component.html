@@ -6,25 +6,21 @@
     <mat-tab-group class="tab-group" animationDuration="1000ms" [(selectedIndex)]="selectedGameIndex">
         <mat-tab label="{{ games[0] }}">
             <mat-radio-group class="radio-group" [(ngModel)]="selectedMode">
-                <mat-radio-button class="radio-button" value="solo" *ngFor="let mode of modes" [value]="mode">{{ mode }}
-                </mat-radio-button>
+                <mat-radio-button class="radio-button" value="solo" *ngFor="let mode of modes" [value]="mode">{{ mode }} </mat-radio-button>
             </mat-radio-group>
         </mat-tab>
         <mat-tab label="{{ games[1] }}">
             <mat-radio-group class="radio-group" [(ngModel)]="selectedMode">
-                <mat-radio-button class="radio-button" value="soloLOG" *ngFor="let mode of modes" [value]="mode">{{ mode
-                    }}</mat-radio-button>
+                <mat-radio-button class="radio-button" value="soloLOG" *ngFor="let mode of modes" [value]="mode">{{ mode }}</mat-radio-button>
             </mat-radio-group>
         </mat-tab>
     </mat-tab-group>
-    <button class="button" id="playButton" mat-raised-button [disabled]="!selectedMode" color="warn"
-        (click)="setGameMode()">Jouer!</button>
+    <button class="button" id="playButton" mat-raised-button [disabled]="!selectedMode" color="warn" (click)="setGameMode()">Jouer!</button>
     <p>
         {{ games[selectedGameIndex] }}<br />
         {{ selectedMode }}
     </p>
-    <button class="button" id="resetButton" mat-raised-button [disabled]="!selectedMode" color="primary"
-        (click)="resetRadios()">
+    <button class="button" id="resetButton" mat-raised-button [disabled]="!selectedMode" color="primary" (click)="resetRadios()">
         Effacer mon choix
     </button>
     <br />

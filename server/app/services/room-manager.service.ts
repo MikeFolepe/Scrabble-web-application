@@ -41,8 +41,8 @@ export class RoomManager {
         room.state = state;
     }
 
-    setSocket(room: Room) {
-        room.setSocketId(room.roomId);
+    setSocket(room: Room, customerSocketId: string) {
+        room.setSocketId(customerSocketId);
     }
 
     getGameSettings(roomId: string) {

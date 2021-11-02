@@ -13,7 +13,7 @@ export class GridService {
     private caseWidth: number;
     private readonly gridLength = 15;
     bonusPositions: Map<string, string>;
-    constructor(){
+    constructor() {
         this.canvasSize = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
         this.caseWidth = DEFAULT_WIDTH / BOARD_SIZE;
         this.bonusPositions = new Map<string, string>();
@@ -33,7 +33,6 @@ export class GridService {
         return this.canvasSize.y;
     }
 
-
     drawGrid() {
         this.writeGridIndexes(this.gridContext, this.gridLength);
         this.drawSimpleGrid(this.gridContext);
@@ -44,23 +43,23 @@ export class GridService {
     writeBonusName(ctx: CanvasRenderingContext2D, text: string, startPosition: Vec2) {
         ctx.font = '12px system-ui';
         ctx.fillStyle = 'black';
-        ctx.textBaseline = 'middle'; 
-        ctx.textAlign = 'center'; 
+        ctx.textBaseline = 'middle';
+        ctx.textAlign = 'center';
         const lines = text.split(' ');
         text = lines[0] + '\n' + lines[1];
-        ctx.fillText(text, startPosition.x + this.caseWidth/2, startPosition.y +  this.caseWidth/2);
+        ctx.fillText(text, startPosition.x + this.caseWidth / 2, startPosition.y + this.caseWidth / 2);
     }
 
     //draw the game grid without any bonus on it
     drawSimpleGrid(gridContext: CanvasRenderingContext2D) {
         const startPosition: Vec2 = { x: 0, y: 0 };
         for (let i = 1; i <= this.gridLength; i++) {
-            startPosition.x = i* this.caseWidth;
+            startPosition.x = i * this.caseWidth;
             for (let j = 1; j <= this.gridLength; j++) {
                 startPosition.y = j * this.caseWidth;
-                    gridContext.fillStyle = 'lightGrey';
-                    gridContext.fillRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
-                    gridContext.strokeRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
+                gridContext.fillStyle = 'lightGrey';
+                gridContext.fillRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
+                gridContext.strokeRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
             }
         }
     }
@@ -68,9 +67,12 @@ export class GridService {
     //specify bonuses boxes on the grid by adding colors and bonuses names
     drawBonusBoxes(bonusPositions: Map<string, string>) {
         bonusPositions.forEach((bonus: string, position: string) => {
-            const positionSplitted = position.split(/([0-9]+)/)
-            let convertedPositon = {x: (positionSplitted[0].charCodeAt(0) - 'A'.charCodeAt(0)+1)*this.caseWidth, y: Number(positionSplitted[1])*this.caseWidth};
-            switch(bonus){
+            const positionSplitted = position.split(/([0-9]+)/);
+            let convertedPositon = {
+                x: (positionSplitted[0].charCodeAt(0) - 'A'.charCodeAt(0) + 1) * this.caseWidth,
+                y: Number(positionSplitted[1]) * this.caseWidth,
+            };
+            switch (bonus) {
                 case 'doubleletter': {
                     this.colorBonusBox(this.gridContext, 'lightBlue', convertedPositon);
                     this.writeBonusName(this.gridContext, 'Lettre x2', convertedPositon);
@@ -92,21 +94,20 @@ export class GridService {
                     break;
                 }
                 default: {
-                
                 }
             }
         });
     }
 
     //color the center box of the grid then draw a star on it
-    drawCenterBoxe(){
-        const centerPosition: Vec2 = {x: 8*this.caseWidth, y: 8*this.caseWidth};
+    drawCenterBoxe() {
+        const centerPosition: Vec2 = { x: 8 * this.caseWidth, y: 8 * this.caseWidth };
         //coloring the box
         this.gridContext.fillStyle = 'pink';
         this.gridContext.fillRect(centerPosition.x, centerPosition.y, this.caseWidth, this.caseWidth);
         this.gridContext.strokeRect(centerPosition.x, centerPosition.y, this.caseWidth, this.caseWidth);
         //drawing star
-        this.drawStar(centerPosition.x + this.caseWidth/2, centerPosition.y + this.caseWidth/2, 5, this.caseWidth / 2.5, 8);
+        this.drawStar(centerPosition.x + this.caseWidth / 2, centerPosition.y + this.caseWidth / 2, 5, this.caseWidth / 2.5, 8);
     }
 
     drawStar(cx: number, cy: number, spikes: number, outerRadius: number, innerRadius: number) {

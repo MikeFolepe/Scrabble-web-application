@@ -10,9 +10,8 @@
 // import { GameSettings } from '@common/game-settings';
 // import { WaitingRoomComponent } from './waiting-room.component';
 
-
 // describe('WaitingRoomComponent', () => {
-    
+
 //     let component: WaitingRoomComponent;
 //     let fixture: ComponentFixture<WaitingRoomComponent>;
 //     let clientSocketServiceSpyjob: jasmine.SpyObj<ClientSocketService>;
@@ -20,10 +19,10 @@
 
 //     beforeEach(() => {
 //         clientSocketServiceSpyjob = jasmine.createSpyObj('ClientSocketService', ['route']);
-//         // TODO Regarder bien comment reinjecter les informations 
+//         // TODO Regarder bien comment reinjecter les informations
 //         // clientSocketServiceSpyjob.socket = jasmine.createSpyObj('SOCKETIO', ['conne']);
 //         gameSettingsServiceSpyjob = jasmine.createSpyObj('GameSettingsServices', ['']);
-        
+
 //     });
 //     beforeEach(async () => {
 //         await TestBed.configureTestingModule({
@@ -36,26 +35,22 @@
 //         }).compileComponents();
 //     });
 
-      
 //     beforeEach(() => {
 //         fixture = TestBed.createComponent(WaitingRoomComponent);
 //         component = fixture.componentInstance;
 //         fixture.detectChanges();
 //     });
 
-   
 //     beforeEach(() => {
 //         fixture = TestBed.createComponent(WaitingRoomComponent);
 //         component = fixture.componentInstance;
 //         fixture.detectChanges();
 //     });
-    
-    
+
 //     it('should create', () => {
 //         expect(component).toBeTruthy();
 //     });
-    
-   
+
 //     it('should redirect to home page if the Ownername is empty', () => {
 //          jasmine.clock().install();
 //         component.gameSettingsService.gameSettings = new GameSettings(['',''],1,'01','00','Facile','Activer','francais');
@@ -73,7 +68,7 @@
 //        expect(component.status).toEqual('');
 //        jasmine.clock().uninstall();
 //    });
-    
+
 //     it('should set the message after the time out', fakeAsync(() => {
 //         jasmine.clock().install();
 //         component.waitBeforeChangeStatus(1000,'');
@@ -81,18 +76,16 @@
 //         expect(component.status).toEqual('');
 //         jasmine.clock().uninstall();
 //     }));
-    
+
 //     it('should route the user a the view on init',() => {
-//         component.gameSettingsService.gameSettings = new GameSettings(['Mike',''],1,'01','00','Facile','Activer','francais'); 
+//         component.gameSettingsService.gameSettings = new GameSettings(['Mike',''],1,'01','00','Facile','Activer','francais');
 //         component.gameSettingsService.isRedirectedFromMultiplayerGame= false;
 //         component.gameSettingsService.isSoloMode= false;
 //         component.route();
 //         expect( component.gameSettingsService.isRedirectedFromMultiplayerGame).toEqual(true);
 //         expect( component.gameSettingsService.isSoloMode).toEqual(true);
 //         // expect(component.router.navigate).toEqual(['solo-game-ai']);
-        
+
 //     });
-    
 
 // });
- 

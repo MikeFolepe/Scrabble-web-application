@@ -43,7 +43,7 @@ export class SocketManager {
                 const myroom = this.roomManager.find(roomId);
                 // On s'assure de pas avoir une room indéfinie
                 if (myroom !== undefined) {
-                    this.roomManager.setSocket(myroom);
+                    this.roomManager.setSocket(myroom, socket.id);
                 }
                 this.roomManager.setState(roomId, State.Playing);
                 // block someone else entry from room selection

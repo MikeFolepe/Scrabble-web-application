@@ -1,6 +1,6 @@
 import { GameSettings, StartingPlayer } from '@common/game-settings';
-import { Injectable } from '@angular/core';
 import { BONUS_POSITIONS } from '@app/classes/constants';
+import { Injectable } from '@angular/core';
 
 @Injectable({
     providedIn: 'root',

@@ -2,7 +2,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AI_NAME_DATABASE,BONUS_POSITIONS } from '@app/classes/constants';
+import { AI_NAME_DATABASE, BONUS_POSITIONS } from '@app/classes/constants';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { GameSettings, StartingPlayer } from '@common/game-settings';
 import { RandomBonusesService } from '@app/services/random-bonuses.service';
@@ -51,9 +51,9 @@ export class FormComponent implements OnDestroy {
 
     getRightBonusPositions(): string {
         let bonusPositions;
-        if (this.form.controls.randomBonus.value === 'Activer'){
+        if (this.form.controls.randomBonus.value === 'Activer') {
             bonusPositions = this.randomBonusService.shuffleBonusesPositions();
-        } else{
+        } else {
             bonusPositions = BONUS_POSITIONS;
         }
         return JSON.stringify(Array.from(bonusPositions));
