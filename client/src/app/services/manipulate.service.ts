@@ -150,7 +150,7 @@ export class ManipulateService {
         return INDEX_INVALID;
     }
 
-    handleManipulationSelection(indexLetter: number) {
+    handleManipulationSelection(indexLetter: number): void {
         // Unselect manipulation
         if (this.letterEaselTab[indexLetter].isSelectedForManipulation) {
             this.letterEaselTab[indexLetter].isSelectedForManipulation = false;
@@ -172,13 +172,13 @@ export class ManipulateService {
         this.enableScrolling();
     }
 
-    disableScrolling() {
+    disableScrolling(): void {
         const x = window.scrollX;
         const y = window.scrollY;
         window.onscroll = () => window.scrollTo(x, y);
     }
 
-    enableScrolling() {
+    enableScrolling(): void {
         window.onscroll = () => window.scrollTo(window.scrollX, window.scrollY);
     }
 }

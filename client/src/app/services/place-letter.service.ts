@@ -329,7 +329,7 @@ export class PlaceLetterService {
 
     isFirstWordValid(position: Vec2, orientation: string, word: string): boolean {
         const currentPosition = { x: position.x, y: position.y };
-        // Disable 'elint prefer-for-of' for this loop because we're not using the variable 'word' inside the loop
+        // JUSTIFICATION : Neither the variable 'word' nor 'i' are used inside the loop
         // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < word.length; i++) {
             // If one letter of the word is placed on the central case (H8)
@@ -388,7 +388,7 @@ export class PlaceLetterService {
         return false;
     }
 
-    updatePosition(position: Vec2, orientation: string) {
+    updatePosition(position: Vec2, orientation: string): void {
         if (orientation === 'h') {
             position.x++;
         } else {

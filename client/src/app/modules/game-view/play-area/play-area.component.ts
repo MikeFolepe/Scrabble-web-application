@@ -16,17 +16,4 @@ export class PlayAreaComponent {
         public boardHandlerService: BoardHandlerService,
         public skipTurnService: SkipTurnService,
     ) {}
-
-    passButton() {
-        this.chatBoxService.sendPlayerMessage('!passer');
-    }
-
-    playButton() {
-        if (this.boardHandlerService.word.length) this.boardHandlerService.confirmPlacement();
-    }
-
-    isPlayButtonActive() {
-        if (this.boardHandlerService.word.length) return true;
-        return false;
-    }
 }

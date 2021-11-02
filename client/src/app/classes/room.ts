@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-restricted-imports
 import { GameSettings } from './game-settings';
 
 export enum State {
