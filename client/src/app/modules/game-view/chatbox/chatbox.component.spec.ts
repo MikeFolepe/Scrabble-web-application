@@ -1,8 +1,8 @@
 /* eslint-disable dot-notation */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormsModule } from '@angular/forms';
 import { ChatboxComponent } from './chatbox.component';
+import { FormsModule } from '@angular/forms';
 
 describe('ChatBoxComponent', () => {
     let component: ChatboxComponent;

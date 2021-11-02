@@ -28,7 +28,7 @@ export class CommunicationService {
             this.wordsToValidate.push(word);
         }
         return this.http
-            .post<boolean>(`${this.baseUrl}/validation/words`, this.wordsToValidate)
+            .post<boolean>(`${this.baseUrl}/multiplayer/validateWords`, this.wordsToValidate)
             .pipe(catchError(this.handleError<boolean>('validationPost')));
     }
 

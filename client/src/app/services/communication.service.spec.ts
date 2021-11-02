@@ -1,3 +1,4 @@
+/* eslint-disable dot-notation */
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { CommunicationService } from '@app/services/communication.service';
 import { Message } from '@app/classes/message';
@@ -61,5 +62,15 @@ describe('CommunicationService', () => {
         expect(req.request.method).toBe('GET');
         req.error(new ErrorEvent('Random error occurred'));
     });
-    // });
+
+    it('should return the result of a validation request', () => {
+        const newPlayedWords: Map<string, string[]> = new Map<string, string[]>([['ma', ['H8', 'H9']]]);
+        // eslint-disable-next-line prefer-const
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        service.validationPost(newPlayedWords).subscribe(() => {}, fail);
+        expect(service['wordsToValidate']).toEqual(['ma']);
+        const req = httpMock.expectOne(`${baseUrl}/multiplayer/validateWords`);
+        expect(req.request.method).toBe('POST');
+        req.flush(newPlayedWords);
+    });
 });

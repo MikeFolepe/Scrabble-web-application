@@ -3,7 +3,6 @@ import { Component } from '@angular/core';
 import { EndGameService } from '@app/services/end-game.service';
 import { SkipTurnService } from '@app/services/skip-turn.service';
 
-
 @Component({
     selector: 'app-play-area',
     templateUrl: './play-area.component.html',

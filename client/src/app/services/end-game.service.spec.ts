@@ -87,29 +87,26 @@
 //     });
 
 //     it('should know whether it is the end of the game or not', () => {
-//         //spyOn(service.letterService, 'getReserveSize').and.returnValues(0, 0, 0, 3, 3);
-//         const notEmptyEaselStub = [letterA, letterA];
-//         const emptyEaselStub: Letter[] = [];
-//         service.letterService.reserveSize = 0;
-//         service.playerService.players[0].letterTable = emptyEaselStub;
-//         service.playerService.players[1].letterTable = notEmptyEaselStub;
-//         // spyOn<any>(service.playerService, 'getLettersEasel').and.returnValues(
-//         //     testEmptyEasel,
-//         //     testEmptyEasel,
-//         //     testEasel,
-//         //     testEmptyEasel,
-//         //     testEasel,
-//         //     testEasel,
-//         //     testEmptyEasel,
-//         //     testEmptyEasel,
-//         //     testEasel,
-//         //     testEasel,
-//         // );
+//         spyOn(service.letterService, 'getReserveSize').and.returnValues(0, 0, 0, 3, 3);
+//         const testEasel = [letterA, letterA];
+//         const testEmptyEasel: Letter[] = [];
+//         spyOn<any>(service.playerService, 'getLettersEasel').and.returnValues(
+//             testEmptyEasel,
+//             testEmptyEasel,
+//             testEasel,
+//             testEmptyEasel,
+//             testEasel,
+//             testEasel,
+//             testEmptyEasel,
+//             testEmptyEasel,
+//             testEasel,
+//             testEasel,
+//         );
 
 //         expect(service['isEndGameByEasel']()).toBeTrue();
-//         service.letterService.reserveSize = 0;
-//         service.playerService.players[0].letterTable = notEmptyEaselStub;
-//         service.playerService.players[1].letterTable = notEmptyEaselStub;
+//         expect(service['isEndGameByEasel']()).toBeTrue();
+//         expect(service['isEndGameByEasel']()).toBeTrue();
+//         expect(service['isEndGameByEasel']()).toBeFalse();
 //         expect(service['isEndGameByEasel']()).toBeFalse();
 //     });
 

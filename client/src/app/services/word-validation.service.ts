@@ -1,26 +1,27 @@
 /* eslint-disable sort-imports */
 import { Injectable } from '@angular/core';
-import { ALL_EASEL_BONUS, BOARD_COLUMNS, BOARD_ROWS, RESERVE } from '@app/classes/constants';
+import { ALL_EASEL_BONUS, BOARD_COLUMNS, BOARD_ROWS, BONUS_POSITIONS, RESERVE } from '@app/classes/constants';
 import { ScoreValidation } from '@app/classes/validation-score';
 import { CommunicationService } from '@app/services/communication.service';
-import { RandomBonusesService } from './random-bonuses.service';
 @Injectable({
     providedIn: 'root',
 })
 export class WordValidationService {
-    newWords: string[];
-    playedWords: Map<string, string[]>;
-    newPlayedWords: Map<string, string[]>;
-    newPositions: string[];
-    bonusesPositions: Map<string, string>;
+    private newWords: string[];
+    private playedWords: Map<string, string[]>;
+    private newPlayedWords: Map<string, string[]>;
+    private newPositions: string[];
+    private bonusesPositions: Map<string, string>;
     private validationState = false;
+    private foundWords: string[];
 
-    constructor(private httpServer: CommunicationService, private randomBonusService: RandomBonusesService) {
+    constructor(private httpServer: CommunicationService) {
         this.playedWords = new Map<string, string[]>();
         this.newPlayedWords = new Map<string, string[]>();
         this.newWords = new Array<string>();
         this.newPositions = new Array<string>();
-        this.bonusesPositions = new Map<string, string>(this.randomBonusService.bonusPositions);
+        this.bonusesPositions = new Map<string, string>(BONUS_POSITIONS);
+        this.foundWords = new Array<string>();
     }
 
     findWords(words: string[]): string[] {
@@ -61,23 +62,19 @@ export class WordValidationService {
         return false;
     }
 
-    getWordHorizontalPositions(word: string, index: number): string[] {
+    getWordHorizontalOrVerticalPositions(word: string, indexLine: number, indexColumn: number, isRow: boolean): string[] {
         const positions: string[] = new Array<string>();
         for (const char of word) {
-            const indexChar = this.newWords.indexOf(char) + 1;
-            positions.push(this.getCharPosition(index) + indexChar.toString());
+            if (isRow) {
+                const indexChar = this.newWords.indexOf(char) + 1;
+                positions.push(this.getCharPosition(indexLine) + indexChar.toString());
+            } else {
+                const indexChar = this.newWords.indexOf(char);
+                const column = indexColumn + 1;
+                positions.push(this.getCharPosition(indexChar) + column.toString());
+            }
         }
 
-        return positions;
-    }
-
-    getWordVerticalPositions(word: string, index: number): string[] {
-        const positions: string[] = new Array<string>();
-        for (const char of word) {
-            const indexChar = this.newWords.indexOf(char);
-            const column = index + 1;
-            positions.push(this.getCharPosition(indexChar) + column.toString());
-        }
         return positions;
     }
 
@@ -90,12 +87,12 @@ export class WordValidationService {
                 y = isRow ? j : i;
                 this.newWords.push(scrabbleBoard[x][y]);
             }
-            const words = this.findWords(this.newWords);
-            this.newPositions = new Array<string>(words.length);
+            this.foundWords = this.findWords(this.newWords);
+            this.newPositions = new Array<string>(this.foundWords.length);
 
-            for (const word of words) {
+            for (const word of this.foundWords) {
                 if (word.length >= 2) {
-                    this.newPositions = isRow ? this.getWordHorizontalPositions(word, x) : this.getWordVerticalPositions(word, y);
+                    this.newPositions = this.getWordHorizontalOrVerticalPositions(word, x, y, isRow);
                     if (!this.checkIfPlayed(word, this.newPositions)) {
                         this.addToPlayedWords(word, this.newPositions, this.newPlayedWords);
                     }
@@ -103,6 +100,7 @@ export class WordValidationService {
                 this.newPositions = [];
             }
             this.newWords = [];
+            this.foundWords = [];
         }
     }
 
@@ -178,21 +176,22 @@ export class WordValidationService {
         return score;
     }
 
-    validateAllWordsOnBoard(scrabbleBoard: string[][], isEaselSize: boolean, isRow: boolean): ScoreValidation {
+    async validateAllWordsOnBoard(scrabbleBoard: string[][], isEaselSize: boolean, isRow: boolean): Promise<ScoreValidation> {
         let scoreTotal = 0;
         this.passThroughAllRowsOrColumns(scrabbleBoard, isRow);
         this.passThroughAllRowsOrColumns(scrabbleBoard, !isRow);
-
-        this.httpServer.validationPost(this.newPlayedWords).subscribe((validation) => (this.validationState = validation));
+        this.validationState = await this.httpServer.validationPost(this.newPlayedWords).toPromise();
         if (!this.validationState) {
             this.newPlayedWords.clear();
             return { validation: this.validationState, score: scoreTotal };
         }
+
         scoreTotal += this.calculateTotalScore(scoreTotal, this.newPlayedWords);
 
         if (isEaselSize) {
             scoreTotal += ALL_EASEL_BONUS;
         }
+
         this.removeBonuses(this.newPlayedWords);
 
         for (const word of this.newPlayedWords.keys()) {
