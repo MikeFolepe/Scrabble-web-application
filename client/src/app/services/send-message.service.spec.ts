@@ -25,4 +25,10 @@ describe('SendMessageService', () => {
         expect(service.message).toEqual('I am the player');
         expect(service.typeMessage).toEqual('player');
     });
+
+    it('should send message as opponent when sendOpponentMessage() is called', () => {
+        service.sendOpponentMessage('Opponent message');
+        expect(service.message).toEqual('Opponent message');
+        expect(service.typeMessage).toEqual('opponent');
+    });
 });

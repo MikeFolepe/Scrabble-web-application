@@ -10,7 +10,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { CommunicationService } from './communication.service';
 import { PlaceLetterService } from './place-letter.service';
 
-fdescribe('PlaceLetterService', () => {
+describe('PlaceLetterService', () => {
     let service: PlaceLetterService;
     let gridServiceSpy: jasmine.SpyObj<GridService>;
     beforeEach(() => {
@@ -49,6 +49,8 @@ fdescribe('PlaceLetterService', () => {
         spyOn(service['playerService'], 'refillEasel');
         spyOn(service['wordValidationService'], 'validateAllWordsOnBoard').and.returnValue(Promise.resolve({ validation: true, score: 0 }));
         spyOn(service['sendMessageService'], 'displayMessageByType');
+        spyOn(service['sendMessageService'], 'receiveMessageFromOpponent');
+        spyOn(service['sendMessageService'], 'sendMessageToOpponent');
     });
 
     it('should create', () => {
@@ -237,16 +239,16 @@ fdescribe('PlaceLetterService', () => {
         expect(isPlacementValid).toBeTrue();
     });
 
-    it('placing letters that are not in the easel with the keyboard should be valid', () => {
+    it('placing letters that are not in the easel with the keyboard should be invalid', () => {
         const position: Vec2 = { x: 7, y: 7 };
         const orientation = 'h';
         const word = 'zyx';
-        let isPlacementValid = true;
         for (let i = 0; i < word.length; i++) {
-            if (!service.placeWithKeyboard(position, word[i], orientation, i, INDEX_REAL_PLAYER)) isPlacementValid = false;
+            service.placeWithKeyboard(position, word[i], orientation, i, INDEX_REAL_PLAYER).then((result) => {
+                expect(result).toBeFalse();
+            });
             position.x++;
         }
-        expect(isPlacementValid).toBeFalse();
     });
 
     it('validating multiple valid keyboard placements should return true', () => {
@@ -255,11 +257,15 @@ fdescribe('PlaceLetterService', () => {
         let position: Vec2 = { x: 7, y: 7 };
         let orientation = 'h';
         const word = 'abcd';
-        expect(service.validateKeyboardPlacement(position, orientation, word, INDEX_REAL_PLAYER)).toBeTrue();
+        service.validateKeyboardPlacement(position, orientation, word, INDEX_REAL_PLAYER).then((validation) => {
+            expect(validation).toBeTrue();
+        });
         service.isFirstRound = false;
         position = { x: 7, y: 8 };
         orientation = 'v';
-        expect(service.validateKeyboardPlacement(position, orientation, word, INDEX_REAL_PLAYER)).toBeTrue();
+        service.validateKeyboardPlacement(position, orientation, word, INDEX_REAL_PLAYER).then((validation) => {
+            expect(validation).toBeTrue();
+        });
     });
 
     it('validating multiple unvalid keyboard placements should return false', () => {
@@ -267,10 +273,14 @@ fdescribe('PlaceLetterService', () => {
         let position: Vec2 = { x: 10, y: 10 };
         const orientation = 'h';
         const word = 'abcd';
-        expect(service.validateKeyboardPlacement(position, orientation, word, INDEX_REAL_PLAYER)).toBeFalse();
+        service.validateKeyboardPlacement(position, orientation, word, INDEX_REAL_PLAYER).then((validation) => {
+            expect(validation).toBeFalse();
+        });
         service.isFirstRound = false;
         position = { x: 1, y: 1 };
-        expect(service.validateKeyboardPlacement(position, orientation, word, INDEX_REAL_PLAYER)).toBeFalse();
+        service.validateKeyboardPlacement(position, orientation, word, INDEX_REAL_PLAYER).then((validation) => {
+            expect(validation).toBeFalse();
+        });
     });
 
     it('validating the first unvalid keyboard placement should return false', () => {
@@ -278,7 +288,9 @@ fdescribe('PlaceLetterService', () => {
         const position: Vec2 = { x: 10, y: 10 };
         const orientation = 'h';
         const word = 'abcd';
-        expect(service.validateKeyboardPlacement(position, orientation, word, INDEX_REAL_PLAYER)).toBeFalse();
+        service.validateKeyboardPlacement(position, orientation, word, INDEX_REAL_PLAYER).then((validation) => {
+            expect(validation).toBeFalse();
+        });
     });
 
     it('placing all the letters from the easel to form a valid word should give a bonus', () => {

@@ -3,7 +3,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { ONE_SECOND_TIME } from '@app/classes/constants';
-import { ChatboxComponent } from './chatbox.component';
+import { ChatboxComponent } from '@app/modules/game-view/chatbox/chatbox.component';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 
@@ -75,14 +75,6 @@ describe('ChatBoxComponent', () => {
         expect(component.listTypes).toHaveSize(2);
         expect(component.listMessages).toHaveSize(2);
         expect(component.listTypes[0]).toEqual('system');
-    });
-
-    it('should send message as opponent when sendOpponentMessage() is called', () => {
-        component.sendOpponentMessage('Opponent message');
-        component.sendOpponentMessage('Opponent system message');
-        expect(component.listTypes).toHaveSize(2);
-        expect(component.listMessages).toHaveSize(2);
-        expect(component.listTypes[0]).toEqual('opponent');
     });
 
     it('should use the message and the type from sendMessageService when we display a message', () => {
