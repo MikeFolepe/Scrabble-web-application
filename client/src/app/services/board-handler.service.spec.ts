@@ -7,23 +7,30 @@ import { BoardHandlerService } from './board-handler.service';
 import { GridService } from './grid.service';
 import { RouterTestingModule } from '@angular/router/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { TypeMessage } from '@app/classes/enum';
 
 describe('BoardHandlerService', () => {
     let service: BoardHandlerService;
     let gridServiceSpy: jasmine.SpyObj<GridService>;
 
     beforeEach(() => {
-        gridServiceSpy = jasmine.createSpyObj('GridServiceSpy', ['eraseLayer', 'drawBorder', 'drawArrow']);
+        gridServiceSpy = jasmine.createSpyObj('GridServiceSpy', ['eraseLayer', 'drawBorder', 'drawArrow', 'eraseLetter']);
         TestBed.configureTestingModule({
             providers: [{ provide: GridService, useValue: gridServiceSpy }],
             imports: [HttpClientTestingModule, RouterTestingModule],
         });
         service = TestBed.inject(BoardHandlerService);
 
-        service['placeLetterService'].placeWithKeyboard = jasmine.createSpy().and.returnValue(true);
+        service['placeLetterService'].placeWithKeyboard = jasmine.createSpy().and.returnValue(Promise.resolve(true));
         service['skipTurnService'].isTurn = true;
+        service['sendMessageService']['displayMessage'] = () => {
+            return;
+        };
         spyOn(service['placeLetterService'], 'removePlacedLetter');
         spyOn(service['sendMessageService'], 'displayMessageByType');
+        spyOn(service['sendMessageService'], 'receiveMessageFromOpponent');
+        spyOn(service['sendMessageService'], 'sendMessageToOpponent');
+        spyOn(service['sendMessageService'], 'sendOpponentMessage');
     });
 
     it('should be created', () => {
@@ -64,48 +71,43 @@ describe('BoardHandlerService', () => {
         expect(service.orientation).toEqual('v');
     });
 
-    it('pressing multiple keyboard buttons that are valid letters should all be placed', () => {
+    it('pressing multiple keyboard buttons that are valid letters should all be placed', async () => {
         service.currentCase = { x: 7, y: 7 };
         service.isFirstCasePicked = true;
-        let keyboardEvent;
         const wordToPlace = 'Frite';
         for (const letterToPlace of wordToPlace) {
-            keyboardEvent = new KeyboardEvent('keydown', { key: letterToPlace });
-            service.buttonDetect(keyboardEvent);
+            await service.placeLetter(letterToPlace);
         }
 
-        expect(service.word).toEqual(wordToPlace);
+        expect(service.word).toEqual('Frite');
     });
 
-    it('pressing a keyboard button that is a letter not present in the easel should not be placed', () => {
+    it('pressing a keyboard button that is a letter not present in the easel should not be placed', async () => {
         service.firstCase = { x: 7, y: 7 };
         service.currentCase = { x: 7, y: 7 };
         service.isFirstCasePicked = true;
-        let keyboardEvent = new KeyboardEvent('keydown', { key: 'a' });
+        const keyboardEvent = new KeyboardEvent('keydown', { key: 'a' });
         service.buttonDetect(keyboardEvent);
 
-        service['placeLetterService'].placeWithKeyboard = jasmine.createSpy().and.returnValue(false);
-        keyboardEvent = new KeyboardEvent('keydown', { key: 'z' });
-        service.buttonDetect(keyboardEvent);
-
+        service['placeLetterService'].placeWithKeyboard = jasmine.createSpy().and.returnValue(Promise.resolve(false));
+        await service.placeLetter('z');
         expect(service.word).toEqual('a');
     });
 
     it('pressing Backspace should remove the last letter placed', () => {
+        const spy = spyOn(service, 'removePlacedLetter').and.callThrough();
         service.firstCase = { x: 7, y: 7 };
-        service.currentCase = { x: 7, y: 7 };
+        service.currentCase = { x: 12, y: 7 };
         service.isFirstCasePicked = true;
-        let keyboardEvent;
+        service.isFirstCaseLocked = true;
+        service.word = 'Frites';
+        service.placedLetters = [true, true, true, true, true, true];
 
-        const wordToPlace = 'Frite';
-        for (const letterToPlace of wordToPlace) {
-            keyboardEvent = new KeyboardEvent('keydown', { key: letterToPlace });
-            service.buttonDetect(keyboardEvent);
-        }
-        keyboardEvent = new KeyboardEvent('keydown', { key: 'Backspace' });
+        const keyboardEvent = new KeyboardEvent('keydown', { key: 'Backspace' });
         service.buttonDetect(keyboardEvent);
 
-        expect(service.word).toEqual('Frit');
+        expect(service.word).toEqual('Frite');
+        expect(spy).toHaveBeenCalledTimes(1);
     });
 
     it('removing all letters placed with Backspace should allow the user to pick a new starting case', () => {
@@ -150,8 +152,8 @@ describe('BoardHandlerService', () => {
         expect(service.isFirstCasePicked).toBeFalse();
     });
 
-    it('pressing Enter with a valid word placed should display the respective message ', () => {
-        service['placeLetterService'].validateKeyboardPlacement = jasmine.createSpy().and.returnValue(true);
+    it('pressing Enter with a valid word placed should display the respective message ', async () => {
+        service['placeLetterService'].validateKeyboardPlacement = jasmine.createSpy().and.returnValue(Promise.resolve(true));
         service.currentCase = { x: 7, y: 7 };
         service.firstCase = { x: 7, y: 7 };
         service.isFirstCasePicked = true;
@@ -162,14 +164,12 @@ describe('BoardHandlerService', () => {
             keyboardEvent = new KeyboardEvent('keydown', { key: letterToPlace });
             service.buttonDetect(keyboardEvent);
         }
-        keyboardEvent = new KeyboardEvent('keydown', { key: 'Enter' });
-        service.buttonDetect(keyboardEvent);
-
-        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('!placer h8h Frite', 'player');
+        await service.confirmPlacement();
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('!placer h8h Frite', TypeMessage.Player);
     });
 
-    it('pressing Enter with an unvalid word placed should cancel the placement', () => {
-        service['placeLetterService'].validateKeyboardPlacement = jasmine.createSpy().and.returnValue(false);
+    it('pressing Enter with an unvalid word placed should cancel the placement', async () => {
+        service['placeLetterService'].validateKeyboardPlacement = jasmine.createSpy().and.returnValue(Promise.resolve(false));
         service.currentCase = { x: 7, y: 7 };
         service.isFirstCasePicked = true;
         let keyboardEvent;
@@ -179,14 +179,12 @@ describe('BoardHandlerService', () => {
             keyboardEvent = new KeyboardEvent('keydown', { key: letterToPlace });
             service.buttonDetect(keyboardEvent);
         }
-        keyboardEvent = new KeyboardEvent('keydown', { key: 'Enter' });
-        service.buttonDetect(keyboardEvent);
-
+        await service.confirmPlacement();
         expect(service.word).toEqual('');
     });
 
-    it('forming a valid word out of already placed letters should be valid', () => {
-        service['placeLetterService'].validateKeyboardPlacement = jasmine.createSpy().and.returnValue(true);
+    it('forming a valid word out of already placed letters should be valid', async () => {
+        service['placeLetterService'].validateKeyboardPlacement = jasmine.createSpy().and.returnValue(Promise.resolve(true));
 
         service['placeLetterService'].scrabbleBoard[7][7] = 'l';
         service['placeLetterService'].scrabbleBoard[7][8] = 'i';
@@ -197,19 +195,15 @@ describe('BoardHandlerService', () => {
         service.isFirstCasePicked = true;
 
         const wordToPlace = 'ee';
-        let keyboardEvent;
         for (const letterToPlace of wordToPlace) {
-            keyboardEvent = new KeyboardEvent('keydown', { key: letterToPlace });
-            service.buttonDetect(keyboardEvent);
+            await service.placeLetter(letterToPlace);
         }
-        keyboardEvent = new KeyboardEvent('keydown', { key: 'Enter' });
-        service.buttonDetect(keyboardEvent);
-
-        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('!placer h7h elite', 'player');
+        await service.confirmPlacement();
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('!placer h7h elite', TypeMessage.Player);
     });
 
-    it('placing horizontally out of bounds letters following already placed letters should not be placed', () => {
-        service['placeLetterService'].validateKeyboardPlacement = jasmine.createSpy().and.returnValue(true);
+    it('placing horizontally out of bounds letters following already placed letters should not be placed', async () => {
+        service['placeLetterService'].validateKeyboardPlacement = jasmine.createSpy().and.returnValue(Promise.resolve(true));
 
         service['placeLetterService'].scrabbleBoard[7][11] = 'l';
         service['placeLetterService'].scrabbleBoard[7][12] = 'i';
@@ -219,25 +213,19 @@ describe('BoardHandlerService', () => {
         service.firstCase = { x: 10, y: 7 };
         service.currentCase = { x: 10, y: 7 };
         service.isFirstCasePicked = true;
-
         const wordToPlace = 'ees';
 
-        let keyboardEvent = new KeyboardEvent('keydown', { key: wordToPlace[0] });
-        service.buttonDetect(keyboardEvent);
-        service['placeLetterService'].placeWithKeyboard = jasmine.createSpy().and.returnValue(false);
-        keyboardEvent = new KeyboardEvent('keydown', { key: wordToPlace[1] });
-        service.buttonDetect(keyboardEvent);
-        keyboardEvent = new KeyboardEvent('keydown', { key: wordToPlace[2] });
-        service.buttonDetect(keyboardEvent);
+        await service.placeLetter(wordToPlace[0]);
+        service['placeLetterService'].placeWithKeyboard = jasmine.createSpy().and.returnValue(Promise.resolve(false));
+        await service.placeLetter(wordToPlace[1]);
+        await service.placeLetter(wordToPlace[2]);
 
-        keyboardEvent = new KeyboardEvent('keydown', { key: 'Enter' });
-        service.buttonDetect(keyboardEvent);
-
-        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('!placer h11h e', 'player');
+        await service.confirmPlacement();
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('!placer h11h e', TypeMessage.Player);
     });
 
-    it('placing vertically out of bounds letters following already placed letters should not be placed', () => {
-        service['placeLetterService'].validateKeyboardPlacement = jasmine.createSpy().and.returnValue(true);
+    it('placing vertically out of bounds letters following already placed letters should not be placed', async () => {
+        service['placeLetterService'].validateKeyboardPlacement = jasmine.createSpy().and.returnValue(Promise.resolve(true));
 
         service['placeLetterService'].scrabbleBoard[11][7] = 'l';
         service['placeLetterService'].scrabbleBoard[12][7] = 'i';
@@ -248,20 +236,14 @@ describe('BoardHandlerService', () => {
         service.currentCase = { x: 7, y: 10 };
         service.isFirstCasePicked = true;
         service.orientation = 'v';
-
         const wordToPlace = 'ees';
 
-        let keyboardEvent = new KeyboardEvent('keydown', { key: wordToPlace[0] });
-        service.buttonDetect(keyboardEvent);
-        service['placeLetterService'].placeWithKeyboard = jasmine.createSpy().and.returnValue(false);
-        keyboardEvent = new KeyboardEvent('keydown', { key: wordToPlace[1] });
-        service.buttonDetect(keyboardEvent);
-        keyboardEvent = new KeyboardEvent('keydown', { key: wordToPlace[2] });
-        service.buttonDetect(keyboardEvent);
+        await service.placeLetter(wordToPlace[0]);
+        service['placeLetterService'].placeWithKeyboard = jasmine.createSpy().and.returnValue(Promise.resolve(false));
+        await service.placeLetter(wordToPlace[1]);
+        await service.placeLetter(wordToPlace[2]);
 
-        keyboardEvent = new KeyboardEvent('keydown', { key: 'Enter' });
-        service.buttonDetect(keyboardEvent);
-
-        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('!placer k8v e', 'player');
+        await service.confirmPlacement();
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('!placer k8v e', TypeMessage.Player);
     });
 });

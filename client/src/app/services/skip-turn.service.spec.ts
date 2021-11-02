@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /* eslint-disable dot-notation */
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
@@ -7,6 +8,13 @@ import { io } from 'socket.io-client';
 import { ClientSocketService } from './client-socket.service';
 import { EndGameService } from './end-game.service';
 import { GameSettingsService } from './game-settings.service';
+=======
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { TestBed } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
+// import { ONE_SECOND_DELAY } from '@app/classes/constants';
+// import { GameSettingsService } from './game-settings.service';
+>>>>>>> 8b2f6a360cafbe46bd326087cd1169c94b82feb8
 import { SkipTurnService } from './skip-turn.service';
 
 fdescribe('SkipTurnService', () => {

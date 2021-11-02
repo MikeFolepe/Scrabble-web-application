@@ -1,3 +1,4 @@
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 /* eslint-disable dot-notation */
 import { TestBed } from '@angular/core/testing';
 import { INDEX_PLAYER_AI, INDEX_REAL_PLAYER, RESERVE, THREE_SECONDS_DELAY } from '@app/classes/constants';
@@ -6,7 +7,7 @@ import { Vec2 } from '@app/classes/vec2';
 import { Player } from '@app/models/player.model';
 import { GridService } from '@app/services/grid.service';
 import { RouterTestingModule } from '@angular/router/testing';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { CommunicationService } from './communication.service';
 import { PlaceLetterService } from './place-letter.service';
 
 describe('PlaceLetterService', () => {
@@ -17,6 +18,10 @@ describe('PlaceLetterService', () => {
     });
 
     beforeEach(() => {
+        TestBed.configureTestingModule({
+            imports: [HttpClientTestingModule],
+            providers: [CommunicationService],
+        });
         TestBed.configureTestingModule({
             providers: [{ provide: GridService, useValue: gridServiceSpy }],
             imports: [HttpClientTestingModule, RouterTestingModule],
@@ -42,8 +47,10 @@ describe('PlaceLetterService', () => {
         // Fake these methods to be able to call placeCommand()
         spyOn(service['playerService'], 'removeLetter');
         spyOn(service['playerService'], 'refillEasel');
-        spyOn(service['wordValidationService'], 'validateAllWordsOnBoard').and.returnValue({ validation: true, score: 0 });
+        spyOn(service['wordValidationService'], 'validateAllWordsOnBoard').and.returnValue(Promise.resolve({ validation: true, score: 0 }));
         spyOn(service['sendMessageService'], 'displayMessageByType');
+        spyOn(service['sendMessageService'], 'receiveMessageFromOpponent');
+        spyOn(service['sendMessageService'], 'sendMessageToOpponent');
     });
 
     it('should create', () => {
@@ -120,7 +127,9 @@ describe('PlaceLetterService', () => {
         const position: Vec2 = { x: 7, y: 7 };
         const orientation = 'h';
         const word = 'fil';
-        expect(service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER)).toBeFalse();
+        service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER).then((result) => {
+            expect(result).toEqual(false);
+        });
     });
 
     it('placing letters present in the easel or the scrabbleboard should be valid', () => {
@@ -155,7 +164,9 @@ describe('PlaceLetterService', () => {
         const position: Vec2 = { x: 7, y: 7 };
         const orientation = 'h';
         const word = 'abcd';
-        expect(service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER)).toBeFalse();
+        service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER).then((result) => {
+            expect(result).toEqual(false);
+        });
     });
 
     it('only the invalid letters that we just placed should be removed from scrabbleBoard', () => {
@@ -173,16 +184,18 @@ describe('PlaceLetterService', () => {
         position = { x: 7, y: 7 };
         orientation = 'h';
         word = 'bacchaV';
-        let lettersRemoved = service.placeCommand(position, orientation, word, INDEX_PLAYER_AI);
+        service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER).then((result) => {
+            expect(result).toEqual(false);
+        });
         jasmine.clock().tick(THREE_SECONDS_DELAY + 1);
-        expect(lettersRemoved).toBeFalse();
         // Vertically
         position = { x: 7, y: 7 };
         orientation = 'v';
         word = 'bEcchaa';
-        lettersRemoved = service.placeCommand(position, orientation, word, INDEX_PLAYER_AI);
         jasmine.clock().tick(THREE_SECONDS_DELAY + 1);
-        expect(lettersRemoved).toBeFalse();
+        service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER).then((result) => {
+            expect(result).toEqual(false);
+        });
         jasmine.clock().uninstall();
     });
 
@@ -198,7 +211,9 @@ describe('PlaceLetterService', () => {
         // Player 1 horizontally places a second word on top of the 1st word that has different letters
         word = 'ccd';
         jasmine.clock().tick(THREE_SECONDS_DELAY + 1);
-        expect(service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER)).toBeFalse();
+        service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER).then((result) => {
+            expect(result).toEqual(false);
+        });
         jasmine.clock().uninstall();
     });
     it('calling placeMethodAdapter() should call placeCommand()', () => {
@@ -224,16 +239,16 @@ describe('PlaceLetterService', () => {
         expect(isPlacementValid).toBeTrue();
     });
 
-    it('placing letters that are not in the easel with the keyboard should be valid', () => {
+    it('placing letters that are not in the easel with the keyboard should be invalid', () => {
         const position: Vec2 = { x: 7, y: 7 };
         const orientation = 'h';
         const word = 'zyx';
-        let isPlacementValid = true;
         for (let i = 0; i < word.length; i++) {
-            if (!service.placeWithKeyboard(position, word[i], orientation, i, INDEX_REAL_PLAYER)) isPlacementValid = false;
+            service.placeWithKeyboard(position, word[i], orientation, i, INDEX_REAL_PLAYER).then((result) => {
+                expect(result).toBeFalse();
+            });
             position.x++;
         }
-        expect(isPlacementValid).toBeFalse();
     });
 
     it('validating multiple valid keyboard placements should return true', () => {
@@ -242,11 +257,15 @@ describe('PlaceLetterService', () => {
         let position: Vec2 = { x: 7, y: 7 };
         let orientation = 'h';
         const word = 'abcd';
-        expect(service.validateKeyboardPlacement(position, orientation, word, INDEX_REAL_PLAYER)).toBeTrue();
+        service.validateKeyboardPlacement(position, orientation, word, INDEX_REAL_PLAYER).then((validation) => {
+            expect(validation).toBeTrue();
+        });
         service.isFirstRound = false;
         position = { x: 7, y: 8 };
         orientation = 'v';
-        expect(service.validateKeyboardPlacement(position, orientation, word, INDEX_REAL_PLAYER)).toBeTrue();
+        service.validateKeyboardPlacement(position, orientation, word, INDEX_REAL_PLAYER).then((validation) => {
+            expect(validation).toBeTrue();
+        });
     });
 
     it('validating multiple unvalid keyboard placements should return false', () => {
@@ -254,10 +273,14 @@ describe('PlaceLetterService', () => {
         let position: Vec2 = { x: 10, y: 10 };
         const orientation = 'h';
         const word = 'abcd';
-        expect(service.validateKeyboardPlacement(position, orientation, word, INDEX_REAL_PLAYER)).toBeFalse();
+        service.validateKeyboardPlacement(position, orientation, word, INDEX_REAL_PLAYER).then((validation) => {
+            expect(validation).toBeFalse();
+        });
         service.isFirstRound = false;
         position = { x: 1, y: 1 };
-        expect(service.validateKeyboardPlacement(position, orientation, word, INDEX_REAL_PLAYER)).toBeFalse();
+        service.validateKeyboardPlacement(position, orientation, word, INDEX_REAL_PLAYER).then((validation) => {
+            expect(validation).toBeFalse();
+        });
     });
 
     it('validating the first unvalid keyboard placement should return false', () => {
@@ -265,7 +288,9 @@ describe('PlaceLetterService', () => {
         const position: Vec2 = { x: 10, y: 10 };
         const orientation = 'h';
         const word = 'abcd';
-        expect(service.validateKeyboardPlacement(position, orientation, word, INDEX_REAL_PLAYER)).toBeFalse();
+        service.validateKeyboardPlacement(position, orientation, word, INDEX_REAL_PLAYER).then((validation) => {
+            expect(validation).toBeFalse();
+        });
     });
 
     it('placing all the letters from the easel to form a valid word should give a bonus', () => {
@@ -283,10 +308,4 @@ describe('PlaceLetterService', () => {
         const word = 'dad';
         expect(service.isWordValid(position, orientation, word, INDEX_REAL_PLAYER)).toEqual(false);
     });
-
-    // it('should unsubscribe on destroy', () => {
-    //     spyOn(service.viewSubscription, 'unsubscribe');
-    //     service.ngOnDestroy();
-    //     expect(service.viewSubscription.unsubscribe).toHaveBeenCalled();
-    // });
 });

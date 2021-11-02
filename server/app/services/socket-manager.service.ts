@@ -4,6 +4,7 @@ import * as http from 'http';
 import * as io from 'socket.io';
 import { Service } from 'typedi';
 import { RoomManager } from './room-manager.service';
+// import { Letter } from '../../../client/src/app/classes/letter';
 
 @Service()
 export class SocketManager {
@@ -53,10 +54,11 @@ export class SocketManager {
                 socket.to(roomId).emit('yourGameSettings', this.roomManager.getGameSettings(roomId));
                 // redirect the clients in the new filled room to game view
                 this.sio.in(roomId).emit('goToGameView');
+                this.sio.in(roomId).emit('startTimer');
             });
 
-            socket.on('sendPlacement', (startPosition: unknown, orientation: string, word: string, roomId: string) => {
-                socket.to(roomId).emit('receivePlacement', startPosition, orientation, word);
+            socket.on('sendPlacement', (scrabbleBoard: string[][], startPosition: unknown, orientation: string, word: string, roomId: string) => {
+                socket.to(roomId).emit('receivePlacement', scrabbleBoard, startPosition, orientation, word);
             });
 
             // Delete  the room and uodate the client view
@@ -70,6 +72,41 @@ export class SocketManager {
                 console.log(`Raison de deconnexion : ${reason}`);
             });
             */
+            socket.on('sendReserve', (reserve: unknown, reserveSize: number, roomId: string) => {
+                socket.to(roomId).emit('receiveReserve', reserve, reserveSize);
+            });
+
+            socket.on('sendRoomMessage', (message: string, roomId: string) => {
+                // this.sio.to(roomId).emit('receiveRoomMessage', `${socket.id} : ${message}`);
+                // console.log(message);
+                // console.log(socket.rooms);
+                // this.sio.to(roomId).emit('receiveRoomMessage', message);
+                socket.to(roomId).emit('receiveRoomMessage', message);
+            });
+
+            socket.on('switchTurn', (turn: boolean, roomId: string) => {
+                if (turn) {
+                    socket.to(roomId).emit('turnSwitched', turn);
+                    this.sio.in(roomId).emit('startTimer');
+                    // console.log('time');
+                }
+            });
+
+            socket.on('updateScoreInfo', (score: number, indexPlayer: number, roomId: string) => {
+                socket.to(roomId).emit('receiveScoreInfo', score, indexPlayer);
+            });
+
+            socket.on('sendActions', (actions: string[], roomId: string) => {
+                socket.to(roomId).emit('receiveActions', actions);
+            });
+
+            socket.on('sendEndGame', (isEndGame: boolean, roomId: string) => {
+                this.sio.in(roomId).emit('receiveEndGame', isEndGame);
+            });
+
+            socket.on('sendPlayerTwo', (letterTable: unknown, roomId: string) => {
+                socket.to(roomId).emit('receivePlayerTwo', letterTable);
+            });
         });
     }
 }

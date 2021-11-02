@@ -10,6 +10,7 @@ import {
     INDEX_REAL_PLAYER,
     THREE_SECONDS_DELAY,
 } from '@app/classes/constants';
+import { TypeMessage } from '@app/classes/enum';
 import { ScoreValidation } from '@app/classes/validation-score';
 import { Vec2 } from '@app/classes/vec2';
 import { GridService } from '@app/services/grid.service';
@@ -20,6 +21,7 @@ import { SendMessageService } from './send-message.service';
 import { ClientSocketService } from './client-socket.service';
 import { GameSettingsService } from './game-settings.service';
 import { SkipTurnService } from './skip-turn.service';
+import { EndGameService } from './end-game.service';
 
 @Injectable({
     providedIn: 'root',
@@ -49,6 +51,7 @@ export class PlaceLetterService {
         private skipTurnService: SkipTurnService,
         private clientSocketService: ClientSocketService,
         private gameSettingsService: GameSettingsService,
+        private endGameService: EndGameService,
     ) {
         this.scrabbleBoard = []; // Initializes the array with empty letters
         for (let i = 0; i < BOARD_ROWS; i++) {
@@ -62,21 +65,24 @@ export class PlaceLetterService {
     }
 
     receivePlacement(): void {
-        this.clientSocketService.socket.on('receivePlacement', (startPosition: Vec2, orientation: string, word: string) => {
-            this.placeByOpponent(startPosition, orientation, word);
-        });
+        this.clientSocketService.socket.on(
+            'receivePlacement',
+            (scrabbleBoard: string[][], startPosition: Vec2, orientation: string, word: string) => {
+                this.placeByOpponent(scrabbleBoard, startPosition, orientation, word);
+            },
+        );
     }
 
-    placeMethodAdapter(object: { start: Vec2; orientation: string; word: string; indexPlayer: number }) {
+    async placeMethodAdapter(object: { start: Vec2; orientation: string; word: string; indexPlayer: number }): Promise<void> {
         this.playerAIService.isPlacementValid = false;
-        const isValid = this.placeCommand(object.start, object.orientation, object.word, object.indexPlayer);
+        const isValid = await this.placeCommand(object.start, object.orientation, object.word, object.indexPlayer);
         this.playerAIService.isPlacementValid = isValid;
     }
 
-    placeByOpponent(startPosition: Vec2, orientation: string, word: string): void {
+    placeByOpponent(scrabbleBoard: string[][], startPosition: Vec2, orientation: string, word: string): void {
         const currentPosition = { x: startPosition.x, y: startPosition.y };
+        this.scrabbleBoard = scrabbleBoard;
         for (const letter of word) {
-            this.scrabbleBoard[currentPosition.y][currentPosition.x] = letter;
             this.gridService.drawLetter(
                 this.gridService.gridContextLettersLayer,
                 letter,
@@ -89,16 +95,12 @@ export class PlaceLetterService {
         this.isFirstRound = false;
     }
 
-    placeCommand(position: Vec2, orientation: string, word: string, indexPlayer = INDEX_PLAYER_AI): boolean {
+    async placeCommand(position: Vec2, orientation: string, word: string, indexPlayer = INDEX_PLAYER_AI): Promise<boolean> {
         const currentPosition: Vec2 = { x: position.x, y: position.y };
         this.startPosition = position;
         this.orientation = orientation;
         this.word = word;
-        if (orientation === 'v') {
-            this.isRow = false;
-        } else if (orientation === 'h') {
-            this.isRow = true;
-        }
+        this.isRow = orientation === 'v' ? false : true;
         // Remove accents from the word to place
         const wordNoAccents = word.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
         // Reset the array containing the valid letters by making them all valid
@@ -109,7 +111,7 @@ export class PlaceLetterService {
 
         // If the command is possible according to the parameters
         if (!this.isPossible(position, orientation, wordNoAccents, indexPlayer)) {
-            this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', 'error');
+            this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', TypeMessage.Error);
             return false;
         }
 
@@ -118,7 +120,7 @@ export class PlaceLetterService {
             if (!this.placeLetter(currentPosition, wordNoAccents[i], orientation, i, indexPlayer)) {
                 // If the placement of one letter is invalid, we erase all letters placed
                 this.handleInvalidPlacement(position, orientation, wordNoAccents, indexPlayer);
-                this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', 'error');
+                this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', TypeMessage.Error);
                 return false;
             }
             this.updatePosition(currentPosition, orientation);
@@ -130,7 +132,7 @@ export class PlaceLetterService {
         return this.validatePlacement(position, orientation, wordNoAccents, indexPlayer);
     }
 
-    placeWithKeyboard(position: Vec2, letter: string, orientation: string, indexLetterInWord: number, indexPlayer: number): boolean {
+    async placeWithKeyboard(position: Vec2, letter: string, orientation: string, indexLetterInWord: number, indexPlayer: number): Promise<boolean> {
         // If we are placing the first letter of the word
         if (indexLetterInWord === 0) {
             // Reset the array containing the valid letters
@@ -169,16 +171,21 @@ export class PlaceLetterService {
         return true;
     }
 
-    validatePlacement(position: Vec2, orientation: string, word: string, indexPlayer: number): boolean {
+    async validatePlacement(position: Vec2, orientation: string, word: string, indexPlayer: number): Promise<boolean> {
+        this.endGameService.addActionsLog('placer');
         // Validation of the placement
-        const finalResult: ScoreValidation = this.wordValidationService.validateAllWordsOnBoard(this.scrabbleBoard, this.isEaselSize, this.isRow);
+        const finalResult: ScoreValidation = await this.wordValidationService.validateAllWordsOnBoard(
+            this.scrabbleBoard,
+            this.isEaselSize,
+            this.isRow,
+        );
         if (finalResult.validation) {
             this.handleValidPlacement(finalResult, indexPlayer);
             this.skipTurnService.switchTurn();
             return true;
         }
         this.handleInvalidPlacement(position, orientation, word, indexPlayer);
-        this.sendMessageService.displayMessageByType('ERREUR : Un ou des mots formés sont invalides', 'error');
+        this.sendMessageService.displayMessageByType('ERREUR : Un ou des mots formés sont invalides', TypeMessage.Error);
         setTimeout(() => {
             if (this.gameSettingsService.isSoloMode && indexPlayer === INDEX_REAL_PLAYER) this.skipTurnService.switchTurn();
             else if (!this.gameSettingsService.isSoloMode) this.skipTurnService.switchTurn();
@@ -186,7 +193,7 @@ export class PlaceLetterService {
         return false;
     }
 
-    validateKeyboardPlacement(position: Vec2, orientation: string, word: string, indexPlayer: number): boolean {
+    async validateKeyboardPlacement(position: Vec2, orientation: string, word: string, indexPlayer: number): Promise<boolean> {
         this.startPosition = position;
         this.orientation = orientation;
         this.word = word;
@@ -196,14 +203,14 @@ export class PlaceLetterService {
                 return this.validatePlacement(position, orientation, word, indexPlayer);
             }
             this.handleInvalidPlacement(position, orientation, word, indexPlayer);
-            this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', 'error');
+            this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', TypeMessage.Error);
             return false;
         } // Placing the following words
         if (this.isWordTouchingOthers(position, orientation, word)) {
             return this.validatePlacement(position, orientation, word, indexPlayer);
         }
         this.handleInvalidPlacement(position, orientation, word, indexPlayer);
-        this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', 'error');
+        this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', TypeMessage.Error);
         return false;
     }
 
@@ -229,7 +236,14 @@ export class PlaceLetterService {
         this.playerAIService.isFirstRound = false;
         // Emit to server on multiplayer mode
         if (!this.gameSettingsService.isSoloMode) {
-            this.clientSocketService.socket.emit('sendPlacement', this.startPosition, this.orientation, this.word, this.clientSocketService.roomId);
+            this.clientSocketService.socket.emit(
+                'sendPlacement',
+                this.scrabbleBoard,
+                this.startPosition,
+                this.orientation,
+                this.word,
+                this.clientSocketService.roomId,
+            );
         }
     }
 

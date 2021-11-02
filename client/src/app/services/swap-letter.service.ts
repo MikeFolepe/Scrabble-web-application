@@ -1,19 +1,26 @@
 import { Injectable } from '@angular/core';
 import { INDEX_INVALID, MIN_RESERVE_SIZE_TO_SWAP } from '@app/classes/constants';
+import { TypeMessage } from '@app/classes/enum';
 import { LetterService } from '@app/services/letter.service';
 import { PlayerService } from '@app/services/player.service';
 import { SendMessageService } from './send-message.service';
+import { EndGameService } from './end-game.service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class SwapLetterService {
-    constructor(private playerService: PlayerService, private letterService: LetterService, private sendMessageService: SendMessageService) {}
+    constructor(
+        private playerService: PlayerService,
+        private letterService: LetterService,
+        private sendMessageService: SendMessageService,
+        private endGameService: EndGameService,
+    ) {}
 
     // Swap all the letters selected from the easel with new ones from the reserve
     swapCommand(lettersToSwap: string, indexPlayer: number): boolean {
         if (!this.isPossible(lettersToSwap, indexPlayer)) {
-            this.sendMessageService.displayMessageByType('ERREUR : La commande est impossible à réaliser', 'error');
+            this.sendMessageService.displayMessageByType('ERREUR : La commande est impossible à réaliser', TypeMessage.Error);
             return false;
         }
 
@@ -21,6 +28,7 @@ export class SwapLetterService {
         for (const indexLetter of lettersToSwapIndexes) {
             this.swap(indexLetter, indexPlayer);
         }
+        this.endGameService.addActionsLog('echanger');
         return true;
     }
 

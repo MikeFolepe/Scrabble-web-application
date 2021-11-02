@@ -11,6 +11,7 @@ import {
 } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { Player } from '@app/models/player.model';
+import { ClientSocketService } from './client-socket.service';
 import { GridService } from './grid.service';
 import { LetterService } from './letter.service';
 
@@ -24,7 +25,10 @@ export class PlayerService {
 
     private updateEasel: () => void;
 
-    constructor(private letterService: LetterService, private gridService: GridService) {
+    constructor(private letterService: LetterService, private gridService: GridService, private clientSocketService: ClientSocketService) {
+        this.clientSocketService.socket.on('receiveScoreInfo', (score: number, indexPlayer: number) => {
+            this.players[indexPlayer].score = score;
+        });
         this.fontSize = DEFAULT_FONT_SIZE;
     }
 
@@ -158,9 +162,10 @@ export class PlayerService {
 
     addScore(score: number, indexPlayer: number): void {
         this.players[indexPlayer].score += score;
+        this.clientSocketService.socket.emit('updateScoreInfo', this.players[indexPlayer].score, 1, this.clientSocketService.roomId);
     }
 
-    getScore(indexPlayer: number): number {
-        return this.players[indexPlayer].score;
+    isEaselEmpty(indexPlayer: number): boolean {
+        return this.players[indexPlayer].letterTable.length === 0;
     }
 }

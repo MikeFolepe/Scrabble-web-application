@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { PageNotFoundComponent } from '@app/components/page-not-found/page-not-found.component';
+import { PageNotFoundComponent } from '@app/pages/page-not-found/page-not-found.component';
 import { JoinRoomComponent } from '@app/pages/join-room/join-room.component';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { WaitingRoomComponent } from '@app/pages/waiting-room/waiting-room.component';
