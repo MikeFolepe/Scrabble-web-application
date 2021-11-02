@@ -7,7 +7,7 @@ import { ClientSocketService } from '@app/services/client-socket.service';
     styleUrls: ['./game-view.component.scss'],
 })
 export class GameViewComponent {
-    constructor(private clientSocketService: ClientSocketService){
+    constructor(private clientSocketService: ClientSocketService) {
         this.clientSocketService.route();
     }
 }

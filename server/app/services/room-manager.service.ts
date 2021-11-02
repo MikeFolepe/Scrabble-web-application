@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 import { GameSettings, StartingPlayer } from '@common/game-settings';
 import { Room, State } from '@common/room';
 import { PlayerIndex } from '@common/PlayerIndex';
@@ -41,8 +42,8 @@ export class RoomManager {
         room.state = state;
     }
 
-    setSocket(room: Room) {
-        room.setSocketId(room.roomId);
+    setSocket(room: Room, customerSocketId: string) {
+        room.setSocketId(customerSocketId);
     }
 
     getGameSettings(roomId: string) {
@@ -86,6 +87,26 @@ export class RoomManager {
             return room.roomId;
         }
         return '';
+    }
+
+    findWinnerbySocket(socketID: string): number {
+        const room = this.rooms.find((rooms) => {
+            for (const socketId of rooms.socketIds) {
+                if (socketId === socketID) return rooms.socketIds.indexOf(socketID);
+            }
+            return false;
+        });
+
+        if (room !== undefined) {
+            return 100;
+        }
+        return 100;
+    }
+
+    getWinnerName(roomId: string, indexofLoser: number): string {
+        const room = this.find(roomId) as Room;
+        if (indexofLoser === 0) return room.gameSettings.playersName[1];
+        else return room.gameSettings.playersName[1];
     }
     isNotAvailable(roomId: string): boolean {
         const room = this.find(roomId);

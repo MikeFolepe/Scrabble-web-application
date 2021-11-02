@@ -1,0 +1,13 @@
+<h1 mat-dialog-title style="color: black">Etes vous sur de vouloir quitter la partie</h1>
+<div mat-dialog-content>
+    <mat-form-field appearance="fill" style="width: 500px">
+        <mat-label>Etes vous sur de vouloir quitter la partie</mat-label>
+    </mat-form-field>
+</div>
+<br />
+<br />
+<br />
+<div mat-dialog-actions>
+    <button mat-button mat-dialog-close (click)="stayInGame()" color="warn">Non</button>
+    <button mat-raised-button mat-dialog-close (click)="exitGame()" color="warn">Oui</button>
+</div>

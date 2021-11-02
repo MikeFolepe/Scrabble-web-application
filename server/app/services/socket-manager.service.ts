@@ -1,10 +1,12 @@
-import * as http from 'http';
-import * as io from 'socket.io';
+/* eslint-disable @typescript-eslint/no-magic-numbers */
+/* eslint-disable sort-imports */
 import { GameSettings } from '@common/game-settings';
 import { PlayerIndex } from '@common/PlayerIndex';
-import { RoomManager } from './room-manager.service';
-import { Service } from 'typedi';
 import { State } from '@common/room';
+import * as http from 'http';
+import * as io from 'socket.io';
+import { Service } from 'typedi';
+import { RoomManager } from './room-manager.service';
 @Service()
 export class SocketManager {
     private sio: io.Server;
@@ -42,13 +44,12 @@ export class SocketManager {
                 const myroom = this.roomManager.find(roomId);
                 // On s'assure de pas avoir une room indéfinie
                 if (myroom !== undefined) {
-                    this.roomManager.setSocket(myroom);
+                    this.roomManager.setSocket(myroom, socket.id);
                 }
                 this.roomManager.setState(roomId, State.Playing);
                 // block someone else entry from room selection
                 this.sio.emit('roomConfiguration', this.roomManager.rooms);
                 socket.join(roomId);
-                console.log(this.roomManager.rooms);
                 // update roomID in the new filled room to allow the clients in this room
                 // to ask the server make some actions in their room later
                 this.sio.in(roomId).emit('yourRoomId', roomId);
@@ -65,25 +66,41 @@ export class SocketManager {
             socket.on('deleteGame', (roomId: string) => {
                 this.roomManager.deleteRoom(roomId);
                 this.sio.emit('roomConfiguration', this.roomManager.rooms);
-                socket.disconnect();
+                this.sio.socketsLeave(roomId);
             });
 
             socket.on('disconnect', () => {
                 const roomId = this.roomManager.findRoomIdOf(socket.id);
-                console.log(roomId);
+                setTimeout(() => {
+                    this.sio.in(roomId).emit('receiveEndGamebyGiveup', true);
+                }, 5000);
                 this.roomManager.deleteRoom(roomId);
                 this.sio.emit('roomConfiguration', this.roomManager.rooms);
+                // Code pour winner
+                // const indexOfLoser = this.roomManager.findWinnerbySocket(socket.id);
+                // const winnerName = this.roomManager.getWinnerName(roomId, indexOfLoser);
+                // console.log(winnerName);
+                // this.sio.in(roomId).emit('receiverWinnerName', winnerName);
+
                 // console.log(`Deconnexion par l'utilisateur avec id : ${socket.id}`);
                 // console.log(`Raison de deconnexion : ${reason}`);
-                this.sio.in(roomId).emit('goToMainMenu');
-                socket.disconnect();
-                // route les joueurs vers le debut avec un message d'erreur
+            });
+
+            // Receive the Endgame from the give up game or the natural EndGame by easel or by actions
+            socket.on('sendEndGame', (isEndGame: boolean, roomId: string) => {
+                this.sio.in(roomId).emit('receiveEndGamebyGiveup', isEndGame);
+                this.roomManager.deleteRoom(roomId);
+                this.sio.emit('roomConfiguration', this.roomManager.rooms);
+
+                // code winner
+                // const indexOfLoser = this.roomManager.findWinnerbySocket(socket.id);
+                // const winnerName = this.roomManager.getWinnerName(roomId, indexOfLoser);
+                // console.log(winnerName);
+                // this.sio.in(roomId).emit('receiverWinnerName', winnerName);
+                // socket.disconnect();
             });
 
             socket.on('sendRoomMessage', (message: string, roomId: string) => {
-                // this.sio.to(roomId).emit('receiveRoomMessage', `${socket.id} : ${message}`);
-                // console.log(message);
-                // console.log(socket.rooms);
                 socket.to(roomId).emit('receiveRoomMessage', message);
             });
         });
