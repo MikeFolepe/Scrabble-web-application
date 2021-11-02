@@ -1,9 +1,5 @@
 import { Injectable } from '@angular/core';
-<<<<<<< HEAD
-import { ONE_SECOND_TIME, THREE_SECONDS_DELAY } from '@app/classes/constants';
-=======
 import { ONE_SECOND_DELAY, THREE_SECONDS_DELAY } from '@app/classes/constants';
->>>>>>> 8b2f6a360cafbe46bd326087cd1169c94b82feb8
 import { ClientSocketService } from '@app/services/client-socket.service';
 import { EndGameService } from '@app/services/end-game.service';
 import { GameSettingsService } from './game-settings.service';
@@ -29,10 +25,6 @@ export class SkipTurnService {
             this.startTimer();
         });
     }
-<<<<<<< HEAD
-=======
-
->>>>>>> 8b2f6a360cafbe46bd326087cd1169c94b82feb8
     bindAiTurn(fn: () => void) {
         this.playAiTurn = fn;
     }
@@ -54,11 +46,7 @@ export class SkipTurnService {
                         this.isTurn = true;
                         this.startTimer();
                     }
-<<<<<<< HEAD
-                }, ONE_SECOND_TIME);
-=======
                 }, ONE_SECOND_DELAY);
->>>>>>> 8b2f6a360cafbe46bd326087cd1169c94b82feb8
             } else {
                 this.clientSocket.socket.emit('switchTurn', this.isTurn, this.clientSocket.roomId);
                 this.isTurn = false;
