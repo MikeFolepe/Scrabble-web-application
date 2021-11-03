@@ -1,10 +1,10 @@
 import { GameSettings, StartingPlayer } from '@common/game-settings';
-import { Room, State } from '@common/room';
 import { PlayerIndex } from '@common/PlayerIndex';
+import { Room, State } from '@common/room';
 import { Service } from 'typedi';
 
 @Service()
-export class RoomManager {
+export class RoomManagerService {
     rooms: Room[];
 
     constructor() {

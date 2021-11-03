@@ -44,10 +44,9 @@ describe('InformationPanelComponent', () => {
 
     it('should call clearPlayers on Destroy', () => {
         spyOn(component.playerService, 'clearPlayers');
-        spyOn(component.skipTurn, 'stopTimer');
         component.ngOnDestroy();
         expect(component.playerService.clearPlayers).toHaveBeenCalled();
-        expect(component.skipTurn.stopTimer).toHaveBeenCalled();
+        expect(skipTurnSpy.stopTimer).toHaveBeenCalled();
     });
 
     it('should start timer if game is solo', () => {

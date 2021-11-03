@@ -1,9 +1,9 @@
+import { Application } from '@app/app';
+import { RoomManagerService } from '@app/services/room-manager.service';
+import { SocketManagerService } from '@app/services/socket-manager.service';
 import * as http from 'http';
 import { AddressInfo } from 'net';
-import { Application } from '@app/app';
-import { RoomManager } from '@app/services/room-manager.service';
 import { Service } from 'typedi';
-import { SocketManager } from '@app/services/socket-manager.service';
 
 @Service()
 export class Server {
@@ -11,8 +11,8 @@ export class Server {
     // eslint-disable-next-line @typescript-eslint/no-magic-numbers
     private static readonly baseDix: number = 10;
     private server: http.Server;
-    private socketManager: SocketManager;
-    private roomManager: RoomManager;
+    private socketManagerService: SocketManagerService;
+    private roomManagerService: RoomManagerService;
     constructor(private readonly application: Application) {}
 
     private static normalizePort(val: number | string): number | string | boolean {
@@ -29,10 +29,10 @@ export class Server {
         this.application.app.set('port', Server.appPort);
 
         this.server = http.createServer(this.application.app);
-        this.roomManager = new RoomManager();
+        this.roomManagerService = new RoomManagerService();
 
-        this.socketManager = new SocketManager(this.server, this.roomManager);
-        this.socketManager.handleSockets();
+        this.socketManagerService = new SocketManagerService(this.server, this.roomManagerService);
+        this.socketManagerService.handleSockets();
 
         this.server.listen(Server.appPort);
         this.server.on('error', (error: NodeJS.ErrnoException) => this.onError(error));

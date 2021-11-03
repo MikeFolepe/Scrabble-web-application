@@ -1,16 +1,16 @@
+import { RoomManagerService } from '@app/services/room-manager.service';
 import { GameSettings, StartingPlayer } from '@common/game-settings';
-import { RoomManager } from '@app/services/room-manager.service';
 import { State } from '@common/room';
 import { expect } from 'chai';
 describe('RoomManagerService', () => {
-    let roomManagerService: RoomManager;
+    let roomManagerService: RoomManagerService;
     const id = 'LOG2990';
     const socketId1 = 'socket1';
 
     const settings: GameSettings = new GameSettings(['Paul', 'Mike'], StartingPlayer.Player1, '00', '30', 'facile', 'Désactiver', 'français', '00');
 
     beforeEach(() => {
-        roomManagerService = new RoomManager();
+        roomManagerService = new RoomManagerService();
         roomManagerService.rooms = [];
     });
 
