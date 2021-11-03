@@ -81,7 +81,7 @@ export class WordValidationService {
     passThroughAllRowsOrColumns(scrabbleBoard: string[][], isRow: boolean) {
         let x = 0;
         let y = 0;
-        for (let i = 7; i < BOARD_ROWS; i++) {
+        for (let i = 0; i < BOARD_ROWS; i++) {
             for (let j = 0; j < BOARD_COLUMNS; j++) {
                 x = isRow ? i : j;
                 y = isRow ? j : i;
