@@ -3,7 +3,7 @@ import { Service } from 'typedi';
 
 @Service()
 export class WordValidationService {
-    private dictionaryData = fs.readFileSync('@../../../client/src/assets/dictionary.json');
+    private dictionaryData = fs.readFileSync('@../../../assets/dictionary.json');
     private dictionary: string[];
     constructor() {
         this.dictionary = JSON.parse(this.dictionaryData.toString()).words;
