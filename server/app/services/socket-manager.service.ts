@@ -1,10 +1,10 @@
-import { RoomManagerService } from '@app/services/room-manager.service';
-import { GameSettings } from '@common/game-settings';
-import { PlayerIndex } from '@common/PlayerIndex';
-import { State } from '@common/room';
 import * as http from 'http';
 import * as io from 'socket.io';
+import { GameSettings } from '@common/game-settings';
+import { PlayerIndex } from '@common/PlayerIndex';
+import { RoomManagerService } from '@app/services/room-manager.service';
 import { Service } from 'typedi';
+import { State } from '@common/room';
 
 @Service()
 export class SocketManagerService {

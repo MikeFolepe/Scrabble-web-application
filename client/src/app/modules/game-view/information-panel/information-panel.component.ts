@@ -1,8 +1,8 @@
-/* eslint-disable sort-imports */
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { INDEX_PLAYER_AI, INDEX_REAL_PLAYER } from '@app/classes/constants';
 import { EndGameService } from '@app/services/end-game.service';
-import { GameSettings } from '@common/game-settings';
+// eslint-disable-next-line no-restricted-imports
+import { GameSettings } from '../../../../../../common/game-settings';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { LetterService } from '@app/services/letter.service';
 import { Player } from '@app/models/player.model';

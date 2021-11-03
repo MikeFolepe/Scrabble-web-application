@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable dot-notation */
 import { EndGameService } from './end-game.service';
 import { GameSettingsService } from './game-settings.service';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ONE_SECOND_DELAY } from '@app/classes/constants';
 import { RouterTestingModule } from '@angular/router/testing';
-import { SkipTurnService }  from './skip-turn.service';
+import { SkipTurnService } from './skip-turn.service';
 import { TestBed } from '@angular/core/testing';
 
 describe('SkipTurnService', () => {
@@ -45,7 +46,6 @@ describe('SkipTurnService', () => {
         service.switchTurn();
         expect(spy).toHaveBeenCalled();
     });
-
 
     // it('should startTimer when switching turns 2', () => {
     //     service.isTurn = true;

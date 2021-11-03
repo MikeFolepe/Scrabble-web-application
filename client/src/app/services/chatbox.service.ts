@@ -1,6 +1,4 @@
 import { INDEX_REAL_PLAYER, MAX_NUMBER_OF_POSSIBILITY } from '@app/classes/constants';
-import { TypeMessage } from '@app/classes/enum';
-import { Vec2 } from '@app/classes/vec2';
 import { DebugService } from '@app/services/debug.service';
 import { EndGameService } from '@app/services/end-game.service';
 import { Injectable } from '@angular/core';
@@ -10,6 +8,8 @@ import { PlayerService } from '@app/services/player.service';
 import { SendMessageService } from '@app/services/send-message.service';
 import { SkipTurnService } from '@app/services/skip-turn.service';
 import { SwapLetterService } from '@app/services/swap-letter.service';
+import { TypeMessage } from '@app/classes/enum';
+import { Vec2 } from '@app/classes/vec2';
 
 @Injectable({
     providedIn: 'root',

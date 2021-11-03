@@ -1,9 +1,9 @@
-import { Application } from '@app/app';
-import { RoomManagerService } from '@app/services/room-manager.service';
-import { SocketManagerService } from '@app/services/socket-manager.service';
 import * as http from 'http';
 import { AddressInfo } from 'net';
+import { Application } from '@app/app';
+import { RoomManagerService } from '@app/services/room-manager.service';
 import { Service } from 'typedi';
+import { SocketManagerService } from '@app/services/socket-manager.service';
 
 @Service()
 export class Server {

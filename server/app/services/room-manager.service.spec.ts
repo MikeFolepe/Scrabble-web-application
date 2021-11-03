@@ -1,7 +1,8 @@
-import { RoomManagerService } from '@app/services/room-manager.service';
 import { GameSettings, StartingPlayer } from '@common/game-settings';
+import { RoomManagerService } from '@app/services/room-manager.service';
 import { State } from '@common/room';
 import { expect } from 'chai';
+
 describe('RoomManagerService', () => {
     let roomManagerService: RoomManagerService;
     const id = 'LOG2990';
@@ -11,6 +12,10 @@ describe('RoomManagerService', () => {
 
     beforeEach(() => {
         roomManagerService = new RoomManagerService();
+        roomManagerService.rooms = [];
+    });
+
+    afterEach(() => {
         roomManagerService.rooms = [];
     });
 
@@ -46,7 +51,7 @@ describe('RoomManagerService', () => {
         const socketId2 = 'socket2';
         const myRoom = roomManagerService.rooms[0];
         roomManagerService.setSocket(myRoom, socketId2);
-        expect(myRoom.socketIds[1]).to.equal(socketId2);
+        expect(roomManagerService.rooms[0].socketIds[1]).to.equal(socketId2);
     });
 
     it('should return the formatGameSettings for the Customer in a specific Room', () => {

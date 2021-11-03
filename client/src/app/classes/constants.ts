@@ -1,6 +1,7 @@
 import { AIStrategy, PlacingStrategy } from '@app/classes/enum';
 import { Letter } from '@app/classes/letter';
-import dictionaryData from '@src/../../assets/dictionary.json';
+// eslint-disable-next-line no-restricted-imports
+import dictionaryData from '../../../../common/dictionary.json';
 
 export const DEFAULT_WIDTH = 750;
 export const DEFAULT_HEIGHT = 750;

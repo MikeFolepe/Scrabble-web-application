@@ -10,14 +10,14 @@ export class Room {
     id: string;
     gameSettings: GameSettings;
     state: State;
-    socketIds: string[] = [];
+    socketIds: string[];
 
     constructor(roomId: string, socketId: string, gameSettings: GameSettings, state: State = State.Waiting) {
+        this.socketIds = [];
         this.id = roomId;
         this.socketIds = new Array<string>();
         this.socketIds[PlayerIndex.OWNER] = socketId;
         this.gameSettings = gameSettings;
         this.state = state;
-        this.socketIds.push(socketId);
     }
 }

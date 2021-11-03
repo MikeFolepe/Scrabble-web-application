@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { PageEvent } from '@angular/material/paginator';
+import { Room, State } from '@common/room';
+import { ClientSocketService } from '@app/services/client-socket.service';
 import { DELAY_OF_LOGIN } from '@app/classes/constants';
 import { DialogComponent } from '@app/modules/initialize-solo-game/dialog/dialog.component';
-import { ClientSocketService } from '@app/services/client-socket.service';
+import { MatDialog } from '@angular/material/dialog';
+import { PageEvent } from '@angular/material/paginator';
 import { PlayerIndex } from '@common/PlayerIndex';
-import { Room, State } from '@common/room';
 
 @Component({
     selector: 'app-join-room',

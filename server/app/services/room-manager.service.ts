@@ -1,6 +1,6 @@
 import { GameSettings, StartingPlayer } from '@common/game-settings';
-import { PlayerIndex } from '@common/PlayerIndex';
 import { Room, State } from '@common/room';
+import { PlayerIndex } from '@common/PlayerIndex';
 import { Service } from 'typedi';
 
 @Service()

@@ -39,6 +39,4 @@ describe('JoinRoomComponent', () => {
     it('should return the state of room is the state is Playing', () => {
         expect(component.computeRoomState(1)).toEqual('En attente');
     });
-
-
 });

@@ -1,15 +1,11 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
-/* eslint-disable prettier/prettier */
 /* eslint-disable sort-imports */
-// eslint-disable-next-line prettier/prettier
-// with { "type": "module" } in your package.json
 import { GameSettings } from '@common/game-settings';
 import { Room, State } from '@common/room';
 import { expect } from 'chai';
 import * as http from 'http';
-// import * as ioS from 'socket.io';
 import { createStubInstance, SinonStubbedInstance } from 'sinon';
 import * as io from 'socket.io';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';

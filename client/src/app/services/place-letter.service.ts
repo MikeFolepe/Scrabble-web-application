@@ -1,5 +1,4 @@
 /* eslint-disable max-lines */
-import { Injectable } from '@angular/core';
 import {
     BOARD_COLUMNS,
     BOARD_ROWS,
@@ -10,17 +9,18 @@ import {
     INDEX_REAL_PLAYER,
     THREE_SECONDS_DELAY,
 } from '@app/classes/constants';
-import { TypeMessage } from '@app/classes/enum';
-import { ScoreValidation } from '@app/classes/validation-score';
-import { Vec2 } from '@app/classes/vec2';
-import { GridService } from '@app/services/grid.service';
-import { PlayerAIService } from '@app/services/player-ia.service';
-import { PlayerService } from '@app/services/player.service';
-import { WordValidationService } from '@app/services/word-validation.service';
 import { ClientSocketService } from './client-socket.service';
 import { GameSettingsService } from './game-settings.service';
+import { GridService } from '@app/services/grid.service';
+import { Injectable } from '@angular/core';
+import { PlayerAIService } from '@app/services/player-ia.service';
+import { PlayerService } from '@app/services/player.service';
+import { ScoreValidation } from '@app/classes/validation-score';
 import { SendMessageService } from './send-message.service';
 import { SkipTurnService } from './skip-turn.service';
+import { TypeMessage } from '@app/classes/enum';
+import { Vec2 } from '@app/classes/vec2';
+import { WordValidationService } from '@app/services/word-validation.service';
 
 @Injectable({
     providedIn: 'root',
