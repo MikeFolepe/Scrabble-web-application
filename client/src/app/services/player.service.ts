@@ -10,7 +10,7 @@ import {
     FONT_SIZE_MAX,
     FONT_SIZE_MIN,
     INDEX_INVALID,
-    RESERVE,
+    RESERVE
 } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';

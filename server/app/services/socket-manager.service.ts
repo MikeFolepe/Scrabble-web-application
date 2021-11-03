@@ -34,9 +34,7 @@ export class SocketManager {
             });
 
             socket.on('newRoomCustomer', (playerName: string, roomId: string) => {
-                console.log('new custom');
                 if (this.roomManager.isNotAvailable(roomId)) {
-                    console.log('isNotAvaible');
                     // block someone else entry from dialog window
                     socket.emit('roomAlreadyToken');
                     return;

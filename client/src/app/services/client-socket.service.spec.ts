@@ -7,6 +7,8 @@ import * as http from 'http';
 import { ClientSocketService } from './client-socket.service';
 
 //const sinonChai = require("sinon-chai");
+import { RouterModule } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
 
 //chai.use(sinonChai);
 
@@ -23,7 +25,9 @@ fdescribe('ClientSocketService', () => {
     // });
 
     beforeEach(() => {
-        TestBed.configureTestingModule({});
+        TestBed.configureTestingModule({
+            imports: [RouterModule, RouterTestingModule],
+        });
         service = TestBed.inject(ClientSocketService);
     });
   

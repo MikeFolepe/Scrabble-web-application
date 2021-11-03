@@ -1,5 +1,5 @@
-import { TestBed } from '@angular/core/testing';
 import { Player } from '@app/models/player.model';
+import { TestBed } from '@angular/core/testing';
 
 describe('PlayerAI', () => {
     let model: Player;

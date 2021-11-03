@@ -1,8 +1,11 @@
+import { HttpClientModule } from '@angular/common/http';
+import { RouterTestingModule } from '@angular/router/testing';
 /* eslint-disable dot-notation */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ChatboxComponent } from './chatbox.component';
 import { FormsModule } from '@angular/forms';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 describe('ChatBoxComponent', () => {
     let component: ChatboxComponent;
@@ -11,7 +14,8 @@ describe('ChatBoxComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [ChatboxComponent],
-            imports: [FormsModule],
+            imports: [FormsModule, RouterTestingModule, HttpClientModule],
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
     });
 

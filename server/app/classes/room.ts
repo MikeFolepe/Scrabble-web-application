@@ -1,5 +1,5 @@
-// eslint-disable-next-line no-restricted-imports
 import { GameSettings } from '@common/game-settings';
+import { PlayerIndex } from '@common/PlayerIndex';
 
 export enum State {
     Playing,
@@ -8,22 +8,23 @@ export enum State {
 
 export class Room {
     roomId: string;
+    socketIds: string[];
     gameSettings: GameSettings;
     state: State;
-    socketIds: string[] = [];
 
-    constructor(roomId: string, socketID: string, gameSettings: GameSettings, state: State = State.Waiting) {
+    constructor(roomId: string, socketId: string, gameSettings: GameSettings, state: State = State.Waiting) {
         this.roomId = roomId;
+        this.socketIds = new Array<string>();
+        this.socketIds[PlayerIndex.OWNER] = socketId;
         this.gameSettings = gameSettings;
         this.state = state;
-        this.socketIds.push(socketID);
     }
 
     addCustomer(customerName: string) {
-        this.gameSettings.playersName[1] = customerName;
+        this.gameSettings.playersName[PlayerIndex.CUSTOMER] = customerName;
     }
 
-    setSocketId(customerSocketID: string) {
-        this.socketIds.push(customerSocketID);
+    setSocketId(customerSocketId: string) {
+        this.socketIds.push(customerSocketId);
     }
 }
