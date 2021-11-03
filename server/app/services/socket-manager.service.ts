@@ -1,10 +1,10 @@
-import { GameSettings } from '@app/classes/multiplayer-game-settings';
-import { State } from '@app/classes/room';
+import { RoomManager } from '@app/services/room-manager.service';
+import { GameSettings } from '@common/game-settings';
+import { PlayerIndex } from '@common/PlayerIndex';
+import { State } from '@common/room';
 import * as http from 'http';
 import * as io from 'socket.io';
 import { Service } from 'typedi';
-import { RoomManager } from './room-manager.service';
-// import { Letter } from '../../../client/src/app/classes/letter';
 
 @Service()
 export class SocketManager {
@@ -18,11 +18,11 @@ export class SocketManager {
     handleSockets(): void {
         this.sio.on('connection', (socket) => {
             socket.on('createRoom', (gameSettings: GameSettings) => {
-                const roomId = this.roomManager.createRoomId(gameSettings.playersName[0]);
-                // TODO: trouver une solution definitive au roomId
-                this.roomManager.createRoom(roomId, gameSettings);
-                // Each room created will have the creator's socket id as roomId
+                const roomId = this.roomManager.createRoomId(gameSettings.playersName[PlayerIndex.OWNER]);
+                this.roomManager.createRoom(socket.id, roomId, gameSettings);
                 socket.join(roomId);
+                // give the client his roomId to communicate later with server
+                socket.emit('yourRoomId', roomId);
                 // room creation alerts all clients on the new rooms configurations
                 this.sio.emit('roomConfiguration', this.roomManager.rooms);
             });
@@ -39,6 +39,12 @@ export class SocketManager {
                     return;
                 }
                 this.roomManager.addCustomer(playerName, roomId);
+                // Search the good room and set the custommer ID
+                const myroom = this.roomManager.find(roomId);
+                // On s'assure de pas avoir une room indéfinie
+                if (myroom !== undefined) {
+                    this.roomManager.setSocket(myroom);
+                }
                 this.roomManager.setState(roomId, State.Playing);
                 // block someone else entry from room selection
                 this.sio.emit('roomConfiguration', this.roomManager.rooms);
@@ -54,33 +60,32 @@ export class SocketManager {
                 socket.to(roomId).emit('yourGameSettings', this.roomManager.getGameSettings(roomId));
                 // redirect the clients in the new filled room to game view
                 this.sio.in(roomId).emit('goToGameView');
-                this.sio.in(roomId).emit('startTimer');
             });
 
             socket.on('sendPlacement', (scrabbleBoard: string[][], startPosition: unknown, orientation: string, word: string, roomId: string) => {
                 socket.to(roomId).emit('receivePlacement', scrabbleBoard, startPosition, orientation, word);
             });
 
-            // Delete  the room and uodate the client view
-            socket.on('cancelMultiplayerparty', (roomId: string) => {
+            socket.on('deleteGame', (roomId: string) => {
                 this.roomManager.deleteRoom(roomId);
                 this.sio.emit('roomConfiguration', this.roomManager.rooms);
+                socket.disconnect();
             });
-            /*
-            socket.on('disconnect', (reason) => {
-                console.log(`Deconnexion par l'utilisateur avec id : ${socket.id}`);
-                console.log(`Raison de deconnexion : ${reason}`);
+
+            socket.on('disconnect', () => {
+                const roomId = this.roomManager.findRoomIdOf(socket.id);
+                this.roomManager.deleteRoom(roomId);
+                this.sio.emit('roomConfiguration', this.roomManager.rooms);
+                this.sio.in(roomId).emit('goToMainMenu');
+                socket.disconnect();
+                // route les joueurs vers le debut avec un message d'erreur
             });
-            */
+
             socket.on('sendReserve', (reserve: unknown, reserveSize: number, roomId: string) => {
                 socket.to(roomId).emit('receiveReserve', reserve, reserveSize);
             });
 
             socket.on('sendRoomMessage', (message: string, roomId: string) => {
-                // this.sio.to(roomId).emit('receiveRoomMessage', `${socket.id} : ${message}`);
-                // console.log(message);
-                // console.log(socket.rooms);
-                // this.sio.to(roomId).emit('receiveRoomMessage', message);
                 socket.to(roomId).emit('receiveRoomMessage', message);
             });
 

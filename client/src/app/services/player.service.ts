@@ -11,9 +11,9 @@ import {
 } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { Player } from '@app/models/player.model';
+import { GridService } from '@app/services/grid.service';
+import { LetterService } from '@app/services/letter.service';
 import { ClientSocketService } from './client-socket.service';
-import { GridService } from './grid.service';
-import { LetterService } from './letter.service';
 
 @Injectable({
     providedIn: 'root',
@@ -67,8 +67,8 @@ export class PlayerService {
         for (let i = 0; i < BOARD_ROWS; i++) {
             for (let j = 0; j < BOARD_COLUMNS; j++) {
                 if (this.scrabbleBoard[i][j] !== '') {
-                    this.gridService.eraseLetter(this.gridService.gridContextLettersLayer, j, i);
-                    this.gridService.drawLetter(this.gridService.gridContextLettersLayer, this.scrabbleBoard[i][j], j, i, this.fontSize);
+                    this.gridService.eraseLetter(this.gridService.gridContextLettersLayer, { x: j, y: i });
+                    this.gridService.drawLetter(this.gridService.gridContextLettersLayer, this.scrabbleBoard[i][j], { x: j, y: i }, this.fontSize);
                 }
             }
         }

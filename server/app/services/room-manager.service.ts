@@ -1,6 +1,7 @@
-import { Room, State } from '@app/classes/room';
+import { GameSettings, StartingPlayer } from '@common/game-settings';
+import { Room, State } from '@common/room';
+import { PlayerIndex } from '@common/PlayerIndex';
 import { Service } from 'typedi';
-import { GameSettings } from '@app/classes/multiplayer-game-settings';
 
 @Service()
 export class RoomManager {
@@ -10,8 +11,8 @@ export class RoomManager {
         this.rooms = [];
     }
 
-    createRoom(roomId: string, gameSettings: GameSettings) {
-        this.rooms.push(new Room(this.createRoomId(gameSettings.playersName[0]), gameSettings));
+    createRoom(socketId: string, roomId: string, gameSettings: GameSettings) {
+        this.rooms.push(new Room(roomId, socketId, gameSettings));
     }
 
     createRoomId(playerName: string) {
@@ -40,6 +41,10 @@ export class RoomManager {
         room.state = state;
     }
 
+    setSocket(room: Room) {
+        room.setSocketId(room.id);
+    }
+
     getGameSettings(roomId: string) {
         const room = this.find(roomId) as Room;
         return room.gameSettings;
@@ -48,15 +53,16 @@ export class RoomManager {
     formatGameSettingsForCustomerIn(roomId: string): GameSettings {
         const room = this.find(roomId) as Room;
         const gameSettings = room.gameSettings;
-        const playerNames: string[] = [gameSettings.playersName[1], gameSettings.playersName[0]];
-        const startingPlayer = gameSettings.startingPlayer ? 0 : 1;
+        const playerNames: string[] = [gameSettings.playersName[PlayerIndex.CUSTOMER], gameSettings.playersName[PlayerIndex.OWNER]];
+        const startingPlayer = gameSettings.startingPlayer ? StartingPlayer.Player1 : StartingPlayer.Player2;
         const formattedGameSettings = new GameSettings(
             playerNames,
             startingPlayer,
             gameSettings.timeMinute,
             gameSettings.timeSecond,
+            gameSettings.level,
             gameSettings.randomBonus,
-            gameSettings.randomBonus,
+            gameSettings.bonusPositions,
             gameSettings.dictionary,
         );
 
@@ -69,6 +75,19 @@ export class RoomManager {
         });
     }
 
+    findRoomIdOf(socketId: string): string {
+        const room = this.rooms.find((rooms) => {
+            for (const id of rooms.socketIds) {
+                if (socketId === id) return true;
+            }
+            return false;
+        });
+
+        if (room !== undefined) {
+            return room.id;
+        }
+        return '';
+    }
     isNotAvailable(roomId: string): boolean {
         const room = this.find(roomId);
 

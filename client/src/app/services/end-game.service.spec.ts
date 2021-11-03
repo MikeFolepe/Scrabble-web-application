@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
-import { TestBed } from '@angular/core/testing';
-import { RESERVE } from '@app/classes/constants';
+import { EndGameService } from '@app/services/end-game.service';
 import { Letter } from '@app/classes/letter';
 import { Orientation } from '@app/classes/scrabble-board-pattern';
-import { PlayerAI } from '@app/models/player-ai.model';
 import { Player } from '@app/models/player.model';
-import { EndGameService } from './end-game.service';
 import { RouterTestingModule } from '@angular/router/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { RESERVE } from '@app/classes/constants';
+import { TestBed } from '@angular/core/testing';
+import { PlayerAI } from '@app/models/player-ai.model';
 
 describe('EndGameService', () => {
     let service: EndGameService;

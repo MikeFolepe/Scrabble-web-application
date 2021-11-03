@@ -1,10 +1,11 @@
 {
     "compilerOptions": {
-        "baseUrl": "./",
+        "baseUrl": ".",
         "target": "es6",
         "types": ["reflect-metadata", "@types/mocha", "mocha"],
         "module": "commonjs",
         "moduleResolution": "node",
+        "sourceRoot": "app",
         "sourceMap": true,
         "outDir": "out",
         "emitDecoratorMetadata": true,
@@ -18,7 +19,8 @@
         "strictNullChecks": true,
         "resolveJsonModule": true,
         "paths": {
-            "@app/*": ["./app/*"]
+            "@app/*": ["app/*"],
+            "@common/*": ["../common/*"]
         }
     }
 }

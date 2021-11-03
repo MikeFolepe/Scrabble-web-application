@@ -1,15 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable no-unused-vars */
-import { TestBed } from '@angular/core/testing';
-import { PlayerAIComponent } from '@app/modules/game-view/player-ai/player-ai.component';
-import { PlayerAI } from '@app/models/player-ai.model';
-import { SwapLetter } from '@app/models/swap-letter-strategy.model';
-import { RESERVE } from '@app/classes/constants';
-import { LetterService } from '@app/services/letter.service';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { LetterService } from '@app/services/letter.service';
+import { PlayerAI } from '@app/models/player-ai.model';
+import { PlayerAIComponent } from '@app/modules/game-view/player-ai/player-ai.component';
+import { RESERVE } from '@app/classes/constants';
 import { RouterTestingModule } from '@angular/router/testing';
+import { SwapLetter } from '@app/models/swap-letter-strategy.model';
+import { TestBed } from '@angular/core/testing';
 
 describe('SwapLetter', () => {
     const id = 0;

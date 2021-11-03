@@ -1,7 +1,7 @@
+import { BoardHandlerService } from '@app/services/board-handler.service';
+import { ChatboxService } from '@app/services/chatbox.service';
 import { Component } from '@angular/core';
 import { EndGameService } from '@app/services/end-game.service';
-import { ChatboxService } from '@app/services/chatbox.service';
-import { BoardHandlerService } from '@app/services/board-handler.service';
 import { SkipTurnService } from '@app/services/skip-turn.service';
 
 @Component({

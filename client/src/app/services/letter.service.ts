@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
 import { EASEL_SIZE, RESERVE } from '@app/classes/constants';
-import { Letter } from '@app/classes/letter';
 import { BehaviorSubject } from 'rxjs';
 import { ClientSocketService } from '@app/services/client-socket.service';
+import { Injectable } from '@angular/core';
+import { Letter } from '@app/classes/letter';
 
 @Injectable({
     providedIn: 'root',

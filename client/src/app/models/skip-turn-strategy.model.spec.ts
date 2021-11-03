@@ -1,10 +1,10 @@
-import { TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { PlayerAI } from '@app/models/player-ai.model';
 import { PlayerAIComponent } from '@app/modules/game-view/player-ai/player-ai.component';
-import { PlayerAI } from './player-ai.model';
-import { SkipTurn } from './skip-turn-strategy.model';
 import { RESERVE } from '@app/classes/constants';
 import { RouterTestingModule } from '@angular/router/testing';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { SkipTurn } from '@app/models/skip-turn-strategy.model';
+import { TestBed } from '@angular/core/testing';
 
 describe('SkipTurn', () => {
     const id = 0;

@@ -1,7 +1,7 @@
 /* eslint-disable dot-notation */
-import { TestBed } from '@angular/core/testing';
 import { PlayStrategy } from '@app/models/abstract-strategy.model';
-import { SkipTurn } from './skip-turn-strategy.model';
+import { SkipTurn } from '@app/models/skip-turn-strategy.model';
+import { TestBed } from '@angular/core/testing';
 
 describe('Abstract Strategy', () => {
     let strategy: PlayStrategy;

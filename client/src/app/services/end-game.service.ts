@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { INDEX_PLAYER_AI, INDEX_PLAYER_ONE, NUMBER_OF_SKIP, RESERVE } from '@app/classes/constants';
+import { DebugService } from '@app/services/debug.service';
 import { ClientSocketService } from './client-socket.service';
-import { DebugService } from './debug.service';
 import { LetterService } from './letter.service';
 import { PlayerService } from './player.service';
 

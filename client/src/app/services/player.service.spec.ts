@@ -1,13 +1,13 @@
 /* eslint-disable max-lines */
 /* eslint-disable dot-notation */
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 import { BOARD_COLUMNS, BOARD_ROWS, FONT_SIZE_MAX, FONT_SIZE_MIN, INDEX_INVALID, RESERVE } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { PlayerAI } from '@app/models/player-ai.model';
 import { Player } from '@app/models/player.model';
 import { PlayerService } from './player.service';
-import { RouterTestingModule } from '@angular/router/testing';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('PlayerService', () => {
     let letterA: Letter;

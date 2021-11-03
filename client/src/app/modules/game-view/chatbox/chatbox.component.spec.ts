@@ -1,12 +1,12 @@
 /* eslint-disable dot-notation */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ChatboxComponent } from '@app/modules/game-view//chatbox/chatbox.component';
 import { FormsModule } from '@angular/forms';
-import { RouterTestingModule } from '@angular/router/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ONE_SECOND_DELAY } from '@app/classes/constants';
+import { RouterTestingModule } from '@angular/router/testing';
 import { TypeMessage } from '@app/classes/enum';
-import { ChatboxComponent } from './chatbox.component';
 
 describe('ChatBoxComponent', () => {
     let component: ChatboxComponent;

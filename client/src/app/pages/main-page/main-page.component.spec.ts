@@ -1,9 +1,9 @@
 /* eslint-disable dot-notation */
-import { HttpClientModule } from '@angular/common/http';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
+import { HttpClientModule } from '@angular/common/http';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('MainPageComponent', () => {
     let component: MainPageComponent;
@@ -42,6 +42,6 @@ describe('MainPageComponent', () => {
 
         component.selectedGameMode = 'Joindre une partie multijoueur';
         component.route();
-        expect(spy).toHaveBeenCalledWith(['multiplayer-mode']);
+        expect(spy).toHaveBeenCalledWith(['join-room']);
     });
 });

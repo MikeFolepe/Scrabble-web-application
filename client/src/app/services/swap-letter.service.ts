@@ -3,8 +3,8 @@ import { INDEX_INVALID, MIN_RESERVE_SIZE_TO_SWAP } from '@app/classes/constants'
 import { TypeMessage } from '@app/classes/enum';
 import { LetterService } from '@app/services/letter.service';
 import { PlayerService } from '@app/services/player.service';
-import { SendMessageService } from './send-message.service';
 import { EndGameService } from './end-game.service';
+import { SendMessageService } from './send-message.service';
 
 @Injectable({
     providedIn: 'root',

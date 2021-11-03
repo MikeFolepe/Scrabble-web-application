@@ -1,6 +1,6 @@
+import { AIStrategy, PlacingStrategy } from '@app/classes/enum';
 import { Letter } from '@app/classes/letter';
 import dictionaryData from '@src/../../assets/dictionary.json';
-import { AIStrategy, PlacingStrategy } from './enum';
 
 export const DEFAULT_WIDTH = 750;
 export const DEFAULT_HEIGHT = 750;
@@ -20,6 +20,7 @@ export const NUMBER_OF_SKIP = 6;
 
 export const ONE_SECOND_DELAY = 1000;
 export const DELAY_TO_PLAY = 20000;
+export const DELAY_OF_LOGIN = 4000;
 export const THREE_SECONDS_DELAY = 3000;
 
 export const CENTRAL_CASE_POSITION_X = 7;
@@ -268,8 +269,9 @@ export const RESERVE: Letter[] = [
     },
 ];
 
-// Positions are used for keys, bonuses string are used for value
-export const BONUSES_POSITIONS: Map<string, string> = new Map<string, string>([
+// positions are used for keys
+// bonuses string are use for value
+export const BONUS_POSITIONS: Map<string, string> = new Map<string, string>([
     ['A1', 'tripleword'],
     ['A4', 'doubleletter'],
     ['A8', 'tripleword'],

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ONE_SECOND_DELAY, THREE_SECONDS_DELAY } from '@app/classes/constants';
 import { ClientSocketService } from '@app/services/client-socket.service';
 import { EndGameService } from '@app/services/end-game.service';
-import { GameSettingsService } from './game-settings.service';
+import { GameSettingsService } from '@app/services/game-settings.service';
 
 @Injectable({
     providedIn: 'root',

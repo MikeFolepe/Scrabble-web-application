@@ -5,7 +5,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { INDEX_PLAYER_ONE, RESERVE } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { Player } from '@app/models/player.model';
-import { SwapLetterService } from './swap-letter.service';
+import { SwapLetterService } from '@app/services/swap-letter.service';
 
 describe('SwapLetterService', () => {
     let service: SwapLetterService;

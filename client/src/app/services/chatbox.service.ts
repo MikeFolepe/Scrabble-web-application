@@ -2,14 +2,15 @@ import { Injectable } from '@angular/core';
 import { INDEX_PLAYER_ONE, MAX_NUMBER_OF_POSSIBILITY } from '@app/classes/constants';
 import { TypeMessage } from '@app/classes/enum';
 import { Vec2 } from '@app/classes/vec2';
+import { DebugService } from '@app/services/debug.service';
 import { EndGameService } from '@app/services/end-game.service';
+import { LetterService } from '@app/services/letter.service';
 import { PlaceLetterService } from '@app/services/place-letter.service';
 import { PlayerService } from '@app/services/player.service';
+import { SendMessageService } from '@app/services/send-message.service';
 import { SkipTurnService } from '@app/services/skip-turn.service';
 import { SwapLetterService } from '@app/services/swap-letter.service';
-import { DebugService } from './debug.service';
-import { LetterService } from './letter.service';
-import { SendMessageService } from './send-message.service';
+
 @Injectable({
     providedIn: 'root',
 })

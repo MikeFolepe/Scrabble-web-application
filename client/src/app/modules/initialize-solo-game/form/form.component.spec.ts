@@ -1,11 +1,11 @@
 /* eslint-disable dot-notation */
-import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AI_NAME_DATABASE } from '@app/classes/constants';
 import { FormComponent } from './form.component';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { RouterTestingModule } from '@angular/router/testing';
 import { WaitingRoomComponent } from '@app/pages/waiting-room/waiting-room.component';
-import { StartingPlayer } from '@app/classes/game-settings';
+import { StartingPlayer } from '@common/game-settings';
 
 describe('FormComponent', () => {
     let component: FormComponent;

@@ -2,10 +2,10 @@ import { Injectable } from '@angular/core';
 import { BOARD_COLUMNS, BOARD_ROWS, CASE_SIZE, INDEX_INVALID, INDEX_PLAYER_ONE, LAST_INDEX } from '@app/classes/constants';
 import { MouseButton, TypeMessage } from '@app/classes/enum';
 import { Vec2 } from '@app/classes/vec2';
-import { GridService } from './grid.service';
-import { PlaceLetterService } from './place-letter.service';
-import { SendMessageService } from './send-message.service';
-import { SkipTurnService } from './skip-turn.service';
+import { GridService } from '@app/services/grid.service';
+import { PlaceLetterService } from '@app/services/place-letter.service';
+import { SendMessageService } from '@app/services/send-message.service';
+import { SkipTurnService } from '@app/services/skip-turn.service';
 
 @Injectable({
     providedIn: 'root',
@@ -15,8 +15,6 @@ export class BoardHandlerService {
     firstCase: Vec2 = { x: INDEX_INVALID, y: INDEX_INVALID };
     word: string = '';
     placedLetters: boolean[] = [];
-    // Attribut indexletters? pour track les letters déja placées
-
     isFirstCasePicked = false;
     isFirstCaseLocked = false;
     orientation = 'h';
@@ -224,16 +222,14 @@ export class BoardHandlerService {
 
     updateCaseDisplay(): void {
         this.gridService.eraseLayer(this.gridService.gridContextPlacementLayer);
-        this.gridService.drawBorder(this.gridService.gridContextPlacementLayer, this.currentCase.x, this.currentCase.y);
-        // Colored border of the current placement if there is letters placed
-        if (this.isFirstCaseLocked) {
-            this.drawPlacementBorder();
-        }
+        this.gridService.drawBorder(this.gridService.gridContextPlacementLayer, this.currentCase);
         // Drawing the arrow on the starting case when no letters are placed
         if (!this.isFirstCaseLocked) {
-            this.gridService.drawArrow(this.gridService.gridContextPlacementLayer, this.currentCase.x, this.currentCase.y, this.orientation);
+            this.gridService.drawArrow(this.gridService.gridContextPlacementLayer, this.currentCase, this.orientation);
             return;
         }
+        // Colored border of the current placement if there is letters placed{
+        this.drawPlacementBorder();
         // Only display the arrow on the next empty tile if there is an empty tile in the direction of the orientation
         this.drawArrowOnNextEmpty();
     }
@@ -241,9 +237,9 @@ export class BoardHandlerService {
     drawPlacementBorder(): void {
         for (let i = 0; i < this.word.length; i++) {
             if (this.orientation === 'h')
-                this.gridService.drawBorder(this.gridService.gridContextPlacementLayer, this.currentCase.x - i, this.currentCase.y);
+                this.gridService.drawBorder(this.gridService.gridContextPlacementLayer, { x: this.currentCase.x - i, y: this.currentCase.y });
             else if (this.orientation === 'v')
-                this.gridService.drawBorder(this.gridService.gridContextPlacementLayer, this.currentCase.x, this.currentCase.y - i);
+                this.gridService.drawBorder(this.gridService.gridContextPlacementLayer, { x: this.currentCase.x, y: this.currentCase.y - i });
         }
     }
 
@@ -261,6 +257,6 @@ export class BoardHandlerService {
                 if (currentArrowIndex.y + 1 > BOARD_ROWS) return;
             } while (this.placeLetterService.scrabbleBoard[currentArrowIndex.y][currentArrowIndex.x] !== '');
         }
-        this.gridService.drawArrow(this.gridService.gridContextPlacementLayer, currentArrowIndex.x, currentArrowIndex.y, this.orientation);
+        this.gridService.drawArrow(this.gridService.gridContextPlacementLayer, currentArrowIndex, this.orientation);
     }
 }

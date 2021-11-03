@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable dot-notation */
-import { TestBed } from '@angular/core/testing';
 import { EASEL_SIZE, INDEX_INVALID } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { Player } from '@app/models/player.model';
 import { ManipulateService } from './manipulate.service';
 import { RouterTestingModule } from '@angular/router/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { TestBed } from '@angular/core/testing';
 
 describe('ManipulateService', () => {
     let service: ManipulateService;

@@ -6,8 +6,8 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { INDEX_PLAYER_ONE, RESERVE } from '@app/classes/constants';
 import { TypeMessage } from '@app/classes/enum';
 import { Orientation, PossibleWords } from '@app/classes/scrabble-board-pattern';
+import { ChatboxService } from '@app/services/chatbox.service';
 import { Player } from '@app/models/player.model';
-import { ChatboxService } from './chatbox.service';
 
 describe('ChatboxService', () => {
     let service: ChatboxService;

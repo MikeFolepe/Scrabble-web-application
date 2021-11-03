@@ -1,14 +1,14 @@
 import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { DEFAULT_FONT_SIZE, EASEL_SIZE, INDEX_PLAYER_ONE } from '@app/classes/constants';
+import { BoardHandlerService } from '@app/services/board-handler.service';
 import { Letter } from '@app/classes/letter';
 import { LetterService } from '@app/services/letter.service';
-import { PlayerService } from '@app/services/player.service';
-import { SwapLetterService } from '@app/services/swap-letter.service';
-import { BoardHandlerService } from '@app/services/board-handler.service';
-import { SendMessageService } from '@app/services/send-message.service';
 import { ManipulateService } from '@app/services/manipulate.service';
+import { PlayerService } from '@app/services/player.service';
+import { SendMessageService } from '@app/services/send-message.service';
 import { SkipTurnService } from '@app/services/skip-turn.service';
 import { EndGameService } from '@app/services/end-game.service';
+import { SwapLetterService } from '@app/services/swap-letter.service';
 import { TypeMessage } from '@app/classes/enum';
 
 @Component({
