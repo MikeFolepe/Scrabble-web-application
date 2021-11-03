@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-// eslint-disable-next-line no-restricted-imports
 import { GameSettings } from './multiplayer-game-settings';
 
 export enum State {

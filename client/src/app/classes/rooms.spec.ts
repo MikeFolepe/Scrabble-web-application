@@ -31,4 +31,8 @@ describe('Room', () => {
         room.addCustomer('Paul');
         expect(room.gameSettings.playersName[1]).toEqual('Paul');
     });
+
+    it('should create an instance with the right default value', () => {
+        expect(new Room(id, settings).state).toEqual(State.Waiting);
+    });
 });

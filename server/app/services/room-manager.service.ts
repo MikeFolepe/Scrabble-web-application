@@ -1,7 +1,6 @@
 import { Room, State } from '@app/classes/room';
 import { Service } from 'typedi';
-// eslint-disable-next-line no-restricted-imports
-import { GameSettings } from '../classes/multiplayer-game-settings';
+import { GameSettings } from '@app/classes/multiplayer-game-settings';
 
 @Service()
 export class RoomManager {

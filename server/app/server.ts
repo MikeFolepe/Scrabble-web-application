@@ -9,14 +9,14 @@ import { SocketManager } from './services/socket-manager.service';
 export class Server {
     private static readonly appPort: string | number | boolean = Server.normalizePort(process.env.PORT || '3000');
     // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-    private static readonly baseDix: number = 10;
+    private static readonly decimalBase: number = 10;
     private server: http.Server;
     private socketManager: SocketManager;
     private roomManager: RoomManager;
     constructor(private readonly application: Application) {}
 
     private static normalizePort(val: number | string): number | string | boolean {
-        const port: number = typeof val === 'string' ? parseInt(val, this.baseDix) : val;
+        const port: number = typeof val === 'string' ? parseInt(val, this.decimalBase) : val;
         if (isNaN(port)) {
             return val;
         } else if (port >= 0) {
@@ -25,6 +25,7 @@ export class Server {
             return false;
         }
     }
+
     init(): void {
         this.application.app.set('port', Server.appPort);
 

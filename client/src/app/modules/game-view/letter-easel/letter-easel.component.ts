@@ -36,7 +36,7 @@ export class LetterEaselComponent implements OnInit {
     // TODO Changer le font size ne deselect pas ?
     @HostListener('document:click', ['$event'])
     @HostListener('document:contextmenu', ['$event'])
-    clickEvent(event: MouseEvent) {
+    clickEvent(event: MouseEvent): void {
         if (this.easel.nativeElement.contains(event.target)) return;
         // Disable all easel selections made when a click occurs outside the easel
         for (const letterEasel of this.letterEaselTab) {
@@ -48,14 +48,14 @@ export class LetterEaselComponent implements OnInit {
     }
 
     @HostListener('keydown', ['$event'])
-    onKeyPress(event: KeyboardEvent) {
+    onKeyPress(event: KeyboardEvent): void {
         if (this.easel.nativeElement.contains(event.target)) {
             this.manipulateService.onKeyPress(event);
         }
     }
 
     @HostListener('document:wheel', ['$event'])
-    onMouseWheelTick(event: WheelEvent) {
+    onMouseWheelTick(event: WheelEvent): void {
         if (this.letterEaselTab.some((letter) => letter.isSelectedForManipulation)) {
             this.manipulateService.onMouseWheelTick(event);
         }
@@ -77,7 +77,7 @@ export class LetterEaselComponent implements OnInit {
         this.manipulateService.selectWithClick(indexLetter);
     }
 
-    onEaselClick() {
+    onEaselClick(): void {
         this.boardHandlerService.cancelPlacement();
     }
 
@@ -130,9 +130,7 @@ export class LetterEaselComponent implements OnInit {
     isCancelButtonActive(): boolean {
         // Activated if at least one letter is selected to swap or to manipulate
         for (const letter of this.letterEaselTab) {
-            if (letter.isSelectedForSwap || letter.isSelectedForManipulation) {
-                return true;
-            }
+            if (letter.isSelectedForSwap || letter.isSelectedForManipulation) return true;
         }
         return false;
     }
@@ -141,12 +139,15 @@ export class LetterEaselComponent implements OnInit {
         this.letterEaselTab = this.playerService.getEasel(INDEX_REAL_PLAYER);
     }
 
-    private handleSwapSelection(indexLetter: number) {
+    private handleSwapSelection(indexLetter: number): void {
         // Unselect swap
         if (this.letterEaselTab[indexLetter].isSelectedForSwap) {
             this.letterEaselTab[indexLetter].isSelectedForSwap = false;
-        } // Select to swap if the letter isn't selected for swap or manipulation
-        else if (!this.letterEaselTab[indexLetter].isSelectedForManipulation) {
+        }
+        // Do not select to swap if the letter is already selected for manipulation
+        else if (this.letterEaselTab[indexLetter].isSelectedForManipulation) {
+            this.letterEaselTab[indexLetter].isSelectedForSwap = false;
+        } else {
             this.letterEaselTab[indexLetter].isSelectedForSwap = true;
         }
     }

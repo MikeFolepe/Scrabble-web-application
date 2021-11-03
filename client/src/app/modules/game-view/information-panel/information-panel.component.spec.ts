@@ -10,7 +10,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 describe('InformationPanelComponent', () => {
     let component: InformationPanelComponent;
     let fixture: ComponentFixture<InformationPanelComponent>;
-    let skipTurnSpy: unknown;
+    let skipTurnSpy: jasmine.SpyObj<SkipTurnService>;
 
     beforeEach(() => {
         skipTurnSpy = jasmine.createSpyObj('SkipTurnService', ['startTimer', 'stopTimer']);
@@ -40,5 +40,11 @@ describe('InformationPanelComponent', () => {
         spyOn(component.playerService, 'clearPlayers');
         component.ngOnDestroy();
         expect(component.playerService.clearPlayers).toHaveBeenCalled();
+    });
+
+    it('should start timer if game is solo', () => {
+        component.gameSettingsService.isSoloMode = true;
+        component.ngOnInit();
+        expect(skipTurnSpy.startTimer).toHaveBeenCalledTimes(1);
     });
 });

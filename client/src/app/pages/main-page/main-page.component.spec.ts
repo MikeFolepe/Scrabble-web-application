@@ -1,8 +1,9 @@
+/* eslint-disable dot-notation */
 import { HttpClientModule } from '@angular/common/http';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { RouterTestingModule } from '@angular/router/testing';
+import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 
 describe('MainPageComponent', () => {
     let component: MainPageComponent;
@@ -26,30 +27,21 @@ describe('MainPageComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('should be able to reset radio buttons', () => {
-        component.selectedMode = component.games[0];
-        fixture.detectChanges();
+    it('should route to the right page according to the selected game mode', () => {
+        const spy = spyOn(component['router'], 'navigate');
 
-        component.resetRadios();
-        fixture.detectChanges();
+        component.selectedGameMode = 'Jouer une partie en solo';
+        component.route();
+        expect(component.gameSettingsService.isSoloMode).toBeTrue();
+        expect(spy).toHaveBeenCalledOnceWith(['solo-game-ai']);
 
-        expect(component.selectedMode).toBeUndefined();
-    });
+        component.selectedGameMode = 'Créer une partie multijoueur';
+        component.route();
+        expect(component.gameSettingsService.isSoloMode).toBeFalse();
+        expect(spy).toHaveBeenCalledWith(['multiplayer-mode']);
 
-    it('should disable buttons if nothing is selected', () => {
-        const resetButton = fixture.debugElement.nativeElement.querySelector('#resetButton');
-        const playButton = fixture.debugElement.nativeElement.querySelector('#playButton');
-
-        component.selectedMode = component.modes[0];
-        fixture.detectChanges();
-
-        expect(resetButton.disabled).toBeFalsy();
-        expect(playButton.disabled).toBeFalsy();
-
-        component.resetRadios();
-        fixture.detectChanges();
-
-        expect(resetButton.disabled).toBeTruthy();
-        expect(playButton.disabled).toBeTruthy();
+        component.selectedGameMode = 'Joindre une partie multijoueur';
+        component.route();
+        expect(spy).toHaveBeenCalledWith(['multiplayer-mode']);
     });
 });
