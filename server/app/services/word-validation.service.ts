@@ -3,7 +3,6 @@ import { Service } from 'typedi';
 
 @Service()
 export class WordValidationService {
-    // eslint-disable-next-line no-invalid-this
     dictionaryData = fs.readFileSync('@../../../client/src/assets/dictionary.json');
     private dictionary: string[];
     constructor() {
