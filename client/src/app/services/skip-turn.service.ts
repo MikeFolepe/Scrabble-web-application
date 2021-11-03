@@ -25,7 +25,6 @@ export class SkipTurnService {
             this.startTimer();
         });
     }
-
     bindAiTurn(fn: () => void) {
         this.playAiTurn = fn;
     }
