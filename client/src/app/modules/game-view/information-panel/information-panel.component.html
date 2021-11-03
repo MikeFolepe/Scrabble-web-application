@@ -16,14 +16,14 @@
             <div *ngIf="skipTurn.isTurn && player.id === 1">
                 <div id="info-timer">
                     <p>Joueur actif</p>
-                    <p>Temps restant au tour: {{ skipTurn.minutes }}:{{ skipTurn.seconds }}</p>
+                    <p>Temps restant au tour: {{ skipTurn.minutes }}:{{ skipTurn.seconds > 0 ? skipTurn.seconds : 0 }}</p>
                 </div>
             </div>
 
             <div *ngIf="!skipTurn.isTurn && player.id === 2">
                 <div id="info-timer">
                     <p>Joueur actif</p>
-                    <p>Temps restant au tour: {{ skipTurn.minutes }}:{{ skipTurn.seconds }}</p>
+                    <p>Temps restant au tour: {{ skipTurn.minutes }}:{{ skipTurn.seconds > 0 ? skipTurn.seconds : 0 }}</p>
                 </div>
             </div>
         </li>

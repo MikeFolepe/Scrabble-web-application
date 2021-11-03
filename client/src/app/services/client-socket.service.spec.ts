@@ -1,5 +1,4 @@
-import { ClientSocketService } from './client-socket.service';
-import { RouterModule } from '@angular/router';
+import { ClientSocketService } from '@app/services/client-socket.service';
 import { RouterTestingModule } from '@angular/router/testing';
 import { TestBed } from '@angular/core/testing';
 
@@ -8,7 +7,7 @@ describe('ClientSocketService', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            imports: [RouterModule, RouterTestingModule],
+            imports: [RouterTestingModule],
         });
         service = TestBed.inject(ClientSocketService);
     });

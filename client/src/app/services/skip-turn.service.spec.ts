@@ -1,10 +1,10 @@
-import { HttpClientModule } from '@angular/common/http';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
 /* eslint-disable dot-notation */
 import { EndGameService } from './end-game.service';
 import { GameSettingsService } from './game-settings.service';
-import { ONE_SECOND_TIME } from '@app/classes/constants';
-import { SkipTurnService } from './skip-turn.service';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { ONE_SECOND_DELAY } from '@app/classes/constants';
+import { RouterTestingModule } from '@angular/router/testing';
+import { SkipTurnService }  from './skip-turn.service';
 import { TestBed } from '@angular/core/testing';
 
 describe('SkipTurnService', () => {
@@ -15,7 +15,7 @@ describe('SkipTurnService', () => {
         const settingsSpy = jasmine.createSpyObj('GameSettingsService', ['gameSettings']);
         const endGameSpy = jasmine.createSpyObj('EndGameService', ['isEndGame']);
         TestBed.configureTestingModule({
-            imports: [HttpClientTestingModule, HttpClientModule],
+            imports: [HttpClientTestingModule, RouterTestingModule],
             providers: [SkipTurnService, { provide: GameSettingsService, useValue: settingsSpy }, { provide: EndGameService, useValue: endGameSpy }],
         });
         service = TestBed.inject(SkipTurnService);
@@ -54,7 +54,7 @@ describe('SkipTurnService', () => {
         const spyStart = spyOn(service, 'startTimer');
         const spyOnAi = spyOn(service, 'bindAiTurn');
         service.switchTurn();
-        jasmine.clock().tick(ONE_SECOND_TIME + 1);
+        jasmine.clock().tick(ONE_SECOND_DELAY + 1);
         expect(service.isTurn).toEqual(newTurn);
         expect(spyOnAi).toHaveBeenCalled();
         expect(spyStart).toHaveBeenCalled();
@@ -65,7 +65,7 @@ describe('SkipTurnService', () => {
         gameSettingsService.gameSettings.timeSecond = '59';
         endGameService.isEndGame = false;
         service.startTimer();
-        jasmine.clock().tick(ONE_SECOND_TIME + 1);
+        jasmine.clock().tick(ONE_SECOND_DELAY + 1);
         expect(service['minutes']).toEqual(0);
         expect(service['seconds']).toEqual(58);
     });
@@ -81,7 +81,7 @@ describe('SkipTurnService', () => {
         gameSettingsService.gameSettings.timeSecond = '00';
         endGameService.isEndGame = false;
         service.startTimer();
-        jasmine.clock().tick(ONE_SECOND_TIME + 1);
+        jasmine.clock().tick(ONE_SECOND_DELAY + 1);
         expect(service['seconds']).toEqual(59);
         expect(service['minutes']).toEqual(4);
     });
@@ -117,9 +117,9 @@ describe('SkipTurnService', () => {
         const spyOnStop = spyOn(service, 'stopTimer');
         const spyOnSwitch = spyOn(service, 'switchTurn');
         service.startTimer();
-        jasmine.clock().tick(ONE_SECOND_TIME + 1);
+        jasmine.clock().tick(ONE_SECOND_DELAY + 1);
         expect(spyOnStop).toHaveBeenCalled();
-        jasmine.clock().tick(ONE_SECOND_TIME);
+        jasmine.clock().tick(ONE_SECOND_DELAY);
         expect(spyOnSwitch).toHaveBeenCalled();
     });
 });

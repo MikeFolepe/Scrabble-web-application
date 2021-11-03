@@ -1,10 +1,9 @@
-/* eslint-disable sort-imports */
-import { Application } from '@app/app';
 import * as http from 'http';
 import { AddressInfo } from 'net';
+import { Application } from '@app/app';
+import { RoomManager } from '@app/services/room-manager.service';
 import { Service } from 'typedi';
-import { RoomManager } from './services/room-manager.service';
-import { SocketManager } from './services/socket-manager.service';
+import { SocketManager } from '@app/services/socket-manager.service';
 
 @Service()
 export class Server {

@@ -1,22 +1,21 @@
-/* eslint-disable sort-imports */
-import { HttpClientModule } from '@angular/common/http';
-import { NgModule } from '@angular/core';
+import { AppComponent } from '@app/pages/app/app.component';
+import { AppMaterialModule } from '@app/modules/material.module';
+import { AppRoutingModule } from '@app/modules/app-routing.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
+import { GameViewModule } from '@app/modules/game-view/game-view.module';
+import { HttpClientModule } from '@angular/common/http';
+import { InitializeSoloGameModule } from '@app/modules/initialize-solo-game/initialize-solo-game.module';
+import { JoinRoomComponent } from '@app/pages/join-room/join-room.component';
+import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { MatCardModule } from '@angular/material/card';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { AppRoutingModule } from '@app/modules/app-routing.module';
-import { AppMaterialModule } from '@app/modules/material.module';
-import { AppComponent } from '@app/pages/app/app.component';
-import { MainPageComponent } from '@app/pages/main-page/main-page.component';
-import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
-import { GameViewModule } from './modules/game-view/game-view.module';
-import { InitializeSoloGameModule } from './modules/initialize-solo-game/initialize-solo-game.module';
-import { SharedModule } from './modules/shared/shared/shared.module';
-import { JoinRoomComponent } from './pages/join-room/join-room.component';
-import { WaitingRoomComponent } from './pages/waiting-room/waiting-room.component';
+import { NgModule } from '@angular/core';
+import { PageNotFoundComponent } from '@app/pages/page-not-found/page-not-found.component';
+import { SharedModule } from '@app/modules/shared/shared.module';
+import { WaitingRoomComponent } from '@app/pages/waiting-room/waiting-room.component';
 
 /**
  * Main module that is used in main.ts.

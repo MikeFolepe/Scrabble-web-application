@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
 import { BONUS_POSITIONS } from '@app/classes/constants';
+import { Injectable } from '@angular/core';
 
 @Injectable({
     providedIn: 'root',
@@ -10,23 +10,22 @@ export class RandomBonusesService {
         this.bonusPositions = new Map<string, string>(BONUS_POSITIONS);
     }
 
-    //Met toutes les valeurs du map de bonus dans un tableau puis mélange ce dernier aléatoirement.
-    shuffleBonuses(): Array<string> {
-        let bonuses = Array.from(this.bonusPositions.values());
+    // Put all the values of the bonus map into an array, then randomly shuffle this array's elements
+    shuffleBonuses(): string[] {
+        const bonuses = Array.from(this.bonusPositions.values());
         for (let currentBonusIndex = bonuses.length - 1; currentBonusIndex > 0; currentBonusIndex--) {
-            let randomIndex = Math.floor(Math.random() * (currentBonusIndex + 1));
+            const randomIndex = Math.floor(Math.random() * (currentBonusIndex + 1));
             [bonuses[currentBonusIndex], bonuses[randomIndex]] = [bonuses[randomIndex], bonuses[currentBonusIndex]];
         }
         return bonuses;
     }
 
-    //met dans le map des positions de bonus les valeurs issues du tableau de bonus mélangés
+    // Put into the bonus map the shuffled values obtained from the array of bonuses made in the previous method.
     shuffleBonusesPositions(): Map<string, string> {
-        let bonuses = this.shuffleBonuses();
+        const bonuses = this.shuffleBonuses();
         this.bonusPositions.forEach((bonus: string, position: string) => {
             this.bonusPositions.set(position, bonuses.pop() as string);
         });
         return this.bonusPositions;
-        //this.gridService.bonusesPositions = this.bonusesPositions;
     }
 }

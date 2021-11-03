@@ -1,28 +1,23 @@
-/* eslint-disable no-invalid-this */
+/* eslint-disable @typescript-eslint/no-magic-numbers */
+import { BOARD_ROWS, CASE_SIZE, DEFAULT_HEIGHT, DEFAULT_WIDTH, RESERVE } from '@app/classes/constants';
 import { Injectable } from '@angular/core';
-import { BOARD_SIZE, DEFAULT_HEIGHT, DEFAULT_WIDTH, RESERVE } from '@app/classes/constants';
 import { Vec2 } from '@app/classes/vec2';
 
 @Injectable({
     providedIn: 'root',
 })
 export class GridService {
-    gridContext: CanvasRenderingContext2D;
-    gridContextLayer: CanvasRenderingContext2D;
-    private canvasSize: Vec2;
-    private caseWidth: number;
-    private readonly gridLength = 15;
+    gridContextBoardLayer: CanvasRenderingContext2D;
+    gridContextLettersLayer: CanvasRenderingContext2D;
+    gridContextPlacementLayer: CanvasRenderingContext2D;
     bonusPositions: Map<string, string>;
+    private canvasSize: Vec2;
+    private caseSize: number;
+    private readonly gridLength = BOARD_ROWS;
     constructor() {
         this.canvasSize = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
-        this.caseWidth = DEFAULT_WIDTH / BOARD_SIZE;
+        this.caseSize = CASE_SIZE;
         this.bonusPositions = new Map<string, string>();
-    }
-
-    /* eslint-disable @typescript-eslint/no-magic-numbers */
-
-    setGridContext(gridContext: CanvasRenderingContext2D) {
-        this.gridContext = gridContext;
     }
 
     get width(): number {
@@ -33,81 +28,113 @@ export class GridService {
         return this.canvasSize.y;
     }
 
+    setGridContext(gridContext: CanvasRenderingContext2D) {
+        this.gridContextBoardLayer = gridContext;
+    }
+
+    // Transpose the positions from 15x15 array to 750x750 grid
+    positionTabToPositionGrid(positionTabX: number, positionTabY: number): Vec2 {
+        return {
+            x: positionTabX * CASE_SIZE + CASE_SIZE,
+            y: positionTabY * CASE_SIZE + CASE_SIZE,
+        };
+    }
+
     drawGrid() {
-        this.writeGridIndexes(this.gridContext, this.gridLength);
-        this.drawSimpleGrid(this.gridContext);
+        this.writeGridIndexes(this.gridContextBoardLayer, this.gridLength);
+        this.drawSimpleGrid(this.gridContextBoardLayer);
         this.drawBonusBoxes(this.bonusPositions);
         this.drawCenterBoxe();
     }
 
-    writeBonusName(ctx: CanvasRenderingContext2D, text: string, startPosition: Vec2) {
-        ctx.font = '12px system-ui';
-        ctx.fillStyle = 'black';
-        ctx.textBaseline = 'middle';
-        ctx.textAlign = 'center';
-        const lines = text.split(' ');
-        text = lines[0] + '\n' + lines[1];
-        ctx.fillText(text, startPosition.x + this.caseWidth / 2, startPosition.y + this.caseWidth / 2);
-    }
-
-    //draw the game grid without any bonus on it
-    drawSimpleGrid(gridContext: CanvasRenderingContext2D) {
+    // draw the game grid without any bonus on it
+    drawSimpleGrid(context: CanvasRenderingContext2D) {
         const startPosition: Vec2 = { x: 0, y: 0 };
         for (let i = 1; i <= this.gridLength; i++) {
-            startPosition.x = i * this.caseWidth;
+            startPosition.x = i * this.caseSize;
             for (let j = 1; j <= this.gridLength; j++) {
-                startPosition.y = j * this.caseWidth;
-                gridContext.fillStyle = 'lightGrey';
-                gridContext.fillRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
-                gridContext.strokeRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
+                startPosition.y = j * this.caseSize;
+                context.fillStyle = 'lightGrey';
+                context.fillRect(startPosition.x, startPosition.y, this.caseSize, this.caseSize);
+                context.strokeRect(startPosition.x, startPosition.y, this.caseSize, this.caseSize);
             }
         }
     }
 
-    //specify bonuses boxes on the grid by adding colors and bonuses names
+    writeGridIndexes(context: CanvasRenderingContext2D, columnsNumber: number) {
+        context.font = '18px system-ui';
+        context.fillStyle = 'black';
+        // we have same number of columns and rows
+        for (let i = 0; i < columnsNumber; i++) {
+            const indexForColumns = i + 1;
+            let indexForLines = 'A'.charCodeAt(0);
+            indexForLines = indexForLines + i;
+            context.fillText(indexForColumns.toString(), (5 * this.caseSize) / 4 + i * this.caseSize, (3 * this.caseSize) / 4);
+            context.fillText(String.fromCharCode(indexForLines), this.caseSize / 2, (7 * this.caseSize) / 4 + i * this.caseSize);
+        }
+    }
+
+    colorBonusBox(context: CanvasRenderingContext2D, color: string, startPosition: Vec2): void {
+        context.fillStyle = color;
+        context.fillRect(startPosition.x, startPosition.y, this.caseSize, this.caseSize);
+        context.strokeRect(startPosition.x, startPosition.y, this.caseSize, this.caseSize);
+    }
+
+    writeBonusName(context: CanvasRenderingContext2D, text: string, startPosition: Vec2) {
+        context.font = '12px system-ui';
+        context.fillStyle = 'black';
+        context.textBaseline = 'middle';
+        context.textAlign = 'center';
+        const lines = text.split(' ');
+        text = lines[0] + '\n' + lines[1];
+        context.fillText(text, startPosition.x + this.caseSize / 2, startPosition.y + this.caseSize / 2);
+    }
+
+    // specify bonuses boxes on the grid by adding colors and bonuses names
     drawBonusBoxes(bonusPositions: Map<string, string>) {
         bonusPositions.forEach((bonus: string, position: string) => {
             const positionSplitted = position.split(/([0-9]+)/);
-            let convertedPositon = {
-                x: (positionSplitted[0].charCodeAt(0) - 'A'.charCodeAt(0) + 1) * this.caseWidth,
-                y: Number(positionSplitted[1]) * this.caseWidth,
+            const convertedPositon = {
+                x: (positionSplitted[0].charCodeAt(0) - 'A'.charCodeAt(0) + 1) * this.caseSize,
+                y: Number(positionSplitted[1]) * this.caseSize,
             };
             switch (bonus) {
                 case 'doubleletter': {
-                    this.colorBonusBox(this.gridContext, 'lightBlue', convertedPositon);
-                    this.writeBonusName(this.gridContext, 'Lettre x2', convertedPositon);
+                    this.colorBonusBox(this.gridContextBoardLayer, 'lightBlue', convertedPositon);
+                    this.writeBonusName(this.gridContextBoardLayer, 'Lettre x2', convertedPositon);
                     break;
                 }
                 case 'tripleletter': {
-                    this.colorBonusBox(this.gridContext, 'cadetBlue', convertedPositon);
-                    this.writeBonusName(this.gridContext, 'Lettre x3', convertedPositon);
+                    this.colorBonusBox(this.gridContextBoardLayer, 'cadetBlue', convertedPositon);
+                    this.writeBonusName(this.gridContextBoardLayer, 'Lettre x3', convertedPositon);
                     break;
                 }
                 case 'doubleword': {
-                    this.colorBonusBox(this.gridContext, 'pink', convertedPositon);
-                    this.writeBonusName(this.gridContext, 'Mot x2', convertedPositon);
+                    this.colorBonusBox(this.gridContextBoardLayer, 'pink', convertedPositon);
+                    this.writeBonusName(this.gridContextBoardLayer, 'Mot x2', convertedPositon);
                     break;
                 }
                 case 'tripleword': {
-                    this.colorBonusBox(this.gridContext, 'red', convertedPositon);
-                    this.writeBonusName(this.gridContext, 'Mot x3', convertedPositon);
+                    this.colorBonusBox(this.gridContextBoardLayer, 'red', convertedPositon);
+                    this.writeBonusName(this.gridContextBoardLayer, 'Mot x3', convertedPositon);
                     break;
                 }
                 default: {
+                    break;
                 }
             }
         });
     }
 
-    //color the center box of the grid then draw a star on it
+    // color the center box of the grid then draw a star on it
     drawCenterBoxe() {
-        const centerPosition: Vec2 = { x: 8 * this.caseWidth, y: 8 * this.caseWidth };
-        //coloring the box
-        this.gridContext.fillStyle = 'pink';
-        this.gridContext.fillRect(centerPosition.x, centerPosition.y, this.caseWidth, this.caseWidth);
-        this.gridContext.strokeRect(centerPosition.x, centerPosition.y, this.caseWidth, this.caseWidth);
-        //drawing star
-        this.drawStar(centerPosition.x + this.caseWidth / 2, centerPosition.y + this.caseWidth / 2, 5, this.caseWidth / 2.5, 8);
+        const centerPosition: Vec2 = { x: 8 * this.caseSize, y: 8 * this.caseSize };
+        // coloring the box
+        this.gridContextBoardLayer.fillStyle = 'pink';
+        this.gridContextBoardLayer.fillRect(centerPosition.x, centerPosition.y, this.caseSize, this.caseSize);
+        this.gridContextBoardLayer.strokeRect(centerPosition.x, centerPosition.y, this.caseSize, this.caseSize);
+        // drawing star
+        this.drawStar(centerPosition.x + this.caseSize / 2, centerPosition.y + this.caseSize / 2, 5, this.caseSize / 2.5, 8);
     }
 
     drawStar(cx: number, cy: number, spikes: number, outerRadius: number, innerRadius: number) {
@@ -116,54 +143,48 @@ export class GridService {
         let y = cy;
         const step = Math.PI / spikes;
 
-        this.gridContext.beginPath();
-        this.gridContext.moveTo(cx, cy - outerRadius);
+        this.gridContextBoardLayer.beginPath();
+        this.gridContextBoardLayer.moveTo(cx, cy - outerRadius);
         for (let i = 0; i < spikes; i++) {
             x = cx + Math.cos(rot) * outerRadius;
             y = cy + Math.sin(rot) * outerRadius;
-            this.gridContext.lineTo(x, y);
+            this.gridContextBoardLayer.lineTo(x, y);
             rot += step;
 
             x = cx + Math.cos(rot) * innerRadius;
             y = cy + Math.sin(rot) * innerRadius;
-            this.gridContext.lineTo(x, y);
+            this.gridContextBoardLayer.lineTo(x, y);
             rot += step;
         }
-        this.gridContext.lineTo(cx, cy - outerRadius);
-        this.gridContext.closePath();
-        this.gridContext.lineWidth = 5;
-        this.gridContext.strokeStyle = 'darkSlateGrey';
-        this.gridContext.stroke();
-        this.gridContext.fillStyle = 'darkSlateGrey';
-        this.gridContext.fill();
+        this.gridContextBoardLayer.lineTo(cx, cy - outerRadius);
+        this.gridContextBoardLayer.closePath();
+        this.gridContextBoardLayer.lineWidth = 5;
+        this.gridContextBoardLayer.strokeStyle = 'darkSlateGrey';
+        this.gridContextBoardLayer.stroke();
+        this.gridContextBoardLayer.fillStyle = 'darkSlateGrey';
+        this.gridContextBoardLayer.fill();
     }
 
-    writeGridIndexes(ctx: CanvasRenderingContext2D, columnsNumber: number) {
-        ctx.font = '18px system-ui';
-        ctx.fillStyle = 'black';
-        //we have same number of columns and rows
-        for (let i = 0; i < columnsNumber; i++) {
-            let indexForColumns = i + 1;
-            let indexForLines = 'A'.charCodeAt(0);
-            indexForLines = indexForLines + i;
-            ctx.fillText(indexForColumns.toString(), (5 * this.caseWidth) / 4 + i * this.caseWidth, (3 * this.caseWidth) / 4);
-            ctx.fillText(String.fromCharCode(indexForLines), this.caseWidth / 2, (7 * this.caseWidth) / 4 + i * this.caseWidth);
-        }
+    drawBorder(context: CanvasRenderingContext2D, positionTab: Vec2) {
+        const gridPosition = this.positionTabToPositionGrid(positionTab.x, positionTab.y);
+        context.strokeStyle = 'purple';
+        context.lineWidth = 5;
+        context.strokeRect(gridPosition.x, gridPosition.y, CASE_SIZE, CASE_SIZE);
     }
 
-    colorBonusBox(ctx: CanvasRenderingContext2D, color: string, startPosition: Vec2): void {
-        ctx.fillStyle = color;
-        ctx.fillRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
-        ctx.strokeRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
+    eraseLayer(context: CanvasRenderingContext2D) {
+        // Clear all the elements drawn on a layer
+        context.clearRect(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
     }
 
-    //functions used by placeLetterService to place a word
-    drawLetter(ctx: CanvasRenderingContext2D, letter: string, position: Vec2, fontSize: number) {
+    drawLetter(context: CanvasRenderingContext2D, letter: string, positionTab: Vec2, fontSize: number) {
+        const gridPosition = this.positionTabToPositionGrid(positionTab.x, positionTab.y);
         // Grid case style
-        ctx.fillStyle = 'tan';
-        ctx.fillRect(position.x + DEFAULT_HEIGHT / 2, position.y + DEFAULT_HEIGHT / 2, this.caseWidth, this.caseWidth);
-        ctx.strokeStyle = 'black';
-        ctx.strokeRect(position.x + DEFAULT_HEIGHT / 2, position.y + DEFAULT_HEIGHT / 2, this.caseWidth, this.caseWidth);
+        const borderOffSet = 2;
+        context.fillStyle = 'black';
+        context.fillRect(gridPosition.x, gridPosition.y, CASE_SIZE, CASE_SIZE);
+        context.fillStyle = 'tan';
+        context.fillRect(gridPosition.x + borderOffSet, gridPosition.y + borderOffSet, CASE_SIZE - borderOffSet * 2, CASE_SIZE - borderOffSet * 2);
 
         // Score of the letter placed
         let letterScore = 0;
@@ -173,25 +194,43 @@ export class GridService {
             }
         }
         // Placing the respective letter
-        ctx.font = fontSize * 1.5 + 'px system-ui';
-        ctx.fillStyle = 'black';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(
-            letter.toUpperCase(),
-            position.x + DEFAULT_HEIGHT / 2 + this.caseWidth / 2,
-            position.y + DEFAULT_HEIGHT / 2 + this.caseWidth / 2,
-        );
+        context.font = fontSize * 1.5 + 'px system-ui';
+        context.fillStyle = 'black';
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        context.fillText(letter.toUpperCase(), gridPosition.x + CASE_SIZE / 2, gridPosition.y + CASE_SIZE / 2);
         // Placing the letter's score
-        ctx.font = (fontSize / 2) * 1.5 + 'px system-ui';
-        ctx.fillText(
-            letterScore.toString(),
-            position.x + DEFAULT_HEIGHT / 2 + this.caseWidth / 2 + this.caseWidth / 3,
-            position.y + DEFAULT_HEIGHT / 2 + this.caseWidth / 2 + this.caseWidth / 3,
-        );
+        context.font = (fontSize / 2) * 1.5 + 'px system-ui';
+        context.fillText(letterScore.toString(), gridPosition.x + CASE_SIZE / 2 + CASE_SIZE / 3, gridPosition.y + CASE_SIZE / 2 + CASE_SIZE / 3);
     }
 
-    eraseLetter(ctx: CanvasRenderingContext2D, position: Vec2) {
-        ctx.clearRect(position.x + DEFAULT_HEIGHT / 2, position.y + DEFAULT_HEIGHT / 2, this.caseWidth, this.caseWidth);
+    eraseLetter(context: CanvasRenderingContext2D, positionTab: Vec2) {
+        const gridPosition = this.positionTabToPositionGrid(positionTab.x, positionTab.y);
+        context.clearRect(gridPosition.x, gridPosition.y, CASE_SIZE, CASE_SIZE);
+    }
+
+    drawArrow(context: CanvasRenderingContext2D, positionTab: Vec2, orientation: string) {
+        const gridPosition = this.positionTabToPositionGrid(positionTab.x, positionTab.y);
+        context.beginPath();
+        if (orientation === 'h') {
+            // Horizontal arrow
+            context.moveTo(gridPosition.x + CASE_SIZE / 2, gridPosition.y + CASE_SIZE / 4);
+            context.lineTo(gridPosition.x + CASE_SIZE / 2, gridPosition.y + (3 * CASE_SIZE) / 4);
+            context.lineTo(gridPosition.x + (5 * CASE_SIZE) / 6, gridPosition.y + CASE_SIZE / 2);
+            context.lineTo(gridPosition.x + CASE_SIZE / 2, gridPosition.y + CASE_SIZE / 4);
+            context.lineTo(gridPosition.x + CASE_SIZE / 2, gridPosition.y + (3 * CASE_SIZE) / 4);
+        } else {
+            // Vertical arrow
+            context.moveTo(gridPosition.x + CASE_SIZE / 4, gridPosition.y + CASE_SIZE / 2);
+            context.lineTo(gridPosition.x + (3 * CASE_SIZE) / 4, gridPosition.y + CASE_SIZE / 2);
+            context.lineTo(gridPosition.x + CASE_SIZE / 2, gridPosition.y + (5 * CASE_SIZE) / 6);
+            context.lineTo(gridPosition.x + CASE_SIZE / 4, gridPosition.y + CASE_SIZE / 2);
+            context.lineTo(gridPosition.x + (3 * CASE_SIZE) / 4, gridPosition.y + CASE_SIZE / 2);
+        }
+        context.fillStyle = 'orange';
+        context.lineWidth = 4;
+        context.strokeStyle = 'black';
+        context.stroke();
+        context.fill();
     }
 }

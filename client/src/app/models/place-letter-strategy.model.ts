@@ -1,14 +1,11 @@
-/* eslint-disable sort-imports */
-/* eslint-disable @typescript-eslint/no-magic-numbers */
-/* eslint-disable max-lines */
-import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSITION_X, DICTIONARY, INDEX_PLAYER_AI } from '@app/classes/constants';
-import { Range } from '@app/classes/range';
+import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSITION_X, DICTIONARY, INDEX_INVALID, INDEX_PLAYER_AI } from '@app/classes/constants';
 import { BoardPattern, Orientation, PatternInfo, PossibleWords } from '@app/classes/scrabble-board-pattern';
-import { Vec2 } from '@app/classes/vec2';
+import { PlayStrategy } from '@app/models/abstract-strategy.model';
+import { PlayerAI } from '@app/models/player-ai.model';
 import { PlayerAIComponent } from '@app/modules/game-view/player-ai/player-ai.component';
-import { PlayStrategy } from './abstract-strategy.model';
-import { PlayerAI } from './player-ai.model';
-import { SwapLetter } from './swap-letter-strategy.model';
+import { Range } from '@app/classes/range';
+import { SwapLetter } from '@app/models/swap-letter-strategy.model';
+import { Vec2 } from '@app/classes/vec2';
 
 export class PlaceLetters extends PlayStrategy {
     dictionary: string[];
@@ -39,7 +36,6 @@ export class PlaceLetters extends PlayStrategy {
         matchingPointingRangeWords = context.playerAIService.filterByRange(allPossibleWords, this.pointingRange);
 
         this.computeResults(allPossibleWords, matchingPointingRangeWords, context);
-        context.switchTurn();
     }
 
     computeResults(allPossibleWords: PossibleWords[], matchingPointingRangeWords: PossibleWords[], context: PlayerAIComponent): void {
@@ -72,6 +68,7 @@ export class PlaceLetters extends PlayStrategy {
             }
             context.placeLetterService.placeMethodAdapter({ start, orientation, word: word.word, indexPlayer: INDEX_PLAYER_AI });
             attempt++;
+            // !!! skip turn after each placement that called validation !!!
         } while (attempt < possibilities.length && context.playerAIService.isFirstRound === false);
         return context.playerAIService.isPlacementValid;
     }
@@ -151,9 +148,7 @@ export class PlaceLetters extends PlayStrategy {
         const start = line.search(pattern);
         const end = start + wordToPlace.word.length - 1;
 
-        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-        // search function returns -1 if not found so as we are only calling -1 a single time, we decided to keep it like this
-        if (start === -1) {
+        if (start === INDEX_INVALID) {
             return false;
         }
 

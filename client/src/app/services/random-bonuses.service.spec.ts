@@ -1,5 +1,5 @@
+import { RandomBonusesService } from '@app/services/random-bonuses.service';
 import { TestBed } from '@angular/core/testing';
-import { RandomBonusesService } from './random-bonuses.service';
 
 describe('RandomBonusesService', () => {
     let service: RandomBonusesService;
@@ -14,8 +14,8 @@ describe('RandomBonusesService', () => {
     });
 
     it('should return an array of all bonuses values with right quantities and a different other from initial one', () => {
-        let bonuses = service.shuffleBonuses();
-        let bonusLength = bonuses.length;
+        const bonuses = service.shuffleBonuses();
+        const bonusLength = bonuses.length;
         expect(bonusLength).toEqual(service.bonusPositions.size);
         expect(bonuses).not.toEqual(Array.from(service.bonusPositions.values()));
     });

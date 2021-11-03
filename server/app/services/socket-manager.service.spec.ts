@@ -1,4 +1,4 @@
-import { Room } from '@app/classes/room';
+import { Room, State } from '@common/room';
 /* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
@@ -7,7 +7,6 @@ import { Room } from '@app/classes/room';
 // eslint-disable-next-line prettier/prettier
 // with { "type": "module" } in your package.json
 import { GameSettings } from '@common/game-settings';
-import { State } from '@common/room';
 import { expect } from 'chai';
 import * as http from 'http';
 // import * as ioS from 'socket.io';

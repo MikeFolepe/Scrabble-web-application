@@ -1,15 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { DELAY_TO_PLAY, INDEX_PLAYER_AI } from '@app/classes/constants';
-import { PossibleWords } from '@app/classes/scrabble-board-pattern';
-import { PlayerAI } from '@app/models/player-ai.model';
 import { ChatboxService } from '@app/services/chatbox.service';
 import { DebugService } from '@app/services/debug.service';
+import { EndGameService } from '@app/services/end-game.service';
 import { LetterService } from '@app/services/letter.service';
 import { PlaceLetterService } from '@app/services/place-letter.service';
+import { PlayerAI } from '@app/models/player-ai.model';
 import { PlayerAIService } from '@app/services/player-ia.service';
 import { PlayerService } from '@app/services/player.service';
+import { PossibleWords } from '@app/classes/scrabble-board-pattern';
+import { SendMessageService } from '@app/services/send-message.service';
 import { SkipTurnService } from '@app/services/skip-turn.service';
-import { EndGameService } from '@app/services/end-game.service';
+import { TypeMessage } from '@app/classes/enum';
 
 @Component({
     selector: 'app-player-ai',
@@ -27,6 +29,7 @@ export class PlayerAIComponent implements OnInit {
         public debugService: DebugService,
         public skipTurn: SkipTurnService,
         public endGameService: EndGameService,
+        public sendMessageService: SendMessageService,
         public playerAIService: PlayerAIService,
     ) {}
 
@@ -53,7 +56,7 @@ export class PlayerAIComponent implements OnInit {
                 this.skipTurn.switchTurn();
             }, DELAY_TO_PLAY);
             this.endGameService.actionsLog.push('passer');
-            this.chatBoxService.displayMessageByType('joueur virtuel passe', 'opponent');
+            this.sendMessageService.displayMessageByType('passer', TypeMessage.Opponent);
         }
     }
 
@@ -63,7 +66,7 @@ export class PlayerAIComponent implements OnInit {
                 this.skipTurn.switchTurn();
             }, DELAY_TO_PLAY);
             this.endGameService.actionsLog.push('echanger');
-            this.chatBoxService.displayMessageByType('joueur virtuel echange', 'opponent');
+            this.sendMessageService.displayMessageByType('joueur virtuel echange', TypeMessage.Opponent);
         }
     }
 

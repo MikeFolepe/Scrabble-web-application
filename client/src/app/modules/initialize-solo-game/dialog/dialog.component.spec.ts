@@ -1,10 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DialogComponent } from './dialog.component';
-import { HttpClientModule } from '@angular/common/http';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { MatDialogRef } from '@angular/material/dialog';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { RouterTestingModule } from '@angular/router/testing';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 describe('DialogComponent', () => {
     let component: DialogComponent;
@@ -13,8 +13,13 @@ describe('DialogComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [DialogComponent],
-            imports: [HttpClientModule, HttpClientTestingModule, RouterTestingModule, MatDialogRef],
-            schemas: [NO_ERRORS_SCHEMA],
+            providers: [
+                {
+                    provide: MatDialogRef,
+                    useValue: {},
+                },
+            ],
+            imports: [ReactiveFormsModule, FormsModule, MatFormFieldModule, MatInputModule, BrowserAnimationsModule],
         }).compileComponents();
     });
 

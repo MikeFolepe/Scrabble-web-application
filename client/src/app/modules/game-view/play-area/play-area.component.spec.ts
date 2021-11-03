@@ -11,7 +11,7 @@ describe('PlayAreaComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [PlayAreaComponent],
-            imports: [RouterTestingModule, HttpClientTestingModule],
+            imports: [HttpClientTestingModule, RouterTestingModule],
             schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
     });

@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { Room, State } from '@common/room';
-import { ClientSocketService } from '@app/services/client-socket.service';
-import { DELAY_OF_LOGIN } from '@app/classes/constants';
-import { DialogComponent } from '@app/modules/initialize-solo-game/dialog/dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
+import { DELAY_OF_LOGIN } from '@app/classes/constants';
+import { DialogComponent } from '@app/modules/initialize-solo-game/dialog/dialog.component';
+import { ClientSocketService } from '@app/services/client-socket.service';
 import { PlayerIndex } from '@common/PlayerIndex';
+import { Room, State } from '@common/room';
+
 @Component({
     selector: 'app-join-room',
     templateUrl: './join-room.component.html',
@@ -69,7 +70,7 @@ export class JoinRoomComponent implements OnInit {
                 }, DELAY_OF_LOGIN);
                 return;
             }
-            this.clientSocketService.socket.emit('newRoomCustomer', playerName, room.roomId);
+            this.clientSocketService.socket.emit('newRoomCustomer', playerName, room.id);
         });
     }
 }

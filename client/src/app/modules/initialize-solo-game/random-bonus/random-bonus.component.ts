@@ -8,7 +8,11 @@ import { FormGroup, Validators } from '@angular/forms';
 })
 export class RandomBonusComponent implements OnInit {
     @Input() parentForm: FormGroup;
-    randomBonusSelectionList: string[] = ['Désactiver', 'Activer'];
+    randomBonusSelectionList: string[];
+
+    constructor() {
+        this.randomBonusSelectionList = ['Désactiver', 'Activer'];
+    }
 
     ngOnInit(): void {
         this.parentForm.controls.randomBonus.setValidators([Validators.required]);

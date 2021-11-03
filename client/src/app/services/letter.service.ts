@@ -12,47 +12,8 @@ export class LetterService {
     reserve: Letter[] = JSON.parse(JSON.stringify(RESERVE));
     reserveSize: number;
     messageSource = new BehaviorSubject('default message');
-    // eslint-disable-next-line no-invalid-this
 
     constructor() {
-        this.updateReserveSize();
-    }
-
-    // Returns a random letter from the reserve if reserve is not empty
-    getRandomLetter(): Letter {
-        const letterEmpty: Letter = {
-            value: '',
-            quantity: 0,
-            points: 0,
-        };
-
-        if (this.isReserveEmpty()) {
-            return letterEmpty;
-        }
-
-        let letter: Letter;
-
-        do {
-            this.randomElement = Math.floor(Math.random() * this.reserve.length);
-            letter = this.reserve[this.randomElement];
-        } while (letter.quantity === 0);
-
-        // Update reserve
-        letter.quantity--;
-        this.updateReserveSize();
-        return letter;
-    }
-
-    isReserveEmpty(): boolean {
-        for (const letter of this.reserve) {
-            if (letter.quantity > 0) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    updateReserveSize(): void {
         let size = 0;
         for (const letter of this.reserve) {
             size += letter.quantity;
@@ -60,11 +21,35 @@ export class LetterService {
         this.reserveSize = size;
     }
 
+    // Returns a random letter from the reserve if reserve is not empty
+    getRandomLetter(): Letter {
+        if (this.reserveSize === 0) {
+            // Return an empty letter
+            return {
+                value: '',
+                quantity: 0,
+                points: 0,
+                isSelectedForSwap: false,
+                isSelectedForManipulation: false,
+            };
+        }
+        let letter: Letter;
+        do {
+            this.randomElement = Math.floor(Math.random() * this.reserve.length);
+            letter = this.reserve[this.randomElement];
+        } while (letter.quantity === 0);
+
+        // Update reserve
+        letter.quantity--;
+        this.reserveSize--;
+        return letter;
+    }
+
     addLetterToReserve(letter: string): void {
         for (const letterReserve of this.reserve) {
             if (letter.toUpperCase() === letterReserve.value) {
                 letterReserve.quantity++;
-                this.updateReserveSize();
+                this.reserveSize++;
                 return;
             }
         }
@@ -80,6 +65,8 @@ export class LetterService {
                 value: letter.value,
                 quantity: letter.quantity,
                 points: letter.points,
+                isSelectedForSwap: letter.isSelectedForSwap,
+                isSelectedForManipulation: letter.isSelectedForManipulation,
             };
         }
         return tab;

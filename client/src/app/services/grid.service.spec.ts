@@ -1,5 +1,6 @@
-import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/classes/constants';
+import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { GridService } from '@app/services/grid.service';
 import { TestBed } from '@angular/core/testing';
 
@@ -11,7 +12,8 @@ describe('GridService', () => {
         TestBed.configureTestingModule({});
         service = TestBed.inject(GridService);
         ctxStub = CanvasTestHelper.createCanvas(DEFAULT_WIDTH, DEFAULT_HEIGHT).getContext('2d') as CanvasRenderingContext2D;
-        service.gridContext = ctxStub;
+        service.gridContextBoardLayer = ctxStub;
+        service.gridContextLettersLayer = ctxStub;
     });
 
     it('should be created', () => {
@@ -27,42 +29,59 @@ describe('GridService', () => {
     });
 
     it(' drawLetter should call fillText on the canvas', () => {
-        const fillTextSpy = spyOn(service.gridContext, 'fillText').and.callThrough();
-        service.drawLetter(service.gridContext, 'L', { x: 1, y: 5 }, 13);
+        const fillTextSpy = spyOn(service.gridContextLettersLayer, 'fillText').and.callThrough();
+        service.drawLetter(service.gridContextLettersLayer, 'L', { x: 1, y: 5 }, 13);
         expect(fillTextSpy).toHaveBeenCalled();
     });
 
     it(' drawLetter should color pixels on the canvas', () => {
-        let imageData = service.gridContext.getImageData(0, 0, service.width, service.height).data;
+        let imageData = service.gridContextLettersLayer.getImageData(0, 0, service.width, service.height).data;
         const beforeSize = imageData.filter((x) => x !== 0).length;
-        service.drawLetter(service.gridContext, 'L', { x: 1, y: 5 }, 13);
-        imageData = service.gridContext.getImageData(0, 0, service.width, service.height).data;
+        service.drawLetter(service.gridContextLettersLayer, 'L', { x: 1, y: 5 }, 13);
+        imageData = service.gridContextLettersLayer.getImageData(0, 0, service.width, service.height).data;
         const afterSize = imageData.filter((x) => x !== 0).length;
         expect(afterSize).toBeGreaterThan(beforeSize);
     });
 
-    it('drawGrid should color pixels on the canvas', () => {
-        let imageData = service.gridContext.getImageData(0, 0, service.width, service.height).data;
+    it(' drawGrid should color pixels on the canvas', () => {
+        let imageData = service.gridContextBoardLayer.getImageData(0, 0, service.width, service.height).data;
         const beforeSize = imageData.filter((x) => x !== 0).length;
         service.drawGrid();
-        imageData = service.gridContext.getImageData(0, 0, service.width, service.height).data;
+        imageData = service.gridContextBoardLayer.getImageData(0, 0, service.width, service.height).data;
         const afterSize = imageData.filter((x) => x !== 0).length;
         expect(afterSize).toBeGreaterThan(beforeSize);
     });
 
     it('eraseLetter should call clearRect on the canvas', () => {
-        const clearRectSpy = spyOn(service.gridContext, 'clearRect').and.callThrough();
-        service.eraseLetter(service.gridContext, { x: 1, y: 5 });
+        const clearRectSpy = spyOn(service.gridContextLettersLayer, 'clearRect').and.callThrough();
+        service.eraseLetter(service.gridContextLettersLayer, { x: 1, y: 5 });
         expect(clearRectSpy).toHaveBeenCalled();
+    });
+
+    it('eraseLayer should call clearRect on the canvas', () => {
+        const clearRectSpy = spyOn(service.gridContextLettersLayer, 'clearRect').and.callThrough();
+        service.eraseLayer(service.gridContextLettersLayer);
+        expect(clearRectSpy).toHaveBeenCalled();
+    });
+
+    it('drawBorder should call strokeRect on the canvas', () => {
+        const strokeRectSpy = spyOn(service.gridContextLettersLayer, 'strokeRect').and.callThrough();
+        service.drawBorder(service.gridContextLettersLayer, { x: 1, y: 5 });
+        expect(strokeRectSpy).toHaveBeenCalled();
     });
 
     it('drawBonusesBoxes should call colorBonusBox and writeBonusName', () => {
         const bonusPositionsStub = new Map<string, string>([
             ['A1', 'tripleword'],
             ['A4', 'doubleletter'],
-            ['A8', 'tripleLetter'],
-            ['A12', 'doubleWord'],
+            ['A8', 'tripleletter'],
+            ['A12', 'doubleword'],
             ['A15', 'tripleword'],
+            ['B2', 'doubleword'],
+            ['B6', 'tripleletter'],
+            ['B10', 'doubleletter'],
+            ['B14', 'doubleword'],
+            ['C3', ''],
         ]);
         const colorBonusBoxSpy = spyOn(service, 'colorBonusBox').and.callThrough();
         const writeBonusNameSpy = spyOn(service, 'writeBonusName').and.callThrough();
@@ -73,6 +92,6 @@ describe('GridService', () => {
 
     it('should set grid context', () => {
         service.setGridContext(ctxStub);
-        expect(service.gridContext).toBe(ctxStub);
+        expect(service.gridContextBoardLayer).toBe(ctxStub);
     });
 });
