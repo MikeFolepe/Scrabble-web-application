@@ -72,32 +72,30 @@ export class SocketManager {
             socket.on('disconnect', () => {
                 const roomId = this.roomManager.findRoomIdOf(socket.id);
                 setTimeout(() => {
-                    this.sio.in(roomId).emit('receiveEndGamebyGiveup', true);
+                    socket.to(roomId).emit('receiveEndGamebyGiveup', true);
+                    this.roomManager.deleteRoom(roomId);
+                    this.sio.emit('roomConfiguration', this.roomManager.rooms);
+                    this.sio.socketsLeave(roomId);
                 }, 5000);
-                this.roomManager.deleteRoom(roomId);
-                this.sio.emit('roomConfiguration', this.roomManager.rooms);
                 // Code pour winner
                 // const indexOfLoser = this.roomManager.findWinnerbySocket(socket.id);
                 // const winnerName = this.roomManager.getWinnerName(roomId, indexOfLoser);
                 // console.log(winnerName);
                 // this.sio.in(roomId).emit('receiverWinnerName', winnerName);
-
-                // console.log(`Deconnexion par l'utilisateur avec id : ${socket.id}`);
-                // console.log(`Raison de deconnexion : ${reason}`);
             });
 
             // Receive the Endgame from the give up game or the natural EndGame by easel or by actions
             socket.on('sendEndGame', (isEndGame: boolean, roomId: string) => {
-                this.sio.in(roomId).emit('receiveEndGamebyGiveup', isEndGame);
+                socket.to(roomId).emit('receiveEndGamebyGiveup', isEndGame);
                 this.roomManager.deleteRoom(roomId);
                 this.sio.emit('roomConfiguration', this.roomManager.rooms);
+                this.sio.socketsLeave(roomId);
 
                 // code winner
                 // const indexOfLoser = this.roomManager.findWinnerbySocket(socket.id);
                 // const winnerName = this.roomManager.getWinnerName(roomId, indexOfLoser);
                 // console.log(winnerName);
                 // this.sio.in(roomId).emit('receiverWinnerName', winnerName);
-                // socket.disconnect();
             });
 
             socket.on('sendRoomMessage', (message: string, roomId: string) => {

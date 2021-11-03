@@ -33,7 +33,6 @@ export class PlayAreaComponent {
             if (!decision) return;
             // if decision is true the EndGame occures
             this.clientSocketService.socket.emit('sendEndGame', decision, this.clientSocketService.roomId);
-            this.clientSocketService.socket.emit('deleteGame', this.clientSocketService.roomId);
         });
     }
 }

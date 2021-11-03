@@ -42,6 +42,7 @@ export class EndGameService {
 
     checkEndGame(): void {
         this.isEndGame = this.isEndGameByActions() || this.isEndGameByEasel() || this.isEndGamebyGiveUp;
+
         if (this.isEndGame) this.skipturnService.stopTimer();
     }
 

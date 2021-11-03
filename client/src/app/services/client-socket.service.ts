@@ -45,9 +45,9 @@ export class ClientSocketService {
         });
     }
 
-    delete() {
-        this.socket.emit('deleteGame', this.roomId);
-    }
+    // delete() {
+    //     this.socket.emit('deleteGame', this.roomId);
+    // }
 
     // les methodes de reception des commandes de jeu sont définies ici
 }

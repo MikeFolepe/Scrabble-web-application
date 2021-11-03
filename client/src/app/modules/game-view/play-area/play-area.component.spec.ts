@@ -1,5 +1,5 @@
-import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { PlayAreaComponent } from '@app/modules/game-view/play-area/play-area.component';
 
 describe('PlayAreaComponent', () => {
