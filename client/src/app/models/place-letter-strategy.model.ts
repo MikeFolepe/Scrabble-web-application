@@ -1,12 +1,11 @@
-/* eslint-disable max-lines */
 import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSITION_X, DICTIONARY, INDEX_INVALID, INDEX_PLAYER_AI } from '@app/classes/constants';
-import { Range } from '@app/classes/range';
 import { BoardPattern, Orientation, PatternInfo, PossibleWords } from '@app/classes/scrabble-board-pattern';
-import { Vec2 } from '@app/classes/vec2';
+import { PlayStrategy } from '@app/models/abstract-strategy.model';
+import { PlayerAI } from '@app/models/player-ai.model';
 import { PlayerAIComponent } from '@app/modules/game-view/player-ai/player-ai.component';
-import { PlayStrategy } from './abstract-strategy.model';
-import { PlayerAI } from './player-ai.model';
-import { SwapLetter } from './swap-letter-strategy.model';
+import { Range } from '@app/classes/range';
+import { SwapLetter } from '@app/models/swap-letter-strategy.model';
+import { Vec2 } from '@app/classes/vec2';
 
 export class PlaceLetters extends PlayStrategy {
     dictionary: string[];

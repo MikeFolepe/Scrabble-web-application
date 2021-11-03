@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { Range } from '@app/classes/range';
+
 @Component({
     selector: 'app-player-name-field',
     templateUrl: './player-name-field.component.html',

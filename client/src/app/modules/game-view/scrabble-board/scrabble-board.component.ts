@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
-import { GridService } from '@app/services/grid.service';
 import { BoardHandlerService } from '@app/services/board-handler.service';
+import { GridService } from '@app/services/grid.service';
 
 @Component({
     selector: 'app-scrabble-board',

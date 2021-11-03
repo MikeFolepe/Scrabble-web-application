@@ -1,9 +1,9 @@
 /* eslint-disable dot-notation */
-import { TestBed } from '@angular/core/testing';
 import { INDEX_REAL_PLAYER, RESERVE } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { Player } from '@app/models/player.model';
-import { SwapLetterService } from './swap-letter.service';
+import { SwapLetterService } from '@app/services/swap-letter.service';
+import { TestBed } from '@angular/core/testing';
 
 describe('SwapLetterService', () => {
     let service: SwapLetterService;

@@ -1,8 +1,7 @@
 /* eslint-disable dot-notation */
+import { SendMessageService } from '@app/services/send-message.service';
 import { TestBed } from '@angular/core/testing';
 import { TypeMessage } from '@app/classes/enum';
-
-import { SendMessageService } from './send-message.service';
 
 describe('SendMessageService', () => {
     let service: SendMessageService;

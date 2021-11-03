@@ -1,22 +1,23 @@
-import { Application } from '@app/app';
+/* eslint-disable sort-imports */
 import * as http from 'http';
+import { Application } from '@app/app';
 import { AddressInfo } from 'net';
+import { RoomManager } from '@app/services/room-manager.service';
+import { SocketManager } from '@app/services/socket-manager.service';
 import { Service } from 'typedi';
-import { RoomManager } from './services/room-manager.service';
-import { SocketManager } from './services/socket-manager.service';
 
 @Service()
 export class Server {
     private static readonly appPort: string | number | boolean = Server.normalizePort(process.env.PORT || '3000');
     // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-    private static readonly decimalBase: number = 10;
+    private static readonly baseDix: number = 10;
     private server: http.Server;
     private socketManager: SocketManager;
     private roomManager: RoomManager;
     constructor(private readonly application: Application) {}
 
     private static normalizePort(val: number | string): number | string | boolean {
-        const port: number = typeof val === 'string' ? parseInt(val, this.decimalBase) : val;
+        const port: number = typeof val === 'string' ? parseInt(val, this.baseDix) : val;
         if (isNaN(port)) {
             return val;
         } else if (port >= 0) {
@@ -25,12 +26,12 @@ export class Server {
             return false;
         }
     }
-
     init(): void {
         this.application.app.set('port', Server.appPort);
 
         this.server = http.createServer(this.application.app);
         this.roomManager = new RoomManager();
+
         this.socketManager = new SocketManager(this.server, this.roomManager);
         this.socketManager.handleSockets();
 

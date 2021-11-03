@@ -1,13 +1,13 @@
 /* eslint-disable dot-notation */
-import { TestBed } from '@angular/core/testing';
 import { INDEX_PLAYER_AI, INDEX_REAL_PLAYER, RESERVE, THREE_SECONDS_DELAY } from '@app/classes/constants';
-import { Letter } from '@app/classes/letter';
-import { Vec2 } from '@app/classes/vec2';
-import { Player } from '@app/models/player.model';
 import { GridService } from '@app/services/grid.service';
-import { RouterTestingModule } from '@angular/router/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { PlaceLetterService } from './place-letter.service';
+import { Letter } from '@app/classes/letter';
+import { PlaceLetterService } from '@app/services/place-letter.service';
+import { Player } from '@app/models/player.model';
+import { RouterTestingModule } from '@angular/router/testing';
+import { TestBed } from '@angular/core/testing';
+import { Vec2 } from '@app/classes/vec2';
 
 describe('PlaceLetterService', () => {
     let service: PlaceLetterService;

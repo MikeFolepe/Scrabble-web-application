@@ -1,5 +1,5 @@
+import { ClientSocketService } from '@app/services/client-socket.service';
 import { TestBed } from '@angular/core/testing';
-import { ClientSocketService } from './client-socket.service';
 import { RouterTestingModule } from '@angular/router/testing';
 
 describe('ClientSocketService', () => {

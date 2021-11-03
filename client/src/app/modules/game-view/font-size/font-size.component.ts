@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { DEFAULT_FONT_SIZE, FONT_SIZE_MAX, FONT_SIZE_MIN, SIZE_VARIATION } from '@app/classes/constants';
 
 @Component({

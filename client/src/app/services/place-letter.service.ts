@@ -1,5 +1,4 @@
 /* eslint-disable max-lines */
-import { Injectable } from '@angular/core';
 import {
     BOARD_COLUMNS,
     BOARD_ROWS,
@@ -10,17 +9,18 @@ import {
     INDEX_REAL_PLAYER,
     THREE_SECONDS_DELAY,
 } from '@app/classes/constants';
-import { TypeMessage } from '@app/classes/enum';
-import { ScoreValidation } from '@app/classes/validation-score';
-import { Vec2 } from '@app/classes/vec2';
-import { GridService } from '@app/services/grid.service';
-import { PlayerAIService } from '@app/services/player-ia.service';
-import { PlayerService } from '@app/services/player.service';
-import { WordValidationService } from '@app/services/word-validation.service';
-import { SendMessageService } from './send-message.service';
 import { ClientSocketService } from './client-socket.service';
 import { GameSettingsService } from './game-settings.service';
+import { GridService } from '@app/services/grid.service';
+import { Injectable } from '@angular/core';
+import { PlayerAIService } from '@app/services/player-ia.service';
+import { PlayerService } from '@app/services/player.service';
+import { ScoreValidation } from '@app/classes/validation-score';
+import { SendMessageService } from './send-message.service';
 import { SkipTurnService } from './skip-turn.service';
+import { TypeMessage } from '@app/classes/enum';
+import { Vec2 } from '@app/classes/vec2';
+import { WordValidationService } from '@app/services/word-validation.service';
 
 @Injectable({
     providedIn: 'root',
@@ -78,13 +78,7 @@ export class PlaceLetterService {
         const currentPosition = { x: startPosition.x, y: startPosition.y };
         for (const letter of word) {
             this.scrabbleBoard[currentPosition.y][currentPosition.x] = letter;
-            this.gridService.drawLetter(
-                this.gridService.gridContextLettersLayer,
-                letter,
-                currentPosition.x,
-                currentPosition.y,
-                this.playerService.fontSize,
-            );
+            this.gridService.drawLetter(this.gridService.gridContextLettersLayer, letter, currentPosition, this.playerService.fontSize);
             this.updatePosition(currentPosition, orientation);
         }
         this.isFirstRound = false;
@@ -166,7 +160,7 @@ export class PlaceLetterService {
             this.playerService.removeLetter(this.playerService.indexLetterInEasel(letter, 0, indexPlayer), indexPlayer);
         }
         // Display the letter on the scrabble board grid
-        this.gridService.drawLetter(this.gridService.gridContextLettersLayer, letter, position.x, position.y, this.playerService.fontSize);
+        this.gridService.drawLetter(this.gridService.gridContextLettersLayer, letter, position, this.playerService.fontSize);
         return true;
     }
 
@@ -236,7 +230,7 @@ export class PlaceLetterService {
 
     removePlacedLetter(position: Vec2, letter: string, indexPlayer: number) {
         this.scrabbleBoard[position.y][position.x] = '';
-        this.gridService.eraseLetter(this.gridService.gridContextLettersLayer, position.x, position.y);
+        this.gridService.eraseLetter(this.gridService.gridContextLettersLayer, position);
         this.playerService.addLetterToEasel(letter, indexPlayer);
     }
 

@@ -3,21 +3,30 @@ import { Service } from 'typedi';
 
 @Service()
 export class WordValidationService {
+    // eslint-disable-next-line no-invalid-this
     dictionaryData = fs.readFileSync('@../../../client/src/assets/dictionary.json');
     private dictionary: string[];
     constructor() {
+        // eslint-disable-next-line no-invalid-this
+
         this.dictionary = JSON.parse(this.dictionaryData.toString()).words;
     }
 
     isValidInDictionary(words: string[]): boolean {
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         let countValidWords = 0;
-        for (const word of words) {
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
+        for (let i = 0; i < words.length; i++) {
             for (const item of this.dictionary) {
-                if (word.toLowerCase() === item) {
+                if (words[i].toLowerCase() === item) {
                     countValidWords++;
                 }
             }
         }
-        return countValidWords === words.length;
+
+        if (countValidWords === words.length) {
+            return true;
+        }
+        return false;
     }
 }

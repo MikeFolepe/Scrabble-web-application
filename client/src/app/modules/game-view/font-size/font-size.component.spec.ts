@@ -1,12 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { DEFAULT_FONT_SIZE, SIZE_VARIATION } from '@app/classes/constants';
+import { FontSizeComponent } from './font-size.component';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSliderModule } from '@angular/material/slider';
-import { DEFAULT_FONT_SIZE, SIZE_VARIATION } from '@app/classes/constants';
-
-import { FontSizeComponent } from './font-size.component';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 describe('FontSizeComponent', () => {
     let component: FontSizeComponent;

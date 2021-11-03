@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
-import { TestBed } from '@angular/core/testing';
-import { RESERVE } from '@app/classes/constants';
+import { EndGameService } from '@app/services/end-game.service';
 import { Letter } from '@app/classes/letter';
 import { Orientation } from '@app/classes/scrabble-board-pattern';
-import { PlayerAI } from '@app/models/player-ai.model';
 import { Player } from '@app/models/player.model';
-import { EndGameService } from './end-game.service';
+import { PlayerAI } from '@app/models/player-ai.model';
+import { RESERVE } from '@app/classes/constants';
+import { TestBed } from '@angular/core/testing';
 
 describe('EndGameService', () => {
     let service: EndGameService;

@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
-import { TestBed } from '@angular/core/testing';
 import { INDEX_REAL_PLAYER, RESERVE } from '@app/classes/constants';
 import { Orientation, PossibleWords } from '@app/classes/scrabble-board-pattern';
-import { Player } from '@app/models/player.model';
-import { ChatboxService } from './chatbox.service';
-import { TypeMessage } from '@app/classes/enum';
-import { RouterTestingModule } from '@angular/router/testing';
+import { ChatboxService } from '@app/services/chatbox.service';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { Player } from '@app/models/player.model';
+import { RouterTestingModule } from '@angular/router/testing';
+import { TestBed } from '@angular/core/testing';
+import { TypeMessage } from '@app/classes/enum';
 
 describe('ChatboxService', () => {
     let service: ChatboxService;

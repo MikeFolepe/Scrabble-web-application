@@ -1,8 +1,9 @@
-// import { Observable } from 'rxjs';
-import { Injectable } from '@angular/core';
-import { ALL_EASEL_BONUS, BOARD_COLUMNS, BOARD_ROWS, BONUSES_POSITIONS, RESERVE } from '@app/classes/constants';
-import { ScoreValidation } from '@app/classes/validation-score';
+import { ALL_EASEL_BONUS, BOARD_COLUMNS, BOARD_ROWS, RESERVE } from '@app/classes/constants';
 import { CommunicationService } from '@app/services/communication.service';
+import { Injectable } from '@angular/core';
+import { RandomBonusesService } from '@app/services/random-bonuses.service';
+import { ScoreValidation } from '@app/classes/validation-score';
+
 @Injectable({
     providedIn: 'root',
 })
@@ -14,26 +15,13 @@ export class WordValidationService {
     bonusesPositions: Map<string, string>;
     private validationState = false;
 
-    constructor(private httpServer: CommunicationService) {
+    constructor(private httpServer: CommunicationService, private randomBonusService: RandomBonusesService) {
         this.playedWords = new Map<string, string[]>();
         this.newPlayedWords = new Map<string, string[]>();
         this.newWords = new Array<string>();
         this.newPositions = new Array<string>();
-        this.bonusesPositions = new Map<string, string>(BONUSES_POSITIONS);
+        this.bonusesPositions = new Map<string, string>(this.randomBonusService.bonusPositions);
     }
-
-    // isValidInDictionary(word: string): boolean {
-    //     if (word.length >= 2) {
-    //         // eslint-disable-next-line prefer-const
-    //         for (const item of DICTIONARY) {
-    //             if (word === item) {
-    //                 return true;
-    //             }
-    //         }
-    //         return false;
-    //     }
-    //     return false;
-    // }
 
     findWords(words: string[]): string[] {
         return words
@@ -190,22 +178,10 @@ export class WordValidationService {
         return score;
     }
 
-    // getServerValidation(scrabbleBoard: string[][], isEaselSize: boolean, isRow: boolean): Observable<ScoreValidation> {
-    //     const wordValidationUrl = 'api/validation/:scrabbleBoard/:isEaselSize/:boolean';
-    //     return this.http.get<ScoreValidation>(wordValidationUrl);
-    // }
-
     validateAllWordsOnBoard(scrabbleBoard: string[][], isEaselSize: boolean, isRow: boolean): ScoreValidation {
         let scoreTotal = 0;
         this.passThroughAllRowsOrColumns(scrabbleBoard, isRow);
         this.passThroughAllRowsOrColumns(scrabbleBoard, !isRow);
-        // for (const word of this.newPlayedWords.keys()) {
-        //     const lowerCaseWord = word.toLowerCase();
-        //     if (!this.isValidInDictionary(lowerCaseWord)) {
-        //         this.newPlayedWords.clear();
-        //         return { validation: false, score: scoreTotal };
-        //     }
-        // }
 
         this.httpServer.validationPost(this.newPlayedWords).subscribe((validation) => (this.validationState = validation));
         if (!this.validationState) {

@@ -1,17 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { DELAY_TO_PLAY, INDEX_PLAYER_AI } from '@app/classes/constants';
-import { TypeMessage } from '@app/classes/enum';
-import { PossibleWords } from '@app/classes/scrabble-board-pattern';
-import { PlayerAI } from '@app/models/player-ai.model';
 import { ChatboxService } from '@app/services/chatbox.service';
 import { DebugService } from '@app/services/debug.service';
+import { EndGameService } from '@app/services/end-game.service';
 import { LetterService } from '@app/services/letter.service';
 import { PlaceLetterService } from '@app/services/place-letter.service';
+import { PlayerAI } from '@app/models/player-ai.model';
 import { PlayerAIService } from '@app/services/player-ia.service';
 import { PlayerService } from '@app/services/player.service';
+import { PossibleWords } from '@app/classes/scrabble-board-pattern';
 import { SendMessageService } from '@app/services/send-message.service';
 import { SkipTurnService } from '@app/services/skip-turn.service';
-import { EndGameService } from '@app/services/end-game.service';
+import { TypeMessage } from '@app/classes/enum';
 
 @Component({
     selector: 'app-player-ai',
