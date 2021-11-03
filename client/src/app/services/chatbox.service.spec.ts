@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { INDEX_REAL_PLAYER, RESERVE } from '@app/classes/constants';
+import { RouterTestingModule } from '@angular/router/testing';
+import { INDEX_PLAYER_ONE, RESERVE } from '@app/classes/constants';
+import { TypeMessage } from '@app/classes/enum';
 import { Orientation, PossibleWords } from '@app/classes/scrabble-board-pattern';
 import { Player } from '@app/models/player.model';
 import { ChatboxService } from './chatbox.service';
-import { TypeMessage } from '@app/classes/enum';
-import { RouterTestingModule } from '@angular/router/testing';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('ChatboxService', () => {
     let service: ChatboxService;
@@ -195,7 +195,7 @@ describe('ChatboxService', () => {
 
     it('calling displayFinalMessage should send the respective message to the chatbox', () => {
         service['endGameService'].isEndGame = true;
-        service.displayFinalMessage(INDEX_REAL_PLAYER);
+        service.displayFinalMessage(INDEX_PLAYER_ONE);
         expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('Player 1 : AABBCCA', TypeMessage.System);
     });
 

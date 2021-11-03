@@ -1,12 +1,12 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 /* eslint-disable dot-notation */
 import { TestBed } from '@angular/core/testing';
-import { INDEX_PLAYER_AI, INDEX_REAL_PLAYER, RESERVE, THREE_SECONDS_DELAY } from '@app/classes/constants';
+import { RouterTestingModule } from '@angular/router/testing';
+import { INDEX_PLAYER_AI, INDEX_PLAYER_ONE, RESERVE, THREE_SECONDS_DELAY } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
 import { Player } from '@app/models/player.model';
 import { GridService } from '@app/services/grid.service';
-import { RouterTestingModule } from '@angular/router/testing';
 import { CommunicationService } from './communication.service';
 import { PlaceLetterService } from './place-letter.service';
 
@@ -94,7 +94,7 @@ describe('PlaceLetterService', () => {
         let position: Vec2 = { x: 7, y: 7 };
         let orientation = 'h';
         let word = 'bac';
-        await service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER);
+        await service.placeCommand(position, orientation, word, INDEX_PLAYER_ONE);
         // Try to place a word vertically while touching the previous word placed
         position = { x: 10, y: 6 };
         orientation = 'v';
@@ -114,7 +114,7 @@ describe('PlaceLetterService', () => {
         let position: Vec2 = { x: 7, y: 7 };
         let orientation = 'v';
         let word = 'bac';
-        await service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER);
+        await service.placeCommand(position, orientation, word, INDEX_PLAYER_ONE);
         // Try to place a word vertically without touching the previous word placed
         position = { x: 11, y: 13 };
         orientation = 'v';
@@ -127,7 +127,7 @@ describe('PlaceLetterService', () => {
         const position: Vec2 = { x: 7, y: 7 };
         const orientation = 'h';
         const word = 'fil';
-        const isPlacementValid = await service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER);
+        const isPlacementValid = await service.placeCommand(position, orientation, word, INDEX_PLAYER_ONE);
         expect(isPlacementValid).toEqual(false);
     });
 
@@ -136,7 +136,7 @@ describe('PlaceLetterService', () => {
         let position: Vec2 = { x: 7, y: 7 };
         let orientation = 'h';
         let word = 'abcd';
-        await service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER);
+        await service.placeCommand(position, orientation, word, INDEX_PLAYER_ONE);
         // Player 2 tries to vertically place a word while using letters already on the scrabbleBoard
         position = { x: 10, y: 6 };
         orientation = 'v';
@@ -163,7 +163,7 @@ describe('PlaceLetterService', () => {
         const position: Vec2 = { x: 7, y: 7 };
         const orientation = 'h';
         const word = 'abcd';
-        const isPlacementValid = await service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER);
+        const isPlacementValid = await service.placeCommand(position, orientation, word, INDEX_PLAYER_ONE);
         expect(isPlacementValid).toEqual(false);
     });
 
@@ -174,7 +174,7 @@ describe('PlaceLetterService', () => {
         let position: Vec2 = { x: 7, y: 7 };
         let orientation = 'h';
         let word = 'bac';
-        await service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER);
+        await service.placeCommand(position, orientation, word, INDEX_PLAYER_ONE);
 
         // Player 2 places an invalid word on top of the previous one
         service['wordValidationService'].validateAllWordsOnBoard = jasmine.createSpy().and.returnValue({ validation: false, score: 0 });
@@ -183,7 +183,7 @@ describe('PlaceLetterService', () => {
         position = { x: 7, y: 7 };
         orientation = 'h';
         word = 'bacchaV';
-        isPlacementValid = await service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER);
+        isPlacementValid = await service.placeCommand(position, orientation, word, INDEX_PLAYER_ONE);
         expect(isPlacementValid).toEqual(false);
 
         jasmine.clock().tick(THREE_SECONDS_DELAY + 1);
@@ -192,7 +192,7 @@ describe('PlaceLetterService', () => {
         orientation = 'v';
         word = 'bEcchaa';
         jasmine.clock().tick(THREE_SECONDS_DELAY + 1);
-        isPlacementValid = await service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER);
+        isPlacementValid = await service.placeCommand(position, orientation, word, INDEX_PLAYER_ONE);
         expect(isPlacementValid).toEqual(false);
 
         jasmine.clock().uninstall();
@@ -206,11 +206,11 @@ describe('PlaceLetterService', () => {
         const position: Vec2 = { x: 7, y: 7 };
         const orientation = 'h';
         let word = 'aabb';
-        await service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER);
+        await service.placeCommand(position, orientation, word, INDEX_PLAYER_ONE);
         // Player 1 horizontally places a second word on top of the 1st word that has different letters
         word = 'ccd';
         jasmine.clock().tick(THREE_SECONDS_DELAY + 1);
-        const isPlacementValid = await service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER);
+        const isPlacementValid = await service.placeCommand(position, orientation, word, INDEX_PLAYER_ONE);
         expect(isPlacementValid).toEqual(false);
 
         jasmine.clock().uninstall();
@@ -232,7 +232,7 @@ describe('PlaceLetterService', () => {
         const word = 'abcd';
         let isPlacementValid = true;
         for (let i = 0; i < word.length; i++) {
-            if ((await service.placeWithKeyboard(position, word[i], orientation, i, INDEX_REAL_PLAYER)) === false) isPlacementValid = false;
+            if ((await service.placeWithKeyboard(position, word[i], orientation, i, INDEX_PLAYER_ONE)) === false) isPlacementValid = false;
             position.x++;
         }
         expect(isPlacementValid).toBeTrue();
@@ -244,7 +244,7 @@ describe('PlaceLetterService', () => {
         const word = 'zyx';
         let isPlacementValid;
         for (let i = 0; i < word.length; i++) {
-            isPlacementValid = await service.placeWithKeyboard(position, word[i], orientation, i, INDEX_REAL_PLAYER);
+            isPlacementValid = await service.placeWithKeyboard(position, word[i], orientation, i, INDEX_PLAYER_ONE);
             expect(isPlacementValid).toBeFalse();
             position.x++;
         }
@@ -257,13 +257,13 @@ describe('PlaceLetterService', () => {
         let position: Vec2 = { x: 7, y: 7 };
         let orientation = 'h';
         const word = 'abcd';
-        isPlacementValid = await service.validateKeyboardPlacement(position, orientation, word, INDEX_REAL_PLAYER);
+        isPlacementValid = await service.validateKeyboardPlacement(position, orientation, word, INDEX_PLAYER_ONE);
         expect(isPlacementValid).toBeTrue();
 
         service.isFirstRound = false;
         position = { x: 7, y: 8 };
         orientation = 'v';
-        isPlacementValid = await service.validateKeyboardPlacement(position, orientation, word, INDEX_REAL_PLAYER);
+        isPlacementValid = await service.validateKeyboardPlacement(position, orientation, word, INDEX_PLAYER_ONE);
         expect(isPlacementValid).toBeTrue();
     });
 
@@ -273,12 +273,12 @@ describe('PlaceLetterService', () => {
         let position: Vec2 = { x: 10, y: 10 };
         const orientation = 'h';
         const word = 'abcd';
-        isPlacementValid = await service.validateKeyboardPlacement(position, orientation, word, INDEX_REAL_PLAYER);
+        isPlacementValid = await service.validateKeyboardPlacement(position, orientation, word, INDEX_PLAYER_ONE);
         expect(isPlacementValid).toBeFalse();
 
         service.isFirstRound = false;
         position = { x: 1, y: 1 };
-        isPlacementValid = await service.validateKeyboardPlacement(position, orientation, word, INDEX_REAL_PLAYER);
+        isPlacementValid = await service.validateKeyboardPlacement(position, orientation, word, INDEX_PLAYER_ONE);
         expect(isPlacementValid).toBeFalse();
     });
 
@@ -287,7 +287,7 @@ describe('PlaceLetterService', () => {
         const position: Vec2 = { x: 10, y: 10 };
         const orientation = 'h';
         const word = 'abcd';
-        const isPlacementValid = await service.validateKeyboardPlacement(position, orientation, word, INDEX_REAL_PLAYER);
+        const isPlacementValid = await service.validateKeyboardPlacement(position, orientation, word, INDEX_PLAYER_ONE);
         expect(isPlacementValid).toBeFalse();
     });
 
@@ -304,6 +304,6 @@ describe('PlaceLetterService', () => {
         const position: Vec2 = { x: 7, y: 7 };
         const orientation = 'h';
         const word = 'dad';
-        expect(service.isWordValid(position, orientation, word, INDEX_REAL_PLAYER)).toEqual(false);
+        expect(service.isWordValid(position, orientation, word, INDEX_PLAYER_ONE)).toEqual(false);
     });
 });

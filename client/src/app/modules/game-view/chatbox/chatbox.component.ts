@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
-import { INDEX_PLAYER_AI, INDEX_REAL_PLAYER, ONE_SECOND_DELAY } from '@app/classes/constants';
+import { INDEX_PLAYER_AI, INDEX_PLAYER_ONE, ONE_SECOND_DELAY } from '@app/classes/constants';
 import { TypeMessage } from '@app/classes/enum';
 import { BoardHandlerService } from '@app/services/board-handler.service';
 import { ChatboxService } from '@app/services/chatbox.service';
@@ -73,9 +73,9 @@ export class ChatboxComponent implements OnInit, AfterViewInit {
     ngAfterViewInit() {
         const findEnd = setInterval(() => {
             this.endGameService.checkEndGame();
-            this.chatBoxService.displayFinalMessage(INDEX_REAL_PLAYER);
+            this.chatBoxService.displayFinalMessage(INDEX_PLAYER_ONE);
             this.chatBoxService.displayFinalMessage(INDEX_PLAYER_AI);
-            this.endGameService.getFinalScore(INDEX_REAL_PLAYER);
+            this.endGameService.getFinalScore(INDEX_PLAYER_ONE);
             this.endGameService.getFinalScore(INDEX_PLAYER_AI);
             if (this.endGameService.isEndGame) {
                 clearInterval(findEnd);

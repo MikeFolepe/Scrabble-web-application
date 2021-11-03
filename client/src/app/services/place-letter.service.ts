@@ -7,7 +7,7 @@ import {
     EASEL_SIZE,
     INDEX_INVALID,
     INDEX_PLAYER_AI,
-    INDEX_REAL_PLAYER,
+    INDEX_PLAYER_ONE,
     THREE_SECONDS_DELAY,
 } from '@app/classes/constants';
 import { TypeMessage } from '@app/classes/enum';
@@ -17,11 +17,11 @@ import { GridService } from '@app/services/grid.service';
 import { PlayerAIService } from '@app/services/player-ia.service';
 import { PlayerService } from '@app/services/player.service';
 import { WordValidationService } from '@app/services/word-validation.service';
-import { SendMessageService } from './send-message.service';
 import { ClientSocketService } from './client-socket.service';
-import { GameSettingsService } from './game-settings.service';
-import { SkipTurnService } from './skip-turn.service';
 import { EndGameService } from './end-game.service';
+import { GameSettingsService } from './game-settings.service';
+import { SendMessageService } from './send-message.service';
+import { SkipTurnService } from './skip-turn.service';
 
 @Injectable({
     providedIn: 'root',
@@ -187,7 +187,7 @@ export class PlaceLetterService {
         this.handleInvalidPlacement(position, orientation, word, indexPlayer);
         this.sendMessageService.displayMessageByType('ERREUR : Un ou des mots formés sont invalides', TypeMessage.Error);
         setTimeout(() => {
-            if (this.gameSettingsService.isSoloMode && indexPlayer === INDEX_REAL_PLAYER) this.skipTurnService.switchTurn();
+            if (this.gameSettingsService.isSoloMode && indexPlayer === INDEX_PLAYER_ONE) this.skipTurnService.switchTurn();
             else if (!this.gameSettingsService.isSoloMode) this.skipTurnService.switchTurn();
         }, THREE_SECONDS_DELAY);
         return false;

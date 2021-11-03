@@ -63,6 +63,17 @@ export class LetterService {
         }
     }
 
+    removeLettersFromReserve(letters: Letter[]): void {
+        for (const letter of letters) {
+            for (const letterReserve of this.reserve) {
+                if (letter.value === letterReserve.value) {
+                    letterReserve.quantity--;
+                    this.reserveSize--;
+                }
+            }
+        }
+    }
+
     // Draw seven letters from the reserve
     // Useful for initialize player's easel
     getRandomLetters(): Letter[] {

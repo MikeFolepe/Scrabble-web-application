@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { INDEX_PLAYER_AI, INDEX_REAL_PLAYER, NUMBER_OF_SKIP, RESERVE } from '@app/classes/constants';
+import { INDEX_PLAYER_AI, INDEX_PLAYER_ONE, NUMBER_OF_SKIP, RESERVE } from '@app/classes/constants';
 import { ClientSocketService } from './client-socket.service';
 import { DebugService } from './debug.service';
 import { LetterService } from './letter.service';
@@ -85,7 +85,7 @@ export class EndGameService {
     private isEndGameByEasel(): boolean {
         return (
             this.letterService.reserveSize === 0 &&
-            (this.playerService.isEaselEmpty(INDEX_REAL_PLAYER) || this.playerService.isEaselEmpty(INDEX_PLAYER_AI))
+            (this.playerService.isEaselEmpty(INDEX_PLAYER_ONE) || this.playerService.isEaselEmpty(INDEX_PLAYER_AI))
         );
     }
 }
