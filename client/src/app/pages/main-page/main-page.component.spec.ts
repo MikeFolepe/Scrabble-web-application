@@ -11,8 +11,8 @@ describe('MainPageComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [HttpClientModule],
-            declarations: [MainPageComponent, HttpClientTestingModule, RouterTestingModule],
+            imports: [HttpClientModule, HttpClientTestingModule, RouterTestingModule],
+            declarations: [MainPageComponent],
             schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
     });

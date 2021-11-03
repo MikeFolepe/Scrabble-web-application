@@ -1,29 +1,35 @@
+import { CommunicationService } from '@app/services/communication.service';
 /* eslint-disable sort-imports */
 /* eslint-disable dot-notation */
+import { HttpClientModule } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 import { INDEX_PLAYER_AI, INDEX_REAL_PLAYER, THREE_SECONDS_DELAY } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { Vec2 } from '@app/classes/vec2';
 import { Player } from '@app/models/player.model';
 import { GridService } from '@app/services/grid.service';
-import { CommunicationService } from './communication.service';
 import { PlaceLetterService } from './place-letter.service';
 
 describe('PlaceLetterService', () => {
     let service: PlaceLetterService;
     let gridServiceSpy: unknown;
+    let communicationService: jasmine.SpyObj<CommunicationService>;
     beforeEach(() => {
         gridServiceSpy = jasmine.createSpyObj('GridService', ['drawLetter', 'eraseLetter']);
+        communicationService = jasmine.createSpyObj<CommunicationService>('CommunicationService', ['validationPost']);
     });
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            imports: [HttpClientTestingModule],
-            providers: [CommunicationService],
+            imports: [HttpClientModule, HttpClientTestingModule, RouterTestingModule],
         });
         TestBed.configureTestingModule({
-            providers: [{ provide: GridService, useValue: gridServiceSpy }],
+            providers: [
+                { provide: GridService, useValue: gridServiceSpy },
+                { provide: CommunicationService, useValue: communicationService },
+            ],
         });
         service = TestBed.inject(PlaceLetterService);
     });

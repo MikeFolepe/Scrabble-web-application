@@ -1,3 +1,4 @@
+import { HttpClientModule } from '@angular/common/http';
 /* eslint-disable dot-notation */
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { CommunicationService } from '@app/services/communication.service';
@@ -11,7 +12,7 @@ describe('CommunicationService', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            imports: [HttpClientTestingModule],
+            imports: [HttpClientTestingModule, HttpClientModule],
         });
         service = TestBed.inject(CommunicationService);
         httpMock = TestBed.inject(HttpTestingController);

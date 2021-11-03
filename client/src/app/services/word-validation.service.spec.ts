@@ -11,7 +11,7 @@ import { CommunicationService } from '@app/services/communication.service';
 import { WordValidationService } from '@app/services/word-validation.service';
 import { of } from 'rxjs';
 
-fdescribe('WordValidationService', () => {
+describe('WordValidationService', () => {
     let httpMock: HttpTestingController;
     let service: WordValidationService;
     const scrabbleBoard: string[][] = [];

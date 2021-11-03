@@ -1,3 +1,5 @@
+import { HttpClientModule } from '@angular/common/http';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 /* eslint-disable dot-notation */
 import { EndGameService } from './end-game.service';
 import { GameSettingsService } from './game-settings.service';
@@ -13,6 +15,7 @@ describe('SkipTurnService', () => {
         const settingsSpy = jasmine.createSpyObj('GameSettingsService', ['gameSettings']);
         const endGameSpy = jasmine.createSpyObj('EndGameService', ['isEndGame']);
         TestBed.configureTestingModule({
+            imports: [HttpClientTestingModule, HttpClientModule],
             providers: [SkipTurnService, { provide: GameSettingsService, useValue: settingsSpy }, { provide: EndGameService, useValue: endGameSpy }],
         });
         service = TestBed.inject(SkipTurnService);
@@ -43,60 +46,6 @@ describe('SkipTurnService', () => {
         expect(spy).toHaveBeenCalled();
     });
 
-    // it('should startTimer when switching turns', () => {
-    //     service.isTurn = false;
-    //     const newTurn = true;
-    //     spyOn(service, 'startTimer').andz;
-    //     service.switchTurn();
-    //     expect(service.isTurn).toEqual(newTurn);
-    //     expect(service.startTimer).toHaveBeenCalled();
-    // });
-
-    // it('should clearInterval when stopping timer', () => {
-    //     service.stopTimer();
-    //     expect(clearInterval).toHaveBeenCalled();
-    // });
-
-    /* eslint-disable @typescript-eslint/no-magic-numbers */
-    /* eslint-disable @typescript-eslint/no-explicit-any */
-    // import { ComponentFixture, TestBed } from '@angular/core/testing';
-    // import { ONESECOND_TIME } from '@app/classes/constants';
-    // import { CountdownComponent } from './countdown.component';
-
-    // describe('CountdownComponent', () => {
-    //     let component: CountdownComponent;
-    //     let fixture: ComponentFixture<CountdownComponent>;
-
-    //     beforeEach(async () => {
-    //         await TestBed.configureTestingModule({
-    //             declarations: [CountdownComponent],
-    //         }).compileComponents();
-    //     });
-
-    //     beforeEach(() => {
-    //         fixture = TestBed.createComponent(CountdownComponent);
-    //         component = fixture.componentInstance;
-    //         fixture.detectChanges();
-    //     });
-
-    //     beforeEach(() => {
-    //         jasmine.clock().install();
-    //     });
-
-    //     afterEach(() => {
-    //         jasmine.clock().uninstall();
-    //     });
-
-    //     it('should create', () => {
-    //         expect(component).toBeTruthy();
-    //     });
-
-    //     it('should call setTimer onInit', () => {
-    //         component.ngOnInit();
-    //         spyOn<any>(component, 'setTimer');
-    //         jasmine.clock().tick(ONESECOND_TIME + 1);
-    //         expect(component.setTimer).toHaveBeenCalled();
-    //     });
 
     it('should startTimer when switching turns 2', () => {
         service.isTurn = true;
