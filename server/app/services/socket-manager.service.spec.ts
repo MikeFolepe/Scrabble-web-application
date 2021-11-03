@@ -144,7 +144,6 @@ describe('SocketManager', () => {
                 return fakeIn;
             },
 
-            // eslint-disable-next-line no-dupe-keys
 
         };
 

@@ -66,7 +66,7 @@ export class WaitingRoomComponent implements OnInit {
     route() {
         this.gameSettingsService.isSoloMode = true;
         this.gameSettingsService.isRedirectedFromMultiplayerGame = true;
-        this.clientSocket.socket.emit('deleteGame', this.clientSocket.roomId);
+        this.delete();
         this.router.navigate(['solo-game-ai']);
     }
 }
