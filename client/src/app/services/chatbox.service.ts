@@ -125,7 +125,6 @@ export class ChatboxService {
                 y: positionSplitted[0].charCodeAt(0) - 'a'.charCodeAt(0),
             };
             const orientation = positionSplitted[2];
-
             if (await this.placeLetterService.placeCommand(position, orientation, messageSplitted[2], INDEX_REAL_PLAYER)) {
                 this.sendMessageService.displayMessageByType(this.message, this.typeMessage);
             }

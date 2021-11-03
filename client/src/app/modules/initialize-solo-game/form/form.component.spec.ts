@@ -1,3 +1,4 @@
+/* eslint-disable dot-notation */
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AI_NAME_DATABASE } from '@app/classes/constants';
@@ -56,13 +57,15 @@ describe('FormComponent', () => {
         expect(players).toContain(result.toString());
     });
 
-    it('should call chooseRandomAIName()', () => {
+    it('should call chooseRandomAIName()', async () => {
+        spyOn(component['router'], 'navigate');
         const spy = spyOn(component, 'chooseRandomAIName');
         component.initGame();
         expect(spy).toHaveBeenCalled();
     });
 
     it('should call chooseStartingPlayer()', () => {
+        spyOn(component['router'], 'navigate');
         const spy = spyOn(component, 'chooseStartingPlayer');
         component.initGame();
         expect(spy).toHaveBeenCalled();

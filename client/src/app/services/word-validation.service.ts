@@ -13,6 +13,7 @@ export class WordValidationService {
     private newPositions: string[];
     private bonusesPositions: Map<string, string>;
     private validationState = false;
+    private foundWords: string[];
 
     constructor(private httpServer: CommunicationService) {
         this.playedWords = new Map<string, string[]>();
@@ -20,6 +21,7 @@ export class WordValidationService {
         this.newWords = new Array<string>();
         this.newPositions = new Array<string>();
         this.bonusesPositions = new Map<string, string>(BONUSES_POSITIONS);
+        this.foundWords = new Array<string>();
     }
 
     findWords(words: string[]): string[] {
@@ -85,10 +87,10 @@ export class WordValidationService {
                 y = isRow ? j : i;
                 this.newWords.push(scrabbleBoard[x][y]);
             }
-            const words = this.findWords(this.newWords);
-            this.newPositions = new Array<string>(words.length);
+            this.foundWords = this.findWords(this.newWords);
+            this.newPositions = new Array<string>(this.foundWords.length);
 
-            for (const word of words) {
+            for (const word of this.foundWords) {
                 if (word.length >= 2) {
                     this.newPositions = this.getWordHorizontalOrVerticalPositions(word, x, y, isRow);
                     if (!this.checkIfPlayed(word, this.newPositions)) {
@@ -98,6 +100,7 @@ export class WordValidationService {
                 this.newPositions = [];
             }
             this.newWords = [];
+            this.foundWords = [];
         }
     }
 

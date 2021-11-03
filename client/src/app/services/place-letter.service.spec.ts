@@ -89,12 +89,12 @@ describe('PlaceLetterService', () => {
         expect(service.isFirstWordValid(position, orientation, word)).toBeFalse();
     });
 
-    it('word placed on the following rounds should be valid if he touches other words', () => {
+    it('word placed on the following rounds should be valid if he touches other words', async () => {
         // Place first word
         let position: Vec2 = { x: 7, y: 7 };
         let orientation = 'h';
         let word = 'bac';
-        service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER);
+        await service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER);
         // Try to place a word vertically while touching the previous word placed
         position = { x: 10, y: 6 };
         orientation = 'v';
@@ -109,12 +109,12 @@ describe('PlaceLetterService', () => {
         expect(isWordTouching).toBeTrue();
     });
 
-    it("word placed on the following rounds should be invalid if he's not touching others", () => {
+    it("word placed on the following rounds should be invalid if he's not touching others", async () => {
         // Place first word
         let position: Vec2 = { x: 7, y: 7 };
         let orientation = 'v';
         let word = 'bac';
-        service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER);
+        await service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER);
         // Try to place a word vertically without touching the previous word placed
         position = { x: 11, y: 13 };
         orientation = 'v';
@@ -123,21 +123,20 @@ describe('PlaceLetterService', () => {
         expect(isWordTouching).toBeFalse();
     });
 
-    it("placing letters that aren't present in the easel or the scrabbleboard should be invalid", () => {
+    it("placing letters that aren't present in the easel or the scrabbleboard should be invalid", async () => {
         const position: Vec2 = { x: 7, y: 7 };
         const orientation = 'h';
         const word = 'fil';
-        service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER).then((result) => {
-            expect(result).toEqual(false);
-        });
+        const isPlacementValid = await service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER);
+        expect(isPlacementValid).toEqual(false);
     });
 
-    it('placing letters present in the easel or the scrabbleboard should be valid', () => {
+    it('placing letters present in the easel or the scrabbleboard should be valid', async () => {
         // Player 1 places the first word
         let position: Vec2 = { x: 7, y: 7 };
         let orientation = 'h';
         let word = 'abcd';
-        service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER);
+        await service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER);
         // Player 2 tries to vertically place a word while using letters already on the scrabbleBoard
         position = { x: 10, y: 6 };
         orientation = 'v';
@@ -158,24 +157,24 @@ describe('PlaceLetterService', () => {
         expect(service.isWordValid(position, orientation, word, INDEX_PLAYER_AI)).toBeTrue();
     });
 
-    it("placing letters that doesn't form a valid word should be removed from scrabbleBoard", () => {
+    it("placing letters that doesn't form a valid word should be removed from scrabbleBoard", async () => {
         service['wordValidationService'].validateAllWordsOnBoard = jasmine.createSpy().and.returnValue({ validation: false, score: 0 });
         // Player 1 places an invalid word
         const position: Vec2 = { x: 7, y: 7 };
         const orientation = 'h';
         const word = 'abcd';
-        service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER).then((result) => {
-            expect(result).toEqual(false);
-        });
+        const isPlacementValid = await service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER);
+        expect(isPlacementValid).toEqual(false);
     });
 
-    it('only the invalid letters that we just placed should be removed from scrabbleBoard', () => {
+    it('only the invalid letters that we just placed should be removed from scrabbleBoard', async () => {
         spyOn(service['skipTurnService'], 'switchTurn');
+        let isPlacementValid;
         // Player 1 places the 1st word
         let position: Vec2 = { x: 7, y: 7 };
         let orientation = 'h';
         let word = 'bac';
-        service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER);
+        await service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER);
 
         // Player 2 places an invalid word on top of the previous one
         service['wordValidationService'].validateAllWordsOnBoard = jasmine.createSpy().and.returnValue({ validation: false, score: 0 });
@@ -184,22 +183,22 @@ describe('PlaceLetterService', () => {
         position = { x: 7, y: 7 };
         orientation = 'h';
         word = 'bacchaV';
-        service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER).then((result) => {
-            expect(result).toEqual(false);
-        });
+        isPlacementValid = await service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER);
+        expect(isPlacementValid).toEqual(false);
+
         jasmine.clock().tick(THREE_SECONDS_DELAY + 1);
         // Vertically
         position = { x: 7, y: 7 };
         orientation = 'v';
         word = 'bEcchaa';
         jasmine.clock().tick(THREE_SECONDS_DELAY + 1);
-        service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER).then((result) => {
-            expect(result).toEqual(false);
-        });
+        isPlacementValid = await service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER);
+        expect(isPlacementValid).toEqual(false);
+
         jasmine.clock().uninstall();
     });
 
-    it('placing a word on top of a different existing word should be invalid', () => {
+    it('placing a word on top of a different existing word should be invalid', async () => {
         spyOn(service['skipTurnService'], 'switchTurn');
         service['wordValidationService'].validateAllWordsOnBoard = jasmine.createSpy().and.returnValue({ validation: true, score: 0 });
         jasmine.clock().install();
@@ -207,98 +206,97 @@ describe('PlaceLetterService', () => {
         const position: Vec2 = { x: 7, y: 7 };
         const orientation = 'h';
         let word = 'aabb';
-        service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER);
+        await service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER);
         // Player 1 horizontally places a second word on top of the 1st word that has different letters
         word = 'ccd';
         jasmine.clock().tick(THREE_SECONDS_DELAY + 1);
-        service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER).then((result) => {
-            expect(result).toEqual(false);
-        });
+        const isPlacementValid = await service.placeCommand(position, orientation, word, INDEX_REAL_PLAYER);
+        expect(isPlacementValid).toEqual(false);
+
         jasmine.clock().uninstall();
     });
-    it('calling placeMethodAdapter() should call placeCommand()', () => {
+    it('calling placeMethodAdapter() should call placeCommand()', async () => {
         service['wordValidationService'].validateAllWordsOnBoard = jasmine.createSpy().and.returnValue({ validation: false, score: 0 });
         const spy = spyOn(service, 'placeCommand').and.callThrough();
         const start: Vec2 = { x: 7, y: 7 };
         const orientation = 'h';
         const word = 'dab';
         const object = { start, orientation, word, indexPlayer: 1 };
-        service.placeMethodAdapter(object);
+        await service.placeMethodAdapter(object);
         expect(spy).toHaveBeenCalled();
     });
 
-    it('placing letters in the easel with the keyboard should be valid', () => {
+    it('placing letters in the easel with the keyboard should be valid', async () => {
         const position: Vec2 = { x: 7, y: 7 };
         const orientation = 'h';
         const word = 'abcd';
         let isPlacementValid = true;
         for (let i = 0; i < word.length; i++) {
-            if (!service.placeWithKeyboard(position, word[i], orientation, i, INDEX_REAL_PLAYER)) isPlacementValid = false;
+            if ((await service.placeWithKeyboard(position, word[i], orientation, i, INDEX_REAL_PLAYER)) === false) isPlacementValid = false;
             position.x++;
         }
         expect(isPlacementValid).toBeTrue();
     });
 
-    it('placing letters that are not in the easel with the keyboard should be invalid', () => {
+    it('placing letters that are not in the easel with the keyboard should be invalid', async () => {
         const position: Vec2 = { x: 7, y: 7 };
         const orientation = 'h';
         const word = 'zyx';
+        let isPlacementValid;
         for (let i = 0; i < word.length; i++) {
-            service.placeWithKeyboard(position, word[i], orientation, i, INDEX_REAL_PLAYER).then((result) => {
-                expect(result).toBeFalse();
-            });
+            isPlacementValid = await service.placeWithKeyboard(position, word[i], orientation, i, INDEX_REAL_PLAYER);
+            expect(isPlacementValid).toBeFalse();
             position.x++;
         }
     });
 
-    it('validating multiple valid keyboard placements should return true', () => {
+    it('validating multiple valid keyboard placements should return true', async () => {
         spyOn(service, 'isWordTouchingOthers').and.returnValue(true);
+        let isPlacementValid;
         service.isFirstRound = true;
         let position: Vec2 = { x: 7, y: 7 };
         let orientation = 'h';
         const word = 'abcd';
-        service.validateKeyboardPlacement(position, orientation, word, INDEX_REAL_PLAYER).then((validation) => {
-            expect(validation).toBeTrue();
-        });
+        isPlacementValid = await service.validateKeyboardPlacement(position, orientation, word, INDEX_REAL_PLAYER);
+        expect(isPlacementValid).toBeTrue();
+
         service.isFirstRound = false;
         position = { x: 7, y: 8 };
         orientation = 'v';
-        service.validateKeyboardPlacement(position, orientation, word, INDEX_REAL_PLAYER).then((validation) => {
-            expect(validation).toBeTrue();
-        });
+        isPlacementValid = await service.validateKeyboardPlacement(position, orientation, word, INDEX_REAL_PLAYER);
+        expect(isPlacementValid).toBeTrue();
     });
 
-    it('validating multiple unvalid keyboard placements should return false', () => {
+    it('validating multiple unvalid keyboard placements should return false', async () => {
+        let isPlacementValid;
         service.isFirstRound = true;
         let position: Vec2 = { x: 10, y: 10 };
         const orientation = 'h';
         const word = 'abcd';
-        service.validateKeyboardPlacement(position, orientation, word, INDEX_REAL_PLAYER).then((validation) => {
-            expect(validation).toBeFalse();
-        });
+        isPlacementValid = await service.validateKeyboardPlacement(position, orientation, word, INDEX_REAL_PLAYER);
+        expect(isPlacementValid).toBeFalse();
+
         service.isFirstRound = false;
         position = { x: 1, y: 1 };
-        service.validateKeyboardPlacement(position, orientation, word, INDEX_REAL_PLAYER).then((validation) => {
-            expect(validation).toBeFalse();
-        });
+        isPlacementValid = await service.validateKeyboardPlacement(position, orientation, word, INDEX_REAL_PLAYER);
+        expect(isPlacementValid).toBeFalse();
     });
 
-    it('validating the first unvalid keyboard placement should return false', () => {
+    it('validating the first unvalid keyboard placement should return false', async () => {
         service.isFirstRound = true;
         const position: Vec2 = { x: 10, y: 10 };
         const orientation = 'h';
         const word = 'abcd';
-        service.validateKeyboardPlacement(position, orientation, word, INDEX_REAL_PLAYER).then((validation) => {
-            expect(validation).toBeFalse();
-        });
+        const isPlacementValid = await service.validateKeyboardPlacement(position, orientation, word, INDEX_REAL_PLAYER);
+        expect(isPlacementValid).toBeFalse();
     });
 
-    it('placing all the letters from the easel to form a valid word should give a bonus', () => {
+    it('placing all the letters from the easel to form a valid word should give a bonus', async () => {
         service['wordValidationService'].validateAllWordsOnBoard = jasmine.createSpy().and.returnValue({ validation: true, score: 0 });
         const position: Vec2 = { x: 7, y: 7 };
         const orientation = 'h';
         const word = 'abah*cc';
-        service.placeCommand(position, orientation, word, INDEX_PLAYER_AI);
+        await service.placeCommand(position, orientation, word, INDEX_PLAYER_AI);
         expect(service.isEaselSize).toBeTrue();
     });
 
