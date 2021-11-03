@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 import { GameSettings, StartingPlayer } from '@common/game-settings';
-import { Room, State } from '@common/room';
 import { PlayerIndex } from '@common/PlayerIndex';
+import { Room, State } from '@common/room';
 import { Service } from 'typedi';
 
 @Service()
@@ -89,7 +89,7 @@ export class RoomManager {
         return '';
     }
 
-    findWinnerbySocket(socketID: string): number {
+    findWinnerbySocket(socketID: string): number | string {
         const room = this.rooms.find((rooms) => {
             for (const socketId of rooms.socketIds) {
                 if (socketId === socketID) return rooms.socketIds.indexOf(socketID);
@@ -98,9 +98,9 @@ export class RoomManager {
         });
 
         if (room !== undefined) {
-            return 100;
+            return '';
         }
-        return 100;
+        return '';
     }
 
     getWinnerName(roomId: string, indexofLoser: number): string {
