@@ -1,9 +1,8 @@
-// import { ScoreValidation } from './../../../client/src/app/classes/validation-score';
-// import { WordValidationService } from '@app/services/word-validation.service';
-import { WordValidationService } from '@app/services/word-validation.service';
 import { Request, Response, Router } from 'express';
-// Request, Response,
 import { Service } from 'typedi';
+// import { ScoreValidation } from './../../../client/src/app/classes/validation-score';
+import { WordValidationService } from '@app/services/word-validation.service';
+// Request, Response,
 
 @Service()
 export class WordValidationController {
@@ -65,8 +64,6 @@ export class WordValidationController {
             // res.send(true);
 
             res.send(this.wordValidator.isValidInDictionary(req.body));
-
-            // console.log(req.body);
         });
     }
 

@@ -1,13 +1,13 @@
-import { TestBed } from '@angular/core/testing';
 import { BOARD_COLUMNS, BOARD_ROWS } from '@app/classes/constants';
-import { Letter } from '@app/classes/letter';
 import { BoardPattern, Orientation, PatternInfo, PossibleWords } from '@app/classes/scrabble-board-pattern';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { Letter } from '@app/classes/letter';
+import { LetterService } from '@app/services/letter.service';
 import { PlaceLetters } from '@app/models/place-letter-strategy.model';
 import { PlayerAI } from '@app/models/player-ai.model';
 import { PlayerAIComponent } from '@app/modules/game-view/player-ai/player-ai.component';
-import { LetterService } from '@app/services/letter.service';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
+import { TestBed } from '@angular/core/testing';
 
 describe('Place Letter', () => {
     let playerAI: PlayerAI;

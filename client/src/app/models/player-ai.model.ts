@@ -1,13 +1,13 @@
-import { placingBallotBox, strategyBallotBox } from '@app/classes/constants';
 import { AIStrategy, PlacingStrategy } from '@app/classes/enum';
+import { placingBallotBox, strategyBallotBox } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
-import { Range } from '@app/classes/range';
+import { PlaceLetters } from '@app/models/place-letter-strategy.model';
+import { PlayStrategy } from '@app/models/abstract-strategy.model';
+import { Player } from '@app/models/player.model';
 import { PlayerAIComponent } from '@app/modules/game-view/player-ai/player-ai.component';
-import { PlayStrategy } from './abstract-strategy.model';
-import { PlaceLetters } from './place-letter-strategy.model';
-import { Player } from './player.model';
-import { SkipTurn } from './skip-turn-strategy.model';
-import { SwapLetter } from './swap-letter-strategy.model';
+import { Range } from '@app/classes/range';
+import { SkipTurn } from '@app/models/skip-turn-strategy.model';
+import { SwapLetter } from '@app/models/swap-letter-strategy.model';
 
 export class PlayerAI extends Player {
     context: PlayerAIComponent;

@@ -1,9 +1,9 @@
+// import { GameSettingsService } from '@app/services/game-settings.service';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { TestBed } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
 // import { ONE_SECOND_DELAY } from '@app/classes/constants';
-// import { GameSettingsService } from './game-settings.service';
-import { SkipTurnService } from './skip-turn.service';
+import { RouterTestingModule } from '@angular/router/testing';
+import { SkipTurnService } from '@app/services/skip-turn.service';
+import { TestBed } from '@angular/core/testing';
 
 describe('SkipTurnService', () => {
     let service: SkipTurnService;

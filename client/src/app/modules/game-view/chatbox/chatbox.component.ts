@@ -3,10 +3,10 @@ import { INDEX_PLAYER_AI, INDEX_REAL_PLAYER, ONE_SECOND_DELAY } from '@app/class
 import { TypeMessage } from '@app/classes/enum';
 import { BoardHandlerService } from '@app/services/board-handler.service';
 import { ChatboxService } from '@app/services/chatbox.service';
+import { ClientSocketService } from '@app/services/client-socket.service';
 import { EndGameService } from '@app/services/end-game.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { SendMessageService } from '@app/services/send-message.service';
-import { ClientSocketService } from './../../../services/client-socket.service';
 
 @Component({
     selector: 'app-chatbox',
@@ -51,7 +51,8 @@ export class ChatboxComponent implements OnInit, AfterViewInit {
             event.preventDefault();
             this.chatBoxService.sendPlayerMessage(this.message);
             this.sendMessageToOpponent(this.message, this.gameSettingsService.gameSettings.playersName[0]);
-            this.message = ''; // Clear input
+            // Clear input
+            this.message = '';
 
             this.scrollToBottom();
         }

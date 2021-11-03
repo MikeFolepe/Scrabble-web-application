@@ -1,4 +1,3 @@
-import { Injectable } from '@angular/core';
 import {
     BOARD_COLUMNS,
     BOARD_ROWS,
@@ -9,10 +8,11 @@ import {
     INDEX_INVALID,
     RESERVE,
 } from '@app/classes/constants';
+import { GridService } from '@app/services/grid.service';
+import { Injectable } from '@angular/core';
 import { Letter } from '@app/classes/letter';
+import { LetterService } from '@app/services/letter.service';
 import { Player } from '@app/models/player.model';
-import { GridService } from './grid.service';
-import { LetterService } from './letter.service';
 
 @Injectable({
     providedIn: 'root',
@@ -63,8 +63,8 @@ export class PlayerService {
         for (let i = 0; i < BOARD_ROWS; i++) {
             for (let j = 0; j < BOARD_COLUMNS; j++) {
                 if (this.scrabbleBoard[i][j] !== '') {
-                    this.gridService.eraseLetter(this.gridService.gridContextLettersLayer, j, i);
-                    this.gridService.drawLetter(this.gridService.gridContextLettersLayer, this.scrabbleBoard[i][j], j, i, this.fontSize);
+                    this.gridService.eraseLetter(this.gridService.gridContextLettersLayer, { x: j, y: i });
+                    this.gridService.drawLetter(this.gridService.gridContextLettersLayer, this.scrabbleBoard[i][j], { x: j, y: i }, this.fontSize);
                 }
             }
         }

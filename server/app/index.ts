@@ -1,6 +1,8 @@
 // WARNING : Make sure to always import 'reflect-metadata' and 'module-alias/register' first
-import 'reflect-metadata';
+/* eslint-disable sort-imports */
 import 'module-alias/register';
+import 'reflect-metadata';
+
 import { Server } from '@app/server';
 import { Container } from 'typedi';
 

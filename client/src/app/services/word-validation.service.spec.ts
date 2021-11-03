@@ -13,7 +13,7 @@
 // import { BOARD_COLUMNS, BOARD_ROWS } from '@app/classes/constants';
 // >>>>>>> dffd1575caf34a0774757e7f27439194dc0e305b
 // import { ScoreValidation } from '@app/classes/validation-score';
-// import { WordValidationService } from './word-validation.service';
+// import { WordValidationService } from '@app/services/word-validation.service';
 
 // describe('WordValidationService', () => {
 //     let service: WordValidationService;

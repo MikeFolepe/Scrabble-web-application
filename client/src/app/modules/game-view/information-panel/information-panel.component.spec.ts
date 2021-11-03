@@ -1,9 +1,9 @@
 /* eslint-disable dot-notation */
-import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { GameSettings, StartingPlayer } from '@app/classes/game-settings';
-import { SkipTurnService } from '@app/services/skip-turn.service';
+import { GameSettings } from '@common/game-settings';
 import { InformationPanelComponent } from './information-panel.component';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { SkipTurnService } from '@app/services/skip-turn.service';
 
 describe('InformationPanelComponent', () => {
     let component: InformationPanelComponent;
@@ -25,7 +25,16 @@ describe('InformationPanelComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(InformationPanelComponent);
         component = fixture.componentInstance;
-        component['gameSettings'] = new GameSettings(['player1', 'player2'], StartingPlayer.Player1, '01', '00', 'facile', 'Non', 'dictionary.json');
+        component['gameSettings'] = new GameSettings(
+            ['Paul', 'Mike'],
+            1,
+            '00',
+            '30',
+            'facile',
+            'Désactiver',
+            "[['A1', 'doubleLetter'], ['A4', 'tripleLetter']]",
+            'français',
+        );
         fixture.detectChanges();
     });
 

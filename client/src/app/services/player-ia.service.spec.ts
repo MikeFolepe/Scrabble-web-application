@@ -1,10 +1,10 @@
 /* eslint-disable dot-notation */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
-import { TestBed } from '@angular/core/testing';
 import { BOARD_COLUMNS, BOARD_ROWS } from '@app/classes/constants';
 import { Orientation, PossibleWords } from '@app/classes/scrabble-board-pattern';
+import { PlayerAIService } from '@app/services/player-ia.service';
+import { TestBed } from '@angular/core/testing';
 import { Vec2 } from '@app/classes/vec2';
-import { PlayerAIService } from './player-ia.service';
 
 describe('PlayerAIService', () => {
     let service: PlayerAIService;
@@ -46,7 +46,7 @@ describe('PlayerAIService', () => {
         const matrixPos: Vec2 = { x: 7, y: 7 };
         const letter = 'a';
         const letterValue = 1;
-        const expectedEarning = { letterPt: 1, wordFactor: 1 };
+        const expectedEarning = { letterPoint: 1, wordFactor: 1 };
         scrabbleBoard[matrixPos.x][matrixPos.y] = letter;
 
         // eslint-disable-next-line dot-notation
@@ -58,7 +58,7 @@ describe('PlayerAIService', () => {
         const matrixPos: Vec2 = { x: 5, y: 5 };
         const bonusPos = 3;
         const letterValue = 1; /* attempting to place 'a' */
-        const expectedEarning = { letterPt: letterValue * bonusPos, wordFactor: 1 };
+        const expectedEarning = { letterPoint: letterValue * bonusPos, wordFactor: 1 };
 
         // eslint-disable-next-line dot-notation
         expect(service['computeCell'](pos, letterValue, matrixPos, scrabbleBoard)).toEqual(expectedEarning);
@@ -69,7 +69,7 @@ describe('PlayerAIService', () => {
         const matrixPos: Vec2 = { x: 1, y: 13 };
         const bonusPos = 2;
         const letterValue = 1; /* attempting to place 'a' */
-        const expectedEarning = { letterPt: letterValue, wordFactor: 1 * bonusPos };
+        const expectedEarning = { letterPoint: letterValue, wordFactor: 1 * bonusPos };
 
         // eslint-disable-next-line dot-notation
         expect(service['computeCell'](pos, letterValue, matrixPos, scrabbleBoard)).toEqual(expectedEarning);

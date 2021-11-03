@@ -1,8 +1,8 @@
 import { EASEL_SIZE, MIN_RESERVE_SIZE_TO_SWAP } from '@app/classes/constants';
+import { PlayStrategy } from '@app/models/abstract-strategy.model';
+import { PlayerAI } from '@app/models/player-ai.model';
 import { PlayerAIComponent } from '@app/modules/game-view/player-ai/player-ai.component';
-import { PlayStrategy } from './abstract-strategy.model';
-import { PlayerAI } from './player-ai.model';
-import { SkipTurn } from './skip-turn-strategy.model';
+import { SkipTurn } from '@app/models/skip-turn-strategy.model';
 
 export class SwapLetter extends PlayStrategy {
     execute(player: PlayerAI, context: PlayerAIComponent): void {

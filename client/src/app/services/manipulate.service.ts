@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
 import { EASEL_SIZE, INDEX_INVALID, INDEX_REAL_PLAYER } from '@app/classes/constants';
+import { Injectable } from '@angular/core';
 import { Letter } from '@app/classes/letter';
-import { PlayerService } from './player.service';
+import { PlayerService } from '@app/services/player.service';
 
 @Injectable({
     providedIn: 'root',

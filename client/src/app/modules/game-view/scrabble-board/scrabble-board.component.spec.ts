@@ -1,8 +1,8 @@
 /* eslint-disable dot-notation */
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { BoardHandlerService } from '@app/services/board-handler.service';
-import { ScrabbleBoardComponent } from './scrabble-board.component';
 import { By } from '@angular/platform-browser';
+import { ScrabbleBoardComponent } from './scrabble-board.component';
 
 describe('ScrabbleBoardComponent', () => {
     let component: ScrabbleBoardComponent;

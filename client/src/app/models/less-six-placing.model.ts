@@ -4,8 +4,8 @@
 // import { Letter } from '@app/classes/letter';
 // import { Vec2 } from '@app/classes/vec2';
 // import { PlayerIAComponent } from '@app/modules/game-view/components/player-ia/player-ia.component';
-// import { PlaceLetters } from './place-letter-strategy.model';
-// import { PlayerIA } from './player-ia.model';
+// import { PlaceLetters } from '@app/models/place-letter-strategy.model';
+// import { PlayerIA } from '@app/models/player-ia.model';
 // export class LessSix extends PlaceLetters {
 //     execute(player: PlayerIA, context: PlayerIAComponent): void {
 //         // get the player's hand to generate a pattern containing

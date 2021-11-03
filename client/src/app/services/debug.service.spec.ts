@@ -1,6 +1,6 @@
+import { Orientation, PossibleWords } from '@app/classes/scrabble-board-pattern';
 import { TestBed } from '@angular/core/testing';
-import { PossibleWords, Orientation } from '@app/classes/scrabble-board-pattern';
-import { DebugService } from './debug.service';
+import { DebugService } from '@app/services/debug.service';
 
 describe('DebugService', () => {
     let service: DebugService;
