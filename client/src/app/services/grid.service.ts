@@ -2,6 +2,7 @@
 import { BOARD_ROWS, CASE_SIZE, DEFAULT_HEIGHT, DEFAULT_WIDTH, RESERVE } from '@app/classes/constants';
 import { Injectable } from '@angular/core';
 import { Vec2 } from '@app/classes/vec2';
+import { Orientation } from '@app/classes/scrabble-board-pattern';
 
 @Injectable({
     providedIn: 'root',
@@ -209,18 +210,16 @@ export class GridService {
         context.clearRect(gridPosition.x, gridPosition.y, CASE_SIZE, CASE_SIZE);
     }
 
-    drawArrow(context: CanvasRenderingContext2D, positionTab: Vec2, orientation: string) {
+    drawArrow(context: CanvasRenderingContext2D, positionTab: Vec2, orientation: Orientation) {
         const gridPosition = this.positionTabToPositionGrid(positionTab.x, positionTab.y);
         context.beginPath();
-        if (orientation === 'h') {
-            // Horizontal arrow
+        if (orientation === Orientation.Horizontal) {
             context.moveTo(gridPosition.x + CASE_SIZE / 2, gridPosition.y + CASE_SIZE / 4);
             context.lineTo(gridPosition.x + CASE_SIZE / 2, gridPosition.y + (3 * CASE_SIZE) / 4);
             context.lineTo(gridPosition.x + (5 * CASE_SIZE) / 6, gridPosition.y + CASE_SIZE / 2);
             context.lineTo(gridPosition.x + CASE_SIZE / 2, gridPosition.y + CASE_SIZE / 4);
             context.lineTo(gridPosition.x + CASE_SIZE / 2, gridPosition.y + (3 * CASE_SIZE) / 4);
         } else {
-            // Vertical arrow
             context.moveTo(gridPosition.x + CASE_SIZE / 4, gridPosition.y + CASE_SIZE / 2);
             context.lineTo(gridPosition.x + (3 * CASE_SIZE) / 4, gridPosition.y + CASE_SIZE / 2);
             context.lineTo(gridPosition.x + CASE_SIZE / 2, gridPosition.y + (5 * CASE_SIZE) / 6);

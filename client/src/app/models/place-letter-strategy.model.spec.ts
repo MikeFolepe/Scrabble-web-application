@@ -1,13 +1,13 @@
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { TestBed } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 import { BOARD_COLUMNS, BOARD_ROWS } from '@app/classes/constants';
 import { BoardPattern, Orientation, PatternInfo, PossibleWords } from '@app/classes/scrabble-board-pattern';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { Letter } from '@app/classes/letter';
-import { LetterService } from '@app/services/letter.service';
 import { PlaceLetters } from '@app/models/place-letter-strategy.model';
 import { PlayerAI } from '@app/models/player-ai.model';
 import { PlayerAIComponent } from '@app/modules/game-view/player-ai/player-ai.component';
-import { RouterTestingModule } from '@angular/router/testing';
-import { TestBed } from '@angular/core/testing';
+import { LetterService } from '@app/services/letter.service';
 
 describe('Place Letter', () => {
     let playerAI: PlayerAI;
@@ -103,18 +103,18 @@ describe('Place Letter', () => {
         const randomDictionary: string[] = ['moi', 'canada', 'inf2610', 'moins', 'a', 'o'];
 
         const expected: PossibleWords[] = [];
-        expected.push({ word: 'canada', orientation: Orientation.HorizontalOrientation, line: 0, startIdx: 0, point: 0 });
-        expected.push({ word: 'moi', orientation: Orientation.VerticalOrientation, line: 0, startIdx: 0, point: 0 });
-        expected.push({ word: 'moins', orientation: Orientation.VerticalOrientation, line: 0, startIdx: 0, point: 0 });
+        expected.push({ word: 'canada', orientation: Orientation.Horizontal, line: 0, startIdx: 0, point: 0 });
+        expected.push({ word: 'moi', orientation: Orientation.Vertical, line: 0, startIdx: 0, point: 0 });
+        expected.push({ word: 'moins', orientation: Orientation.Vertical, line: 0, startIdx: 0, point: 0 });
 
         expect(placeStrategy.generateAllWords(randomDictionary, patterns)).toEqual(expected);
     });
 
     it('should retain only those he can play in letter quantity', () => {
         const possibleWords: PossibleWords[] = [];
-        const word1: PossibleWords = { word: 'abc', orientation: Orientation.HorizontalOrientation, line: 0, startIdx: 0, point: 0 };
-        const word2: PossibleWords = { word: 'aab', orientation: Orientation.HorizontalOrientation, line: 2, startIdx: 0, point: 0 };
-        const word3: PossibleWords = { word: 'abz', orientation: Orientation.HorizontalOrientation, line: 4, startIdx: 0, point: 0 };
+        const word1: PossibleWords = { word: 'abc', orientation: Orientation.Horizontal, line: 0, startIdx: 0, point: 0 };
+        const word2: PossibleWords = { word: 'aab', orientation: Orientation.Horizontal, line: 2, startIdx: 0, point: 0 };
+        const word3: PossibleWords = { word: 'abz', orientation: Orientation.Horizontal, line: 4, startIdx: 0, point: 0 };
 
         possibleWords.push(word1);
         possibleWords.push(word2);
@@ -138,15 +138,15 @@ describe('Place Letter', () => {
     //     scrabbleBoard[2][0] = 'r';
     //     scrabbleBoard[5][0] = 'n';
 
-    //     const word1: PossibleWords = { word: 'amar', orientation: Orientation.HorizontalOrientation, line: 0, startIdx: 0, point: 0 };
-    //     const word2: PossibleWords = { word: 'maree', orientation: Orientation.HorizontalOrientation, line: 0, startIdx: 0, point: 0 };
-    //     const word3: PossibleWords = { word: 'martin', orientation: Orientation.HorizontalOrientation, line: 0, startIdx: 0, point: 0 };
-    //     const word4: PossibleWords = { word: 'mare', orientation: Orientation.HorizontalOrientation, line: 0, startIdx: 0, point: 0 };
+    //     const word1: PossibleWords = { word: 'amar', orientation: Orientation.Horizontal, line: 0, startIdx: 0, point: 0 };
+    //     const word2: PossibleWords = { word: 'maree', orientation: Orientation.Horizontal, line: 0, startIdx: 0, point: 0 };
+    //     const word3: PossibleWords = { word: 'martin', orientation: Orientation.Horizontal, line: 0, startIdx: 0, point: 0 };
+    //     const word4: PossibleWords = { word: 'mare', orientation: Orientation.Horizontal, line: 0, startIdx: 0, point: 0 };
 
-    //     const word5: PossibleWords = { word: 'amar', orientation: Orientation.VerticalOrientation, line: 0, startIdx: 0, point: 0 };
-    //     const word6: PossibleWords = { word: 'maree', orientation: Orientation.VerticalOrientation, line: 0, startIdx: 0, point: 0 };
-    //     const word7: PossibleWords = { word: 'martin', orientation: Orientation.VerticalOrientation, line: 0, startIdx: 0, point: 0 };
-    //     const word8: PossibleWords = { word: 'mare', orientation: Orientation.VerticalOrientation, line: 0, startIdx: 0, point: 0 };
+    //     const word5: PossibleWords = { word: 'amar', orientation: Orientation.Vertical, line: 0, startIdx: 0, point: 0 };
+    //     const word6: PossibleWords = { word: 'maree', orientation: Orientation.Vertical, line: 0, startIdx: 0, point: 0 };
+    //     const word7: PossibleWords = { word: 'martin', orientation: Orientation.Vertical, line: 0, startIdx: 0, point: 0 };
+    //     const word8: PossibleWords = { word: 'mare', orientation: Orientation.Vertical, line: 0, startIdx: 0, point: 0 };
 
     //     const possibleWord: PossibleWords[] = [];
     //     possibleWord.push(word1);
@@ -191,8 +191,8 @@ describe('Place Letter', () => {
 
         const spy = spyOn(placeStrategy, 'computeResults');
 
-        const word1: PossibleWords = { word: 'rond', orientation: Orientation.HorizontalOrientation, line: 7, startIdx: 7, point: 5 };
-        const word2: PossibleWords = { word: 'rond', orientation: Orientation.VerticalOrientation, line: 7, startIdx: 7, point: 5 };
+        const word1: PossibleWords = { word: 'rond', orientation: Orientation.Horizontal, line: 7, startIdx: 7, point: 5 };
+        const word2: PossibleWords = { word: 'rond', orientation: Orientation.Vertical, line: 7, startIdx: 7, point: 5 };
 
         const expectedPoss: PossibleWords[] = [];
         expectedPoss.push(word1);
@@ -235,12 +235,12 @@ describe('Place Letter', () => {
 
     //     const spy = spyOn(placeStrategy, 'computeResults');
 
-    //     const word1: PossibleWords = { word: 'maths', orientation: Orientation.HorizontalOrientation, line: 3, startIdx: 1, point: 9 };
-    //     const word2: PossibleWords = { word: 'rond', orientation: Orientation.HorizontalOrientation, line: 4, startIdx: 2, point: 10 };
-    //     const word3: PossibleWords = { word: 'thon', orientation: Orientation.HorizontalOrientation, line: 5, startIdx: 2, point: 9 };
-    //     const word4: PossibleWords = { word: 'thon', orientation: Orientation.VerticalOrientation, line: 3, startIdx: 3, point: 7 };
-    //     const word5: PossibleWords = { word: 'art', orientation: Orientation.VerticalOrientation, line: 3, startIdx: 1, point: 3 };
-    //     const word6: PossibleWords = { word: 'art', orientation: Orientation.HorizontalOrientation, line: 5, startIdx: 0, point: 5 };
+    //     const word1: PossibleWords = { word: 'maths', orientation: Orientation.Horizontal, line: 3, startIdx: 1, point: 9 };
+    //     const word2: PossibleWords = { word: 'rond', orientation: Orientation.Horizontal, line: 4, startIdx: 2, point: 10 };
+    //     const word3: PossibleWords = { word: 'thon', orientation: Orientation.Horizontal, line: 5, startIdx: 2, point: 9 };
+    //     const word4: PossibleWords = { word: 'thon', orientation: Orientation.Vertical, line: 3, startIdx: 3, point: 7 };
+    //     const word5: PossibleWords = { word: 'art', orientation: Orientation.Vertical, line: 3, startIdx: 1, point: 3 };
+    //     const word6: PossibleWords = { word: 'art', orientation: Orientation.Horizontal, line: 5, startIdx: 0, point: 5 };
 
     //     const expectedPoss: PossibleWords[] = [];
     //     expectedPoss.push(word2);

@@ -3,6 +3,7 @@ import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/classes/constants';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { GridService } from '@app/services/grid.service';
 import { TestBed } from '@angular/core/testing';
+import { Orientation } from '@app/classes/scrabble-board-pattern';
 
 describe('GridService', () => {
     let service: GridService;
@@ -99,8 +100,8 @@ describe('GridService', () => {
     it('drawArrow should call stroke and fill on the canvas', () => {
         const strokeSpy = spyOn(service.gridContextPlacementLayer, 'stroke');
         const fillSpy = spyOn(service.gridContextPlacementLayer, 'fill');
-        service.drawArrow(service.gridContextPlacementLayer, { x: 7, y: 7 }, 'h');
-        service.drawArrow(service.gridContextPlacementLayer, { x: 7, y: 7 }, 'v');
+        service.drawArrow(service.gridContextPlacementLayer, { x: 7, y: 7 }, Orientation.Horizontal);
+        service.drawArrow(service.gridContextPlacementLayer, { x: 7, y: 7 }, Orientation.Vertical);
         expect(strokeSpy).toHaveBeenCalledTimes(2);
         expect(fillSpy).toHaveBeenCalledTimes(2);
     });
