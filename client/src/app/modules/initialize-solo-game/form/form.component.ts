@@ -68,7 +68,11 @@ export class FormComponent implements OnDestroy {
         return;
     }
 
-    private chooseRandomAIName(): string {
+    chooseStartingPlayer(): StartingPlayer {
+        return Math.floor((Math.random() * Object.keys(StartingPlayer).length) / 2);
+    }
+
+    chooseRandomAIName(): string {
         let randomName: string;
         do {
             // Random value [0, AI_NAME_DATABASE.length[
@@ -76,9 +80,5 @@ export class FormComponent implements OnDestroy {
             randomName = AI_NAME_DATABASE[randomNumber];
         } while (randomName === this.form.controls.playerName.value);
         return randomName;
-    }
-
-    private chooseStartingPlayer(): StartingPlayer {
-        return Math.floor((Math.random() * Object.keys(StartingPlayer).length) / 2);
     }
 }

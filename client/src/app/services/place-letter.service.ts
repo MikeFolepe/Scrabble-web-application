@@ -1,4 +1,5 @@
 /* eslint-disable max-lines */
+import { Injectable } from '@angular/core';
 import {
     BOARD_COLUMNS,
     BOARD_ROWS,
@@ -6,21 +7,21 @@ import {
     EASEL_SIZE,
     INDEX_INVALID,
     INDEX_PLAYER_AI,
-    INDEX_REAL_PLAYER,
+    INDEX_PLAYER_ONE,
     THREE_SECONDS_DELAY,
 } from '@app/classes/constants';
-import { ClientSocketService } from './client-socket.service';
-import { GameSettingsService } from './game-settings.service';
+import { TypeMessage } from '@app/classes/enum';
+import { ScoreValidation } from '@app/classes/validation-score';
+import { Vec2 } from '@app/classes/vec2';
 import { GridService } from '@app/services/grid.service';
-import { Injectable } from '@angular/core';
 import { PlayerAIService } from '@app/services/player-ia.service';
 import { PlayerService } from '@app/services/player.service';
-import { ScoreValidation } from '@app/classes/validation-score';
+import { WordValidationService } from '@app/services/word-validation.service';
+import { ClientSocketService } from './client-socket.service';
+import { EndGameService } from './end-game.service';
+import { GameSettingsService } from './game-settings.service';
 import { SendMessageService } from './send-message.service';
 import { SkipTurnService } from './skip-turn.service';
-import { TypeMessage } from '@app/classes/enum';
-import { Vec2 } from '@app/classes/vec2';
-import { WordValidationService } from '@app/services/word-validation.service';
 
 @Injectable({
     providedIn: 'root',
@@ -50,6 +51,7 @@ export class PlaceLetterService {
         private skipTurnService: SkipTurnService,
         private clientSocketService: ClientSocketService,
         private gameSettingsService: GameSettingsService,
+        private endGameService: EndGameService,
     ) {
         this.scrabbleBoard = []; // Initializes the array with empty letters
         for (let i = 0; i < BOARD_ROWS; i++) {
@@ -63,21 +65,24 @@ export class PlaceLetterService {
     }
 
     receivePlacement(): void {
-        this.clientSocketService.socket.on('receivePlacement', (startPosition: Vec2, orientation: string, word: string) => {
-            this.placeByOpponent(startPosition, orientation, word);
-        });
+        this.clientSocketService.socket.on(
+            'receivePlacement',
+            (scrabbleBoard: string[][], startPosition: Vec2, orientation: string, word: string) => {
+                this.placeByOpponent(scrabbleBoard, startPosition, orientation, word);
+            },
+        );
     }
 
-    async placeMethodAdapter(object: { start: Vec2; orientation: string; word: string; indexPlayer: number }) {
+    async placeMethodAdapter(object: { start: Vec2; orientation: string; word: string; indexPlayer: number }): Promise<void> {
         this.playerAIService.isPlacementValid = false;
         const isValid = await this.placeCommand(object.start, object.orientation, object.word, object.indexPlayer);
         this.playerAIService.isPlacementValid = isValid;
     }
 
-    placeByOpponent(startPosition: Vec2, orientation: string, word: string): void {
+    placeByOpponent(scrabbleBoard: string[][], startPosition: Vec2, orientation: string, word: string): void {
         const currentPosition = { x: startPosition.x, y: startPosition.y };
+        this.scrabbleBoard = scrabbleBoard;
         for (const letter of word) {
-            this.scrabbleBoard[currentPosition.y][currentPosition.x] = letter;
             this.gridService.drawLetter(this.gridService.gridContextLettersLayer, letter, currentPosition, this.playerService.fontSize);
             this.updatePosition(currentPosition, orientation);
         }
@@ -89,11 +94,7 @@ export class PlaceLetterService {
         this.startPosition = position;
         this.orientation = orientation;
         this.word = word;
-        if (orientation === 'v') {
-            this.isRow = false;
-        } else if (orientation === 'h') {
-            this.isRow = true;
-        }
+        this.isRow = orientation === 'v' ? false : true;
         // Remove accents from the word to place
         const wordNoAccents = word.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
         // Reset the array containing the valid letters by making them all valid
@@ -125,7 +126,7 @@ export class PlaceLetterService {
         return await this.validatePlacement(position, orientation, wordNoAccents, indexPlayer);
     }
 
-    placeWithKeyboard(position: Vec2, letter: string, orientation: string, indexLetterInWord: number, indexPlayer: number): boolean {
+    async placeWithKeyboard(position: Vec2, letter: string, orientation: string, indexLetterInWord: number, indexPlayer: number): Promise<boolean> {
         // If we are placing the first letter of the word
         if (indexLetterInWord === 0) {
             // Reset the array containing the valid letters
@@ -165,6 +166,7 @@ export class PlaceLetterService {
     }
 
     async validatePlacement(position: Vec2, orientation: string, word: string, indexPlayer: number): Promise<boolean> {
+        this.endGameService.addActionsLog('placer');
         // Validation of the placement
         const finalResult: ScoreValidation = await this.wordValidationService.validateAllWordsOnBoard(
             this.scrabbleBoard,
@@ -179,7 +181,7 @@ export class PlaceLetterService {
         this.handleInvalidPlacement(position, orientation, word, indexPlayer);
         this.sendMessageService.displayMessageByType('ERREUR : Un ou des mots formés sont invalides', TypeMessage.Error);
         setTimeout(() => {
-            if (this.gameSettingsService.isSoloMode && indexPlayer === INDEX_REAL_PLAYER) this.skipTurnService.switchTurn();
+            if (this.gameSettingsService.isSoloMode && indexPlayer === INDEX_PLAYER_ONE) this.skipTurnService.switchTurn();
             else if (!this.gameSettingsService.isSoloMode) this.skipTurnService.switchTurn();
         }, THREE_SECONDS_DELAY);
         return false;
@@ -228,7 +230,14 @@ export class PlaceLetterService {
         this.playerAIService.isFirstRound = false;
         // Emit to server on multiplayer mode
         if (!this.gameSettingsService.isSoloMode) {
-            this.clientSocketService.socket.emit('sendPlacement', this.startPosition, this.orientation, this.word, this.clientSocketService.roomId);
+            this.clientSocketService.socket.emit(
+                'sendPlacement',
+                this.scrabbleBoard,
+                this.startPosition,
+                this.orientation,
+                this.word,
+                this.clientSocketService.roomId,
+            );
         }
     }
 

@@ -78,14 +78,6 @@ describe('ChatBoxComponent', () => {
         expect(component.listTypes[0]).toEqual(TypeMessage.System);
     });
 
-    it('should send message as opponent when sendOpponentMessage() is called', () => {
-        component.sendOpponentMessage('Opponent message');
-        component.sendOpponentMessage('Opponent system message');
-        expect(component.listTypes).toHaveSize(2);
-        expect(component.listMessages).toHaveSize(2);
-        expect(component.listTypes[0]).toEqual(TypeMessage.Opponent);
-    });
-
     it('should use the message and the type from sendMessageService when we display a message', () => {
         component['sendMessageService'].message = 'Service message';
         component['sendMessageService'].typeMessage = TypeMessage.System;

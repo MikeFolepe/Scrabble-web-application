@@ -29,7 +29,8 @@ export const CENTRAL_CASE_POSITION_Y = 7;
 
 export const PLAYERS_NUMBER = 2;
 export const INDEX_INVALID = -1;
-export const INDEX_REAL_PLAYER = 0;
+export const INDEX_PLAYER_ONE = 0;
+export const INDEX_PLAYER_TWO = 1;
 export const INDEX_PLAYER_AI = 1;
 
 export const LAST_INDEX = -1;
