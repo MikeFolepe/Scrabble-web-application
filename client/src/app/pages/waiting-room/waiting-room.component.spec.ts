@@ -4,6 +4,7 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable prettier/prettier */
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ClientSocketService } from '@app/services/client-socket.service';
@@ -31,6 +32,7 @@ describe('WaitingRoomComponent', () => {
                 { provide: clientSocketServiceSpyjob, useValue: ClientSocketService },
                 { provide: gameSettingsServiceSpyjob, useValue: GameSettingsService },
             ],
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
     });
 
