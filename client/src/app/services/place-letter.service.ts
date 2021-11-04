@@ -8,7 +8,7 @@ import {
     INDEX_INVALID,
     INDEX_PLAYER_AI,
     INDEX_PLAYER_ONE,
-    THREE_SECONDS_DELAY
+    THREE_SECONDS_DELAY,
 } from '@app/classes/constants';
 import { TypeMessage } from '@app/classes/enum';
 import { Orientation } from '@app/classes/scrabble-board-pattern';
