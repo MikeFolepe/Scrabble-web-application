@@ -1,10 +1,10 @@
+import { RoomManagerService } from '@app/services/room-manager.service';
 import { GameSettings } from '@common/game-settings';
 import { PlayerIndex } from '@common/PlayerIndex';
-import { RoomManagerService } from '@app/services/room-manager.service';
-import { Service } from 'typedi';
 import { State } from '@common/room';
 import * as http from 'http';
 import * as io from 'socket.io';
+import { Service } from 'typedi';
 
 @Service()
 export class SocketManagerService {
@@ -40,11 +40,7 @@ export class SocketManagerService {
                 }
                 this.roomManagerService.addCustomer(playerName, roomId);
                 // Search the good room and set the custommer ID
-                const myroom = this.roomManagerService.find(roomId);
-                // On s'assure de pas avoir une room indéfinie
-                if (myroom !== undefined) {
-                    this.roomManagerService.setSocket(myroom, socket.id);
-                }
+                this.roomManagerService.setSocket(this.roomManagerService.find(roomId), socket.id);
                 this.roomManagerService.setState(roomId, State.Playing);
                 // block someone else entry from room selection
                 this.sio.emit('roomConfiguration', this.roomManagerService.rooms);
@@ -78,7 +74,6 @@ export class SocketManagerService {
                 this.roomManagerService.deleteRoom(roomId);
                 this.sio.emit('roomConfiguration', this.roomManagerService.rooms);
                 this.sio.in(roomId).emit('goToMainMenu');
-                // route les joueurs vers le debut avec un message d'erreur
             });
 
             socket.on('sendReserve', (reserve: unknown, reserveSize: number, roomId: string) => {
@@ -93,7 +88,6 @@ export class SocketManagerService {
                 if (turn) {
                     socket.to(roomId).emit('turnSwitched', turn);
                     this.sio.in(roomId).emit('startTimer');
-                    // console.log('time');
                 }
             });
 

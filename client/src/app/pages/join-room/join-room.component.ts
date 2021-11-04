@@ -15,13 +15,14 @@ import { Room, State } from '@common/room';
     styleUrls: ['./join-room.component.scss'],
 })
 export class JoinRoomComponent implements OnInit {
-    rooms: Room[] = [];
+    rooms: Room[];
     pageSize: number;
     startIdx: number;
     isNameValid: boolean;
     isRoomStillAvailable: boolean;
 
     constructor(private clientSocketService: ClientSocketService, public dialog: MatDialog) {
+        this.rooms = [];
         this.isNameValid = true;
         this.isRoomStillAvailable = true;
         this.startIdx = 0;
