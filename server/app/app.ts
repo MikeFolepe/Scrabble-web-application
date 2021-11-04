@@ -1,3 +1,4 @@
+import { HttpException } from '@app/classes/http.exception';
 /* eslint-disable sort-imports */
 import * as logger from 'morgan';
 import * as swaggerJSDoc from 'swagger-jsdoc';
@@ -5,7 +6,6 @@ import * as swaggerUi from 'swagger-ui-express';
 import * as cookieParser from 'cookie-parser';
 import * as cors from 'cors';
 import * as express from 'express';
-import { HttpException } from '@app/classes/http.exception';
 import { StatusCodes } from 'http-status-codes';
 import { Service } from 'typedi';
 import { MultiplayerController } from './controllers/multiplayer.controller';

@@ -14,6 +14,7 @@ describe('GridService', () => {
         ctxStub = CanvasTestHelper.createCanvas(DEFAULT_WIDTH, DEFAULT_HEIGHT).getContext('2d') as CanvasRenderingContext2D;
         service.gridContextBoardLayer = ctxStub;
         service.gridContextLettersLayer = ctxStub;
+        service.gridContextPlacementLayer = ctxStub;
     });
 
     it('should be created', () => {
@@ -93,5 +94,14 @@ describe('GridService', () => {
     it('should set grid context', () => {
         service.setGridContext(ctxStub);
         expect(service.gridContextBoardLayer).toBe(ctxStub);
+    });
+
+    it('drawArrow should call stroke and fill on the canvas', () => {
+        const strokeSpy = spyOn(service.gridContextPlacementLayer, 'stroke');
+        const fillSpy = spyOn(service.gridContextPlacementLayer, 'fill');
+        service.drawArrow(service.gridContextPlacementLayer, { x: 7, y: 7 }, 'h');
+        service.drawArrow(service.gridContextPlacementLayer, { x: 7, y: 7 }, 'v');
+        expect(strokeSpy).toHaveBeenCalledTimes(2);
+        expect(fillSpy).toHaveBeenCalledTimes(2);
     });
 });

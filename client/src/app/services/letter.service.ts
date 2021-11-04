@@ -1,5 +1,6 @@
 import { EASEL_SIZE, RESERVE } from '@app/classes/constants';
 import { BehaviorSubject } from 'rxjs';
+import { ClientSocketService } from '@app/services/client-socket.service';
 import { Injectable } from '@angular/core';
 import { Letter } from '@app/classes/letter';
 @Injectable({
@@ -13,7 +14,11 @@ export class LetterService {
     reserveSize: number;
     messageSource = new BehaviorSubject('default message');
 
-    constructor() {
+    constructor(private clientSocketService: ClientSocketService) {
+        this.clientSocketService.socket.on('receiveReserve', (reserve: Letter[], reserveSize: number) => {
+            this.reserve = reserve;
+            this.reserveSize = reserveSize;
+        });
         let size = 0;
         for (const letter of this.reserve) {
             size += letter.quantity;
@@ -42,6 +47,7 @@ export class LetterService {
         // Update reserve
         letter.quantity--;
         this.reserveSize--;
+        this.clientSocketService.socket.emit('sendReserve', this.reserve, this.reserveSize, this.clientSocketService.roomId);
         return letter;
     }
 
@@ -50,7 +56,19 @@ export class LetterService {
             if (letter.toUpperCase() === letterReserve.value) {
                 letterReserve.quantity++;
                 this.reserveSize++;
+                this.clientSocketService.socket.emit('sendReserve', this.reserve, this.reserveSize, this.clientSocketService.roomId);
                 return;
+            }
+        }
+    }
+
+    removeLettersFromReserve(letters: Letter[]): void {
+        for (const letter of letters) {
+            for (const letterReserve of this.reserve) {
+                if (letter.value === letterReserve.value) {
+                    letterReserve.quantity--;
+                    this.reserveSize--;
+                }
             }
         }
     }

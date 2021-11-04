@@ -1,11 +1,11 @@
-import { BOARD_COLUMNS, BOARD_ROWS, CASE_SIZE, INDEX_INVALID, INDEX_REAL_PLAYER, LAST_INDEX } from '@app/classes/constants';
-import { MouseButton, TypeMessage } from '@app/classes/enum';
-import { GridService } from '@app/services/grid.service';
 import { Injectable } from '@angular/core';
+import { BOARD_COLUMNS, BOARD_ROWS, CASE_SIZE, INDEX_INVALID, INDEX_PLAYER_ONE, LAST_INDEX } from '@app/classes/constants';
+import { MouseButton, TypeMessage } from '@app/classes/enum';
+import { Vec2 } from '@app/classes/vec2';
+import { GridService } from '@app/services/grid.service';
 import { PlaceLetterService } from '@app/services/place-letter.service';
 import { SendMessageService } from '@app/services/send-message.service';
 import { SkipTurnService } from '@app/services/skip-turn.service';
-import { Vec2 } from '@app/classes/vec2';
 
 @Injectable({
     providedIn: 'root',
@@ -70,10 +70,10 @@ export class BoardHandlerService {
         }
     }
 
-    placeLetter(letter: string): void {
+    async placeLetter(letter: string): Promise<void> {
         if (this.isFirstCasePicked && !this.isFirstCaseLocked) {
             // Placing the 1st letter
-            if (this.placeLetterService.placeWithKeyboard(this.currentCase, letter, this.orientation, this.word.length, INDEX_REAL_PLAYER)) {
+            if (await this.placeLetterService.placeWithKeyboard(this.currentCase, letter, this.orientation, this.word.length, INDEX_PLAYER_ONE)) {
                 this.placedLetters[this.word.length] = true;
                 this.word += letter;
                 this.isFirstCaseLocked = true;
@@ -82,7 +82,7 @@ export class BoardHandlerService {
         } else if (this.isFirstCaseLocked) {
             // Placing following letters
             this.goToNextCase();
-            if (this.placeLetterService.placeWithKeyboard(this.currentCase, letter, this.orientation, this.word.length, INDEX_REAL_PLAYER)) {
+            if (await this.placeLetterService.placeWithKeyboard(this.currentCase, letter, this.orientation, this.word.length, INDEX_PLAYER_ONE)) {
                 this.placedLetters[this.word.length] = true;
                 this.word += letter;
                 this.updateCaseDisplay();
@@ -97,7 +97,7 @@ export class BoardHandlerService {
         // Verify that letterToRemove isn't undefined
         if (letterToRemove) {
             this.word = this.word.slice(0, LAST_INDEX);
-            this.placeLetterService.removePlacedLetter(this.currentCase, letterToRemove, INDEX_REAL_PLAYER);
+            this.placeLetterService.removePlacedLetter(this.currentCase, letterToRemove, INDEX_PLAYER_ONE);
         }
         // If there's still at least one letter to remove
         if (this.word.length) {
@@ -113,9 +113,9 @@ export class BoardHandlerService {
         }
     }
 
-    confirmPlacement(): void {
+    async confirmPlacement(): Promise<void> {
         // Validation of the placement
-        if (this.placeLetterService.validateKeyboardPlacement(this.firstCase, this.orientation, this.word, INDEX_REAL_PLAYER)) {
+        if (await this.placeLetterService.validateKeyboardPlacement(this.firstCase, this.orientation, this.word, INDEX_PLAYER_ONE)) {
             const column = (this.firstCase.x + 1).toString();
             const row: string = String.fromCharCode(this.firstCase.y + 'a'.charCodeAt(0));
             this.sendMessageService.displayMessageByType('!placer ' + row + column + this.orientation + ' ' + this.word, TypeMessage.Player);

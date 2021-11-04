@@ -1,15 +1,15 @@
-import { INDEX_REAL_PLAYER, MAX_NUMBER_OF_POSSIBILITY } from '@app/classes/constants';
+import { Injectable } from '@angular/core';
+import { INDEX_PLAYER_ONE, MAX_NUMBER_OF_POSSIBILITY } from '@app/classes/constants';
+import { TypeMessage } from '@app/classes/enum';
+import { Vec2 } from '@app/classes/vec2';
 import { DebugService } from '@app/services/debug.service';
 import { EndGameService } from '@app/services/end-game.service';
-import { Injectable } from '@angular/core';
 import { LetterService } from '@app/services/letter.service';
 import { PlaceLetterService } from '@app/services/place-letter.service';
 import { PlayerService } from '@app/services/player.service';
 import { SendMessageService } from '@app/services/send-message.service';
 import { SkipTurnService } from '@app/services/skip-turn.service';
 import { SwapLetterService } from '@app/services/swap-letter.service';
-import { TypeMessage } from '@app/classes/enum';
-import { Vec2 } from '@app/classes/vec2';
 
 @Injectable({
     providedIn: 'root',
@@ -80,7 +80,7 @@ export class ChatboxService {
 
     executeSkipTurn() {
         if (this.skipTurn.isTurn) {
-            this.endGameService.actionsLog.push('passer');
+            this.endGameService.addActionsLog('passer');
             this.sendMessageService.displayMessageByType(this.message, this.typeMessage);
             this.skipTurn.switchTurn();
         } else {
@@ -103,11 +103,10 @@ export class ChatboxService {
 
     executeSwap() {
         if (this.skipTurn.isTurn) {
-            this.endGameService.actionsLog.push('echanger');
             const messageSplitted = this.message.split(/\s/);
 
-            if (this.swapLetterService.swapCommand(messageSplitted[1], INDEX_REAL_PLAYER)) {
-                this.message = this.playerService.players[INDEX_REAL_PLAYER].name + ' : ' + this.message;
+            if (this.swapLetterService.swapCommand(messageSplitted[1], INDEX_PLAYER_ONE)) {
+                this.message = this.playerService.players[INDEX_PLAYER_ONE].name + ' : ' + this.message;
                 this.sendMessageService.displayMessageByType(this.message, this.typeMessage);
                 this.skipTurn.switchTurn();
             }
@@ -118,7 +117,6 @@ export class ChatboxService {
 
     async executePlace() {
         if (this.skipTurn.isTurn) {
-            this.endGameService.actionsLog.push('placer');
             const messageSplitted = this.message.split(/\s/);
             const positionSplitted = messageSplitted[1].split(/([0-9]+)/);
 
@@ -128,13 +126,11 @@ export class ChatboxService {
                 y: positionSplitted[0].charCodeAt(0) - 'a'.charCodeAt(0),
             };
             const orientation = positionSplitted[2];
-
-            if (this.placeLetterService.placeCommand(position, orientation, messageSplitted[2], INDEX_REAL_PLAYER)) {
+            if (await this.placeLetterService.placeCommand(position, orientation, messageSplitted[2], INDEX_PLAYER_ONE)) {
                 this.sendMessageService.displayMessageByType(this.message, this.typeMessage);
             }
         } else {
-            this.typeMessage = TypeMessage.Error;
-            this.message = this.notTurnErrorMessage;
+            this.sendMessageService.displayMessageByType(this.notTurnErrorMessage, TypeMessage.Error);
         }
     }
 
@@ -148,40 +144,31 @@ export class ChatboxService {
     }
 
     isInputValid(): boolean {
-        const debugInput = /^!debug/g;
-        const passInput = /^!passer/g;
-        const swapInput = /^!échanger/g;
-        const placeInput = /^!placer/g;
+        const validInputs = [/^!debug/g, /^!passer/g, /^!échanger/g, /^!placer/g, /^!reserve/g];
 
-        if (debugInput.test(this.message) || passInput.test(this.message) || swapInput.test(this.message) || placeInput.test(this.message)) {
-            return true;
-        }
+        for (const input of validInputs) if (input.test(this.message)) return true;
 
         this.message = "ERREUR : L'entrée est invalide";
         return false;
     }
 
     isSyntaxValid(): boolean {
-        const debugSyntax = /^!debug$/g;
-        const passSyntax = /^!passer$/g;
-        const swapSyntax = /^!échanger\s([a-z]|[*]){1,7}$/g;
-        const placeSyntax = /^!placer\s([a-o]([1-9]|1[0-5])[hv])\s([a-zA-Z\u00C0-\u00FF]|[*])+/g;
+        const syntaxes = new Map<RegExp, string>([
+            [/^!debug$/g, 'debug'],
+            [/^!passer$/g, 'passer'],
+            [/^!échanger\s([a-z]|[*]){1,7}$/g, 'echanger'],
+            [/^!placer\s([a-o]([1-9]|1[0-5])[hv])\s([a-zA-Z\u00C0-\u00FF]|[*])+/g, 'placer'],
+            [/^!reserve$/g, 'reserve'],
+        ]);
 
-        let isSyntaxValid = true;
-
-        if (debugSyntax.test(this.message)) {
-            this.command = 'debug';
-        } else if (passSyntax.test(this.message)) {
-            this.command = 'passer';
-        } else if (swapSyntax.test(this.message)) {
-            this.command = 'echanger';
-        } else if (placeSyntax.test(this.message)) {
-            this.command = 'placer';
-        } else {
-            isSyntaxValid = false;
-            this.message = 'ERREUR : La syntaxe est invalide';
+        for (const syntax of syntaxes.keys()) {
+            if (syntax.test(this.message) && syntaxes.get(syntax)) {
+                this.command = syntaxes.get(syntax) as string;
+                return true;
+            }
         }
-        return isSyntaxValid;
+        this.message = 'ERREUR : La syntaxe est invalide';
+        return false;
     }
 
     // Method which check the different size of table of possibility for the debug
