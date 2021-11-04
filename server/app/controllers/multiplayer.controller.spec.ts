@@ -10,7 +10,7 @@ describe('MultiPlayerController', () => {
     let expressApp: Express.Application;
     chai.use(chaiHttp);
 
-    beforeEach(async () => {
+    beforeEach(() => {
         const app = Container.get(Application);
         expressApp = app.app;
     });

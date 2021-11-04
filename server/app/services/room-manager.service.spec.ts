@@ -105,7 +105,7 @@ describe('RoomManagerService', () => {
         expect(roomManagerService.isNotAvailable(id)).to.equal(false);
     });
 
-    it('should return  true if the room  exist', () => {
+    it('should return false if the room  is available ', () => {
         roomManagerService.createRoom(socketId1, id, settings);
         expect(roomManagerService.isNotAvailable(id)).to.equal(false);
     });
