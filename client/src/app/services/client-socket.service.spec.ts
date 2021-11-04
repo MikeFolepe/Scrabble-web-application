@@ -1,40 +1,29 @@
 /* eslint-disable dot-notation */
 /* eslint-disable sort-imports */
 import { TestBed } from '@angular/core/testing';
-import { Router } from '@angular/router';
+// import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { ClientSocketService } from './client-socket.service';
+import { ClientSocketService } from '@app/services/client-socket.service';
+import { GameSettings } from '@common/game-settings';
+import { Socket } from 'socket.io-client';
 
 fdescribe('ClientSocketService', () => {
     let service: ClientSocketService;
-    let routerSpy: Router;
-    // let gameSettingsService: jasmine.SpyObj<GameSettingsService>;
-    // RouterTestingModule.withRoutes([{ path: 'game', component: GameViewComponent }]);
-
-    // beforeEach(async () => {
-    //     RouterTestingModule.withRoutes([{ path: 'game', component: GameViewComponent }]);
-    // });
+    // let routerSpy: Router;
     beforeEach(() => {
-        routerSpy = jasmine.createSpyObj('Router', ['navigate']);
-        // service.socket = Socket as unknown as sio.Server;
-        // server.listen(() => {
-        // let urlString = `http://${window.location.hostname}:3000`;
-        // service.socket = io(urlString);
-        // sio.on("connection", (socket: any) => {
-        //   serverSocket = socket;
-        // });
+        //routerSpy = jasmine.createSpyObj('Router', ['navigate']);
     });
 
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [RouterTestingModule],
-            providers: [{ provide: Router, useValue: routerSpy }],
+            // providers: [{ provide: Router, useValue: routerSpy }],
         });
         service = TestBed.inject(ClientSocketService);
     });
 
     it('should navigate to game page on goToGameView event', () => {
-        //const navigateSpy = spyOn(service['router'], 'navigate');
+        const navigateSpy = spyOn(service['router'], 'navigate').and.callThrough();
         // RouterTestingModule.withRoutes([{ path: 'game', component: GameViewComponent }]);
         service.socket = {
             // eslint-disable-next-line no-unused-vars
@@ -43,8 +32,44 @@ fdescribe('ClientSocketService', () => {
                     callback();
                 }
             },
-        };
+        } as unknown as Socket;
         service.route();
-        expect(routerSpy['navigate']).toHaveBeenCalledOnceWith(['game']);
+        expect(navigateSpy).toHaveBeenCalledWith(['game']);
+    });
+
+    it('should initialize roomId with argument', () => {
+        service.socket = {
+            // eslint-disable-next-line no-unused-vars
+            on: (eventName: string, callback: (roomIdFromServer: string) => void) => {
+                if (eventName === 'yourRoomId') {
+                    callback('fakeId');
+                }
+            },
+        } as unknown as Socket;
+        service.initializeRoomId();
+        expect(service.roomId).toEqual('fakeId');
+    });
+
+    it('should initialize gameSettings of gameSettingsService with argument', () => {
+        const settings: GameSettings = new GameSettings(
+            ['Paul', 'Mike'],
+            1,
+            '00',
+            '30',
+            'facile',
+            'Désactiver',
+            "[['A1', 'doubleLetter'], ['A8', 'tripleLetter']]",
+            'français',
+        );
+        service.socket = {
+            // eslint-disable-next-line no-unused-vars
+            on: (eventName: string, callback: (gameSettings: GameSettings) => void) => {
+                if (eventName === 'yourGameSettings') {
+                    callback(settings);
+                }
+            },
+        } as unknown as Socket;
+        service.initializeGameSettings();
+        expect(service['gameSettingsService'].gameSettings).toEqual(settings);
     });
 });

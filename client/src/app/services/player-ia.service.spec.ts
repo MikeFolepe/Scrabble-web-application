@@ -1,10 +1,10 @@
-/* eslint-disable sort-imports */
+/* eslint-disable dot-notation */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
-import { TestBed } from '@angular/core/testing';
 import { BOARD_COLUMNS, BOARD_ROWS } from '@app/classes/constants';
 import { Orientation, PossibleWords } from '@app/classes/scrabble-board-pattern';
+import { PlayerAIService } from '@app/services/player-ia.service';
+import { TestBed } from '@angular/core/testing';
 import { Vec2 } from '@app/classes/vec2';
-import { PlayerAIService } from './player-ia.service';
 
 describe('PlayerAIService', () => {
     let service: PlayerAIService;
@@ -91,5 +91,15 @@ describe('PlayerAIService', () => {
 
         service.calculatePoints(possWord, scrabbleBoard);
         expect(possWord[0].point).toEqual(expectedEarning);
+    });
+
+    it('should sort decreasing', () => {
+        const testWord = { word: 'test', orientation: Orientation.VerticalOrientation, line: 5, startIdx: 13, point: 0 };
+        const secondTestWord = { word: 'test2', orientation: Orientation.VerticalOrientation, line: 5, startIdx: 13, point: 10 };
+        expect(service['sortDecreasing'](testWord, secondTestWord)).toEqual(1);
+        expect(service['sortDecreasing'](secondTestWord, testWord)).toEqual(-1);
+        const allPossibleWords = [testWord, secondTestWord];
+        service.sortDecreasingPoints(allPossibleWords);
+        expect(allPossibleWords).toEqual([secondTestWord, testWord]);
     });
 });

@@ -1,7 +1,7 @@
-import { WordValidationService } from '@app/services/word-validation.service';
 import { Request, Response, Router } from 'express';
-import { StatusCodes } from 'http-status-codes';
 import { Service } from 'typedi';
+import { StatusCodes } from 'http-status-codes';
+import { WordValidationService } from '@app/services/word-validation.service';
 
 @Service()
 export class MultiplayerController {

@@ -1,6 +1,6 @@
-import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { PlayerNameFieldComponent } from './player-name-field.component';
 
 describe('PlayerNameFieldComponent', () => {

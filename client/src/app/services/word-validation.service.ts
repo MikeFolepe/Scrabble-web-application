@@ -1,8 +1,9 @@
-/* eslint-disable sort-imports */
-import { Injectable } from '@angular/core';
-import { ALL_EASEL_BONUS, BOARD_COLUMNS, BOARD_ROWS, BONUS_POSITIONS, RESERVE } from '@app/classes/constants';
-import { ScoreValidation } from '@app/classes/validation-score';
+import { ALL_EASEL_BONUS, BOARD_COLUMNS, BOARD_ROWS, RESERVE } from '@app/classes/constants';
 import { CommunicationService } from '@app/services/communication.service';
+import { Injectable } from '@angular/core';
+import { RandomBonusesService } from '@app/services/random-bonuses.service';
+import { ScoreValidation } from '@app/classes/validation-score';
+
 @Injectable({
     providedIn: 'root',
 })
@@ -15,12 +16,12 @@ export class WordValidationService {
     private validationState = false;
     private foundWords: string[];
 
-    constructor(private httpServer: CommunicationService) {
+    constructor(private httpServer: CommunicationService, private randomBonusService: RandomBonusesService) {
         this.playedWords = new Map<string, string[]>();
         this.newPlayedWords = new Map<string, string[]>();
         this.newWords = new Array<string>();
         this.newPositions = new Array<string>();
-        this.bonusesPositions = new Map<string, string>(BONUS_POSITIONS);
+        this.bonusesPositions = new Map<string, string>(this.randomBonusService.bonusPositions);
         this.foundWords = new Array<string>();
     }
 

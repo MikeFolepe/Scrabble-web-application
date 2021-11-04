@@ -10,25 +10,21 @@
     gap: 5em;
 }
 
-/*.side-board-container {
-    display: flex;
-    width: 15vw;
-    height: 90vh;
-    min-height: 35em;
-    min-width: 55em;
-    justify-content: flex-start;
-    flex-direction: column;
-    flex-wrap: wrap;
-    border: 3px solid #bbb;
-    border-radius: 6px;
-}*/
+.board-container {
+    outline: none;
+}
 
 button {
     height: 3em;
     width: 8em;
 }
 
-#Pass-button {
+#pass-button {
+    height: 3em;
+    width: 8em;
+}
+
+#play-button {
     height: 3em;
     width: 8em;
 }

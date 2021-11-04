@@ -1,26 +1,21 @@
-import { Room } from '@app/classes/room';
 /* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
-/* eslint-disable prettier/prettier */
 /* eslint-disable sort-imports */
-// eslint-disable-next-line prettier/prettier
-// with { "type": "module" } in your package.json
 import { GameSettings } from '@common/game-settings';
-import { State } from '@common/room';
+import { Room, State } from '@common/room';
 import { expect } from 'chai';
 import * as http from 'http';
-// import * as ioS from 'socket.io';
 import { createStubInstance, SinonStubbedInstance } from 'sinon';
 import * as io from 'socket.io';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
-import { RoomManager } from './room-manager.service';
-import { SocketManager } from './socket-manager.service';
+import { RoomManagerService } from './room-manager.service';
+import { SocketManagerService } from './socket-manager.service';
 import Sinon = require('sinon');
 
-describe('SocketManager', () => {
-    let roomManager: SinonStubbedInstance<RoomManager>;
-    let service: SocketManager;
+describe('SocketManagerService', () => {
+    let roomManagerService: SinonStubbedInstance<RoomManagerService>;
+    let service: SocketManagerService;
     let sio: SinonStubbedInstance<io.Server>;
     const id = 'LOG2990';
     const socketId = 'socket1';
@@ -30,14 +25,14 @@ describe('SocketManager', () => {
     const fakeIn = {
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         in: () => {},
-         // eslint-disable-next-line @typescript-eslint/no-empty-function
-        emit: () =>{}
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        emit: () => {},
     } as unknown as io.BroadcastOperator<DefaultEventsMap>;
-    
+
     beforeEach(() => {
-        roomManager = createStubInstance(RoomManager);
+        roomManagerService = createStubInstance(RoomManagerService);
         sio = createStubInstance(io.Server);
-        service = new SocketManager(http.createServer(), roomManager);
+        service = new SocketManagerService(http.createServer(), roomManagerService);
         service['sio'] = sio as unknown as io.Server;
     });
 
@@ -49,7 +44,7 @@ describe('SocketManager', () => {
                 return;
             },
         };
-        
+
         service['sio'] = {
             on: (eventName: string, callback: (socket: any) => void) => {
                 if (eventName === 'connection') {
@@ -57,7 +52,7 @@ describe('SocketManager', () => {
                 }
             },
         } as io.Server;
-        
+
         const spy = Sinon.spy(fakeSocket, 'on');
         service.handleSockets();
         expect(spy.called).to.equal(true);
@@ -72,9 +67,7 @@ describe('SocketManager', () => {
                 }
             },
             // eslint-disable-next-line @typescript-eslint/no-empty-function
-            join: () => {
-                
-            },
+            join: () => {},
             // eslint-disable-next-line @typescript-eslint/no-empty-function
             emit: () => {},
         };
@@ -90,9 +83,8 @@ describe('SocketManager', () => {
         } as unknown as io.Server;
 
         service.handleSockets();
-        expect(roomManager.createRoomId.called).to.equal(true);
-        expect(roomManager.createRoom.called).to.equal(true);
-
+        expect(roomManagerService.createRoomId.called).to.equal(true);
+        expect(roomManagerService.createRoom.called).to.equal(true);
     });
 
     it('should emit RoomConfigurations', () => {
@@ -143,8 +135,6 @@ describe('SocketManager', () => {
             to: () => {
                 return fakeIn;
             },
-
-
         };
 
         service['sio'] = {
@@ -156,12 +146,12 @@ describe('SocketManager', () => {
             // eslint-disable-next-line @typescript-eslint/no-empty-function
             emit: () => {},
             // eslint-disable-next-line @typescript-eslint/no-empty-function
-            in: () =>{
+            in: () => {
                 return fakeIn;
-            } 
+            },
         } as unknown as io.Server;
         const spy = Sinon.spy(fakeSocket, 'emit');
-        roomManager.rooms = new Array(new Room(id, socketId, settings, stateBusy));
+        roomManagerService.rooms = new Array(new Room(id, socketId, settings, stateBusy));
         service.handleSockets();
         expect(spy.called).to.equal(true);
     });
@@ -176,10 +166,9 @@ describe('SocketManager', () => {
                 }
             },
             // eslint-disable-next-line @typescript-eslint/no-empty-function
-            emit: () => {
-            },
+            emit: () => {},
             // eslint-disable-next-line @typescript-eslint/no-empty-function
-            disconnect: () =>{}
+            disconnect: () => {},
         } as unknown as io.Socket;
         const spy = Sinon.spy(fakeSocket, 'disconnect');
         service['sio'] = {
@@ -194,7 +183,7 @@ describe('SocketManager', () => {
 
         service.handleSockets();
         expect(spy.called).to.equal(true);
-        expect(roomManager.deleteRoom.called).to.equal(true);
+        expect(roomManagerService.deleteRoom.called).to.equal(true);
     });
 
     it('should call disconnect', () => {
@@ -216,16 +205,14 @@ describe('SocketManager', () => {
             // eslint-disable-next-line @typescript-eslint/no-empty-function
             emit: () => {},
 
-            in: () =>{
+            in: () => {
                 return fakeIn;
-            } 
-
+            },
         } as unknown as io.Server;
 
         service.handleSockets();
-        expect(roomManager.deleteRoom.called).to.equal(true);
+        expect(roomManagerService.deleteRoom.called).to.equal(true);
     });
-
 
     it('should send a message', () => {
         const fakeSocket = {
@@ -254,13 +241,11 @@ describe('SocketManager', () => {
             // eslint-disable-next-line @typescript-eslint/no-empty-function
             emit: () => {},
             // eslint-disable-next-line @typescript-eslint/no-empty-function
-            in: () =>{
+            in: () => {
                 return fakeIn;
-            } 
+            },
         } as unknown as io.Server;
         service.handleSockets();
         expect(spy.called).to.equal(true);
     });
-
-
 });

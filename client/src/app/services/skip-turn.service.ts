@@ -1,8 +1,8 @@
 /* eslint-disable sort-imports */
-import { Injectable } from '@angular/core';
-import { ONE_SECOND_TIME } from '@app/classes/constants';
 import { EndGameService } from '@app/services/end-game.service';
 import { GameSettingsService } from './game-settings.service';
+import { Injectable } from '@angular/core';
+import { ONE_SECOND_DELAY } from '@app/classes/constants';
 
 @Injectable({
     providedIn: 'root',
@@ -35,7 +35,7 @@ export class SkipTurnService {
                 this.isTurn = true;
                 this.startTimer();
             }
-        }, ONE_SECOND_TIME);
+        }, ONE_SECOND_DELAY);
     }
 
     startTimer(): void {
@@ -53,11 +53,11 @@ export class SkipTurnService {
                 this.stopTimer();
                 setTimeout(() => {
                     this.switchTurn();
-                }, ONE_SECOND_TIME);
+                }, ONE_SECOND_DELAY);
             } else {
                 this.seconds = this.seconds - 1;
             }
-        }, ONE_SECOND_TIME);
+        }, ONE_SECOND_DELAY);
     }
 
     stopTimer(): void {
