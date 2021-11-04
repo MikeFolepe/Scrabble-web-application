@@ -1,11 +1,12 @@
 /* eslint-disable dot-notation */
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { AI_NAME_DATABASE } from '@app/classes/constants';
-import { FormComponent } from './form.component';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormControl, FormGroup } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
+import { AI_NAME_DATABASE } from '@app/classes/constants';
 import { WaitingRoomComponent } from '@app/pages/waiting-room/waiting-room.component';
 import { StartingPlayer } from '@common/game-settings';
+import { FormComponent } from './form.component';
 
 describe('FormComponent', () => {
     let component: FormComponent;
@@ -19,6 +20,13 @@ describe('FormComponent', () => {
             imports: [RouterTestingModule],
             schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
+        component.form = new FormGroup({
+            playerName: new FormControl(''),
+            minuteInput: new FormControl('70'),
+            secondInput: new FormControl('00'),
+            levelInput: new FormControl('Facile'),
+            randomBonus: new FormControl('Désactiver'),
+        });
     });
 
     beforeEach(() => {
@@ -57,16 +65,45 @@ describe('FormComponent', () => {
 
     it('should call chooseRandomAIName()', async () => {
         spyOn(component['router'], 'navigate');
-        const spy = spyOn(component, 'chooseRandomAIName');
+        const chooseRandomAINameSpy = spyOn(component, 'chooseRandomAIName');
         component.initGame();
-        expect(spy).toHaveBeenCalled();
+        expect(chooseRandomAINameSpy).toHaveBeenCalled();
     });
 
     it('should call chooseStartingPlayer()', () => {
         spyOn(component['router'], 'navigate');
-        const spy = spyOn(component, 'chooseStartingPlayer');
+        const chooseStartingPlayerSpy = spyOn(component, 'chooseStartingPlayer');
         component.initGame();
-        expect(spy).toHaveBeenCalled();
+        expect(chooseStartingPlayerSpy).toHaveBeenCalled();
+    });
+
+    it('should only initSoloGame and not initMultiplayerGame if it is soloGame', () => {
+        const initSoloGameSpy = spyOn(component, 'initSoloGame');
+        const initMultiplayerGameSpy = spyOn(component, 'initMultiplayerGame');
+        component.gameSettingsService.isSoloMode = true;
+        component.initGame();
+        expect(initSoloGameSpy).toHaveBeenCalled();
+        expect(initMultiplayerGameSpy).not.toHaveBeenCalled();
+    });
+
+    it('should initMultiplayerGame if it is not soloGame', () => {
+        const initMultiplayerGameSpy = spyOn(component, 'initMultiplayerGame');
+        component.gameSettingsService.isSoloMode = false;
+        component.initGame();
+        expect(initMultiplayerGameSpy).toHaveBeenCalled();
+    });
+
+    it('should call shuffleBonusPositons of randomBonusService if randomBonus are activated in the form', () => {
+        const shuffleBonusPositionsSpy = spyOn(component['randomBonusService'], 'shuffleBonusPositions');
+        component.form = new FormGroup({
+            playerName: new FormControl(''),
+            minuteInput: new FormControl('70'),
+            secondInput: new FormControl('00'),
+            levelInput: new FormControl('Facile'),
+            randomBonus: new FormControl('Activer'),
+        });
+        component.getRightBonusPositions();
+        expect(shuffleBonusPositionsSpy).toHaveBeenCalled();
     });
 
     // it('should initialize all GameSettings elements', () => {

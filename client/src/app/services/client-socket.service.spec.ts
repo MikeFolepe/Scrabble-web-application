@@ -7,7 +7,7 @@ import { ClientSocketService } from '@app/services/client-socket.service';
 import { GameSettings } from '@common/game-settings';
 import { Socket } from 'socket.io-client';
 
-fdescribe('ClientSocketService', () => {
+describe('ClientSocketService', () => {
     let service: ClientSocketService;
     // let routerSpy: Router;
     beforeEach(() => {

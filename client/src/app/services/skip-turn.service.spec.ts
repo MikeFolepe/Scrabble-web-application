@@ -39,15 +39,14 @@ describe('SkipTurnService', () => {
         clientSocketService.socket = io(urlString);
         jasmine.clock().install();
     });
-    
+
     afterEach(() => {
         jasmine.clock().uninstall();
     });
-    
+
     it('should be created', () => {
         expect(service).toBeTruthy();
     });
-
 
     it('should create', () => {
         expect(service).toBeTruthy();
