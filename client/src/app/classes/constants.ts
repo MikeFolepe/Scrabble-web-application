@@ -21,7 +21,7 @@ export const NUMBER_OF_SKIP = 6;
 
 export const ONE_SECOND_DELAY = 1000;
 export const DELAY_TO_PLAY = 20000;
-export const DELAY_OF_LOGIN = 4000;
+export const ERROR_MESSAGE_DELAY = 4000;
 export const THREE_SECONDS_DELAY = 3000;
 
 export const CENTRAL_CASE_POSITION_X = 7;
