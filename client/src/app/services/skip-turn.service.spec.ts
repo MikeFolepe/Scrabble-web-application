@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 import { HttpClientModule } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 /* eslint-disable dot-notation */
@@ -26,14 +27,15 @@ describe('SkipTurnService', () => {
     beforeEach(() => {
         jasmine.clock().install();
     });
-
+    
+    afterEach(() => {
+        jasmine.clock().uninstall();
+    });
+    
     it('should be created', () => {
         expect(service).toBeTruthy();
     });
 
-    afterEach(() => {
-        jasmine.clock().uninstall();
-    });
 
     it('should create', () => {
         expect(service).toBeTruthy();

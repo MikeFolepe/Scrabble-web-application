@@ -1,69 +1,50 @@
-import * as sinon from 'sinon';
+/* eslint-disable dot-notation */
+/* eslint-disable sort-imports */
 import { TestBed } from '@angular/core/testing';
-import { assert } from "chai";
-import * as http from 'http';
-//import { createServer } from "http";
-//import { Server } from "socket.io";
-import { ClientSocketService } from './client-socket.service';
-
-//const sinonChai = require("sinon-chai");
-import { RouterModule } from '@angular/router';
+import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-
-//chai.use(sinonChai);
+import { ClientSocketService } from './client-socket.service';
 
 fdescribe('ClientSocketService', () => {
     let service: ClientSocketService;
-    let io: any;
-    let server: http.Server;
-    let serverSocket: any; 
-    //let clientSocket: any;
+    let routerSpy: Router;
+    // let gameSettingsService: jasmine.SpyObj<GameSettingsService>;
     // RouterTestingModule.withRoutes([{ path: 'game', component: GameViewComponent }]);
-    
+
     // beforeEach(async () => {
     //     RouterTestingModule.withRoutes([{ path: 'game', component: GameViewComponent }]);
     // });
+    beforeEach(() => {
+        routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+        // service.socket = Socket as unknown as sio.Server;
+        // server.listen(() => {
+        // let urlString = `http://${window.location.hostname}:3000`;
+        // service.socket = io(urlString);
+        // sio.on("connection", (socket: any) => {
+        //   serverSocket = socket;
+        // });
+    });
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            imports: [RouterModule, RouterTestingModule],
+            imports: [RouterTestingModule],
+            providers: [{ provide: Router, useValue: routerSpy }],
         });
         service = TestBed.inject(ClientSocketService);
     });
-  
-    beforeEach((done) => {
-      //const httpServer = createServer();
-      //io = new Server(httpServer);
-      io = new io.Server(server, { cors: { origin: '*', methods: ['GET', 'POST'] } });
-      server.listen(() => {
-        // let urlString = `http://${window.location.hostname}:3000`;
-        // clientSocket = io(urlString);
-        io.on("connection", (socket: any) => {
-          serverSocket = socket;
-        });
-      });
-    });
-  
-    afterEach(() => {
-      io.close();
-      service.socket.close();
-    });
 
-    // it('should be created', () => {
-    //     expect(service).toBeTruthy();
-    // });
-
-    it('should navigate to game page on goToGameView event', (done) => {
-        spyOn(service['router'], 'navigate');
-        const stub = sinon.stub(service['router'], 'navigate');
-        service.socket.on('goToGameView', () => {
+    it('should navigate to game page on goToGameView event', () => {
+        //const navigateSpy = spyOn(service['router'], 'navigate');
+        // RouterTestingModule.withRoutes([{ path: 'game', component: GameViewComponent }]);
+        service.socket = {
+            // eslint-disable-next-line no-unused-vars
+            on: (eventName: string, callback: () => void) => {
+                if (eventName === 'goToGameView') {
+                    callback();
+                }
+            },
+        };
         service.route();
-        assert.isTrue(stub.called);
-        //expect(stub).toHaveBeenCalled();
-        done();
-        });
-        serverSocket.emit('goToGameView');
+        expect(routerSpy['navigate']).toHaveBeenCalledOnceWith(['game']);
     });
-
-    
 });

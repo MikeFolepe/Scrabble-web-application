@@ -9,7 +9,7 @@
 // //import { TourService } from '@app/services/tour.service';
 // import { PlayerIAComponent } from './player-ia.component';
 
-// fdescribe('PlayerIAComponent', () => {
+// describe('PlayerIAComponent', () => {
 //     let component: PlayerIAComponent;
 //     let fixture: ComponentFixture<PlayerIAComponent>;
 //     const letterA: Letter[] = [{ value: 'a', quantity: 1, points: 3 }];

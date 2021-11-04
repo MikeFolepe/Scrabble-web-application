@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/classes/constants';
 import { GridService } from '@app/services/grid.service';
@@ -5,13 +6,13 @@ import { TestBed } from '@angular/core/testing';
 
 describe('GridService', () => {
     let service: GridService;
-    let ctxStub: CanvasRenderingContext2D;
+    let contextStub: CanvasRenderingContext2D;
 
     beforeEach(() => {
         TestBed.configureTestingModule({});
         service = TestBed.inject(GridService);
-        ctxStub = CanvasTestHelper.createCanvas(DEFAULT_WIDTH, DEFAULT_HEIGHT).getContext('2d') as CanvasRenderingContext2D;
-        service.gridContext = ctxStub;
+        contextStub = CanvasTestHelper.createCanvas(DEFAULT_WIDTH, DEFAULT_HEIGHT).getContext('2d') as CanvasRenderingContext2D;
+        service.gridContext = contextStub;
     });
 
     it('should be created', () => {
@@ -72,7 +73,7 @@ describe('GridService', () => {
     });
 
     it('should set grid context', () => {
-        service.setGridContext(ctxStub);
-        expect(service.gridContext).toBe(ctxStub);
+        service.setGridContext(contextStub);
+        expect(service.gridContext).toBe(contextStub);
     });
 });
