@@ -28,7 +28,7 @@ describe('MainPageComponent', () => {
     });
 
     it('should route to the right page according to the selected game mode', () => {
-        const spy = spyOn(component['router'], 'navigate').and.callThrough();
+        const spy = spyOn(component['router'], 'navigate');
 
         component.selectedGameMode = 'Jouer une partie en solo';
         component.route();

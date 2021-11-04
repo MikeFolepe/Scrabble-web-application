@@ -1,4 +1,3 @@
-/* eslint-disable sort-imports */
 import { Application } from '@app/app';
 import * as chai from 'chai';
 import { expect } from 'chai';

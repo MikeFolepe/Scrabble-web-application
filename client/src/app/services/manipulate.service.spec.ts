@@ -2,15 +2,19 @@
 /* eslint-disable dot-notation */
 import { EASEL_SIZE, INDEX_INVALID } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
-import { ManipulateService } from '@app/services/manipulate.service';
 import { Player } from '@app/models/player.model';
+import { ManipulateService } from './manipulate.service';
+import { RouterTestingModule } from '@angular/router/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 
 describe('ManipulateService', () => {
     let service: ManipulateService;
 
     beforeEach(() => {
-        TestBed.configureTestingModule({});
+        TestBed.configureTestingModule({
+            imports: [HttpClientTestingModule, RouterTestingModule],
+        });
         service = TestBed.inject(ManipulateService);
 
         const letterA: Letter = { value: 'A', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false };

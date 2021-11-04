@@ -1,5 +1,5 @@
-import { EASEL_SIZE, INDEX_INVALID, INDEX_REAL_PLAYER } from '@app/classes/constants';
 import { Injectable } from '@angular/core';
+import { EASEL_SIZE, INDEX_INVALID, INDEX_PLAYER_ONE } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { PlayerService } from '@app/services/player.service';
 
@@ -29,7 +29,7 @@ export class ManipulateService {
             default: {
                 // Shift + * ?
                 if (/([a-zA-Z]|[*])+/g.test(event.key) && event.key.length === 1) {
-                    const letterPressed = this.indexToSelect(event.key, INDEX_REAL_PLAYER);
+                    const letterPressed = this.indexToSelect(event.key, INDEX_PLAYER_ONE);
                     if (letterPressed === INDEX_INVALID) {
                         this.usedLetters.fill(false, 0, this.usedLetters.length);
                         this.unselectAll();

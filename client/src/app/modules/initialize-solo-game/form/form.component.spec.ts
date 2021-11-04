@@ -5,6 +5,7 @@ import { FormComponent } from './form.component';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { RouterTestingModule } from '@angular/router/testing';
 import { WaitingRoomComponent } from '@app/pages/waiting-room/waiting-room.component';
+import { StartingPlayer } from '@common/game-settings';
 
 describe('FormComponent', () => {
     let component: FormComponent;
@@ -47,4 +48,29 @@ describe('FormComponent', () => {
         expect(secondAiName).not.toEqual(component.form.controls.playerName.value);
         expect(thirdAiName).not.toEqual(component.form.controls.playerName.value);
     });
+
+    it('should choose a valid starting player', () => {
+        const result = component.chooseStartingPlayer();
+        const players = Object.keys(StartingPlayer);
+        expect(players).toContain(result.toString());
+    });
+
+    it('should call chooseRandomAIName()', async () => {
+        spyOn(component['router'], 'navigate');
+        const spy = spyOn(component, 'chooseRandomAIName');
+        component.initGame();
+        expect(spy).toHaveBeenCalled();
+    });
+
+    it('should call chooseStartingPlayer()', () => {
+        spyOn(component['router'], 'navigate');
+        const spy = spyOn(component, 'chooseStartingPlayer');
+        component.initGame();
+        expect(spy).toHaveBeenCalled();
+    });
+
+    // it('should initialize all GameSettings elements', () => {
+    //     component.initGame();
+    //     expect(gameSettingsServiceSpy.initializeSettings).toHaveBeenCalled();
+    // });
 });

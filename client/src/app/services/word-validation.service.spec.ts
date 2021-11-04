@@ -1,5 +1,3 @@
-/* eslint-disable sort-imports */
-// import { CommunicationService } from '@app/services/communication.service';
 /* eslint-disable dot-notation */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-explicit-any */
