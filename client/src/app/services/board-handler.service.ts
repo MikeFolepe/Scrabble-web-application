@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { BOARD_COLUMNS, BOARD_ROWS, CASE_SIZE, INDEX_INVALID, INDEX_PLAYER_ONE, LAST_INDEX } from '@app/classes/constants';
 import { MouseButton, TypeMessage } from '@app/classes/enum';
+import { Orientation } from '@app/classes/scrabble-board-pattern';
 import { Vec2 } from '@app/classes/vec2';
-import { GridService } from '@app/services/grid.service';
-import { PlaceLetterService } from '@app/services/place-letter.service';
-import { SendMessageService } from '@app/services/send-message.service';
-import { SkipTurnService } from '@app/services/skip-turn.service';
+import { GridService } from './grid.service';
+import { PlaceLetterService } from './place-letter.service';
+import { SendMessageService } from './send-message.service';
+import { SkipTurnService } from './skip-turn.service';
 
 @Injectable({
     providedIn: 'root',
@@ -15,9 +16,11 @@ export class BoardHandlerService {
     firstCase: Vec2 = { x: INDEX_INVALID, y: INDEX_INVALID };
     word: string = '';
     placedLetters: boolean[] = [];
+    // Attribut indexletters? pour track les letters déja placées
+
     isFirstCasePicked = false;
     isFirstCaseLocked = false;
-    orientation = 'h';
+    orientation = Orientation.Horizontal;
 
     constructor(
         private gridService: GridService,
@@ -118,7 +121,8 @@ export class BoardHandlerService {
         if (await this.placeLetterService.validateKeyboardPlacement(this.firstCase, this.orientation, this.word, INDEX_PLAYER_ONE)) {
             const column = (this.firstCase.x + 1).toString();
             const row: string = String.fromCharCode(this.firstCase.y + 'a'.charCodeAt(0));
-            this.sendMessageService.displayMessageByType('!placer ' + row + column + this.orientation + ' ' + this.word, TypeMessage.Player);
+            const charOrientation = this.orientation === Orientation.Horizontal ? 'h' : 'v';
+            this.sendMessageService.displayMessageByType('!placer ' + row + column + charOrientation + ' ' + this.word, TypeMessage.Player);
             this.word = '';
             this.placedLetters = [];
             this.isFirstCasePicked = false;
@@ -147,12 +151,12 @@ export class BoardHandlerService {
         this.currentCase = { x: caseClicked.x, y: caseClicked.y };
         this.firstCase = { x: caseClicked.x, y: caseClicked.y };
         this.isFirstCasePicked = true;
-        this.orientation = 'h';
+        this.orientation = Orientation.Horizontal;
         this.updateCaseDisplay();
     }
 
     switchOrientation(): void {
-        this.orientation = this.orientation === 'h' ? 'v' : 'h'; // Change orientation when clicked
+        this.orientation = this.orientation === Orientation.Horizontal ? Orientation.Vertical : Orientation.Horizontal;
         this.updateCaseDisplay();
     }
 
@@ -175,9 +179,9 @@ export class BoardHandlerService {
     }
 
     goToNextCase(): void {
-        if (this.orientation === 'h') {
+        if (this.orientation === Orientation.Horizontal) {
             this.goToNextHorizontalCase();
-        } else if (this.orientation === 'v') {
+        } else if (this.orientation === Orientation.Vertical) {
             this.goToNextVerticalCase();
         }
     }
@@ -205,7 +209,7 @@ export class BoardHandlerService {
     }
 
     goToPreviousCase(): void {
-        if (this.orientation === 'h') {
+        if (this.orientation === Orientation.Horizontal) {
             this.currentCase.x--;
             while (!this.placedLetters[this.currentCase.x - this.firstCase.x]) {
                 this.word = this.word.slice(0, LAST_INDEX);
@@ -228,30 +232,28 @@ export class BoardHandlerService {
             this.gridService.drawArrow(this.gridService.gridContextPlacementLayer, this.currentCase, this.orientation);
             return;
         }
-        // Colored border of the current placement if there is letters placed{
-        this.drawPlacementBorder();
         // Only display the arrow on the next empty tile if there is an empty tile in the direction of the orientation
         this.drawArrowOnNextEmpty();
     }
 
     drawPlacementBorder(): void {
         for (let i = 0; i < this.word.length; i++) {
-            if (this.orientation === 'h')
+            if (this.orientation === Orientation.Horizontal) {
                 this.gridService.drawBorder(this.gridService.gridContextPlacementLayer, { x: this.currentCase.x - i, y: this.currentCase.y });
-            else if (this.orientation === 'v')
+            } else {
                 this.gridService.drawBorder(this.gridService.gridContextPlacementLayer, { x: this.currentCase.x, y: this.currentCase.y - i });
+            }
         }
     }
 
     drawArrowOnNextEmpty(): void {
         const currentArrowIndex: Vec2 = { x: this.currentCase.x, y: this.currentCase.y };
-        if (this.orientation === 'h') {
+        if (this.orientation === Orientation.Horizontal) {
             do {
                 currentArrowIndex.x++;
                 if (currentArrowIndex.x + 1 > BOARD_COLUMNS) return;
             } while (this.placeLetterService.scrabbleBoard[currentArrowIndex.y][currentArrowIndex.x] !== '');
-        }
-        if (this.orientation === 'v') {
+        } else {
             do {
                 currentArrowIndex.y++;
                 if (currentArrowIndex.y + 1 > BOARD_ROWS) return;

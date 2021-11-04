@@ -8,7 +8,7 @@ export const DEFAULT_HEIGHT = 750;
 export const BOARD_SIZE = 16;
 export const BOARD_ROWS = 15;
 export const BOARD_COLUMNS = 15;
-export const CENTRAL_CASE_POSITION = 7;
+export const CENTRAL_CASE_POSITION = { x: 7, y: 7 };
 export const CASE_SIZE = DEFAULT_WIDTH / BOARD_SIZE;
 
 export const EASEL_SIZE = 7;

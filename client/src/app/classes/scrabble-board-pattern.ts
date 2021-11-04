@@ -9,8 +9,8 @@ export interface PatternInfo {
 }
 
 export enum Orientation {
-    HorizontalOrientation,
-    VerticalOrientation,
+    Horizontal,
+    Vertical,
 }
 
 export interface PossibleWords {

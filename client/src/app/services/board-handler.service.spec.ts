@@ -8,6 +8,7 @@ import { GridService } from './grid.service';
 import { RouterTestingModule } from '@angular/router/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TypeMessage } from '@app/classes/enum';
+import { Orientation } from '@app/classes/scrabble-board-pattern';
 
 describe('BoardHandlerService', () => {
     let service: BoardHandlerService;
@@ -68,7 +69,7 @@ describe('BoardHandlerService', () => {
             button: 0,
         } as MouseEvent;
         service.mouseHitDetect(mouseEvent);
-        expect(service.orientation).toEqual('v');
+        expect(service.orientation).toEqual(Orientation.Vertical);
     });
 
     it('pressing multiple keyboard buttons that are valid letters should all be placed', async () => {
@@ -134,7 +135,7 @@ describe('BoardHandlerService', () => {
         service.firstCase = { x: 7, y: 7 };
         service.currentCase = { x: 7, y: 7 };
         service.isFirstCasePicked = true;
-        service.orientation = 'v';
+        service.orientation = Orientation.Vertical;
         let keyboardEvent;
 
         const wordToPlace = 'Frite';
@@ -235,7 +236,7 @@ describe('BoardHandlerService', () => {
         service.firstCase = { x: 7, y: 10 };
         service.currentCase = { x: 7, y: 10 };
         service.isFirstCasePicked = true;
-        service.orientation = 'v';
+        service.orientation = Orientation.Vertical;
         const wordToPlace = 'ees';
 
         await service.placeLetter(wordToPlace[0]);

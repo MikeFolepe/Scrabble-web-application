@@ -23,7 +23,7 @@ export class PlayerAIService {
                 let key: string;
                 let matrixPos: Vec2;
 
-                if (word.orientation === Orientation.HorizontalOrientation) {
+                if (word.orientation === Orientation.Horizontal) {
                     key = String.fromCharCode(word.line + ROW_OFFSET) + (word.startIdx + COLUMN_OFFSET + i).toString();
                     matrixPos = { x: word.line, y: word.startIdx + i };
                 } else {
