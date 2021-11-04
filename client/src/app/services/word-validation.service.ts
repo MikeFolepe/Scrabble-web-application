@@ -1,8 +1,8 @@
-import { ALL_EASEL_BONUS, BOARD_COLUMNS, BOARD_ROWS, RESERVE } from '@app/classes/constants';
-import { CommunicationService } from '@app/services/communication.service';
 import { Injectable } from '@angular/core';
-import { RandomBonusesService } from '@app/services/random-bonuses.service';
+import { ALL_EASEL_BONUS, BOARD_COLUMNS, BOARD_ROWS, RESERVE } from '@app/classes/constants';
 import { ScoreValidation } from '@app/classes/validation-score';
+import { CommunicationService } from '@app/services/communication.service';
+import { RandomBonusesService } from '@app/services/random-bonuses.service';
 
 @Injectable({
     providedIn: 'root',
@@ -129,11 +129,11 @@ export class WordValidationService {
             for (const letter of RESERVE) {
                 if (char.toUpperCase() === letter.value) {
                     switch (this.bonusesPositions.get(positions[i])) {
-                        case 'doubleletter': {
+                        case 'doubleLetter': {
                             score += letter.points * 2;
                             break;
                         }
-                        case 'tripleletter': {
+                        case 'tripleLetter': {
                             score += letter.points * 3;
                             break;
                         }
@@ -161,11 +161,11 @@ export class WordValidationService {
     applyBonusesWord(score: number, positions: string[]): number {
         for (const position of positions) {
             switch (this.bonusesPositions.get(position)) {
-                case 'doubleword': {
+                case 'doubleWord': {
                     score = score * 2;
                     break;
                 }
-                case 'tripleword': {
+                case 'tripleWord': {
                     score = score * 3;
                     break;
                 }

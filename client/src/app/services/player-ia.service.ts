@@ -1,8 +1,8 @@
-import { Board, Earning } from '@app/classes/scrabble-board';
-import { Orientation, PossibleWords } from '@app/classes/scrabble-board-pattern';
 import { Injectable } from '@angular/core';
 import { RESERVE } from '@app/classes/constants';
 import { Range } from '@app/classes/range';
+import { Board, Earning } from '@app/classes/scrabble-board';
+import { Orientation, PossibleWords } from '@app/classes/scrabble-board-pattern';
 import { Vec2 } from '@app/classes/vec2';
 
 const ROW_OFFSET = 65;
@@ -60,17 +60,17 @@ export class PlayerAIService {
         let letterPoint = 0;
         let wordFactor = 1;
         switch (Board[keyCell as keyof typeof Board]) {
-            case 'doubleletter':
+            case 'doubleLetter':
                 letterPoint = letterValue * this.bonusFactor(2, matrixPos, scrabbleBoard);
                 break;
-            case 'tripleletter':
+            case 'tripleLetter':
                 letterPoint = letterValue * this.bonusFactor(3, matrixPos, scrabbleBoard);
                 break;
-            case 'doubleword':
+            case 'doubleWord':
                 letterPoint = letterValue;
                 wordFactor *= this.bonusFactor(2, matrixPos, scrabbleBoard);
                 break;
-            case 'tripleword':
+            case 'tripleWord':
                 letterPoint = letterValue;
                 wordFactor *= this.bonusFactor(3, matrixPos, scrabbleBoard);
                 break;
