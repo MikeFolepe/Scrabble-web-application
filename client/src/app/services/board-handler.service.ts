@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BOARD_COLUMNS, BOARD_ROWS, CASE_SIZE, INDEX_INVALID, INDEX_PLAYER_ONE, LAST_INDEX } from '@app/classes/constants';
+import { BOARD_COLUMNS, BOARD_ROWS, GRID_CASE_SIZE, INDEX_INVALID, INDEX_PLAYER_ONE, LAST_INDEX } from '@app/classes/constants';
 import { MouseButton, TypeMessage } from '@app/classes/enum';
 import { Orientation } from '@app/classes/scrabble-board-pattern';
 import { Vec2 } from '@app/classes/vec2';
@@ -162,8 +162,8 @@ export class BoardHandlerService {
 
     calculateFirstCasePosition(event: MouseEvent): Vec2 {
         const currentCase: Vec2 = { x: 0, y: 0 };
-        currentCase.x = Math.floor((event.offsetX - CASE_SIZE) / CASE_SIZE);
-        currentCase.y = Math.floor((event.offsetY - CASE_SIZE) / CASE_SIZE);
+        currentCase.x = Math.floor((event.offsetX - GRID_CASE_SIZE) / GRID_CASE_SIZE);
+        currentCase.y = Math.floor((event.offsetY - GRID_CASE_SIZE) / GRID_CASE_SIZE);
         return currentCase;
     }
 

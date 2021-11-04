@@ -1,11 +1,11 @@
 /* eslint-disable dot-notation */
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { SkipTurnService } from '@app/services/skip-turn.service';
 import { GameSettings } from '@common/game-settings';
 import { InformationPanelComponent } from './information-panel.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { SkipTurnService } from '@app/services/skip-turn.service';
 
 describe('InformationPanelComponent', () => {
     let component: InformationPanelComponent;
