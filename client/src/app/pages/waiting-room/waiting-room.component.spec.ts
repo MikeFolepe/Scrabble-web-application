@@ -1,8 +1,5 @@
 /* eslint-disable dot-notation */
-/* eslint-disable sort-imports */
-/* eslint-disable @typescript-eslint/quotes */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
-/* eslint-disable prettier/prettier */
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
@@ -23,7 +20,14 @@ describe('WaitingRoomComponent', () => {
         // TODO Regarder bien comment reinjecter les informations
         clientSocketServiceSpyjob.socket = jasmine.createSpyObj('Socket', ['connect', 'on', 'disconnect']);
         gameSettingsServiceSpyjob = jasmine.createSpyObj('GameSettingsServices', ['']);
+
+        jasmine.clock().install();
     });
+
+    afterEach(() => {
+        jasmine.clock().uninstall();
+    });
+
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [WaitingRoomComponent],
@@ -40,51 +44,48 @@ describe('WaitingRoomComponent', () => {
         fixture = TestBed.createComponent(WaitingRoomComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
-        spyOn(component['router'], 'navigate');
     });
 
     it('should create', () => {
         expect(component).toBeTruthy();
     });
 
-    it('should redirect to home page if the Ownername is empty', () => {
-        jasmine.clock().install();
+    it('should redirect to home page if the Owner name is empty', () => {
+        const spyNavigate = spyOn(component['router'], 'navigate');
+
         component['gameSettingsService'].gameSettings = new GameSettings(['', ''], 1, '01', '00', 'Facile', 'Activer', 'francais', '00');
         component.handleReloadErrors();
-        jasmine.clock().tick(3000);
+        jasmine.clock().tick(1001);
         expect(component.status).toEqual('Une erreur est survenue');
-        jasmine.clock().uninstall();
+        expect(spyNavigate).toHaveBeenCalledOnceWith(['home']);
     });
 
-    it('should redirect to home page if the Ownername is not empty', () => {
-        jasmine.clock().install();
+    it('should not redirect to home page if the Owner name is not empty', () => {
         component['gameSettingsService'].gameSettings = new GameSettings(['Mike', ''], 1, '01', '00', 'Facile', 'Activer', 'francais', 'ooo');
         component.handleReloadErrors();
-        jasmine.clock().tick(3000);
-        expect(component.status).toEqual('');
-        jasmine.clock().uninstall();
+        jasmine.clock().tick(1001);
+        expect(component.status).toEqual('Connexion au serveur...');
     });
 
     it('should set the message after the time out', fakeAsync(() => {
-        jasmine.clock().install();
         component.waitBeforeChangeStatus(1000, '');
         jasmine.clock().tick(3000);
         expect(component.status).toEqual('');
-        jasmine.clock().uninstall();
     }));
 
     it('should route the user a the view on init', () => {
+        const spyNavigate = spyOn(component['router'], 'navigate');
+
         component['gameSettingsService'].gameSettings = new GameSettings(['Mike', ''], 1, '01', '00', 'Facile', 'Activer', 'null', 'francais');
         component['gameSettingsService'].isRedirectedFromMultiplayerGame = false;
         component['gameSettingsService'].isSoloMode = false;
         component.route();
         expect(component['gameSettingsService'].isRedirectedFromMultiplayerGame).toEqual(true);
         expect(component['gameSettingsService'].isSoloMode).toEqual(true);
-        // expect(component.router.navigate).toEqual(['solo-game-ai']);
+        expect(spyNavigate).toHaveBeenCalledOnceWith(['solo-game-ai']);
     });
 
-    it('should play the animation on waitin page ', () => {
-        jasmine.clock().install();
+    it('should play the animation on waiting page ', () => {
         const spy1 = spyOn(component, 'waitBeforeChangeStatus');
         const spy2 = spyOn(component, 'handleReloadErrors');
 
@@ -92,8 +93,6 @@ describe('WaitingRoomComponent', () => {
         expect(spy1).toHaveBeenCalled();
         jasmine.clock().tick(2001);
         expect(spy2).toHaveBeenCalled();
-        jasmine.clock().uninstall();
-        // clientSocketServiceSpyjob.socket.on();
         clientSocketServiceSpyjob.socket.connected = true;
         expect(clientSocketServiceSpyjob.socket.connected).toEqual(true);
     });
