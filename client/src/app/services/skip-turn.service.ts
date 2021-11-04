@@ -16,7 +16,7 @@ export class SkipTurnService {
     intervalID: NodeJS.Timeout;
     private playAiTurn: () => void;
 
-    constructor(private gameSettingsService: GameSettingsService, private endGameService: EndGameService, private clientSocket: ClientSocketService) {
+    constructor(public gameSettingsService: GameSettingsService, private endGameService: EndGameService, private clientSocket: ClientSocketService) {
         this.clientSocket.socket.on('turnSwitched', (turn: boolean) => {
             this.isTurn = turn;
         });
