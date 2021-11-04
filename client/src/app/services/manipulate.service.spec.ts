@@ -2,8 +2,8 @@
 /* eslint-disable dot-notation */
 import { EASEL_SIZE, INDEX_INVALID } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
-import { Player } from '@app/models/player.model';
 import { ManipulateService } from '@app/services/manipulate.service';
+import { Player } from '@app/models/player.model';
 import { TestBed } from '@angular/core/testing';
 
 describe('ManipulateService', () => {

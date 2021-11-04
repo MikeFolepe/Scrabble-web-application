@@ -1,108 +1,112 @@
-// /* eslint-disable prettier/prettier */
-// /* eslint-disable no-unused-vars */
-// /* eslint-disable prettier/prettier */
-// // import { State } from '@app/classes/room';
-// // import { State } from '@app/classes/room';
-// // import { State } from '@app/classes/room';
-// import { RoomManager } from '@app/services/room-manager.service';
-// import { expect } from 'chai';
-// import { describe } from 'mocha';
-// // eslint-disable-next-line no-restricted-imports
-// import { GameSettings, StartingPlayer } from '../../../server/app/classes/multiplayer-game-settings';
-// describe('RoomManagerService', () => {
-//     let roomManagerService: RoomManager;
-//     const id = 'LOG2990';
-//     const settings: GameSettings = new GameSettings(['Paul', 'Mike'], StartingPlayer.Owner, '00', '30', 'facile', 'Désactiver', 'français');
+import { GameSettings, StartingPlayer } from '@common/game-settings';
+import { RoomManagerService } from '@app/services/room-manager.service';
+import { State } from '@common/room';
+import { expect } from 'chai';
 
-//     beforeEach(() => {
-//         roomManagerService = new RoomManager();
-//         roomManagerService.rooms = [];
-//     });
+describe('RoomManagerService', () => {
+    let roomManagerService: RoomManagerService;
+    const id = 'LOG2990';
+    const socketId1 = 'socket1';
 
-//     it('should create a Room', () => {
-//         roomManagerService.createRoom(id, settings);
-//         expect(roomManagerService.rooms.length).to.equal(1);
-//     });
+    const settings: GameSettings = new GameSettings(['Paul', 'Mike'], StartingPlayer.Player1, '00', '30', 'facile', 'Désactiver', 'français', '00');
 
-//     it('should not add customer at the Room if ht name are same', () => {
-//         roomManagerService.createRoom(id, settings);
-//         const isSame: boolean = roomManagerService.addCustomer('Paul', id);
-//         expect(isSame).to.equal(false);
-//     });
+    beforeEach(() => {
+        roomManagerService = new RoomManagerService();
+        roomManagerService.rooms = [];
+    });
 
-//     it('should set the state of Room', () => {
-//         roomManagerService.createRoom(id, settings);
-//         roomManagerService.rooms[0].gameSettings.playersName[1] = '';
-//         const testID = roomManagerService.createRoomId('Paul');
-//         roomManagerService.setState(testID, 1);
-//         expect(roomManagerService.rooms[0].state).to.equal(1);
-//     });
+    afterEach(() => {
+        roomManagerService.rooms = [];
+    });
 
-//     it('should return the gamesettings  of room', () => {
-//         roomManagerService.createRoom(id, settings);
-//         const testID = roomManagerService.createRoomId('Paul');
-//         const testSettings = roomManagerService.getGameSettings(testID);
-//         expect(roomManagerService.rooms[0].gameSettings).to.equal(testSettings);
-//     });
+    it('should create a Room', () => {
+        roomManagerService.createRoom(socketId1, id, settings);
+        expect(roomManagerService.rooms.length).to.equal(1);
+    });
 
-//     it('should delete the room with the right id', () => {
-//         roomManagerService.createRoom(id, settings);
-//         const testID = roomManagerService.createRoomId('Paul');
-//         roomManagerService.deleteRoom(testID);
-//         expect(roomManagerService.rooms.length).to.equal(0);
-//     });
+    it('should create a specific rew roomId base on the playerName', () => {
+        const roomIdtest1 = roomManagerService.createRoomId('Paul');
+        expect(roomIdtest1).to.equal(roomIdtest1);
+    });
 
-//     it('should not delete the room if his ID is not in the table', () => {
-//         roomManagerService.createRoom(id, settings);
-//         roomManagerService.addCustomer('Mike', id);
-//         roomManagerService.deleteRoom('LOG2991');
-//         expect(roomManagerService.rooms.length).to.equal(1);
-//     });
+    it('should not add customer at the Room if ht name are same', () => {
+        roomManagerService.createRoom(socketId1, id, settings);
+        expect(roomManagerService.addCustomer('Paul', 'noFountID')).to.equal(false);
+    });
 
-//     it('should find the room by the ID and return it', () => {
-//         roomManagerService.createRoom(id, settings);
-//         const testID = roomManagerService.createRoomId('Paul');
-//         expect(roomManagerService.rooms[0]).to.equal(roomManagerService.find(testID));
-//     });
-//     it('should not find the room by the ID and return undefined', () => {
-//         roomManagerService.createRoom(id, settings);
-//         roomManagerService.addCustomer('Mike', id);
-//         expect(roomManagerService.find('LOG2991')).to.equal(undefined);
-//     });
+    it('should add customer at the Room if ht name are same', () => {
+        roomManagerService.createRoom(socketId1, id, settings);
+        settings.playersName[1] = '';
+        expect(roomManagerService.addCustomer('Paul', id)).to.equal(true);
+    });
 
-//     it('should  return true if the room is not undefined', () => {
-//         roomManagerService.rooms = [];
-//         expect(roomManagerService.addCustomer('jojo', id)).to.equal(false);
-//     });
+    it('should set the state of Room', () => {
+        roomManagerService.createRoom(socketId1, id, settings);
+        roomManagerService.setState(id, State.Playing);
+        expect(roomManagerService.rooms[0].state).to.equal(State.Playing);
+    });
 
-//     it('should false if the room undefined ', () => {
-//         roomManagerService.createRoom(id, settings);
-//         roomManagerService.rooms[0].gameSettings.playersName[1] = '';
-//         const testID = roomManagerService.createRoomId('Paul');
-//         expect(roomManagerService.addCustomer('Mike', testID)).to.equal(true);
-//     });
+    it('should setSocket in the room', () => {
+        roomManagerService.createRoom(socketId1, id, settings);
+        const socketId2 = 'socket2';
+        const myRoom = roomManagerService.rooms[0];
+        roomManagerService.setSocket(myRoom, socketId2);
+        expect(roomManagerService.rooms[0].socketIds[1]).to.equal(socketId2);
+    });
 
-//     it('should return the formatGameSetttings', () => {
-//         roomManagerService.createRoom(id, settings);
-//         const testID = roomManagerService.createRoomId('Paul');
-//         expect(roomManagerService.formatGameSettingsForCustomerIn(testID)).not.to.equal(undefined);
-//     });
+    it('should return the formatGameSettings for the Customer in a specific Room', () => {
+        roomManagerService.createRoom(socketId1, id, settings);
+        settings.startingPlayer = 0;
+        expect(roomManagerService.rooms[0].gameSettings.startingPlayer).to.equal(0);
+        expect(roomManagerService.formatGameSettingsForCustomerIn(id)).not.to.equal(undefined);
+    });
 
-//     it('should return the formatGameSetttings truth', () => {
-//         roomManagerService.createRoom(id, settings);
-//         const testID = roomManagerService.createRoomId('Paul');
-//         // const testTable = ['Mike', 'Paul'];
-//         // const testFormatSettings = new GameSettings(testTable, 1, '00', '30', 'Désactiver', 'Désactiver', 'français');
-//         expect(roomManagerService.formatGameSettingsForCustomerIn(testID));
-//     });
+    it('should return the formatGameSettings for the Customer in a specific Room and swith the starting player', () => {
+        roomManagerService.createRoom(socketId1, id, settings);
+        settings.startingPlayer = 1;
+        expect(roomManagerService.rooms[0].gameSettings.startingPlayer).to.equal(1);
+        expect(roomManagerService.formatGameSettingsForCustomerIn(id)).not.to.equal(undefined);
+    });
 
-//     it('should return  false if the room does not exist', () => {
-//         roomManagerService.rooms = [];
-//         expect(roomManagerService.isNotAvailable(id)).to.equal(false);
-//     });
-//     it('should return  true if the room  exist', () => {
-//         roomManagerService.createRoom(id, settings);
-//         const testID = roomManagerService.createRoomId('Paul');
-//         expect(roomManagerService.isNotAvailable(testID)).to.equal(false);
-//     });
-// });
+    it('should return the gamesettings  of room', () => {
+        roomManagerService.createRoom(socketId1, id, settings);
+        settings.startingPlayer = 0;
+        expect(roomManagerService.rooms[0].gameSettings.startingPlayer).to.equal(0);
+        expect(roomManagerService.formatGameSettingsForCustomerIn(id)).not.to.equal(undefined);
+        expect(roomManagerService.getGameSettings(id)).not.to.equal(undefined);
+    });
+
+    it('should delete the room with the right id', () => {
+        roomManagerService.createRoom(socketId1, id, settings);
+        roomManagerService.deleteRoom(id);
+        expect(roomManagerService.rooms.length).to.equal(0);
+    });
+
+    it('should not delete the room if his ID is not in the table', () => {
+        roomManagerService.createRoom(socketId1, id, settings);
+        roomManagerService.deleteRoom('fakeId');
+        expect(roomManagerService.rooms.length).to.equal(1);
+    });
+
+    it('should find the room with the soketId and return it', () => {
+        roomManagerService.createRoom(socketId1, id, settings);
+        const myRoomId = roomManagerService.findRoomIdOf(socketId1);
+        expect(myRoomId).to.equal(id);
+    });
+
+    it('should not find the room with the soketId and return it', () => {
+        roomManagerService.createRoom(socketId1, id, settings);
+        const myRoomId = roomManagerService.findRoomIdOf('fakesocketId');
+        expect(myRoomId).to.equal('');
+    });
+
+    it('should return  false if the room does not exist', () => {
+        roomManagerService.rooms = [];
+        expect(roomManagerService.isNotAvailable(id)).to.equal(false);
+    });
+
+    it('should return false if the room  is available ', () => {
+        roomManagerService.createRoom(socketId1, id, settings);
+        expect(roomManagerService.isNotAvailable(id)).to.equal(false);
+    });
+});

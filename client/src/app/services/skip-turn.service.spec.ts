@@ -1,24 +1,29 @@
-// import { GameSettingsService } from '@app/services/game-settings.service';
+/* eslint-disable @typescript-eslint/no-magic-numbers */
+/* eslint-disable dot-notation */
+import { EndGameService } from './end-game.service';
+import { GameSettingsService } from './game-settings.service';
+import { HttpClientModule } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-// import { ONE_SECOND_DELAY } from '@app/classes/constants';
-import { RouterTestingModule } from '@angular/router/testing';
-import { SkipTurnService } from '@app/services/skip-turn.service';
+import { ONE_SECOND_DELAY } from '@app/classes/constants';
+import { SkipTurnService } from './skip-turn.service';
 import { TestBed } from '@angular/core/testing';
 
 describe('SkipTurnService', () => {
     let service: SkipTurnService;
-    // let clearInterval: jasmine.Spy<jasmine.Func>;
-    // let gameSettingsService: GameSettingsService;
+    let gameSettingsService: jasmine.SpyObj<GameSettingsService>;
+    let endGameService: jasmine.SpyObj<EndGameService>;
     beforeEach(() => {
+        const settingsSpy = jasmine.createSpyObj('GameSettingsService', ['gameSettings']);
+        const endGameSpy = jasmine.createSpyObj('EndGameService', ['isEndGame']);
         TestBed.configureTestingModule({
-            imports: [HttpClientTestingModule, RouterTestingModule],
+            imports: [HttpClientTestingModule, HttpClientModule],
+            providers: [SkipTurnService, { provide: GameSettingsService, useValue: settingsSpy }, { provide: EndGameService, useValue: endGameSpy }],
         });
         service = TestBed.inject(SkipTurnService);
-        // clearInterval = jasmine.createSpy('clearInterval');
+        gameSettingsService = TestBed.inject(GameSettingsService) as jasmine.SpyObj<GameSettingsService>;
+        endGameService = TestBed.inject(EndGameService) as jasmine.SpyObj<EndGameService>;
     });
-    // beforeEach(() => {
-    //     skipTurnSpy = jasmine.createSpyObj('SkipTurnService', ['startTimer']);
-    // });
+
     beforeEach(() => {
         jasmine.clock().install();
     });
@@ -35,141 +40,86 @@ describe('SkipTurnService', () => {
         expect(service).toBeTruthy();
     });
 
-    // it('should call setTimer onInit', () => {
-    //     component.ngOnInit();
-    //     spyOn<any>(component, 'setTimer');
-    //     jasmine.clock().tick(ONESECOND_TIME + 1);
-    //     expect(component.setTimer).toHaveBeenCalled();
-    // });
-    it('should call clearInterval on stopTimer', () => {
-        spyOn(service, 'stopTimer');
-        service.stopTimer();
-        expect(service.stopTimer).toHaveBeenCalled();
-    });
-
     it('should stopTimer when switching turn', () => {
-        spyOn(service, 'stopTimer');
+        endGameService.isEndGame = false;
+        const spy = spyOn(service, 'stopTimer');
         service.switchTurn();
-        expect(service.stopTimer).toHaveBeenCalled();
+        expect(spy).toHaveBeenCalled();
     });
 
-    // it('should startTimer when switching turns', () => {
-    //     service.isTurn = false;
-    //     const newTurn = true;
-    //     spyOn(service, 'startTimer').andz;
+    // it('should startTimer when switching turns 2', () => {
+    //     service.isTurn = true;
+    //     const newTurn = false;
+    //     endGameService.isEndGame = false;
+    //     const spyStart = spyOn(service, 'startTimer');
+    //     const spyOnAi = spyOn(service, 'bindAiTurn');
     //     service.switchTurn();
+    //     jasmine.clock().tick(ONE_SECOND_DELAY + 1);
     //     expect(service.isTurn).toEqual(newTurn);
-    //     expect(service.startTimer).toHaveBeenCalled();
+    //     expect(spyOnAi).toHaveBeenCalled();
+    //     expect(spyStart).toHaveBeenCalled();
     // });
 
-    // it('should clearInterval when stopping timer', () => {
-    //     service.stopTimer();
-    //     expect(clearInterval).toHaveBeenCalled();
-    // });
+    it('should decrease the countdown', () => {
+        gameSettingsService.gameSettings.timeMinute = '00';
+        gameSettingsService.gameSettings.timeSecond = '59';
+        endGameService.isEndGame = false;
+        service.startTimer();
+        jasmine.clock().tick(ONE_SECOND_DELAY + 1);
+        expect(service['minutes']).toEqual(0);
+        expect(service['seconds']).toEqual(58);
+    });
 
-    /* eslint-disable @typescript-eslint/no-magic-numbers */
-    /* eslint-disable @typescript-eslint/no-explicit-any */
-    // import { ComponentFixture, TestBed } from '@angular/core/testing';
-    // import { ONESECOND_TIME } from '@app/classes/constants';
-    // import { CountdownComponent } from './countdown.component';
+    it('should clearInterval when stopping timer', () => {
+        service.stopTimer();
+        expect(service['minutes']).toEqual(0);
+        expect(service['seconds']).toEqual(0);
+    });
 
-    // describe('CountdownComponent', () => {
-    //     let component: CountdownComponent;
-    //     let fixture: ComponentFixture<CountdownComponent>;
+    it('adapt time output to correct value when when only seconds input is 0', () => {
+        gameSettingsService.gameSettings.timeMinute = '05';
+        gameSettingsService.gameSettings.timeSecond = '00';
+        endGameService.isEndGame = false;
+        service.startTimer();
+        jasmine.clock().tick(ONE_SECOND_DELAY + 1);
+        expect(service['seconds']).toEqual(59);
+        expect(service['minutes']).toEqual(4);
+    });
 
-    //     beforeEach(async () => {
-    //         await TestBed.configureTestingModule({
-    //             declarations: [CountdownComponent],
-    //         }).compileComponents();
-    //     });
+    it('should do nothing when it is an endgame', () => {
+        endGameService.isEndGame = true;
+        service.isTurn = false;
+        const newturn = false;
+        service.switchTurn();
+        expect(service.isTurn).toEqual(newturn);
+    });
 
-    //     beforeEach(() => {
-    //         fixture = TestBed.createComponent(CountdownComponent);
-    //         component = fixture.componentInstance;
-    //         fixture.detectChanges();
-    //     });
+    it('should stop the timer if it is an end of game of start timer ', () => {
+        endGameService.isEndGame = true;
+        const spyOnStop = spyOn(service, 'stopTimer');
+        service.startTimer();
+        expect(spyOnStop).toHaveBeenCalled();
+    });
 
-    //     beforeEach(() => {
-    //         jasmine.clock().install();
-    //     });
+    it('should bind to the playerAi play function', () => {
+        const testFn = () => {
+            let x = 0;
+            return x++;
+        };
+        service.bindAiTurn(testFn);
+        expect(service['playAiTurn']).toEqual(testFn);
+    });
 
-    //     afterEach(() => {
-    //         jasmine.clock().uninstall();
-    //     });
-
-    //     it('should create', () => {
-    //         expect(component).toBeTruthy();
-    //     });
-
-    //     it('should call setTimer onInit', () => {
-    //         component.ngOnInit();
-    //         spyOn<any>(component, 'setTimer');
-    //         jasmine.clock().tick(ONESECOND_TIME + 1);
-    //         expect(component.setTimer).toHaveBeenCalled();
-    //     });
-
-    //     it('should stop timer if it is the end of the game', () => {
-    //         spyOn(component, 'stopTimer');
-    //         component.endgameService.isEndGame = true;
-
-    //         component.setTimer();
-
-    //         expect(component.stopTimer).toHaveBeenCalled();
-    //     });
-
-    //     it('adapt time output to correct value when when only seconds input is 0', () => {
-    //         // when seconds input is 0
-    //         component.seconds = '00';
-    //         component.minutes = '05';
-    //         component.setTimer();
-    //         jasmine.clock().tick(ONESECOND_TIME + 1);
-    //         expect(component.secondsInt).toEqual(59);
-    //         expect(component.minutesInt).toEqual(4);
-    //     });
-
-    //     it('adapt time output to correct value when seconds input and minutes input are both 0', () => {
-    //         component.seconds = '0';
-    //         component.minutes = '0';
-    //         const nullTime = 0;
-    //         spyOn<any>(component.checkTime, 'emit');
-    //         component.setTimer();
-    //         jasmine.clock().tick(ONESECOND_TIME + 1);
-    //         expect(component.secondsInt).toEqual(nullTime);
-    //         expect(component.minutesInt).toEqual(nullTime);
-    //         expect(component.checkTime.emit).toHaveBeenCalledWith(nullTime);
-    //     });
-
-    //     it('adapt time output to correct value when neither seconds nor minutes input is 0', () => {
-    //         component.seconds = '30';
-    //         component.minutes = '03';
-    //         component.setTimer();
-    //         jasmine.clock().tick(ONESECOND_TIME + 1);
-    //         expect(component.secondsInt).toEqual(29);
-    //         expect(component.minutesInt).toEqual(3);
-    //     });
-
-    //     it('stopping timer should set seconds and minutes input to zero and emit seconds only if the message is --!passer--', () => {
-    //         component.message = '!passer';
-    //         component.secondsInt = 30;
-    //         component.minutesInt = 4;
-    //         const nullTime = 0;
-    //         spyOn<any>(component.checkTime, 'emit');
-    //         component.stopTimer();
-    //         expect(component.secondsInt).toEqual(nullTime);
-    //         expect(component.minutesInt).toEqual(nullTime);
-    //         expect(component.checkTime.emit).toHaveBeenCalledWith(nullTime);
-    //     });
-
-    //     it('stopping timer should not not do anything if the message is not --!passer--', () => {
-    //         component.message = '!wrong';
-    //         component.secondsInt = 30;
-    //         component.minutesInt = 4;
-    //         const nullTime = 0;
-    //         spyOn<any>(component.checkTime, 'emit');
-    //         component.stopTimer();
-    //         expect(component.secondsInt).toEqual(30);
-    //         expect(component.minutesInt).toEqual(4);
-    //         expect(component.checkTime.emit).not.toHaveBeenCalledWith(nullTime);
-    //     });
-    // });
+    it('should stop the timer and then switch turn when the countdown is done ', () => {
+        gameSettingsService.gameSettings.timeMinute = '00';
+        gameSettingsService.gameSettings.timeSecond = '00';
+        endGameService.isEndGame = false;
+        const spyOnStop = spyOn(service, 'stopTimer');
+        const spyOnSwitch = spyOn(service, 'switchTurn');
+        service.startTimer();
+        jasmine.clock().tick(ONE_SECOND_DELAY + 1);
+        expect(spyOnStop).toHaveBeenCalled();
+        jasmine.clock().tick(ONE_SECOND_DELAY);
+        expect(spyOnSwitch).toHaveBeenCalled();
+    });
 });

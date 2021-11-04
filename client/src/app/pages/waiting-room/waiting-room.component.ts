@@ -5,6 +5,7 @@ import { GameSettingsService } from '@app/services/game-settings.service';
 import { PlayerIndex } from '@common/PlayerIndex';
 import { Router } from '@angular/router';
 
+// TODO: enlever tout les string et les temps
 @Component({
     selector: 'app-waiting-room',
     templateUrl: './waiting-room.component.html',

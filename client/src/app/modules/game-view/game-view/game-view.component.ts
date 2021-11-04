@@ -3,7 +3,6 @@ import { ClientSocketService } from '@app/services/client-socket.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { GridService } from '@app/services/grid.service';
 import { Router } from '@angular/router';
-
 @Component({
     selector: 'app-game-view',
     templateUrl: './game-view.component.html',
