@@ -14,13 +14,8 @@ export class SkipTurnService {
     seconds: number;
     // eslint-disable-next-line no-undef
     intervalID: NodeJS.Timeout;
-    // private playAiTurn: () => void;
 
     constructor(public gameSettingsService: GameSettingsService, public endGameService: EndGameService, public playerService: PlayerService) {}
-
-    // bindAiTurn(fn: () => void) {
-    //     this.playAiTurn = fn;
-    // }
 
     switchTurn(): void {
         if (this.endGameService.isEndGame) {
