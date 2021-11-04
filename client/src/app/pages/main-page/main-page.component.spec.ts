@@ -27,21 +27,33 @@ describe('MainPageComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('should route to the right page according to the selected game mode', () => {
-        const spy = spyOn(component['router'], 'navigate');
+    it('should route to solo-game-ia when selected mode is solo', () => {
+        const spyNavigate = spyOn(component['router'], 'navigate');
 
         component.selectedGameMode = 'Jouer une partie en solo';
         component.route();
         expect(component.gameSettingsService.isSoloMode).toBeTrue();
-        expect(spy).toHaveBeenCalledOnceWith(['solo-game-ai']);
+        expect(spyNavigate).toHaveBeenCalledOnceWith(['solo-game-ai']);
+    });
+
+    it('should route to multiplayer-mode when selected mode is multiplayer', () => {
+        const spyNavigate = spyOn(component['router'], 'navigate');
 
         component.selectedGameMode = 'Créer une partie multijoueur';
         component.route();
         expect(component.gameSettingsService.isSoloMode).toBeFalse();
-        expect(spy).toHaveBeenCalledWith(['multiplayer-mode']);
+        expect(spyNavigate).toHaveBeenCalledWith(['multiplayer-mode']);
 
         component.selectedGameMode = 'Joindre une partie multijoueur';
         component.route();
-        expect(spy).toHaveBeenCalledWith(['join-room']);
+        expect(spyNavigate).toHaveBeenCalledWith(['multiplayer-mode']);
+    });
+
+    it('should route to join-room when selected mode is join multiplayer', () => {
+        const spyNavigate = spyOn(component['router'], 'navigate');
+
+        component.selectedGameMode = 'Joindre une partie multijoueur';
+        component.route();
+        expect(spyNavigate).toHaveBeenCalledWith(['join-room']);
     });
 });

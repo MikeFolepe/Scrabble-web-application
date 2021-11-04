@@ -17,8 +17,7 @@
 <br />
 <div mat-dialog-actions>
     <button mat-button mat-dialog-close (click)="this.dialogRef.close(null)">Fermer</button>
-    <button mat-raised-button mat-dialog-close (click)="this.dialogRef.close(this.form.value)" color="warn"
-        [disabled]="!form.valid">
+    <button mat-raised-button mat-dialog-close (click)="this.dialogRef.close(this.form.value)" color="warn" [disabled]="!form.valid">
         Confirmer
     </button>
 </div>

@@ -59,14 +59,14 @@ describe('WordValidationService', () => {
     });
 
     it('should double word score if word is placed on a double word case', () => {
-        spyOn(service['bonusesPositions'], 'get').and.returnValue('doubleword');
+        spyOn(service['bonusesPositions'], 'get').and.returnValue('doubleWord');
         const initialScore = 10;
         const score = service.applyBonusesWord(initialScore, ['aaa']);
         expect(score).toEqual(initialScore * 2);
     });
 
     it('should triple letter score if word is placed on a triple letter case', () => {
-        spyOn(service['bonusesPositions'], 'get').and.returnValue('tripleletter');
+        spyOn(service['bonusesPositions'], 'get').and.returnValue('tripleLetter');
         const initialScore = 10;
         const score = service.calculateLettersScore(initialScore, 'a', ['H9']);
         expect(score).toEqual(initialScore + 3);

@@ -40,12 +40,7 @@ describe('WaitingRoomComponent', () => {
         fixture = TestBed.createComponent(WaitingRoomComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
-    });
-
-    beforeEach(() => {
-        fixture = TestBed.createComponent(WaitingRoomComponent);
-        component = fixture.componentInstance;
-        fixture.detectChanges();
+        spyOn(component['router'], 'navigate');
     });
 
     it('should create', () => {

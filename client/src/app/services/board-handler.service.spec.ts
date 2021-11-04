@@ -1,13 +1,14 @@
 /* eslint-disable dot-notation */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 import { TestBed } from '@angular/core/testing';
-import { CASE_SIZE, INDEX_INVALID } from '@app/classes/constants';
+import { GRID_CASE_SIZE, INDEX_INVALID } from '@app/classes/constants';
 import { Vec2 } from '@app/classes/vec2';
 import { BoardHandlerService } from './board-handler.service';
 import { GridService } from './grid.service';
 import { RouterTestingModule } from '@angular/router/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TypeMessage } from '@app/classes/enum';
+import { Orientation } from '@app/classes/scrabble-board-pattern';
 
 describe('BoardHandlerService', () => {
     let service: BoardHandlerService;
@@ -23,14 +24,8 @@ describe('BoardHandlerService', () => {
 
         service['placeLetterService'].placeWithKeyboard = jasmine.createSpy().and.returnValue(Promise.resolve(true));
         service['skipTurnService'].isTurn = true;
-        service['sendMessageService']['displayMessage'] = () => {
-            return;
-        };
         spyOn(service['placeLetterService'], 'removePlacedLetter');
         spyOn(service['sendMessageService'], 'displayMessageByType');
-        spyOn(service['sendMessageService'], 'receiveMessageFromOpponent');
-        spyOn(service['sendMessageService'], 'sendMessageToOpponent');
-        spyOn(service['sendMessageService'], 'sendOpponentMessage');
     });
 
     it('should be created', () => {
@@ -38,7 +33,7 @@ describe('BoardHandlerService', () => {
     });
 
     it('left clicking a case on the board should select it as the starting case', () => {
-        const gridPosition: Vec2 = { x: 7 * CASE_SIZE + CASE_SIZE, y: 7 * CASE_SIZE + CASE_SIZE };
+        const gridPosition: Vec2 = { x: 7 * GRID_CASE_SIZE + GRID_CASE_SIZE, y: 7 * GRID_CASE_SIZE + GRID_CASE_SIZE };
         const mouseEvent = {
             offsetX: gridPosition.x,
             offsetY: gridPosition.y,
@@ -49,7 +44,7 @@ describe('BoardHandlerService', () => {
     });
 
     it('left clicking an out of bounds case should not select it', () => {
-        const gridPosition: Vec2 = { x: -1 * CASE_SIZE + CASE_SIZE, y: -1 * CASE_SIZE + CASE_SIZE };
+        const gridPosition: Vec2 = { x: -1 * GRID_CASE_SIZE + GRID_CASE_SIZE, y: -1 * GRID_CASE_SIZE + GRID_CASE_SIZE };
         const mouseEvent = {
             offsetX: gridPosition.x,
             offsetY: gridPosition.y,
@@ -61,14 +56,14 @@ describe('BoardHandlerService', () => {
 
     it('left clicking on the current selected case should switch the orientation of the placement', () => {
         service.currentCase = { x: 7, y: 7 };
-        const gridPosition: Vec2 = { x: 7 * CASE_SIZE + CASE_SIZE, y: 7 * CASE_SIZE + CASE_SIZE };
+        const gridPosition: Vec2 = { x: 7 * GRID_CASE_SIZE + GRID_CASE_SIZE, y: 7 * GRID_CASE_SIZE + GRID_CASE_SIZE };
         const mouseEvent = {
             offsetX: gridPosition.x,
             offsetY: gridPosition.y,
             button: 0,
         } as MouseEvent;
         service.mouseHitDetect(mouseEvent);
-        expect(service.orientation).toEqual('v');
+        expect(service.orientation).toEqual(Orientation.Vertical);
     });
 
     it('pressing multiple keyboard buttons that are valid letters should all be placed', async () => {
@@ -111,18 +106,14 @@ describe('BoardHandlerService', () => {
     });
 
     it('removing all letters placed with Backspace should allow the user to pick a new starting case', () => {
+        const keyboardEvent = new KeyboardEvent('keydown', { key: 'Backspace' });
         service.firstCase = { x: 7, y: 7 };
-        service.currentCase = { x: 7, y: 7 };
+        service.currentCase = { x: 11, y: 7 };
         service.isFirstCasePicked = true;
-        let keyboardEvent;
-
-        const wordToPlace = 'Frite';
-        for (const letterToPlace of wordToPlace) {
-            keyboardEvent = new KeyboardEvent('keydown', { key: letterToPlace });
-            service.buttonDetect(keyboardEvent);
-        }
+        service.isFirstCaseLocked = true;
+        service.word = 'Frite';
+        service.placedLetters = [true, true, true, true, true];
         while (service.word.length) {
-            keyboardEvent = new KeyboardEvent('keydown', { key: 'Backspace' });
             service.buttonDetect(keyboardEvent);
         }
 
@@ -132,18 +123,13 @@ describe('BoardHandlerService', () => {
 
     it('pressing escape should cancel all the placements and the case selection made', () => {
         service.firstCase = { x: 7, y: 7 };
-        service.currentCase = { x: 7, y: 7 };
+        service.currentCase = { x: 11, y: 7 };
         service.isFirstCasePicked = true;
-        service.orientation = 'v';
-        let keyboardEvent;
+        service.isFirstCaseLocked = true;
+        service.word = 'Frite';
+        service.placedLetters = [true, true, true, true, true];
 
-        const wordToPlace = 'Frite';
-        for (const letterToPlace of wordToPlace) {
-            keyboardEvent = new KeyboardEvent('keydown', { key: letterToPlace });
-            service.buttonDetect(keyboardEvent);
-        }
-
-        keyboardEvent = new KeyboardEvent('keydown', { key: 'Escape' });
+        const keyboardEvent = new KeyboardEvent('keydown', { key: 'Escape' });
         service.buttonDetect(keyboardEvent);
 
         expect(service.word).toEqual('');
@@ -235,7 +221,7 @@ describe('BoardHandlerService', () => {
         service.firstCase = { x: 7, y: 10 };
         service.currentCase = { x: 7, y: 10 };
         service.isFirstCasePicked = true;
-        service.orientation = 'v';
+        service.orientation = Orientation.Vertical;
         const wordToPlace = 'ees';
 
         await service.placeLetter(wordToPlace[0]);
@@ -245,5 +231,13 @@ describe('BoardHandlerService', () => {
 
         await service.confirmPlacement();
         expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('!placer k8v e', TypeMessage.Player);
+    });
+
+    it('pressing the button enter with a word placed should call confirmPlacement', () => {
+        spyOn(service, 'confirmPlacement');
+        service.word = 'girafe';
+        const keyboardEvent = new KeyboardEvent('keydown', { key: 'Enter' });
+        service.buttonDetect(keyboardEvent);
+        expect(service.confirmPlacement).toHaveBeenCalled();
     });
 });

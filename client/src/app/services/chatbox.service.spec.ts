@@ -26,7 +26,7 @@ describe('ChatboxService', () => {
         const firstPlayerEasel = [letterA, letterA, letterB, letterB, letterC, letterC, letterA];
         const firstPlayer = new Player(1, 'Player 1', firstPlayerEasel);
         service['playerService'].addPlayer(firstPlayer);
-        possibleWord = { word: 'test', orientation: Orientation.HorizontalOrientation, line: 0, startIdx: 0, point: 1 };
+        possibleWord = { word: 'test', orientation: Orientation.Horizontal, line: 0, startIdx: 0, point: 1 };
 
         spyOn(service['sendMessageService'], 'displayMessageByType');
     });
@@ -145,7 +145,7 @@ describe('ChatboxService', () => {
 
         service.command = 'debug';
         const table: { word: string; orientation: Orientation; line: number; startIdx: number; point: number }[] = [
-            { word: 'message de debug', orientation: Orientation.HorizontalOrientation, line: 0, startIdx: 0, point: 1 },
+            { word: 'message de debug', orientation: Orientation.Horizontal, line: 0, startIdx: 0, point: 1 },
         ];
 
         service['debugService'].debugServiceMessage = table;
@@ -186,9 +186,7 @@ describe('ChatboxService', () => {
     });
 
     it('should display the right debug message if at least one possibility has been found', () => {
-        service['debugService'].debugServiceMessage = [
-            { word: 'test', orientation: Orientation.HorizontalOrientation, line: 0, startIdx: 0, point: 3 },
-        ];
+        service['debugService'].debugServiceMessage = [{ word: 'test', orientation: Orientation.Horizontal, line: 0, startIdx: 0, point: 3 }];
         service.displayDebugMessage();
         expect(service.message).toEqual('test: -- 3');
     });
@@ -221,5 +219,27 @@ describe('ChatboxService', () => {
         service.message = '!placer h8h test';
         await service.executePlace();
         expect(spy).not.toHaveBeenCalled();
+    });
+
+    it('sending a command placer should call executePlace', () => {
+        spyOn(service, 'executePlace');
+        service.message = 'placer h8h allo';
+        service.command = 'placer';
+        service.sendPlayerMessage(service.message);
+        expect(service.executePlace).toHaveBeenCalled();
+    });
+
+    it('using command !reserve while debug is active should call sendMessageService', () => {
+        service.command = 'reserve';
+        service['debugService'].isDebugActive = true;
+        service.sendPlayerMessage('!reserve');
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledTimes(service['letterService'].reserve.length);
+    });
+
+    it('using command !reserve while debug is inactive should display the respective message', () => {
+        service.command = 'reserve';
+        service['debugService'].isDebugActive = false;
+        service.sendPlayerMessage('!reserve');
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('Commande non réalisable', TypeMessage.Error);
     });
 });
