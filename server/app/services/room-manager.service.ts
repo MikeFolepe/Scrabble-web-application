@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 import { GameSettings, StartingPlayer } from '@common/game-settings';
-import { PlayerIndex } from '@common/PlayerIndex';
 import { Room, State } from '@common/room';
+import { PlayerIndex } from '@common/PlayerIndex';
 import { Service } from 'typedi';
 
 @Service()
@@ -89,24 +89,19 @@ export class RoomManager {
         return '';
     }
 
-    findWinnerbySocket(socketID: string): number | string {
-        const room = this.rooms.find((rooms) => {
-            for (const socketId of rooms.socketIds) {
-                if (socketId === socketID) return rooms.socketIds.indexOf(socketID);
+    findLoserIndex(socketId: string): number {
+        for (const room of this.rooms) {
+            for (const ids of room.socketIds) {
+                if (ids === socketId) return room.socketIds.indexOf(ids) as number;
             }
-            return false;
-        });
-
-        if (room !== undefined) {
-            return '';
         }
-        return '';
+        return 5;
     }
 
     getWinnerName(roomId: string, indexofLoser: number): string {
         const room = this.find(roomId) as Room;
         if (indexofLoser === 0) return room.gameSettings.playersName[1];
-        else return room.gameSettings.playersName[1];
+        else return room.gameSettings.playersName[0];
     }
     isNotAvailable(roomId: string): boolean {
         const room = this.find(roomId);
@@ -118,7 +113,7 @@ export class RoomManager {
         return room.state === State.Playing;
     }
 
-    find(roomId: string): Room | undefined {
-        return this.rooms.find((room) => room.roomId === roomId);
+    find(roomId: string): Room {
+        return this.rooms.find((room) => room.roomId === roomId) as Room;
     }
 }

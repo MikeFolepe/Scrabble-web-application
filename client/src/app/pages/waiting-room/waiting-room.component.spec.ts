@@ -17,6 +17,7 @@ describe('WaitingRoomComponent', () => {
     let gameSettingsServiceSpyjob: jasmine.SpyObj<GameSettingsService>;
 
     beforeEach(() => {
+        jasmine.clock().install();
         clientSocketServiceSpyjob = jasmine.createSpyObj('ClientSocketService', ['route']);
         // TODO Regarder bien comment reinjecter les informations
         // clientSocketServiceSpyjob.socket = jasmine.createSpyObj('SOCKETIO', ['conne']);

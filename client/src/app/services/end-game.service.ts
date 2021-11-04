@@ -15,6 +15,7 @@ export class EndGameService {
     actionsLog: string[] = [];
     isEndGame: boolean = false;
     isEndGamebyGiveUp = false;
+    winnerNamebyGiveUp = '';
 
     constructor(
         public clientSocketService: ClientSocketService,
@@ -24,8 +25,9 @@ export class EndGameService {
         public skipturnService: SkipTurnService,
         public gameSettingsService: GameSettingsService,
     ) {
-        this.clientSocketService.socket.on('receiveEndGamebyGiveup', (isEndGame: boolean) => {
+        this.clientSocketService.socket.on('receiveEndGamebyGiveup', (isEndGame: boolean, myWinner: string) => {
             this.isEndGamebyGiveUp = isEndGame;
+            this.winnerNamebyGiveUp = myWinner;
         });
         this.clearAllData();
     }
@@ -64,12 +66,13 @@ export class EndGameService {
         this.playerService.players = [];
         this.letterService.reserve = JSON.parse(JSON.stringify(RESERVE));
         this.isEndGamebyGiveUp = false;
+        this.winnerNamebyGiveUp = '';
         this.isEndGame = false;
         this.actionsLog = [];
         this.debugService.debugServiceMessage = [];
     }
 
-    private isEndGameByActions(): boolean {
+    isEndGameByActions(): boolean {
         if (this.actionsLog.length < NUMBER_OF_SKIP) {
             return false;
         }
@@ -82,7 +85,7 @@ export class EndGameService {
         return true;
     }
 
-    private isEndGameByEasel(): boolean {
+    isEndGameByEasel(): boolean {
         return (
             this.letterService.reserveSize === 0 &&
             (this.playerService.players[INDEX_REAL_PLAYER].letterTable.length === 0 ||

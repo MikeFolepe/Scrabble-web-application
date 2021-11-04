@@ -40,8 +40,6 @@ export class SocketManager {
                     return;
                 }
                 this.roomManager.addCustomer(playerName, roomId);
-                // check les names
-                console.log(this.roomManager.rooms);
                 // Search the good room and set the custommer ID
                 const myroom = this.roomManager.find(roomId);
                 // On s'assure de pas avoir une room indéfinie
@@ -73,36 +71,26 @@ export class SocketManager {
 
             socket.on('disconnect', () => {
                 const roomId = this.roomManager.findRoomIdOf(socket.id);
+                // Code pour winner
+                const indexOfLoser = this.roomManager.findLoserIndex(socket.id);
+                const winnerName = this.roomManager.getWinnerName(roomId, indexOfLoser);
                 setTimeout(() => {
-                    socket.to(roomId).emit('receiveEndGamebyGiveup', true);
+                    socket.to(roomId).emit('receiveEndGamebyGiveup', true, winnerName);
                     this.roomManager.deleteRoom(roomId);
                     this.sio.emit('roomConfiguration', this.roomManager.rooms);
                     this.sio.socketsLeave(roomId);
                 }, 5000);
-                // Code pour winner
-                // const indexOfLoser = this.roomManager.findWinnerbySocket(socket.id);
-                // const winnerName = this.roomManager.getWinnerName(roomId, indexOfLoser);
-                // console.log(winnerName);
-                // this.sio.in(roomId).emit('receiverWinnerName', winnerName);
             });
 
             // Receive the Endgame from the give up game or the natural EndGame by easel or by actions
             socket.on('sendEndGame', (isEndGame: boolean, roomId: string) => {
                 // code winner
-                const indexOfLoser = this.roomManager.findWinnerbySocket(socket.id);
+                const indexOfLoser = this.roomManager.findLoserIndex(socket.id);
                 const winnerName = this.roomManager.getWinnerName(roomId, indexOfLoser as number);
-                console.log(indexOfLoser);
-                console.log(winnerName);
-                // this.sio.in(roomId).emit('receiverWinnerName', winnerName);
-                socket.to(roomId).emit('receiveEndGamebyGiveup', isEndGame);
+                socket.to(roomId).emit('receiveEndGamebyGiveup', isEndGame, winnerName);
                 this.roomManager.deleteRoom(roomId);
                 this.sio.emit('roomConfiguration', this.roomManager.rooms);
                 this.sio.socketsLeave(roomId);
-
-                // const indexOfLoser = this.roomManager.findWinnerbySocket(socket.id);
-                // const winnerName = this.roomManager.getWinnerName(roomId, indexOfLoser);
-                // console.log(winnerName);
-                // this.sio.in(roomId).emit('receiverWinnerName', winnerName);
             });
 
             socket.on('sendRoomMessage', (message: string, roomId: string) => {
