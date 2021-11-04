@@ -8,7 +8,7 @@ import {
     INDEX_INVALID,
     INDEX_PLAYER_AI,
     INDEX_PLAYER_ONE,
-    THREE_SECONDS_DELAY,
+    THREE_SECONDS_DELAY
 } from '@app/classes/constants';
 import { TypeMessage } from '@app/classes/enum';
 import { Orientation } from '@app/classes/scrabble-board-pattern';
@@ -74,7 +74,7 @@ export class PlaceLetterService {
         this.startPosition = position;
         this.orientation = orientation;
         this.word = word;
-        this.isRow = orientation === Orientation.Horizontal ? true : false;
+        this.isRow = orientation === Orientation.Horizontal;
 
         // Remove accents from the word to place
         const wordNoAccents = word.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
