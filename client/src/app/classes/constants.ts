@@ -51,6 +51,12 @@ export enum AIStrategy {
     Place,
 }
 
+export enum PlacingStrategy {
+    LessSix,
+    SevenToTwelve,
+    ThirteenToEighteen,
+}
+
 export const strategyBallotBox: AIStrategy[] = [
     AIStrategy.Place,
     AIStrategy.Place,
@@ -63,12 +69,6 @@ export const strategyBallotBox: AIStrategy[] = [
     AIStrategy.Place,
     AIStrategy.Place,
 ];
-
-export enum PlacingStrategy {
-    LessSix,
-    SevenToTwelve,
-    ThirteenToEighteen,
-}
 
 export const placingBallotBox: PlacingStrategy[] = [
     PlacingStrategy.LessSix,

@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
-/* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable sort-imports */
 import { Injectable } from '@angular/core';
 import { EASEL_SIZE, MIN_RESERVE_SIZE_TO_SWAP, RESERVE } from '@app/classes/constants';
@@ -8,6 +7,9 @@ import { board, Earning } from '@app/classes/scrabble-board';
 import { Orientation, PossibleWords } from '@app/classes/scrabble-board-pattern';
 import { Vec2 } from '@app/classes/vec2';
 import { PlayerAI } from '@app/models/player-ai.model';
+import { ChatboxService } from './chatbox.service';
+import { DebugService } from './debug.service';
+import { EndGameService } from './end-game.service';
 import { LetterService } from './letter.service';
 import { PlaceLetterService } from './place-letter.service';
 import { PlayerService } from './player.service';
@@ -22,9 +24,6 @@ const MULTIPLICATION_NEUTRAL = 1;
     providedIn: 'root',
 })
 export class PlayerAIService {
-    isFirstRound: boolean = true;
-    isPlacementValid: boolean;
-
     constructor(
         // All services needed for AI Player functionnalities
         public placeLetterService: PlaceLetterService,
@@ -32,7 +31,17 @@ export class PlayerAIService {
         public skipTurnService: SkipTurnService,
         public playerService: PlayerService,
         public letterService: LetterService,
+        public endGameService: EndGameService,
+        public chatBoxService: ChatboxService,
+        public debugService: DebugService,
     ) {}
+
+    skip(): void {
+        // TODO: enlever nombre magique
+        setTimeout(() => {
+            this.skipTurnService.switchTurn();
+        }, 5000);
+    }
 
     generateRandomNumber(maxValue: number): number {
         return Math.floor(Number(Math.random()) * maxValue);
@@ -62,6 +71,10 @@ export class PlayerAIService {
             playerAi.letterTable[index] = this.letterService.getRandomLetter();
         }
 
+        // TODO: arranger l'affichage
+        // this.endGameService.actionsLog.push('echanger');
+        // this.chatBoxService.displayMessageByType('joueur virtuel echange', 'opponent');
+
         return true;
     }
 
@@ -71,7 +84,6 @@ export class PlayerAIService {
 
         if (!isValid) {
             this.swap();
-            // dire que j'ai swap
         }
     }
 

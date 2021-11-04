@@ -6,15 +6,16 @@ import { Range } from '@app/classes/range';
 import { BoardPattern, Orientation, PatternInfo, PossibleWords } from '@app/classes/scrabble-board-pattern';
 import { Vec2 } from '@app/classes/vec2';
 import { PlayerAIService } from '@app/services/player-ia.service';
-import { PlayStrategy } from './abstract-strategy.model';
 import { PlayerAI } from './player-ai.model';
 
+// TODO: caser ces variables qquepart
 const NO_PLAYABLE_WORD = -1;
-export class PlaceLetters extends PlayStrategy {
+const INVALID = -1;
+const MAX_DIMENSIONS = 2;
+export class PlaceLetters {
     dictionary: string[];
     private board: string[][][];
     constructor(public pointingRange: Range) {
-        super();
         this.dictionary = DICTIONARY;
         this.board = [];
     }
@@ -43,39 +44,37 @@ export class PlaceLetters extends PlayStrategy {
         matchingPointingRangeWords = playerAiService.filterByRange(allPossibleWords, this.pointingRange);
 
         this.computeResults(allPossibleWords, matchingPointingRangeWords, playerAiService);
+
         setTimeout(() => {
+            playerAiService.debugService.receiveAIDebugPossibilities(allPossibleWords.concat(matchingPointingRangeWords));
+            playerAiService.endGameService.actionsLog.push('placer');
             playerAiService.skipTurnService.switchTurn();
+            // TODO: enlever nombre magique
         }, 5000);
     }
 
-    computeResults(allPossibleWords: PossibleWords[], matchingPointingRangeWords: PossibleWords[], playerAiService: PlayerAIService): void {
-        let idx: number = this.attempt(matchingPointingRangeWords, playerAiService);
-        if (idx !== NO_PLAYABLE_WORD) {
-            console.log("j'ai joué : " + matchingPointingRangeWords[idx].word);
-            console.log(matchingPointingRangeWords[idx]);
-            console.log(playerAiService.playerService.players[1].letterTable);
-            playerAiService.place(matchingPointingRangeWords[idx]);
+    private computeResults(allPossibleWords: PossibleWords[], matchingPointingRangeWords: PossibleWords[], playerAiService: PlayerAIService): void {
+        let index: number = this.placementAttempt(matchingPointingRangeWords, playerAiService);
+        if (index !== NO_PLAYABLE_WORD) {
+            playerAiService.place(matchingPointingRangeWords[index]);
+            matchingPointingRangeWords.splice(index, 1);
             return;
         }
 
-        idx = this.attempt(allPossibleWords, playerAiService);
-        if (idx !== NO_PLAYABLE_WORD) {
-            console.log("j'ai joué : " + allPossibleWords[idx].word);
-            console.log(allPossibleWords[idx]);
-            console.log(playerAiService.playerService.players[1].letterTable);
-            playerAiService.place(allPossibleWords[idx]);
+        index = this.placementAttempt(allPossibleWords, playerAiService);
+        if (index !== NO_PLAYABLE_WORD) {
+            playerAiService.place(allPossibleWords[index]);
+            allPossibleWords.splice(index, 1);
             return;
         }
 
-        console.log("j'ai été forcé de changer de strategie : je swap");
         playerAiService.swap();
     }
 
-    attempt(possibilities: PossibleWords[], playerAiService: PlayerAIService): number {
-        let result = { validation: false, score: 0 };
+    private placementAttempt(possibilities: PossibleWords[], playerAiService: PlayerAIService): number {
         let i = 0;
 
-        for (i = 0; i < possibilities.length && result.validation === false; i++) {
+        for (i = 0; i < possibilities.length; i++) {
             const word = possibilities[i];
             let start: Vec2;
             let orientation: string;
@@ -86,12 +85,12 @@ export class PlaceLetters extends PlayStrategy {
                 start = { x: word.startIdx, y: word.line };
                 orientation = 'v';
             }
+
             let scrabbleBoard: string[][] = JSON.parse(JSON.stringify(playerAiService.placeLetterService.scrabbleBoard));
             scrabbleBoard = playerAiService.placeWordOnBoard(scrabbleBoard, word.word, start, orientation);
-            result = playerAiService.wordValidation.validateAllWordsOnBoard(scrabbleBoard, word.word.length === 7, orientation === 'h', true);
+            const isValid = this.validateWord(scrabbleBoard);
 
-            if (result.validation === true) {
-                console.log(this.validateWord(scrabbleBoard));
+            if (isValid) {
                 return i;
             }
         }
@@ -99,7 +98,7 @@ export class PlaceLetters extends PlayStrategy {
         return NO_PLAYABLE_WORD;
     }
 
-    initializeArray(scrabbleBoard: string[][]) {
+    private initializeArray(scrabbleBoard: string[][]) {
         const array: string[][][] = new Array(Object.keys(Orientation).length / 2);
         array[Orientation.HorizontalOrientation] = new Array(BOARD_COLUMNS);
         array[Orientation.VerticalOrientation] = new Array(BOARD_ROWS);
@@ -116,7 +115,7 @@ export class PlaceLetters extends PlayStrategy {
         this.board = array;
     }
 
-    removeIfNotDisposable(allPossibleWords: PossibleWords[]): PossibleWords[] {
+    private removeIfNotDisposable(allPossibleWords: PossibleWords[]): PossibleWords[] {
         const filteredWords: PossibleWords[] = [];
         const re1 = new RegExp('(?<=[A-Za-z])(,?)(?=[A-Za-z])', 'g');
         const re2 = new RegExp('[,]', 'g');
@@ -124,10 +123,7 @@ export class PlaceLetters extends PlayStrategy {
         for (const word of allPossibleWords) {
             let line = this.board[word.orientation][word.line]
                 .map((element: string) => {
-                    if (element === '') return ' ';
-                    else {
-                        return element;
-                    }
+                    return element === '' ? ' ' : element;
                 })
                 .toString();
             line = line.replace(re2, '');
@@ -140,7 +136,7 @@ export class PlaceLetters extends PlayStrategy {
         return filteredWords;
     }
 
-    isWordFitting(line: string, wordToPlace: PossibleWords, radixes: string[]): boolean {
+    private isWordFitting(line: string, wordToPlace: PossibleWords, radixes: string[]): boolean {
         const isEmptyCase = new Array<boolean>(wordToPlace.word.length);
         isEmptyCase.fill(true);
 
@@ -161,9 +157,7 @@ export class PlaceLetters extends PlayStrategy {
         const start = line.search(pattern);
         const end = start + wordToPlace.word.length - 1;
 
-        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-        // search function returns -1 if not found so as we are only calling -1 a single time, we decided to keep it like this
-        if (start === -1) {
+        if (start === INVALID) {
             return false;
         }
 
@@ -171,7 +165,7 @@ export class PlaceLetters extends PlayStrategy {
         return this.isWordOverWriting(line, start, end, wordToPlace.word.length) === false;
     }
 
-    isWordOverWriting(line: string, startIdx: number, endIdx: number, wordLength: number): boolean {
+    private isWordOverWriting(line: string, startIdx: number, endIdx: number, wordLength: number): boolean {
         if (wordLength !== BOARD_ROWS) {
             const touchOtherWordByRight = startIdx === 0 && line[endIdx + 1] !== ' ';
             const touchOtherWordByLeft = endIdx === BOARD_ROWS && line[startIdx - 1] !== ' ';
@@ -183,7 +177,7 @@ export class PlaceLetters extends PlayStrategy {
         return false;
     }
 
-    removeIfNotEnoughLetter(allPossibleWords: PossibleWords[], player: PlayerAI) {
+    private removeIfNotEnoughLetter(allPossibleWords: PossibleWords[], player: PlayerAI) {
         const filteredWords: PossibleWords[] = [];
 
         for (const word of allPossibleWords) {
@@ -191,11 +185,11 @@ export class PlaceLetters extends PlayStrategy {
             for (const letter of word.word) {
                 const re = new RegExp(letter, 'g');
                 const re1 = new RegExp('[,]{1,}', 'g');
-                const amntOfLetterNeeded: number = (word.word.match(re) || []).length;
-                const amntOfLetterAlrdyPrsnt: number = (this.board[word.orientation][word.line].toString().replace(re1, '').match(re) || []).length;
-                const plQ: number = player.playerQuantityOf(letter);
+                const amountOfLetterNeeded: number = (word.word.match(re) || []).length;
+                const amountOfLetterPresent: number = (this.board[word.orientation][word.line].toString().replace(re1, '').match(re) || []).length;
+                const playerAmount: number = player.playerQuantityOf(letter);
 
-                if (amntOfLetterNeeded > plQ + amntOfLetterAlrdyPrsnt) {
+                if (amountOfLetterNeeded > playerAmount + amountOfLetterPresent) {
                     isWordValid = false;
                     break;
                 }
@@ -209,7 +203,7 @@ export class PlaceLetters extends PlayStrategy {
         return filteredWords;
     }
 
-    generateAllWords(dictionaryToLookAt: string[], patterns: BoardPattern) {
+    private generateAllWords(dictionaryToLookAt: string[], patterns: BoardPattern) {
         const allWords: PossibleWords[] = [];
 
         for (const pattern of patterns.horizontal) {
@@ -233,7 +227,7 @@ export class PlaceLetters extends PlayStrategy {
         return allWords;
     }
 
-    checkIfWordIsPresent(pattern: string, word: string): boolean {
+    private checkIfWordIsPresent(pattern: string, word: string): boolean {
         const re = new RegExp('(?<=[*])(([a-z]*)?)', 'g');
         const wordPresent = pattern.match(re);
 
@@ -247,8 +241,8 @@ export class PlaceLetters extends PlayStrategy {
     }
 
     private generateAllPatterns(playerHand: string, isFirstRound: boolean): BoardPattern {
-        const horizontal: PatternInfo[] = [];
-        const vertical: PatternInfo[] = [];
+        let horizontal: PatternInfo[] = [];
+        let vertical: PatternInfo[] = [];
 
         if (isFirstRound) {
             horizontal.push({ line: CENTRAL_CASE_POSITION_X, pattern: '^' + playerHand.toLowerCase() + '*$' });
@@ -256,84 +250,62 @@ export class PlaceLetters extends PlayStrategy {
             return { horizontal, vertical };
         }
 
-        const re1 = new RegExp('(?<=[A-Za-z])(,?)(?=[A-Za-z])', 'g');
-        const re2 = new RegExp('[,]{1,}', 'g');
-
-        for (let rowIndex = 0; rowIndex < BOARD_COLUMNS; rowIndex++) {
-            let pattern = this.board[Orientation.HorizontalOrientation][rowIndex]
-                .toString()
-                .replace(re1, '')
-                .replace(re2, playerHand + '*')
-                .toLowerCase();
-            // If it's not an empty row
-            if (pattern !== playerHand.toLowerCase() + '*') {
-                pattern = '^' + pattern + '$';
-                horizontal.push({ line: rowIndex, pattern });
-            }
-        }
-        for (let columnIndex = 0; columnIndex < BOARD_COLUMNS; columnIndex++) {
-            let pattern = this.board[Orientation.VerticalOrientation][columnIndex]
-                .toString()
-                .replace(re1, '')
-                .replace(re2, playerHand + '*')
-                .toLowerCase();
-            // If it's not an empty row
-            if (pattern !== playerHand.toLowerCase() + '*') {
-                pattern = '^' + pattern + '$';
-                vertical.push({ line: columnIndex, pattern });
-            }
-        }
+        horizontal = this.generatePattern(Orientation.HorizontalOrientation, playerHand);
+        vertical = this.generatePattern(Orientation.VerticalOrientation, playerHand);
 
         return { horizontal, vertical };
     }
 
-    validateWord(scrabbleBoard: string[][]): boolean {
+    private generatePattern(orientation: Orientation, playerHand: string): PatternInfo[] {
+        const patternArray: PatternInfo[] = [];
+
+        const re1 = new RegExp('(?<=[A-Za-z])(,?)(?=[A-Za-z])', 'g');
+        const re2 = new RegExp('[,]{1,}', 'g');
+
+        for (let line = 0; line < BOARD_COLUMNS; line++) {
+            let pattern = this.board[orientation][line]
+                .toString()
+                .replace(re1, '')
+                .replace(re2, playerHand + '*')
+                .toLowerCase();
+            // If it's not an empty row
+            if (pattern !== playerHand.toLowerCase() + '*') {
+                pattern = '^' + pattern + '$';
+                patternArray.push({ line, pattern });
+            }
+        }
+
+        return patternArray;
+    }
+
+    private validateWord(scrabbleBoard: string[][]): boolean {
         const save = JSON.parse(JSON.stringify(this.board));
 
         this.initializeArray(scrabbleBoard);
-        let wordsOnBoard: string[] = [];
+        const wordsOnBoard: string[] = [];
 
         const re1 = new RegExp('[,]', 'g');
         const re2 = new RegExp('[ ]{1}', 'g');
 
-        for (let i = 0; i < BOARD_COLUMNS; i++) {
-            this.board[0][i]
-                .map((element: string) => {
-                    if (element === '') return ' ';
-                    else {
-                        return element;
-                    }
-                })
-                .toString()
-                .replace(re1, '')
-                .split(re2)
-                .forEach((x) => {
-                    if (x.length > 1) wordsOnBoard.push(x);
-                });
-
-            this.board[1][i]
-                .map((element: string) => {
-                    if (element === '') return ' ';
-                    else {
-                        return element;
-                    }
-                })
-                .toString()
-                .replace(re1, '')
-                .split(re2)
-                .forEach((x) => {
-                    if (x.length > 1) wordsOnBoard.push(x);
-                });
+        for (let dimension = 0; dimension < MAX_DIMENSIONS; dimension++) {
+            for (let i = 0; i < BOARD_COLUMNS; i++) {
+                this.board[dimension][i]
+                    .map((element: string) => {
+                        return element === '' ? ' ' : element;
+                    })
+                    .toString()
+                    .replace(re1, '')
+                    .split(re2)
+                    .forEach((word) => {
+                        if (word.length > 1 && word !== '') wordsOnBoard.push(word);
+                    });
+            }
         }
-        wordsOnBoard = wordsOnBoard.filter((element) => {
-            return element !== '';
-        });
-        console.log(wordsOnBoard);
-        for (let i = 0; i < wordsOnBoard.length && wordsOnBoard[i].length > 1; i++) {
-            const found = this.dictionary.find((element) => element === wordsOnBoard[i]);
+
+        for (const word of wordsOnBoard) {
+            const found = this.dictionary.find((element) => element === word);
             if (found === undefined) {
                 this.board = save;
-                console.log(wordsOnBoard[i] + " n'est pas dans le dico");
                 return false;
             }
         }

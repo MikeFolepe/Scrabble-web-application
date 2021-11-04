@@ -1,31 +1,20 @@
 /* eslint-disable sort-imports */
-import { AIStrategy, placingBallotBox, PlacingStrategy, strategyBallotBox } from '@app/classes/constants';
+import { placingBallotBox, PlacingStrategy } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { Range } from '@app/classes/range';
 import { PlayerAIService } from '@app/services/player-ia.service';
-import { PlayStrategy } from './abstract-strategy.model';
 import { PlaceLetters } from './place-letter-strategy.model';
 import { Player } from './player.model';
-import { SkipTurn } from './skip-turn-strategy.model';
 
 export class PlayerAI extends Player {
-    strategy: PlayStrategy;
+    private strategy: PlaceLetters;
     constructor(id: number, name: string, letterTable: Letter[], public playerAiService: PlayerAIService) {
         super(id, name, letterTable);
-        // Initialize the first concrete strategy to be executed later
-        this.setStrategy();
+        this.strategy = new PlaceLetters(this.pointingRange());
     }
 
     play() {
-        // Allow the ai to execute the current strategy whoever it is
         this.strategy.execute(this.playerAiService);
-        // Set the next strategy for next tour
-        this.setStrategy();
-    }
-
-    replaceStrategy(strategy: PlayStrategy) {
-        this.strategy = strategy;
-        this.play();
     }
 
     getHand(): string {
@@ -47,24 +36,6 @@ export class PlayerAI extends Player {
         }
 
         return quantity;
-    }
-
-    private setStrategy() {
-        const randomNumber = this.generateRandomNumber(strategyBallotBox.length);
-        switch (strategyBallotBox[randomNumber]) {
-            case AIStrategy.Skip:
-                this.strategy = new PlaceLetters(this.pointingRange());
-                break;
-            case AIStrategy.Swap:
-                this.strategy = new PlaceLetters(this.pointingRange());
-                break;
-            case AIStrategy.Place:
-                this.strategy = new PlaceLetters(this.pointingRange());
-                break;
-            default:
-                this.strategy = new SkipTurn();
-                break;
-        }
     }
 
     private pointingRange(): Range {

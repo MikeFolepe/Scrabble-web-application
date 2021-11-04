@@ -32,15 +32,10 @@ export class SkipTurnService {
                 this.isTurn = false;
                 this.startTimer();
                 const playerAi = this.playerService.players[1] as PlayerAI;
-                // debugger;
-                // console.log(playerAi);
-
+                // TODO: enlever nombre magique
                 setTimeout(() => {
                     playerAi.play();
                 }, 3000);
-
-                // console.log(playerAi);
-                // this.playAiTurn();
             } else {
                 this.isTurn = true;
                 this.startTimer();

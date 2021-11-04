@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 // import { PageEvent } from '@angular/material/paginator';
 import { RouterTestingModule } from '@angular/router/testing';
-import { State } from '@app/classes/room';
+import { State } from '../../../../../common/room';
 import { JoinRoomComponent } from './join-room.component';
 
 describe('JoinRoomComponent', () => {

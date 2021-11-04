@@ -69,7 +69,7 @@ export class PlaceLetterService {
 
         // Validation of the placement
         const finalResult: ScoreValidation = this.wordValidationService.validateAllWordsOnBoard(this.scrabbleBoard, this.isEaselSize, isRow);
-        if ((indexPlayer = INDEX_PLAYER_AI)) finalResult.validation = true;
+        if (indexPlayer === INDEX_PLAYER_AI) finalResult.validation = true;
         if (finalResult.validation) {
             this.handleValidPlacement(finalResult, indexPlayer);
             return true;
