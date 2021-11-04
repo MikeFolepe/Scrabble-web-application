@@ -206,6 +206,12 @@
                         "patterns": ["../*"] // Replacement of the buggy import/no-relative-parent-imports
                     }
                 ],
+                "sort-imports": [
+                    "error",
+                    {
+                        "allowSeparatedGroups": true
+                    }
+                ],
                 "no-throw-literal": "error",
                 "no-trailing-spaces": "off",
                 "no-undef-init": "error",

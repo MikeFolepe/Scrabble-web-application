@@ -9,6 +9,7 @@ import { RESERVE } from '@app/classes/constants';
 import { RouterTestingModule } from '@angular/router/testing';
 import { SwapLetter } from '@app/models/swap-letter-strategy.model';
 import { TestBed } from '@angular/core/testing';
+// import { SkipTurn } from './skip-turn-strategy.model';
 
 describe('SwapLetter', () => {
     const id = 0;
@@ -60,6 +61,7 @@ describe('SwapLetter', () => {
     //     const startingHand = '[ABCDEFG]';
     //     const spy = spyOn<any>(playerAI, 'replaceStrategy');
     //     spyOn<any>(letterService, 'getReserveSize').and.returnValue(7);
+    // });
 
     // it('should be SkipTurn if there is not enough letters in the reserve to change', () => {
     //     spyOn(playerAI, 'play');

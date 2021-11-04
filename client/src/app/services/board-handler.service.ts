@@ -1,11 +1,11 @@
 import { BOARD_COLUMNS, BOARD_ROWS, CASE_SIZE, INDEX_INVALID, INDEX_REAL_PLAYER, LAST_INDEX } from '@app/classes/constants';
 import { MouseButton, TypeMessage } from '@app/classes/enum';
-import { Injectable } from '@angular/core';
-import { Vec2 } from '@app/classes/vec2';
 import { GridService } from '@app/services/grid.service';
+import { Injectable } from '@angular/core';
 import { PlaceLetterService } from '@app/services/place-letter.service';
 import { SendMessageService } from '@app/services/send-message.service';
 import { SkipTurnService } from '@app/services/skip-turn.service';
+import { Vec2 } from '@app/classes/vec2';
 
 @Injectable({
     providedIn: 'root',
