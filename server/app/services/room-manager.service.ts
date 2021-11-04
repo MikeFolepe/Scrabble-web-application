@@ -4,7 +4,7 @@ import { PlayerIndex } from '@common/PlayerIndex';
 import { Service } from 'typedi';
 
 @Service()
-export class RoomManager {
+export class RoomManagerService {
     rooms: Room[];
 
     constructor() {
@@ -32,7 +32,8 @@ export class RoomManager {
         if (room === undefined) {
             return false;
         }
-        room.addCustomer(customerName);
+        room.gameSettings.playersName[PlayerIndex.CUSTOMER] = customerName;
+
         return true;
     }
 
@@ -41,8 +42,8 @@ export class RoomManager {
         room.state = state;
     }
 
-    setSocket(room: Room) {
-        room.setSocketId(room.id);
+    setSocket(room: Room, socketId: string) {
+        room.socketIds.push(socketId);
     }
 
     getGameSettings(roomId: string) {

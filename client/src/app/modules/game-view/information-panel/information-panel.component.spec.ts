@@ -49,11 +49,11 @@ describe('InformationPanelComponent', () => {
         spyOn(component.playerService, 'clearPlayers');
         component.ngOnDestroy();
         expect(component.playerService.clearPlayers).toHaveBeenCalled();
+        expect(skipTurnSpy.stopTimer).toHaveBeenCalled();
     });
-
-    it('should start timer if game is solo', () => {
-        component.gameSettingsService.isSoloMode = true;
-        component.ngOnInit();
-        expect(skipTurnSpy.startTimer).toHaveBeenCalledTimes(1);
-    });
+    // it('should start timer if game is solo', () => {
+    //     component.gameSettingsService.isSoloMode = true;
+    //     component.ngOnInit();
+    //     expect(skipTurnSpy.startTimer).toHaveBeenCalledTimes(1);
+    // });
 });

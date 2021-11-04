@@ -3,7 +3,6 @@ import { BehaviorSubject } from 'rxjs';
 import { ClientSocketService } from '@app/services/client-socket.service';
 import { Injectable } from '@angular/core';
 import { Letter } from '@app/classes/letter';
-
 @Injectable({
     providedIn: 'root',
 })

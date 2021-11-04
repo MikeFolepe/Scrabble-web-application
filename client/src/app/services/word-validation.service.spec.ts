@@ -7,6 +7,7 @@ import { ALL_EASEL_BONUS, BOARD_COLUMNS, BOARD_ROWS } from '@app/classes/constan
 import { ScoreValidation } from '@app/classes/validation-score';
 import { CommunicationService } from '@app/services/communication.service';
 import { WordValidationService } from '@app/services/word-validation.service';
+import { of } from 'rxjs';
 
 describe('WordValidationService', () => {
     let httpMock: HttpTestingController;
@@ -46,29 +47,15 @@ describe('WordValidationService', () => {
         expect(service['httpServer'].validationPost).toBeTruthy();
     });
 
-    it('should pass through all rows and columns', () => {
-        service['newWords'] = ['', 'mais', ''];
-        service['newPlayedWords'].set('humour', ['B2', 'B3', 'B4', 'B5', 'B6', 'B7']);
-        service['playedWords'].set('ma', ['C1', 'C2']);
-        const isEaselSize = true;
-        const isRow = true;
-        const passThroughAllRowsOrColumnsSpy = spyOn(service, 'passThroughAllRowsOrColumns').and.callThrough();
-        service.validateAllWordsOnBoard(scrabbleBoard, isEaselSize, isRow);
-        const req = httpMock.expectOne(`${service['httpServer']['baseUrl']}/multiplayer/validateWords`);
-        expect(req.request.method).toBe('POST');
-        expect(passThroughAllRowsOrColumnsSpy).toHaveBeenCalledTimes(2);
-    });
-    it('should return the correct state and score to the player when validation is true', () => {
+    it('should return the correct state and score to the player when validation is true', async () => {
         const easelSize = false;
         const isRow = true;
         service['newPlayedWords'].set('mAison', ['H8', 'H9', 'H10', 'H11', 'H12', 'H13']);
         const expectedResult: ScoreValidation = { validation: true, score: 7 };
-        service.validateAllWordsOnBoard(scrabbleBoard, easelSize, isRow).then((validation) => {
-            expect(validation.score).toEqual(expectedResult.score);
-            expect(validation.validation).toEqual(expectedResult.validation);
-        });
-        const req = httpMock.expectOne(`${service['httpServer']['baseUrl']}/multiplayer/validateWords`);
-        expect(req.request.method).toBe('POST');
+        spyOn(service['httpServer'], 'validationPost').and.returnValue(of(true));
+        const validation = await service.validateAllWordsOnBoard(scrabbleBoard, easelSize, isRow);
+        expect(validation.score).toEqual(expectedResult.score);
+        expect(validation.validation).toEqual(expectedResult.validation);
     });
 
     it('should double word score if word is placed on a double word case', () => {
@@ -85,14 +72,12 @@ describe('WordValidationService', () => {
         expect(score).toEqual(initialScore + 3);
     });
 
-    it('should add easel bonus when condition encountered and validateAllWordsOnBoard() is called', () => {
+    it('should add easel bonus when condition encountered and validateAllWordsOnBoard() is called', async () => {
         const initialScore = 100;
         spyOn(service, 'calculateTotalScore').and.returnValue(initialScore);
-        service.validateAllWordsOnBoard(scrabbleBoard, true, true).then((validation) => {
-            expect(validation.score).toEqual(initialScore + ALL_EASEL_BONUS);
-        });
-        const req = httpMock.expectOne(`${service['httpServer']['baseUrl']}/multiplayer/validateWords`);
-        expect(req.request.method).toBe('POST');
+        spyOn(service['httpServer'], 'validationPost').and.returnValue(of(true));
+        const validation = await service.validateAllWordsOnBoard(scrabbleBoard, true, true);
+        expect(validation.score).toEqual(initialScore + ALL_EASEL_BONUS);
     });
 
     it('should call the right functions in case word is greater than two letters in passThroughAllRowsOrColumns()', () => {
@@ -110,19 +95,15 @@ describe('WordValidationService', () => {
         expect(spyOnAddToPlayedWords).toHaveBeenCalledTimes(2);
     });
 
-    it('validate all words should be false once one word is not valid in dictionnary', () => {
+    it('validate all words should be false once one word is not valid in dictionnary', async () => {
         service['newPlayedWords'].set('nrteu', ['A1', 'A2', 'A3', 'A4', 'A5']);
         service['playedWords'].set('ma', ['B1', 'B2']);
         const isEaselSize = false;
         const isRow = true;
         const expectedResult: ScoreValidation = { validation: false, score: 0 };
-        const spyToServer = spyOn(service['httpServer'], 'validationPost').and.callThrough();
-        service.validateAllWordsOnBoard(scrabbleBoard, isEaselSize, isRow).then((result) => {
-            expect(result).toEqual(expectedResult);
-        });
-        expect(spyToServer).toHaveBeenCalled();
-        const req = httpMock.expectOne(`${service['httpServer']['baseUrl']}/multiplayer/validateWords`);
-        expect(req.request.method).toBe('POST');
+        spyOn(service['httpServer'], 'validationPost').and.returnValue(of(false));
+        const validation = await service.validateAllWordsOnBoard(scrabbleBoard, isEaselSize, isRow);
+        expect(validation).toEqual(expectedResult);
     });
 
     it('check if played should return false if there is no matching played word', () => {
@@ -188,5 +169,21 @@ describe('WordValidationService', () => {
         expect(service['bonusesPositions'].size).toEqual(expectedSize);
         expect(service['bonusesPositions'].get('H12')).toBe(undefined);
         expect(service['bonusesPositions'].get('H15')).toBe(undefined);
+    });
+
+    it('should pass through all rows and columns', () => {
+        service['newWords'] = ['', 'mais', ''];
+        service['foundWords'] = ['', 'humour', ''];
+        service['newPositions'] = ['B2', 'B3', 'B4', 'B5', 'B6', 'B7'];
+        service['playedWords'].set('ma', ['C1', 'C2']);
+        service['playedWords'].set('humour', ['B2', 'B3', 'B4', 'B5', 'B6', 'B7']);
+        spyOn(service, 'checkIfPlayed').and.returnValue(true);
+        const isEaselSize = true;
+        const isRow = true;
+        const passThroughAllRowsOrColumnsSpy = spyOn(service, 'passThroughAllRowsOrColumns').and.callThrough();
+        service.validateAllWordsOnBoard(scrabbleBoard, isEaselSize, isRow);
+        const req = httpMock.expectOne(`${service['httpServer']['baseUrl']}/multiplayer/validateWords`);
+        expect(req.request.method).toBe('POST');
+        expect(passThroughAllRowsOrColumnsSpy).toHaveBeenCalledTimes(2);
     });
 });

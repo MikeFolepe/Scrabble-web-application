@@ -123,7 +123,7 @@ export class PlaceLetterService {
         if (this.numLettersUsedFromEasel === EASEL_SIZE) this.isEaselSize = true;
 
         // Validation of the placement
-        return this.validatePlacement(position, orientation, wordNoAccents, indexPlayer);
+        return await this.validatePlacement(position, orientation, wordNoAccents, indexPlayer);
     }
 
     async placeWithKeyboard(position: Vec2, letter: string, orientation: string, indexLetterInWord: number, indexPlayer: number): Promise<boolean> {
@@ -194,14 +194,14 @@ export class PlaceLetterService {
         // Placing the first word
         if (this.isFirstRound) {
             if (this.isFirstWordValid(position, orientation, word)) {
-                return this.validatePlacement(position, orientation, word, indexPlayer);
+                return await this.validatePlacement(position, orientation, word, indexPlayer);
             }
             this.handleInvalidPlacement(position, orientation, word, indexPlayer);
             this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', TypeMessage.Error);
             return false;
         } // Placing the following words
         if (this.isWordTouchingOthers(position, orientation, word)) {
-            return this.validatePlacement(position, orientation, word, indexPlayer);
+            return await this.validatePlacement(position, orientation, word, indexPlayer);
         }
         this.handleInvalidPlacement(position, orientation, word, indexPlayer);
         this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', TypeMessage.Error);

@@ -1,6 +1,7 @@
 import { AIStrategy, PlacingStrategy } from '@app/classes/enum';
 import { Letter } from '@app/classes/letter';
-import dictionaryData from '@src/../../assets/dictionary.json';
+// eslint-disable-next-line no-restricted-imports
+import dictionaryData from '@common/dictionary.json';
 
 export const DEFAULT_WIDTH = 750;
 export const DEFAULT_HEIGHT = 750;
@@ -20,7 +21,7 @@ export const NUMBER_OF_SKIP = 6;
 
 export const ONE_SECOND_DELAY = 1000;
 export const DELAY_TO_PLAY = 20000;
-export const DELAY_OF_LOGIN = 4000;
+export const ERROR_MESSAGE_DELAY = 4000;
 export const THREE_SECONDS_DELAY = 3000;
 
 export const CENTRAL_CASE_POSITION_X = 7;

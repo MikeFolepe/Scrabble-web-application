@@ -1,7 +1,6 @@
 <app-background></app-background>
 
 <mat-paginator id="paginator" [length]="rooms.length" [pageSize]="pageSize" (page)="onPageChange($event)"> </mat-paginator>
-<!--<mat-paginator id="paginator" [length]="rooms.length" [pageSize]="pageSize" (page)="onPageChange($event)" aria-label="Select page"> </mat-paginator>-->
 
 <div *ngIf="isNameValid && isRoomStillAvailable">
     <div *ngFor="let room of rooms ? rooms.slice(startIdx, startIdx + pageSize) : []">

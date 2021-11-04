@@ -11,7 +11,7 @@ export class SkipTurnService {
     isTurn: boolean;
     minutes: number;
     seconds: number;
-    // JUSTIFICATION : Next line is mandatory, it is an eslint issue
+    // JUSTIFICATION : Next line is mandatory, NodeJS return an eslint issue
     // eslint-disable-next-line no-undef
     intervalID: NodeJS.Timeout;
     private playAiTurn: () => void;
@@ -30,7 +30,6 @@ export class SkipTurnService {
     }
 
     switchTurn(): void {
-        // console.log('Switching TURN');
         if (this.endGameService.isEndGame) {
             return;
         }
@@ -61,7 +60,6 @@ export class SkipTurnService {
         }
         this.minutes = parseInt(this.gameSettingsService.gameSettings.timeMinute, 10);
         this.seconds = parseInt(this.gameSettingsService.gameSettings.timeSecond, 10);
-        clearInterval(this.intervalID);
         this.intervalID = setInterval(() => {
             if (this.seconds === 0 && this.minutes !== 0) {
                 this.minutes = this.minutes - 1;

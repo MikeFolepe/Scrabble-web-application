@@ -1,12 +1,14 @@
+/* eslint-disable sort-imports */
 import { Component, OnInit } from '@angular/core';
-import { Room, State } from '@common/room';
-import { DELAY_OF_LOGIN } from '@app/classes/constants';
+import { MatDialog } from '@angular/material/dialog';
+import { PageEvent } from '@angular/material/paginator';
+import { ERROR_MESSAGE_DELAY } from '@app/classes/constants';
 import { DialogComponent } from '@app/modules/initialize-solo-game/dialog/dialog.component';
 import { ClientSocketService } from '@app/services/client-socket.service';
 import { PlayerIndex } from '@common/PlayerIndex';
-import { MatDialog } from '@angular/material/dialog';
-import { PageEvent } from '@angular/material/paginator';
+import { Room, State } from '@common/room';
 
+// TODO: enlever les messages
 @Component({
     selector: 'app-join-room',
     templateUrl: './join-room.component.html',
@@ -38,7 +40,7 @@ export class JoinRoomComponent implements OnInit {
             this.isRoomStillAvailable = false;
             setTimeout(() => {
                 this.isRoomStillAvailable = true;
-            }, DELAY_OF_LOGIN);
+            }, ERROR_MESSAGE_DELAY);
             return;
         });
     }
@@ -67,7 +69,7 @@ export class JoinRoomComponent implements OnInit {
                 this.isNameValid = false;
                 setTimeout(() => {
                     this.isNameValid = true;
-                }, DELAY_OF_LOGIN);
+                }, ERROR_MESSAGE_DELAY);
                 return;
             }
             this.clientSocketService.socket.emit('newRoomCustomer', playerName, room.id);

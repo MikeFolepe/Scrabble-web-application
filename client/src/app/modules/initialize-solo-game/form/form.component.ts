@@ -33,7 +33,6 @@ export class FormComponent implements OnDestroy {
         }
         return JSON.stringify(Array.from(bonusPositions));
     }
-
     // Initializes the game with its settings
     initGame(): void {
         if (this.gameSettingsService.isSoloMode) {

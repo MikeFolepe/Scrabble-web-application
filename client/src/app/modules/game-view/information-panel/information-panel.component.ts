@@ -1,11 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { INDEX_PLAYER_AI, INDEX_PLAYER_ONE } from '@app/classes/constants';
+import { EndGameService } from '@app/services/end-game.service';
 import { GameSettings } from '@common/game-settings';
 import { Letter } from '@app/classes/letter';
 import { PlayerAI } from '@app/models/player-ai.model';
 import { Player } from '@app/models/player.model';
 import { ClientSocketService } from '@app/services/client-socket.service';
-import { EndGameService } from '@app/services/end-game.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { LetterService } from '@app/services/letter.service';
 import { PlayerService } from '@app/services/player.service';
@@ -35,12 +35,9 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
             const player = new Player(2, this.gameSettings.playersName[INDEX_PLAYER_AI], letterTable);
             this.playerService.addPlayer(player);
             this.letterService.removeLettersFromReserve(this.playerService.players[INDEX_PLAYER_ONE].letterTable);
-            this.skipTurn.startTimer();
         });
         this.initializeFirstTurn();
-        if (this.gameSettingsService.isSoloMode) {
-            this.skipTurn.startTimer();
-        }
+        if (this.gameSettingsService.isSoloMode) this.skipTurn.startTimer();
     }
 
     initializePlayers(): void {

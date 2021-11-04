@@ -1,7 +1,6 @@
 /* eslint-disable dot-notation */
-/*
-import { expect } from 'chai';
 import { WordValidationService } from './word-validation.service';
+import { expect } from 'chai';
 
 describe('WordValidation service', () => {
     let wordValidationService: WordValidationService;
@@ -21,4 +20,3 @@ describe('WordValidation service', () => {
         expect(result).to.equals(true);
     });
 });
-*/
