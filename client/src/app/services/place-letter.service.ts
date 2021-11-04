@@ -24,6 +24,8 @@ import { GameSettingsService } from './game-settings.service';
 import { SendMessageService } from './send-message.service';
 import { SkipTurnService } from './skip-turn.service';
 
+// TODO Changer nom des fonctions qui return des bools
+
 @Injectable({
     providedIn: 'root',
 })

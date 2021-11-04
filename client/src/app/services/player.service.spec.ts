@@ -14,6 +14,7 @@ describe('PlayerService', () => {
     let letterB: Letter;
     let letterC: Letter;
     let letterD: Letter;
+    let whiteLetter: Letter;
 
     let player: Player;
     let service: PlayerService;
@@ -29,6 +30,7 @@ describe('PlayerService', () => {
         letterB = RESERVE[1];
         letterC = RESERVE[2];
         letterD = RESERVE[3];
+        whiteLetter = RESERVE[26];
 
         player = new Player(1, 'Player 1', [letterA]);
         playerAI = new PlayerAI(2, 'Player AI', [letterB]);
@@ -246,9 +248,10 @@ describe('PlayerService', () => {
 
     it('should add letters when addLetterToEasel() is called', () => {
         service['players'].push(player);
-        const expectedEasel = [letterA, letterB, letterD];
+        const expectedEasel = [letterA, letterB, letterD, whiteLetter];
         service.addLetterToEasel('b', 0);
         service.addLetterToEasel('d', 0);
+        service.addLetterToEasel('*', 0);
         expect(service['players'][0].letterTable).toEqual(expectedEasel);
     });
 

@@ -31,6 +31,7 @@ describe('PlaceLetterService', () => {
     });
 
     beforeEach(() => {
+        jasmine.clock().install();
         const letterA: Letter = RESERVE[0];
         const letterB: Letter = RESERVE[1];
         const letterC: Letter = RESERVE[2];
@@ -52,6 +53,10 @@ describe('PlaceLetterService', () => {
         spyOn(service['sendMessageService'], 'displayMessageByType');
         spyOn(service['sendMessageService'], 'receiveMessageFromOpponent');
         spyOn(service['sendMessageService'], 'sendMessageToOpponent');
+    });
+
+    afterEach(() => {
+        jasmine.clock().uninstall();
     });
 
     it('should create', () => {
@@ -101,10 +106,14 @@ describe('PlaceLetterService', () => {
         orientation = Orientation.Vertical;
         word = 'cba';
         let isWordTouching = service.isWordTouchingOthers(position, orientation, word);
-        // Try to place a word horizontally while touching the previous word placed
+        // Try to place words horizontally while touching the previous word placed
         position = { x: 4, y: 8 };
         orientation = Orientation.Horizontal;
         word = 'dabb';
+        isWordTouching = service.isWordTouchingOthers(position, orientation, word);
+        position = { x: 7, y: 6 };
+        orientation = Orientation.Horizontal;
+        word = 'cabd';
         isWordTouching = service.isWordTouchingOthers(position, orientation, word);
 
         expect(isWordTouching).toBeTrue();
@@ -164,7 +173,9 @@ describe('PlaceLetterService', () => {
         const position: Vec2 = { x: 7, y: 7 };
         const orientation = Orientation.Horizontal;
         const word = 'abcd';
+        service['gameSettingsService'].isSoloMode = true;
         const isPlacementValid = await service.placeCommand(position, orientation, word, INDEX_PLAYER_ONE);
+        jasmine.clock().tick(THREE_SECONDS_DELAY);
         expect(isPlacementValid).toEqual(false);
     });
 
@@ -179,12 +190,13 @@ describe('PlaceLetterService', () => {
 
         // Player 2 places an invalid word on top of the previous one
         service['wordValidationService'].validateAllWordsOnBoard = jasmine.createSpy().and.returnValue({ validation: false, score: 0 });
-        jasmine.clock().install();
         // Horizontally
         position = { x: 7, y: 7 };
         orientation = Orientation.Horizontal;
-        word = 'bacchaV';
+        word = 'baccabd';
+        service['gameSettingsService'].isSoloMode = false;
         isPlacementValid = await service.placeCommand(position, orientation, word, INDEX_PLAYER_ONE);
+        jasmine.clock().tick(THREE_SECONDS_DELAY);
         expect(isPlacementValid).toEqual(false);
 
         jasmine.clock().tick(THREE_SECONDS_DELAY + 1);
@@ -192,17 +204,15 @@ describe('PlaceLetterService', () => {
         position = { x: 7, y: 7 };
         orientation = Orientation.Vertical;
         word = 'bEcchaa';
-        jasmine.clock().tick(THREE_SECONDS_DELAY + 1);
+        service['gameSettingsService'].isSoloMode = false;
         isPlacementValid = await service.placeCommand(position, orientation, word, INDEX_PLAYER_ONE);
+        jasmine.clock().tick(THREE_SECONDS_DELAY);
         expect(isPlacementValid).toEqual(false);
-
-        jasmine.clock().uninstall();
     });
 
     it('placing a word on top of a different existing word should be invalid', async () => {
         spyOn(service['skipTurnService'], 'switchTurn');
         service['wordValidationService'].validateAllWordsOnBoard = jasmine.createSpy().and.returnValue({ validation: true, score: 0 });
-        jasmine.clock().install();
         // Player 1 places the 1st word
         const position: Vec2 = { x: 7, y: 7 };
         const orientation = Orientation.Horizontal;
@@ -213,9 +223,8 @@ describe('PlaceLetterService', () => {
         jasmine.clock().tick(THREE_SECONDS_DELAY + 1);
         const isPlacementValid = await service.placeCommand(position, orientation, word, INDEX_PLAYER_ONE);
         expect(isPlacementValid).toEqual(false);
-
-        jasmine.clock().uninstall();
     });
+
     it('calling placeMethodAdapter() should call placeCommand()', async () => {
         service['wordValidationService'].validateAllWordsOnBoard = jasmine.createSpy().and.returnValue({ validation: false, score: 0 });
         const spy = spyOn(service, 'placeCommand').and.callThrough();
@@ -306,5 +315,14 @@ describe('PlaceLetterService', () => {
         const orientation = Orientation.Horizontal;
         const word = 'dad';
         expect(service.isWordValid(position, orientation, word, INDEX_PLAYER_ONE)).toEqual(false);
+    });
+
+    it('when the opponent place a word, the scrabbleboard of the player should be updated', () => {
+        const startPosition: Vec2 = { x: 0, y: 0 };
+        const orientation = Orientation.Horizontal;
+        const word = 'opponent';
+        const scrabbleBoard: string[][] = [['o', 'p', 'p', 'o', 'n', 'e', 'n', 't']];
+        service['placeByOpponent'](scrabbleBoard, startPosition, orientation, word);
+        expect(service['scrabbleBoard']).toEqual(scrabbleBoard);
     });
 });
