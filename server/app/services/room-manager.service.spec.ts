@@ -1,12 +1,7 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable no-unused-vars */
 /* eslint-disable prettier/prettier */
-// import { State } from '@app/classes/room';
-// import { State } from '@app/classes/room';
-// import { State } from '@app/classes/room';
 import { RoomManager } from '@app/services/room-manager.service';
-// import { describe } from 'mocha';
-// eslint-disable-next-line no-restricted-imports
 import { GameSettings, StartingPlayer } from '@common/game-settings';
 import { State } from '@common/room';
 import { expect } from 'chai';
