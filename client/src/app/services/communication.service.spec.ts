@@ -1,5 +1,5 @@
-import { HttpClientModule } from '@angular/common/http';
 /* eslint-disable dot-notation */
+import { HttpClientModule } from '@angular/common/http';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { CommunicationService } from '@app/services/communication.service';
 import { Message } from '@app/classes/message';

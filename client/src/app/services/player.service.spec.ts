@@ -1,11 +1,13 @@
 /* eslint-disable max-lines */
 /* eslint-disable dot-notation */
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { TestBed } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 import { BOARD_COLUMNS, BOARD_ROWS, FONT_SIZE_MAX, FONT_SIZE_MIN, INDEX_INVALID, RESERVE } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
-import { Player } from '@app/models/player.model';
 import { PlayerAI } from '@app/models/player-ai.model';
-import { PlayerService } from '@app/services/player.service';
-import { TestBed } from '@angular/core/testing';
+import { Player } from '@app/models/player.model';
+import { PlayerService } from './player.service';
 
 describe('PlayerService', () => {
     let letterA: Letter;
@@ -18,7 +20,9 @@ describe('PlayerService', () => {
     let playerAI: PlayerAI;
 
     beforeEach(() => {
-        TestBed.configureTestingModule({});
+        TestBed.configureTestingModule({
+            imports: [HttpClientTestingModule, RouterTestingModule],
+        });
         service = TestBed.inject(PlayerService);
 
         letterA = RESERVE[0];
@@ -280,17 +284,6 @@ describe('PlayerService', () => {
         const ADDED_SCORE = 10;
         service.addScore(ADDED_SCORE, 0);
         expect(service['players'][0].score).toEqual(INITIAL_SCORE + ADDED_SCORE);
-    });
-
-    it("should return player's score", () => {
-        const playerScore = 40;
-        player.score = playerScore;
-        service['players'].push(player);
-        const playerAIScore = 60;
-        playerAI.score = playerAIScore;
-        service['players'].push(playerAI);
-        expect(service.getScore(0)).toEqual(playerScore);
-        expect(service.getScore(1)).toEqual(playerAIScore);
     });
 
     it('should replace a letter from player easel when swap() is called', () => {

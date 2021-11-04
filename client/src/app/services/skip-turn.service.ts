@@ -1,8 +1,8 @@
-/* eslint-disable sort-imports */
-import { EndGameService } from '@app/services/end-game.service';
-import { GameSettingsService } from './game-settings.service';
 import { Injectable } from '@angular/core';
-import { ONE_SECOND_DELAY } from '@app/classes/constants';
+import { ONE_SECOND_DELAY, THREE_SECONDS_DELAY } from '@app/classes/constants';
+import { ClientSocketService } from '@app/services/client-socket.service';
+import { EndGameService } from '@app/services/end-game.service';
+import { GameSettingsService } from '@app/services/game-settings.service';
 
 @Injectable({
     providedIn: 'root',
@@ -11,12 +11,20 @@ export class SkipTurnService {
     isTurn: boolean;
     minutes: number;
     seconds: number;
+    // JUSTIFICATION : Next line is mandatory, NodeJS return an eslint issue
     // eslint-disable-next-line no-undef
     intervalID: NodeJS.Timeout;
     private playAiTurn: () => void;
 
-    constructor(public gameSettingsService: GameSettingsService, public endGameService: EndGameService) {}
-
+    constructor(public gameSettingsService: GameSettingsService, private endGameService: EndGameService, private clientSocket: ClientSocketService) {
+        this.clientSocket.socket.on('turnSwitched', (turn: boolean) => {
+            this.isTurn = turn;
+        });
+        this.clientSocket.socket.on('startTimer', () => {
+            this.stopTimer();
+            this.startTimer();
+        });
+    }
     bindAiTurn(fn: () => void) {
         this.playAiTurn = fn;
     }
@@ -27,15 +35,22 @@ export class SkipTurnService {
         }
         this.stopTimer();
         setTimeout(() => {
-            if (this.isTurn) {
-                this.isTurn = false;
-                this.startTimer();
-                this.playAiTurn();
+            if (this.gameSettingsService.isSoloMode) {
+                setTimeout(() => {
+                    if (this.isTurn) {
+                        this.isTurn = false;
+                        this.startTimer();
+                        this.playAiTurn();
+                    } else {
+                        this.isTurn = true;
+                        this.startTimer();
+                    }
+                }, ONE_SECOND_DELAY);
             } else {
-                this.isTurn = true;
-                this.startTimer();
+                this.clientSocket.socket.emit('switchTurn', this.isTurn, this.clientSocket.roomId);
+                this.isTurn = false;
             }
-        }, ONE_SECOND_DELAY);
+        }, THREE_SECONDS_DELAY);
     }
 
     startTimer(): void {
@@ -50,10 +65,9 @@ export class SkipTurnService {
                 this.minutes = this.minutes - 1;
                 this.seconds = 59;
             } else if (this.seconds === 0 && this.minutes === 0) {
-                this.stopTimer();
-                setTimeout(() => {
+                if (this.isTurn) {
                     this.switchTurn();
-                }, ONE_SECOND_DELAY);
+                }
             } else {
                 this.seconds = this.seconds - 1;
             }

@@ -4,9 +4,11 @@ import { EndGameService } from '@app/services/end-game.service';
 import { Letter } from '@app/classes/letter';
 import { Orientation } from '@app/classes/scrabble-board-pattern';
 import { Player } from '@app/models/player.model';
-import { PlayerAI } from '@app/models/player-ai.model';
+import { RouterTestingModule } from '@angular/router/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RESERVE } from '@app/classes/constants';
 import { TestBed } from '@angular/core/testing';
+import { PlayerAI } from '@app/models/player-ai.model';
 
 describe('EndGameService', () => {
     let service: EndGameService;
@@ -18,7 +20,9 @@ describe('EndGameService', () => {
     let playerAI: PlayerAI;
 
     beforeEach(() => {
-        TestBed.configureTestingModule({});
+        TestBed.configureTestingModule({
+            imports: [HttpClientTestingModule, RouterTestingModule],
+        });
         service = TestBed.inject(EndGameService);
 
         letterA = RESERVE[0];
