@@ -4,8 +4,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ONE_SECOND_DELAY, THREE_SECONDS_DELAY } from '@app/classes/constants';
-import { io } from 'socket.io-client';
-import { ClientSocketService } from './client-socket.service';
+import { Socket } from 'socket.io-client';
 import { EndGameService } from './end-game.service';
 import { GameSettingsService } from './game-settings.service';
 import { SkipTurnService } from './skip-turn.service';
@@ -14,20 +13,14 @@ describe('SkipTurnService', () => {
     let service: SkipTurnService;
     let gameSettingsService: jasmine.SpyObj<GameSettingsService>;
     let endGameService: jasmine.SpyObj<EndGameService>;
-    let clientSocketService: jasmine.SpyObj<ClientSocketService>;
+
     beforeEach(() => {
         const settingsSpy = jasmine.createSpyObj('GameSettingsService', ['gameSettings']);
         const endGameSpy = jasmine.createSpyObj('EndGameService', ['isEndGame']);
-        clientSocketService = jasmine.createSpyObj('ClientSocketService', ['socket']);
-        clientSocketService.socket = jasmine.createSpyObj('Socket', ['on', 'emit', 'connect', 'disconnect']);
+
         TestBed.configureTestingModule({
             imports: [HttpClientTestingModule, RouterTestingModule],
-            providers: [
-                SkipTurnService,
-                { provide: GameSettingsService, useValue: settingsSpy },
-                { provide: EndGameService, useValue: endGameSpy },
-                { provide: clientSocketService, useValue: ClientSocketService },
-            ],
+            providers: [SkipTurnService, { provide: GameSettingsService, useValue: settingsSpy }, { provide: EndGameService, useValue: endGameSpy }],
         });
         service = TestBed.inject(SkipTurnService);
         gameSettingsService = TestBed.inject(GameSettingsService) as jasmine.SpyObj<GameSettingsService>;
@@ -35,21 +28,47 @@ describe('SkipTurnService', () => {
     });
 
     beforeEach(() => {
-        const urlString = 'http://${window.location.hostname}:3000';
-        clientSocketService.socket = io(urlString);
         jasmine.clock().install();
-    });
-
-    it('should be created', () => {
-        expect(service).toBeTruthy();
     });
 
     afterEach(() => {
         jasmine.clock().uninstall();
     });
 
+    it('should be created', () => {
+        expect(service).toBeTruthy();
+    });
+
     it('should create', () => {
         expect(service).toBeTruthy();
+    });
+
+    it('should get the newTurn from the server', () => {
+        service['clientSocket'].socket = {
+            on: (eventName: string, callback: (turn: boolean) => void) => {
+                if (eventName === 'turnSwitched') {
+                    callback(true);
+                }
+            },
+        } as unknown as Socket;
+
+        service.receiveNewTurn();
+        expect(service.isTurn).toEqual(true);
+    });
+
+    it('should get the newTurn from the server', () => {
+        service['clientSocket'].socket = {
+            on: (eventName: string, callback: () => void) => {
+                if (eventName === 'startTimer') {
+                    callback();
+                }
+            },
+        } as unknown as Socket;
+        spyOn(service, 'stopTimer');
+        spyOn(service, 'startTimer');
+        service.receiveStartFromServer();
+        expect(service.stopTimer).toHaveBeenCalled();
+        expect(service.startTimer).toHaveBeenCalled();
     });
 
     it('should stopTimer when switching turn', () => {
@@ -77,10 +96,6 @@ describe('SkipTurnService', () => {
         service.isTurn = true;
         const newTurn = false;
         endGameService.isEndGame = false;
-
-        service['playAiTurn'] = () => {
-            return;
-        };
         const spyStart = spyOn(service, 'startTimer');
         service.switchTurn();
         jasmine.clock().tick(THREE_SECONDS_DELAY + 1);
@@ -134,19 +149,10 @@ describe('SkipTurnService', () => {
         expect(service.isTurn).toEqual(newturn);
     });
 
-    it('should bind to the playerAi play function', () => {
-        const testFn = () => {
-            let x = 0;
-            return x++;
-        };
-        service.bindAiTurn(testFn);
-        expect(service['playAiTurn']).toEqual(testFn);
-    });
-
     it('should stop the timer and then switch turn when the countdown is done ', () => {
         service.gameSettingsService.gameSettings.timeMinute = '00';
         service.gameSettingsService.gameSettings.timeSecond = '00';
-        service.endGameService.isEndGame = false;
+        endGameService.isEndGame = false;
         service.isTurn = true;
         const spyOnStop = spyOn(service, 'stopTimer');
         const spyOnSwitch = spyOn(service, 'switchTurn').and.callThrough();

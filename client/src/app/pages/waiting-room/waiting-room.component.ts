@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { ClientSocketService } from '@app/services/client-socket.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { PlayerIndex } from '@common/PlayerIndex';
-import { Router } from '@angular/router';
 
-// TODO: enlever tout les string et les temps
 @Component({
     selector: 'app-waiting-room',
     templateUrl: './waiting-room.component.html',
@@ -17,7 +16,7 @@ export class WaitingRoomComponent implements OnInit {
 
     constructor(private router: Router, private gameSettingsService: GameSettingsService, private clientSocket: ClientSocketService) {
         this.status = '';
-        this.isWaiting = false;
+        this.isWaiting = true;
         this.clientSocket.route();
     }
 
@@ -29,9 +28,9 @@ export class WaitingRoomComponent implements OnInit {
         const startMessage = 'Connexion au serveur...';
         this.waitBeforeChangeStatus(500, startMessage);
         this.clientSocket.socket.connect();
-        setTimeout(() => {
-            this.handleReloadErrors();
 
+        this.handleReloadErrors();
+        setTimeout(() => {
             if (this.clientSocket.socket.connected) {
                 const connexionSuccess = 'Connexion réussie';
                 this.isWaiting = true;

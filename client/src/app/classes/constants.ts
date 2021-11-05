@@ -1,7 +1,13 @@
-import { AIStrategy, PlacingStrategy } from '@app/classes/enum';
+import { AIStrategy } from '@app/classes/enum';
 import { Letter } from '@app/classes/letter';
 // eslint-disable-next-line no-restricted-imports
 import dictionaryData from '@common/dictionary.json';
+
+export const DELAY_TO_PASS_TURN = 5000;
+export const DELAY_BEFORE_PLAY = 3000;
+export const NO_PLAYABLE_WORD = -1;
+export const INVALID = -1;
+export const MAX_DIMENSIONS = 2;
 
 export const DEFAULT_WIDTH = 750;
 export const DEFAULT_HEIGHT = 750;
@@ -51,6 +57,12 @@ export const MAX_SOLUTION = 3;
 export const AI_NAME_DATABASE: string[] = ['Mister_Bucky', 'Mister_Samy', 'Miss_Betty'];
 
 export const DICTIONARY: string[] = JSON.parse(JSON.stringify(dictionaryData)).words;
+
+export enum PlacingStrategy {
+    LessSix,
+    SevenToTwelve,
+    ThirteenToEighteen,
+}
 
 export const strategyBallotBox: AIStrategy[] = [
     AIStrategy.Place,

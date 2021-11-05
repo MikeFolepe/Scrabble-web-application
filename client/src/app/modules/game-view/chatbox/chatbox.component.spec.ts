@@ -1,12 +1,13 @@
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable dot-notation */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ChatboxComponent } from '@app/modules/game-view//chatbox/chatbox.component';
-import { FormsModule } from '@angular/forms';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { ONE_SECOND_DELAY } from '@app/classes/constants';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
+import { ONE_SECOND_DELAY } from '@app/classes/constants';
 import { TypeMessage } from '@app/classes/enum';
+import { ChatboxComponent } from '@app/modules/game-view//chatbox/chatbox.component';
 
 describe('ChatBoxComponent', () => {
     let component: ChatboxComponent;
@@ -99,7 +100,7 @@ describe('ChatBoxComponent', () => {
         const spy3 = spyOn(component['endGameService'], 'getFinalScore');
         component['endGameService'].isEndGame = true;
         component.ngAfterViewInit();
-        jasmine.clock().tick(ONE_SECOND_DELAY + 1);
+        jasmine.clock().tick(ONE_SECOND_DELAY + 1000);
         expect(spy1).toHaveBeenCalled();
         expect(spy2).toHaveBeenCalled();
         expect(spy3).toHaveBeenCalled();

@@ -15,7 +15,6 @@ import { Orientation } from '@app/classes/scrabble-board-pattern';
 import { ScoreValidation } from '@app/classes/validation-score';
 import { Vec2 } from '@app/classes/vec2';
 import { GridService } from '@app/services/grid.service';
-import { PlayerAIService } from '@app/services/player-ia.service';
 import { PlayerService } from '@app/services/player.service';
 import { WordValidationService } from '@app/services/word-validation.service';
 import { ClientSocketService } from './client-socket.service';
@@ -24,17 +23,19 @@ import { GameSettingsService } from './game-settings.service';
 import { SendMessageService } from './send-message.service';
 import { SkipTurnService } from './skip-turn.service';
 
+// TODO Changer nom des fonctions qui return des bools
+
 @Injectable({
     providedIn: 'root',
 })
 export class PlaceLetterService {
+    isFirstRound: boolean = true;
     scrabbleBoard: string[][]; // 15x15 array
 
     private startPosition: Vec2;
     private orientation: Orientation;
     private word: string;
     private validLetters: boolean[] = []; // Array of the size of the word to place that tells which letter is valid
-    private isFirstRound: boolean = true;
     private isEaselSize: boolean = false; // If the bonus to form a word with all the letters from the easel applies
     private numLettersUsedFromEasel: number = 0; // Number of letters used from the easel to form the word
     private isRow: boolean = false;
@@ -42,7 +43,6 @@ export class PlaceLetterService {
     constructor(
         private playerService: PlayerService,
         private gridService: GridService,
-        public playerAIService: PlayerAIService,
         private wordValidationService: WordValidationService,
         private sendMessageService: SendMessageService,
         private skipTurnService: SkipTurnService,
@@ -59,12 +59,6 @@ export class PlaceLetterService {
         }
         this.playerService.updateScrabbleBoard(this.scrabbleBoard);
         this.receivePlacement();
-    }
-
-    async placeMethodAdapter(object: { start: Vec2; orientation: Orientation; word: string; indexPlayer: number }): Promise<void> {
-        this.playerAIService.isPlacementValid = false;
-        const isValid = await this.placeCommand(object.start, object.orientation, object.word, object.indexPlayer);
-        this.playerAIService.isPlacementValid = isValid;
     }
 
     async placeCommand(position: Vec2, orientation: Orientation, word: string, indexPlayer = INDEX_PLAYER_AI): Promise<boolean> {
@@ -203,7 +197,6 @@ export class PlaceLetterService {
         this.playerService.updateScrabbleBoard(this.scrabbleBoard);
         this.playerService.refillEasel(indexPlayer); // Fill the easel with new letters from the reserve
         this.isFirstRound = false;
-        this.playerAIService.isFirstRound = false;
         // Emit to server on multiplayer mode
         if (!this.gameSettingsService.isSoloMode) {
             this.clientSocketService.socket.emit(
