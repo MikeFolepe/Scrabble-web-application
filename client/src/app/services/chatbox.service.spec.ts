@@ -36,60 +36,60 @@ describe('ChatboxService', () => {
     });
 
     it('should have type error if command is not valid', () => {
-        service.message = '!debugg';
-        service.sendPlayerMessage(service.message);
-        expect(service.message).toEqual('ERREUR : La syntaxe est invalide');
+        service['message'] = '!debugg';
+        service.sendPlayerMessage(service['message']);
+        expect(service['message']).toEqual('ERREUR : La syntaxe est invalide');
     });
 
     it('should have type player if command is valid', () => {
         spyOn(service, 'isValid').and.returnValue(true);
 
-        service.message = '';
-        service.sendPlayerMessage(service.message);
-        expect(service.typeMessage).toEqual(TypeMessage.Player);
+        service['message'] = '';
+        service.sendPlayerMessage(service['message']);
+        expect(service['typeMessage']).toEqual(TypeMessage.Player);
     });
 
     it('should have type player if command is valid', () => {
         spyOn(service, 'isValid').and.returnValue(true);
 
-        service.sendPlayerMessage(service.message);
-        expect(service.typeMessage).toEqual(TypeMessage.Player);
-        expect(service.command).toEqual('');
+        service.sendPlayerMessage(service['message']);
+        expect(service['typeMessage']).toEqual(TypeMessage.Player);
+        expect(service['command']).toEqual('');
     });
 
     it('should know if input is valid', () => {
-        service.message = '!debug';
+        service['message'] = '!debug';
         expect(service.isValid()).toBeTrue();
 
-        service.message = '!passer';
+        service['message'] = '!passer';
         expect(service.isValid()).toBeTrue();
 
-        service.message = '!échanger *s';
+        service['message'] = '!échanger *s';
         expect(service.isValid()).toBeTrue();
 
-        service.message = '!échanger';
+        service['message'] = '!échanger';
         expect(service.isValid()).toBeFalse();
-        expect(service.message).toEqual('ERREUR : La syntaxe est invalide');
+        expect(service['message']).toEqual('ERREUR : La syntaxe est invalide');
 
-        service.message = '!placer h8h test';
+        service['message'] = '!placer h8h test';
         expect(service.isValid()).toBeTrue();
 
-        service.message = '!placer 333';
+        service['message'] = '!placer 333';
         expect(service.isValid()).toBeFalse();
 
-        service.message = '!placer';
+        service['message'] = '!placer';
         expect(service.isValid()).toBeFalse();
 
-        service.message = '!notok';
+        service['message'] = '!notok';
         expect(service.isValid()).toBeFalse();
 
-        service.message = 'random text';
+        service['message'] = 'random text';
         expect(service.isValid()).toBeTrue();
     });
 
     it('using command !debug should call executeDebug()', () => {
         const spy = spyOn(service, 'executeDebug');
-        service.command = 'debug';
+        service['command'] = 'debug';
         const table: PossibleWords[] = [];
         table.push(possibleWord);
 
@@ -101,7 +101,7 @@ describe('ChatboxService', () => {
     });
 
     it('using command !debug without debug messages should display the respective message', () => {
-        service.command = 'debug';
+        service['command'] = 'debug';
         service['debugService'].isDebugActive = false;
         service['debugService'].clearDebugMessage();
 
@@ -115,18 +115,18 @@ describe('ChatboxService', () => {
     it('using command !passer should display the respective message', () => {
         spyOn(service['skipTurn'], 'switchTurn');
         service['skipTurn'].isTurn = true;
-        service.command = 'passer';
+        service['command'] = 'passer';
         service.sendPlayerMessage('!passer');
-        expect(service.message).toEqual('!passer');
+        expect(service['message']).toEqual('!passer');
     });
 
     it('using a valid command !placer should display the respective message', async () => {
         spyOn(service['skipTurn'], 'switchTurn');
         service['skipTurn'].isTurn = true;
         spyOn(service['placeLetterService'], 'placeCommand').and.returnValue(Promise.resolve(true));
-        service.command = 'placer';
-        service.message = '!placer h8h hello';
-        service.typeMessage = TypeMessage.Player;
+        service['command'] = 'placer';
+        service['message'] = '!placer h8h hello';
+        service['typeMessage'] = TypeMessage.Player;
         await service.executePlace();
         expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('!placer h8h hello', TypeMessage.Player);
     });
@@ -135,15 +135,15 @@ describe('ChatboxService', () => {
         spyOn(service['skipTurn'], 'switchTurn');
         service['skipTurn'].isTurn = true;
         spyOn(service['swapLetterService'], 'swapCommand').and.returnValue(true);
-        service.command = 'echanger';
+        service['command'] = 'echanger';
         service.sendPlayerMessage('!échanger abc');
-        expect(service.message).toEqual('Player 1 : !échanger abc');
+        expect(service['message']).toEqual('Player 1 : !échanger abc');
     });
 
     it('deactivating debug should display the respective message', () => {
         spyOn<any>(service, 'displayDebugMessage');
 
-        service.command = 'debug';
+        service['command'] = 'debug';
         const table: { word: string; orientation: Orientation; line: number; startIdx: number; point: number }[] = [
             { word: 'message de debug', orientation: Orientation.Horizontal, line: 0, startIdx: 0, point: 1 },
         ];
@@ -157,21 +157,21 @@ describe('ChatboxService', () => {
 
     it('using command !passer while it is not your turn should display an error', () => {
         service['skipTurn'].isTurn = false;
-        service.command = 'passer';
+        service['command'] = 'passer';
         service.sendPlayerMessage('!passer');
         expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith("ERREUR : Ce n'est pas ton tour", TypeMessage.Error);
     });
 
     it('using command !échanger while it is not your turn should display an error', () => {
         service['skipTurn'].isTurn = false;
-        service.command = 'echanger';
+        service['command'] = 'echanger';
         service.sendPlayerMessage('!échanger');
         expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith("ERREUR : Ce n'est pas ton tour", TypeMessage.Error);
     });
 
     it('using command !placer while it is not your turn should display an error', async () => {
         service['skipTurn'].isTurn = false;
-        service.command = 'placer';
+        service['command'] = 'placer';
         await service.executePlace();
         expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith("ERREUR : Ce n'est pas ton tour", TypeMessage.Error);
     });
@@ -188,7 +188,7 @@ describe('ChatboxService', () => {
     it('should display the right debug message if at least one possibility has been found', () => {
         service['debugService'].debugServiceMessage = [{ word: 'test', orientation: Orientation.Horizontal, line: 0, startIdx: 0, point: 3 }];
         service.displayDebugMessage();
-        expect(service.message).toEqual('test: -- 3');
+        expect(service['message']).toEqual('test: -- 3');
     });
 
     it('calling displayFinalMessage should send the respective message to the chatbox', () => {
@@ -201,7 +201,7 @@ describe('ChatboxService', () => {
         service['skipTurn'].isTurn = true;
         const spy = spyOn(service['skipTurn'], 'switchTurn');
         spyOn(service['swapLetterService'], 'swapCommand').and.returnValue(false);
-        service.message = '!échanger *s';
+        service['message'] = '!échanger *s';
         service.executeSwap();
         expect(spy).not.toHaveBeenCalled();
     });
@@ -216,28 +216,28 @@ describe('ChatboxService', () => {
         service['skipTurn'].isTurn = true;
         const spy = spyOn(service['skipTurn'], 'switchTurn');
         spyOn(service['placeLetterService'], 'placeCommand').and.returnValue(Promise.resolve(false));
-        service.message = '!placer h8h test';
+        service['message'] = '!placer h8h test';
         await service.executePlace();
         expect(spy).not.toHaveBeenCalled();
     });
 
     it('sending a command placer should call executePlace', () => {
         spyOn(service, 'executePlace');
-        service.message = 'placer h8h allo';
-        service.command = 'placer';
-        service.sendPlayerMessage(service.message);
+        service['message'] = 'placer h8h allo';
+        service['command'] = 'placer';
+        service.sendPlayerMessage(service['message']);
         expect(service.executePlace).toHaveBeenCalled();
     });
 
     it('using command !reserve while debug is active should call sendMessageService', () => {
-        service.command = 'reserve';
+        service['command'] = 'reserve';
         service['debugService'].isDebugActive = true;
         service.sendPlayerMessage('!reserve');
         expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledTimes(service['letterService'].reserve.length);
     });
 
     it('using command !reserve while debug is inactive should display the respective message', () => {
-        service.command = 'reserve';
+        service['command'] = 'reserve';
         service['debugService'].isDebugActive = false;
         service.sendPlayerMessage('!reserve');
         expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('Commande non réalisable', TypeMessage.Error);

@@ -19,9 +19,9 @@ import { ClientSocketService } from './client-socket.service';
     providedIn: 'root',
 })
 export class PlayerService {
-    scrabbleBoard: string[][];
     fontSize = DEFAULT_FONT_SIZE;
     players: Player[] = new Array<Player>();
+    private scrabbleBoard: string[][];
 
     private updateEasel: () => void;
 

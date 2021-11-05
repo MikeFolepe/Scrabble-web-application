@@ -5,9 +5,13 @@ import { PossibleWords } from '@app/classes/scrabble-board-pattern';
     providedIn: 'root',
 })
 export class DebugService {
-    debugServiceMessage: PossibleWords[] = [];
-    debugActivate: string[] = [];
-    isDebugActive: boolean = false;
+    debugServiceMessage: PossibleWords[];
+    isDebugActive: boolean;
+
+    constructor() {
+        this.debugServiceMessage = [];
+        this.isDebugActive = false;
+    }
 
     receiveAIDebugPossibilities(table: PossibleWords[]): void {
         this.debugServiceMessage = table;

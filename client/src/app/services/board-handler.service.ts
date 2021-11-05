@@ -12,22 +12,28 @@ import { SkipTurnService } from './skip-turn.service';
     providedIn: 'root',
 })
 export class BoardHandlerService {
-    currentCase: Vec2 = { x: INDEX_INVALID, y: INDEX_INVALID };
-    firstCase: Vec2 = { x: INDEX_INVALID, y: INDEX_INVALID };
-    word: string = '';
-    placedLetters: boolean[] = [];
-    // Attribut indexletters? pour track les letters déja placées
-
-    isFirstCasePicked = false;
-    isFirstCaseLocked = false;
-    orientation = Orientation.Horizontal;
+    word: string;
+    private currentCase: Vec2;
+    private firstCase: Vec2;
+    private placedLetters: boolean[];
+    private isFirstCasePicked: boolean;
+    private isFirstCaseLocked: boolean;
+    private orientation: Orientation;
 
     constructor(
         private gridService: GridService,
         private placeLetterService: PlaceLetterService,
         private sendMessageService: SendMessageService,
         private skipTurnService: SkipTurnService,
-    ) {}
+    ) {
+        this.currentCase = { x: INDEX_INVALID, y: INDEX_INVALID };
+        this.firstCase = { x: INDEX_INVALID, y: INDEX_INVALID };
+        this.word = '';
+        this.placedLetters = [];
+        this.isFirstCasePicked = false;
+        this.isFirstCaseLocked = false;
+        this.orientation = Orientation.Horizontal;
+    }
 
     buttonDetect(event: KeyboardEvent): void {
         switch (event.key) {

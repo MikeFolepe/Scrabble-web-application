@@ -11,11 +11,12 @@ import { Router } from '@angular/router';
 // All methods for recepting the game commands from the server are defined here
 export class ClientSocketService {
     socket: Socket;
-    rooms: Room[] = [];
+    rooms: Room[];
     roomId: string;
     private urlString: string;
 
     constructor(private router: Router, private gameSettingsService: GameSettingsService) {
+        this.rooms = [];
         this.urlString = `http://${window.location.hostname}:3000`;
         this.socket = io(this.urlString);
         this.initializeRoomId();

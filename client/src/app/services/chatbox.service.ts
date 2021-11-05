@@ -16,10 +16,10 @@ import { Orientation } from '@app/classes/scrabble-board-pattern';
     providedIn: 'root',
 })
 export class ChatboxService {
-    message: string = '';
-    typeMessage: TypeMessage;
-    command: string = '';
-    endGameEasel: string = '';
+    private message: string;
+    private typeMessage: TypeMessage;
+    private command: string;
+    private endGameEasel: string;
 
     private readonly notTurnErrorMessage = "ERREUR : Ce n'est pas ton tour";
 
@@ -32,7 +32,11 @@ export class ChatboxService {
         public endGameService: EndGameService,
         public letterService: LetterService,
         public skipTurn: SkipTurnService,
-    ) {}
+    ) {
+        this.message = '';
+        this.command = '';
+        this.endGameEasel = '';
+    }
 
     sendPlayerMessage(message: string) {
         this.typeMessage = TypeMessage.Player;
