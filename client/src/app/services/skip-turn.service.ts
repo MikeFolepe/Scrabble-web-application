@@ -37,13 +37,18 @@ export class SkipTurnService {
         // }
         this.stopTimer();
         setTimeout(() => {
-            if (this.isTurn) {
-                this.isTurn = false;
-                this.startTimer();
-                const playerAi = this.playerService.players[INDEX_PLAYER_AI] as PlayerAI;
-                setTimeout(() => {
-                    playerAi.play();
-                }, DELAY_BEFORE_PLAY);
+            if (this.gameSettingsService.isSoloMode) {
+                if (this.isTurn) {
+                    this.isTurn = false;
+                    this.startTimer();
+                    const playerAi = this.playerService.players[INDEX_PLAYER_AI] as PlayerAI;
+                    setTimeout(() => {
+                        playerAi.play();
+                    }, DELAY_BEFORE_PLAY);
+                } else {
+                    this.isTurn = true;
+                    this.startTimer();
+                }
             } else {
                 this.clientSocket.socket.emit('switchTurn', this.isTurn, this.clientSocket.roomId);
                 this.isTurn = false;

@@ -53,8 +53,6 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
         // TODO: INDEX REAL PLAYER absent
         let player = new Player(1, this.gameSettings.playersName[0], this.letterService.getRandomLetters());
         this.playerService.addPlayer(player);
-        player = new PlayerAI(2, this.gameSettings.playersName[INDEX_PLAYER_AI], this.letterService.getRandomLetters(), this.playerAiService);
-        this.playerService.addPlayer(player);
         if (this.gameSettingsService.isSoloMode) {
             player = new PlayerAI(2, this.gameSettings.playersName[INDEX_PLAYER_AI], this.letterService.getRandomLetters(), this.playerAiService);
             this.playerService.addPlayer(player);

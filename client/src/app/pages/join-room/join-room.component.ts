@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { ClientSocketService } from '@app/services/client-socket.service';
-import { DialogComponent } from '@app/modules/initialize-solo-game/dialog/dialog.component';
-import { ERROR_MESSAGE_DELAY } from '@app/classes/constants';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
+import { ERROR_MESSAGE_DELAY } from '@app/classes/constants';
+import { DialogComponent } from '@app/modules/initialize-solo-game/dialog/dialog.component';
+import { ClientSocketService } from '@app/services/client-socket.service';
 import { PlayerIndex } from '@common/PlayerIndex';
 import { Room, State } from '@common/room';
 
@@ -16,7 +16,7 @@ import { Room, State } from '@common/room';
 export class JoinRoomComponent implements OnInit {
     rooms: Room[];
     pageSize: number;
-    startIdx: number;
+    roomItemIndex: number;
     shouldDisplayNameError: boolean;
     shouldDisplayJoinError: boolean;
 
@@ -24,7 +24,7 @@ export class JoinRoomComponent implements OnInit {
         this.rooms = [];
         this.shouldDisplayNameError = false;
         this.shouldDisplayJoinError = false;
-        this.startIdx = 0;
+        this.roomItemIndex = 0;
         this.pageSize = 2; // 2 rooms per page
         this.clientSocketService.socket.connect();
         this.clientSocketService.socket.emit('getRoomsConfiguration');
@@ -38,7 +38,7 @@ export class JoinRoomComponent implements OnInit {
 
     onPageChange(event: PageEvent) {
         // set the offset for the view
-        this.startIdx = event.pageSize * event.pageIndex;
+        this.roomItemIndex = event.pageSize * event.pageIndex;
     }
 
     computeRoomState(state: State): string {

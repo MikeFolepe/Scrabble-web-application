@@ -4,7 +4,7 @@
 </mat-paginator>
 
 <div *ngIf="!shouldDisplayNameError && !shouldDisplayJoinError">
-    <div *ngFor="let room of rooms ? rooms.slice(startIdx, startIdx + pageSize) : []">
+    <div *ngFor="let room of rooms ? rooms.slice(roomItemIndex, roomItemIndex + pageSize) : []">
         <mat-card class="card">
             <mat-card-title>{{ room.gameSettings.playersName[0] }} </mat-card-title>
             <mat-card-subtitle>

@@ -12,8 +12,8 @@ import { EndGameService } from './end-game.service';
 import { LetterService } from './letter.service';
 import { PlaceLetterService } from './place-letter.service';
 import { PlayerService } from './player.service';
+import { SkipTurnService } from './skip-turn.service';
 import { WordValidationService } from './word-validation.service';
-import { SkipTurnService } from '/skip-turn.service';
 
 const ROW_OFFSET = 65;
 const COLUMN_OFFSET = 1;
@@ -78,6 +78,7 @@ export class PlayerAIService {
     place(word: PossibleWords) {
         const startPos = word.orientation ? { x: word.startIdx, y: word.line } : { x: word.line, y: word.startIdx };
         const isValid = this.placeLetterService.placeCommand(startPos, word.orientation, word.word);
+        console.log(word);
 
         if (!isValid) {
             this.swap();

@@ -20,7 +20,6 @@ import { WordValidationService } from '@app/services/word-validation.service';
 import { ClientSocketService } from './client-socket.service';
 import { EndGameService } from './end-game.service';
 import { GameSettingsService } from './game-settings.service';
-import { PlayerAIService } from './player-ia.service';
 import { SendMessageService } from './send-message.service';
 import { SkipTurnService } from './skip-turn.service';
 
@@ -28,13 +27,13 @@ import { SkipTurnService } from './skip-turn.service';
     providedIn: 'root',
 })
 export class PlaceLetterService {
+    isFirstRound: boolean = true;
     scrabbleBoard: string[][]; // 15x15 array
 
     private startPosition: Vec2;
     private orientation: Orientation;
     private word: string;
     private validLetters: boolean[] = []; // Array of the size of the word to place that tells which letter is valid
-    private isFirstRound: boolean = true;
     private isEaselSize: boolean = false; // If the bonus to form a word with all the letters from the easel applies
     private numLettersUsedFromEasel: number = 0; // Number of letters used from the easel to form the word
     private isRow: boolean = false;
@@ -42,7 +41,6 @@ export class PlaceLetterService {
     constructor(
         private playerService: PlayerService,
         private gridService: GridService,
-        public playerAIService: PlayerAIService,
         private wordValidationService: WordValidationService,
         private sendMessageService: SendMessageService,
         private skipTurnService: SkipTurnService,
@@ -197,7 +195,6 @@ export class PlaceLetterService {
         this.playerService.updateScrabbleBoard(this.scrabbleBoard);
         this.playerService.refillEasel(indexPlayer); // Fill the easel with new letters from the reserve
         this.isFirstRound = false;
-        this.playerAIService.isFirstRound = false;
         // Emit to server on multiplayer mode
         if (!this.gameSettingsService.isSoloMode) {
             this.clientSocketService.socket.emit(
