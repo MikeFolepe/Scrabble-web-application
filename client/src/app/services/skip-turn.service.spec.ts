@@ -144,7 +144,6 @@ describe('SkipTurnService', () => {
         endGameService.isEndGame = false;
         service.switchTurn();
         jasmine.clock().tick(THREE_SECONDS_DELAY + 1);
-        // jasmine.clock().tick(ONE_SECOND_DELAY);
         expect(service.isTurn).toEqual(newTurn);
     });
 
