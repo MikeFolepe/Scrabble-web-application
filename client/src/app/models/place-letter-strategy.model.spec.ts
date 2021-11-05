@@ -8,7 +8,7 @@ import { PlayerAI } from '@app/models/player-ai.model';
 import { PlayerAIService } from '@app/services/player-ia.service';
 import { PlaceLetters } from './place-letter-strategy.model';
 
-fdescribe('Place Letter', () => {
+describe('Place Letter', () => {
     let playerAi: PlayerAI;
     let placeStrategy: PlaceLetters;
     let playerAiService: PlayerAIService;

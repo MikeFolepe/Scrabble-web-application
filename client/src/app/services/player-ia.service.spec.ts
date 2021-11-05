@@ -10,7 +10,7 @@ import { Vec2 } from '@app/classes/vec2';
 import { PlayerAIService } from '@app/services/player-ia.service';
 import { PlayerAI } from './../models/player-ai.model';
 
-fdescribe('PlayerAIService', () => {
+describe('PlayerAIService', () => {
     let service: PlayerAIService;
     const scrabbleBoard: string[][] = [];
 

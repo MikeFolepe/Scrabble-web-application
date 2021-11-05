@@ -1,7 +1,7 @@
 import { AIStrategy } from '@app/classes/enum';
 import { Letter } from '@app/classes/letter';
 // eslint-disable-next-line no-restricted-imports
-import dictionaryData from './../../../../static/dictionnary.json';
+import dictionaryData from '@common/dictionary.json';
 
 export const WAITING_AFTER_PLAYED = 5000;
 export const DELAY_BEFORE_PLAY = 3000;

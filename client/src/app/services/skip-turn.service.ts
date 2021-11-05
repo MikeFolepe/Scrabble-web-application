@@ -4,8 +4,8 @@ import { DELAY_BEFORE_PLAY, INDEX_PLAYER_AI, ONE_SECOND_DELAY, THREE_SECONDS_DEL
 import { PlayerAI } from '@app/models/player-ai.model';
 import { ClientSocketService } from '@app/services/client-socket.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
-import { PlayerService } from './player.service';
 import { EndGameService } from './end-game.service';
+import { PlayerService } from './player.service';
 
 @Injectable({
     providedIn: 'root',
@@ -26,6 +26,7 @@ export class SkipTurnService {
     ) {
         this.receiveNewTurn();
         this.receiveStartFromServer();
+        this.receiveStopFromServer();
     }
 
     receiveNewTurn() {
@@ -38,6 +39,11 @@ export class SkipTurnService {
         this.clientSocket.socket.on('startTimer', () => {
             this.stopTimer();
             this.startTimer();
+        });
+    }
+    receiveStopFromServer() {
+        this.clientSocket.socket.on('stopStimer', () => {
+            this.stopTimer();
         });
     }
 

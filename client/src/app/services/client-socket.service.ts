@@ -13,11 +13,11 @@ export class ClientSocketService {
     socket: Socket;
     rooms: Room[] = [];
     roomId: string;
-    private urlString: string;
+    private url: string;
 
     constructor(private gameSettingsService: GameSettingsService, private router: Router) {
-        this.urlString = `http://${window.location.hostname}:3000`;
-        this.socket = io(this.urlString);
+        this.url = `http://${window.location.hostname}:3000`;
+        this.socket = io(this.url);
         this.initializeRoomId();
         this.initializeGameSettings();
     }

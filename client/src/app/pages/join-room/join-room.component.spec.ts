@@ -36,9 +36,11 @@ describe('JoinRoomComponent', () => {
         // clientSocketServiceSpy = jasmine.createSpyObj('ClientSocketService', ['route']);
     });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
-    });
+//     beforeEach(() => {
+//         fixture = TestBed.createComponent(JoinRoomComponent);
+//         component = fixture.componentInstance;
+//         fixture.detectChanges();
+//     });
 
     it('should return the state of room is the state is waiting', () => {
         expect(component.computeRoomState(State.Playing)).toEqual('Indisponible');
