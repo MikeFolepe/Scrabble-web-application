@@ -17,16 +17,25 @@ export class SkipTurnService {
     private playAiTurn: () => void;
 
     constructor(public gameSettingsService: GameSettingsService, private endGameService: EndGameService, private clientSocket: ClientSocketService) {
+        this.receiveNewTurn();
+        this.receiveStartFromServer();
+    }
+
+    bindAiTurn(fn: () => void) {
+        this.playAiTurn = fn;
+    }
+
+    receiveNewTurn() {
         this.clientSocket.socket.on('turnSwitched', (turn: boolean) => {
             this.isTurn = turn;
         });
+    }
+
+    receiveStartFromServer() {
         this.clientSocket.socket.on('startTimer', () => {
             this.stopTimer();
             this.startTimer();
         });
-    }
-    bindAiTurn(fn: () => void) {
-        this.playAiTurn = fn;
     }
 
     switchTurn(): void {

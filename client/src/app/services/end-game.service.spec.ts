@@ -1,16 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
-import { EndGameService } from '@app/services/end-game.service';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { TestBed } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
+import { RESERVE } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { Orientation } from '@app/classes/scrabble-board-pattern';
-import { Player } from '@app/models/player.model';
-import { RouterTestingModule } from '@angular/router/testing';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { RESERVE } from '@app/classes/constants';
-import { TestBed } from '@angular/core/testing';
 import { PlayerAI } from '@app/models/player-ai.model';
+import { Player } from '@app/models/player.model';
+import { EndGameService } from '@app/services/end-game.service';
+import { Socket } from 'socket.io-client';
 
-describe('EndGameService', () => {
+fdescribe('EndGameService', () => {
     let service: EndGameService;
 
     let letterA: Letter;
@@ -51,6 +52,32 @@ describe('EndGameService', () => {
 
         service.checkEndGame();
         expect(service.isEndGame).toBeTrue();
+    });
+
+    it('should update the actionsLog table when receiving response from the server', () => {
+        service['clientSocketService'].socket = {
+            on: (eventName: string, callback: (actionsLog: string[]) => void) => {
+                if (eventName === 'receiveActions') {
+                    callback(['passer', 'passer']);
+                }
+            },
+        } as unknown as Socket;
+
+        service.receiveActionsFromServer();
+        expect(service.actionsLog).toEqual(['passer', 'passer']);
+    });
+
+    it('should receive the endgame from the server', () => {
+        service['clientSocketService'].socket = {
+            on: (eventName: string, callback: (isEndGame: boolean) => void) => {
+                if (eventName === 'receiveEndGame') {
+                    callback(true);
+                }
+            },
+        } as unknown as Socket;
+
+        service.receiveEndGameFromServer();
+        expect(service.isEndGame).toEqual(true);
     });
 
     it('should return the right winner name when getWinnerName() is called', () => {

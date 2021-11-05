@@ -9,8 +9,8 @@ import { PlayerService } from './player.service';
     providedIn: 'root',
 })
 export class EndGameService {
-    actionsLog: string[] = [];
-    isEndGame: boolean = false;
+    actionsLog: string[];
+    isEndGame: boolean;
 
     constructor(
         public letterService: LetterService,
@@ -18,11 +18,19 @@ export class EndGameService {
         public debugService: DebugService,
         private clientSocketService: ClientSocketService,
     ) {
-        this.clientSocketService.socket.on('receiveActions', (actionsLog: string[]) => {
-            this.actionsLog = actionsLog;
-        });
+        this.actionsLog = [];
+        this.isEndGame = false;
+    }
+
+    receiveEndGameFromServer() {
         this.clientSocketService.socket.on('receiveEndGame', (isEndGame: boolean) => {
             this.isEndGame = isEndGame;
+        });
+    }
+
+    receiveActionsFromServer() {
+        this.clientSocketService.socket.on('receiveActions', (actionsLog: string[]) => {
+            this.actionsLog = actionsLog;
         });
     }
 

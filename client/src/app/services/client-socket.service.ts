@@ -14,10 +14,9 @@ export class ClientSocketService {
     socket: Socket;
     rooms: Room[] = [];
     roomId: string;
-    private router: Router;
     private urlString: string;
 
-    constructor(private gameSettingsService: GameSettingsService) {
+    constructor(private gameSettingsService: GameSettingsService, private router: Router) {
         this.urlString = `http://${window.location.hostname}:3000`;
         this.socket = io(this.urlString);
         this.initializeRoomId();
