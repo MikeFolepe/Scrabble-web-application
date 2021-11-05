@@ -4,6 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { TypeMessage } from '@app/classes/enum';
 import { SendMessageService } from '@app/services/send-message.service';
+import { Socket } from 'socket.io-client';
 
 describe('SendMessageService', () => {
     let service: SendMessageService;
@@ -34,5 +35,27 @@ describe('SendMessageService', () => {
         service.sendOpponentMessage('Opponent message');
         expect(service.message).toEqual('Opponent message');
         expect(service.typeMessage).toEqual(TypeMessage.Opponent);
+    });
+
+    it('the emit receiveRoomMessage should call sendOpponentMessage', () => {
+        service['clientSocketService'].socket = {
+            // eslint-disable-next-line no-unused-vars
+            on: (eventName: string, callback: (message: string) => void) => {
+                if (eventName === 'receiveRoomMessage') {
+                    callback('test');
+                }
+            },
+        } as unknown as Socket;
+        spyOn(service, 'sendOpponentMessage');
+        service.receiveMessageFromOpponent();
+        expect(service.sendOpponentMessage).toHaveBeenCalledWith('test');
+    });
+
+    it('displayBound should associate a function to displayMessage', () => {
+        const functionTest = () => {
+            return;
+        };
+        service.displayBound(functionTest);
+        expect(service['displayMessage']).toEqual(functionTest);
     });
 });

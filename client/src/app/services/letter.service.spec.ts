@@ -1,9 +1,12 @@
-import { EASEL_SIZE } from '@app/classes/constants';
+/* eslint-disable @typescript-eslint/no-magic-numbers */
+/* eslint-disable dot-notation */
+import { EASEL_SIZE, RESERVE } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { LetterService } from './letter.service';
 import { RouterTestingModule } from '@angular/router/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { Socket } from 'socket.io-client';
 
 describe('LetterService', () => {
     let service: LetterService;
@@ -67,5 +70,19 @@ describe('LetterService', () => {
         const initialSize = service.reserveSize;
         service.removeLettersFromReserve(lettersToRemove);
         expect(service.reserveSize).toEqual(initialSize - lettersToRemove.length);
+    });
+
+    it('the emit receiveRoomMessage should call sendOpponentMessage', () => {
+        service['clientSocketService'].socket = {
+            // eslint-disable-next-line no-unused-vars
+            on: (eventName: string, callback: (reserve: Letter[], reserveSize: number) => void) => {
+                if (eventName === 'receiveReserve') {
+                    callback(RESERVE, 100);
+                }
+            },
+        } as unknown as Socket;
+        service.receiveReserve();
+        expect(service.reserve).toEqual(RESERVE);
+        expect(service.reserveSize).toEqual(100);
     });
 });

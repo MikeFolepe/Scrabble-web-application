@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
@@ -9,6 +10,7 @@ import { Vec2 } from '@app/classes/vec2';
 import { Player } from '@app/models/player.model';
 import { GridService } from '@app/services/grid.service';
 import { PlaceLetterService } from '@app/services/place-letter.service';
+import { Socket } from 'socket.io-client';
 import { CommunicationService } from './communication.service';
 
 describe('PlaceLetterService', () => {
@@ -324,5 +326,23 @@ describe('PlaceLetterService', () => {
         const scrabbleBoard: string[][] = [['o', 'p', 'p', 'o', 'n', 'e', 'n', 't']];
         service['placeByOpponent'](scrabbleBoard, startPosition, orientation, word);
         expect(service['scrabbleBoard']).toEqual(scrabbleBoard);
+    });
+
+    it('the emit receivePlacement should call placeByOpponent', () => {
+        const startPosition: Vec2 = { x: 0, y: 0 };
+        const orientation = Orientation.Horizontal;
+        const word = 'opponent';
+        const scrabbleBoard: string[][] = [['o', 'p', 'p', 'o', 'n', 'e', 'n', 't']];
+        service['clientSocketService'].socket = {
+            // eslint-disable-next-line no-unused-vars
+            on: (eventName: string, callback: (scrabbleBoard: string[][], startPosition: Vec2, orientation: Orientation, word: string) => void) => {
+                if (eventName === 'receivePlacement') {
+                    callback(scrabbleBoard, startPosition, orientation, word);
+                }
+            },
+        } as unknown as Socket;
+        spyOn<any>(service, 'placeByOpponent');
+        service['receivePlacement']();
+        expect(service['placeByOpponent']).toHaveBeenCalledWith(scrabbleBoard, startPosition, orientation, word);
     });
 });
