@@ -1,8 +1,10 @@
 /* eslint-disable sort-imports */
 import { Injectable } from '@angular/core';
-import { ONE_SECOND_DELAY, THREE_SECONDS_DELAY } from '@app/classes/constants';
+import { DELAY_BEFORE_PLAY, INDEX_PLAYER_AI, ONE_SECOND_DELAY, THREE_SECONDS_DELAY } from '@app/classes/constants';
+import { PlayerAI } from '@app/models/player-ai.model';
 import { ClientSocketService } from '@app/services/client-socket.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
+import { PlayerService } from './player.service';
 
 @Injectable({
     providedIn: 'root',
@@ -14,11 +16,11 @@ export class SkipTurnService {
     // JUSTIFICATION : Next line is mandatory, NodeJS return an eslint issue
     // eslint-disable-next-line no-undef
     intervalID: NodeJS.Timeout;
-    private playAiTurn: () => void;
     // TODO: Mike et PM revenez dessus
     constructor(
         public gameSettingsService: GameSettingsService,
         /* private endGameService: EndGameService,*/ private clientSocket: ClientSocketService,
+        public playerService: PlayerService,
     ) {
         this.clientSocket.socket.on('turnSwitched', (turn: boolean) => {
             this.isTurn = turn;
@@ -27,12 +29,6 @@ export class SkipTurnService {
             this.stopTimer();
             this.startTimer();
         });
-        this.clientSocket.socket.on('stopStimer', () => {
-            this.stopTimer();
-        });
-    }
-    bindAiTurn(fn: () => void) {
-        this.playAiTurn = fn;
     }
 
     switchTurn(): void {
@@ -41,17 +37,13 @@ export class SkipTurnService {
         // }
         this.stopTimer();
         setTimeout(() => {
-            if (this.gameSettingsService.isSoloMode) {
+            if (this.isTurn) {
+                this.isTurn = false;
+                this.startTimer();
+                const playerAi = this.playerService.players[INDEX_PLAYER_AI] as PlayerAI;
                 setTimeout(() => {
-                    if (this.isTurn) {
-                        this.isTurn = false;
-                        this.startTimer();
-                        this.playAiTurn();
-                    } else {
-                        this.isTurn = true;
-                        this.startTimer();
-                    }
-                }, ONE_SECOND_DELAY);
+                    playerAi.play();
+                }, DELAY_BEFORE_PLAY);
             } else {
                 this.clientSocket.socket.emit('switchTurn', this.isTurn, this.clientSocket.roomId);
                 this.isTurn = false;

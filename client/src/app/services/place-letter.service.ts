@@ -15,12 +15,12 @@ import { Orientation } from '@app/classes/scrabble-board-pattern';
 import { ScoreValidation } from '@app/classes/validation-score';
 import { Vec2 } from '@app/classes/vec2';
 import { GridService } from '@app/services/grid.service';
-import { PlayerAIService } from '@app/services/player-ia.service';
 import { PlayerService } from '@app/services/player.service';
 import { WordValidationService } from '@app/services/word-validation.service';
 import { ClientSocketService } from './client-socket.service';
 import { EndGameService } from './end-game.service';
 import { GameSettingsService } from './game-settings.service';
+import { PlayerAIService } from './player-ia.service';
 import { SendMessageService } from './send-message.service';
 import { SkipTurnService } from './skip-turn.service';
 
@@ -59,12 +59,6 @@ export class PlaceLetterService {
         }
         this.playerService.updateScrabbleBoard(this.scrabbleBoard);
         this.receivePlacement();
-    }
-
-    async placeMethodAdapter(object: { start: Vec2; orientation: Orientation; word: string; indexPlayer: number }): Promise<void> {
-        this.playerAIService.isPlacementValid = false;
-        const isValid = await this.placeCommand(object.start, object.orientation, object.word, object.indexPlayer);
-        this.playerAIService.isPlacementValid = isValid;
     }
 
     async placeCommand(position: Vec2, orientation: Orientation, word: string, indexPlayer = INDEX_PLAYER_AI): Promise<boolean> {
