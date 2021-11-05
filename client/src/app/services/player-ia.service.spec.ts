@@ -3,26 +3,45 @@
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { BOARD_COLUMNS, BOARD_ROWS } from '@app/classes/constants';
+import { RouterTestingModule } from '@angular/router/testing';
+import { BOARD_COLUMNS, BOARD_ROWS, RESERVE } from '@app/classes/constants';
 import { Orientation, PossibleWords } from '@app/classes/scrabble-board-pattern';
 import { Vec2 } from '@app/classes/vec2';
+import { Player } from '@app/models/player.model';
 import { PlayerAIService } from '@app/services/player-ia.service';
 import { PlayerAI } from './../models/player-ai.model';
 
-xdescribe('PlayerAIService', () => {
+describe('PlayerAIService', () => {
     let service: PlayerAIService;
     const scrabbleBoard: string[][] = [];
 
-    beforeEach(() => {
-        TestBed.configureTestingModule({});
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [HttpClientTestingModule, RouterTestingModule],
+        }).compileComponents();
         service = TestBed.inject(PlayerAIService);
+    });
+
+    beforeEach(() => {
         for (let i = 0; i < BOARD_COLUMNS; i++) {
             scrabbleBoard[i] = [];
             for (let j = 0; j < BOARD_ROWS; j++) {
                 scrabbleBoard[i][j] = '';
             }
         }
+        const letterA = RESERVE[0];
+        const letterB = RESERVE[1];
+        const letterC = RESERVE[2];
+        const letterD = RESERVE[3];
+
+        const player = new Player(1, 'Player 1', [letterA, letterB, letterC, letterD]);
+        const playerAi = new Player(2, 'Player 2', [letterA, letterB, letterC, letterD]);
+        service.playerService.addPlayer(player);
+        service.playerService.addPlayer(playerAi);
+
+        spyOn(service.sendMessageService, 'displayMessageByType');
     });
 
     it('should be created', () => {
@@ -190,19 +209,20 @@ xdescribe('PlayerAIService', () => {
         expect(service.generateRandomNumber(max)).toBeLessThan(max);
     });
 
-    it('should ask placeLetterService to place some word on the board', () => {
+    it('should ask placeLetterService to place some word on the board', async () => {
         const word = { word: 'MAJID', orientation: Orientation.Vertical, line: 5, startIdx: 0, point: 0 };
-        const spyOnPlace = spyOn<any>(service.placeLetterService, 'place').and.returnValue(true);
-        service.place(word);
-        expect(spyOnPlace).toHaveBeenCalledOnceWith({ x: word.startIdx, y: word.line }, 'v', word.word);
+        const spyOnPlace = spyOn<any>(service.placeLetterService, 'placeCommand').and.returnValue(Promise.resolve(true));
+        spyOn(service, 'swap');
+        await service.place(word);
+        expect(spyOnPlace).toHaveBeenCalledOnceWith({ x: word.line, y: word.startIdx }, word.orientation, word.word);
     });
 
-    it('should swap if placement fails (placement should never fails from the AI placement)', () => {
+    it('should swap if placement fails (placement should never fails from the AI placement)', async () => {
         const word = { word: 'MAJID', orientation: Orientation.Horizontal, line: 5, startIdx: 0, point: 0 };
-        const spyOnPlace = spyOn<any>(service.placeLetterService, 'place').and.returnValue(false);
+        const spyOnPlace = spyOn<any>(service.placeLetterService, 'placeCommand').and.returnValue(Promise.resolve(false));
         const spyOnSwap = spyOn<any>(service, 'swap').and.returnValue(true);
-        service.place(word);
-        expect(spyOnPlace).toHaveBeenCalledOnceWith({ x: word.line, y: word.startIdx }, 'h', word.word);
+        await service.place(word);
+        expect(spyOnPlace).toHaveBeenCalledOnceWith({ x: word.startIdx, y: word.line }, word.orientation, word.word);
         expect(spyOnSwap).toHaveBeenCalledTimes(1);
     });
 

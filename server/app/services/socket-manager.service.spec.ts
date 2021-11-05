@@ -6,6 +6,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
 /* eslint-disable sort-imports */
+/*
 import { GameSettings } from '@common/game-settings';
 import { Room, State } from '@common/room';
 import { expect } from 'chai';
@@ -543,3 +544,4 @@ describe('SocketManagerService', () => {
         expect(spy.calledWith('mike123')).to.equal(true);
     });
 });
+*/

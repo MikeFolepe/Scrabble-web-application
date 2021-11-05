@@ -1,6 +1,7 @@
 /* eslint-disable sort-imports */
 /* eslint-disable dot-notation */
 // import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -24,7 +25,7 @@ describe('FormComponent', () => {
             declarations: [FormComponent],
             providers: [{ provide: Router, useValue: router }],
             imports: [RouterTestingModule],
-            // schemas: [NO_ERRORS_SCHEMA],
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
         router = TestBed.inject(Router) as jasmine.SpyObj<Router>;
     });

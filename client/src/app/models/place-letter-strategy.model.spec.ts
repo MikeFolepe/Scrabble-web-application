@@ -1,4 +1,6 @@
-/*
+/* eslint-disable @typescript-eslint/no-magic-numbers */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable dot-notation */
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -45,6 +47,8 @@ describe('Place Letter', () => {
                 scrabbleBoard[i][j] = '';
             }
         }
+
+        spyOn(playerAiService.sendMessageService, 'displayMessageByType');
     });
 
     it('should create an instance', () => {
@@ -89,9 +93,9 @@ describe('Place Letter', () => {
 
         placeStrategy = new PlaceLetters({ min: 0, max: 100 });
 
-        placeStrategy.initializeArray(scrabbleBoard);
+        placeStrategy['initializeArray'](scrabbleBoard);
 
-        expect(placeStrategy.generateAllPatterns('[ABCDEFG]', isFirstRound)).toEqual(expected);
+        expect(placeStrategy['generateAllPatterns']('[ABCDEFG]', isFirstRound)).toEqual(expected);
     });
 
     it('player hand pattern at first round', () => {
@@ -103,9 +107,9 @@ describe('Place Letter', () => {
 
         placeStrategy = new PlaceLetters({ min: 0, max: 100 });
 
-        placeStrategy.initializeArray(scrabbleBoard);
+        placeStrategy['initializeArray'](scrabbleBoard);
 
-        expect(placeStrategy.generateAllPatterns('[ABCDEFG]', isFirstRound)).toEqual(expected);
+        expect(placeStrategy['generateAllPatterns']('[ABCDEFG]', isFirstRound)).toEqual(expected);
     });
 
     it('should find all possible words based on pattern', () => {
@@ -124,7 +128,7 @@ describe('Place Letter', () => {
 
         placeStrategy = new PlaceLetters({ min: 0, max: 100 });
 
-        expect(placeStrategy.generateAllWords(randomDictionary, patterns)).toEqual(expected);
+        expect(placeStrategy['generateAllWords'](randomDictionary, patterns)).toEqual(expected);
     });
 
     it('should retain only those he can play in letter quantity', () => {
@@ -143,9 +147,9 @@ describe('Place Letter', () => {
 
         scrabbleBoard[4][0] = 'z';
         placeStrategy = new PlaceLetters({ min: 0, max: 100 });
-        placeStrategy.initializeArray(scrabbleBoard);
+        placeStrategy['initializeArray'](scrabbleBoard);
 
-        expect(placeStrategy.removeIfNotEnoughLetter(possibleWords, playerAi)).toEqual(expected);
+        expect(placeStrategy['removeIfNotEnoughLetter'](possibleWords, playerAi)).toEqual(expected);
     });
 
     it('should remove all word that are no disposable on the scrabble board', () => {
@@ -181,12 +185,12 @@ describe('Place Letter', () => {
         expected.push(word8);
 
         placeStrategy = new PlaceLetters({ min: 0, max: 100 });
-        placeStrategy.initializeArray(scrabbleBoard);
+        placeStrategy['initializeArray'](scrabbleBoard);
 
-        expect(placeStrategy.removeIfNotDisposable(possibleWord)).toEqual(expected);
+        expect(placeStrategy['removeIfNotDisposable'](possibleWord)).toEqual(expected);
     });
 
-    it('should play from the center at first round', () => {
+    it('should play from the center at first round', async () => {
         jasmine.clock().install();
         // TODO: test crash
         const myDictionary: string[] = ['maths', 'math', 'lundi', 'mardi', 'on'];
@@ -204,8 +208,7 @@ describe('Place Letter', () => {
         placeStrategy.dictionary = myDictionary;
         placeStrategy.pointingRange = { min: 1, max: 4 };
 
-        // const spyOnCompute = spyOn<any>(placeStrategy, 'computeResults').and.callThrough();
-        const spyOnPlace = spyOn<unknown>(playerAiService, 'place'); /* .and.returnValue(true)
+        const spyOnPlace = spyOn<any>(playerAiService, 'place');
 
         const word1: PossibleWords = { word: 'on', orientation: Orientation.Horizontal, line: 7, startIdx: 7, point: 2 };
         const word2: PossibleWords = { word: 'on', orientation: Orientation.Vertical, line: 7, startIdx: 7, point: 2 };
@@ -217,8 +220,8 @@ describe('Place Letter', () => {
         const expectedMatching: PossibleWords[] = [];
         expectedMatching.push(word1);
         expectedMatching.push(word2);
-        placeStrategy.execute(playerAiService);
-        jasmine.clock().tick(6000); // expect(spyOnCompute).toHaveBeenCalledWith(allPoss, expectedMatching, playerAiService);
+        await placeStrategy.execute(playerAiService);
+        jasmine.clock().tick(6000);
         expect(spyOnPlace).toHaveBeenCalledWith(word1);
         jasmine.clock().uninstall();
     });
@@ -235,11 +238,11 @@ describe('Place Letter', () => {
 
         placeStrategy = new PlaceLetters({ min: 6, max: 10 });
 
-        expect(placeStrategy.validateWord(scrabbleBoard)).toBeFalse();
+        expect(placeStrategy['validateWord'](scrabbleBoard)).toBeFalse();
     });
 
     it('should remove word that will cause a new word not in dictionary', () => {
-        const allPoss: PossibleWords[] = [{ word: 'ton', orientation: Orientation.VerticalOrientation, line: 3, startIdx: 3, point: 0 }];
+        const allPoss: PossibleWords[] = [{ word: 'ton', orientation: Orientation.Vertical, line: 3, startIdx: 3, point: 0 }];
         const NO_PLAYABLE_WORD = -1;
 
         scrabbleBoard[3][1] = 'm';
@@ -252,28 +255,28 @@ describe('Place Letter', () => {
         playerAiService.placeLetterService.scrabbleBoard = scrabbleBoard;
         placeStrategy = new PlaceLetters({ min: 6, max: 10 });
 
-        expect(placeStrategy.placementAttempt(allPoss, playerAiService)).toEqual(NO_PLAYABLE_WORD);
+        expect(placeStrategy['placementAttempt'](allPoss, playerAiService)).toEqual(NO_PLAYABLE_WORD);
     });
 
-    it('should play alternatives when no matching pointing possibilities', () => {
+    it('should play alternatives when no matching pointing possibilities', async () => {
         const allPossibleWords: PossibleWords[] = [{ word: 'ton', orientation: Orientation.Vertical, line: 3, startIdx: 3, point: 0 }];
         const matchingPointingRangeWords: PossibleWords[] = [];
 
         placeStrategy = new PlaceLetters({ min: 6, max: 10 });
-        const spyOnPlacementAttempt = spyOn<unknown>(placeStrategy, 'placementAttempt').and.callThrough();
-        placeStrategy.computeResults(allPossibleWords, matchingPointingRangeWords, playerAiService);
+        const spyOnPlacementAttempt = spyOn<any>(placeStrategy, 'placementAttempt').and.callThrough();
+        await placeStrategy['computeResults'](allPossibleWords, matchingPointingRangeWords, playerAiService);
 
         expect(spyOnPlacementAttempt).toHaveBeenCalledWith(allPossibleWords, playerAiService);
     });
 
-    it('should swap when no possibilities', () => {
+    it('should swap when no possibilities', async () => {
         const allPossibleWords: PossibleWords[] = [];
         const matchingPointingRangeWords: PossibleWords[] = [];
 
         placeStrategy = new PlaceLetters({ min: 6, max: 10 });
-        const spyOnPlacementAttempt = spyOn<unknown>(playerAiService, 'swap').and.callThrough();
+        const spyOnPlacementAttempt = spyOn<any>(playerAiService, 'swap').and.callThrough();
 
-        placeStrategy.computeResults(allPossibleWords, matchingPointingRangeWords, playerAiService);
+        await placeStrategy['computeResults'](allPossibleWords, matchingPointingRangeWords, playerAiService);
 
         expect(spyOnPlacementAttempt).toHaveBeenCalledTimes(1);
     });
@@ -323,7 +326,7 @@ describe('Place Letter', () => {
         placeStrategy.dictionary = myDictionary;
         playerAiService.placeLetterService.isFirstRound = false;
         playerAiService.placeLetterService.scrabbleBoard = scrabbleBoard;
-        const spyOnCompute = spyOn<unknown>(placeStrategy, 'computeResults');
+        const spyOnCompute = spyOn<any>(placeStrategy, 'computeResults');
         // const spyOnPlace = spyOn<any>(playerAiService, 'place');
         // const spyOnSwitchTurn = spyOn<any>(playerAiService.skipTurnService, 'switchTurn');
 
@@ -334,4 +337,3 @@ describe('Place Letter', () => {
         // expect(spyOnSwitchTurn).toHaveBeenCalledTimes(1);
     });
 });
-*/

@@ -6,8 +6,10 @@ import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { BOARD_COLUMNS, BOARD_ROWS, FONT_SIZE_MAX, FONT_SIZE_MIN, INDEX_INVALID, RESERVE } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
+import { PlayerAI } from '@app/models/player-ai.model';
 import { Player } from '@app/models/player.model';
 import { Socket } from 'socket.io-client';
+import { PlayerAIService } from './player-ia.service';
 import { PlayerService } from './player.service';
 
 describe('PlayerService', () => {
@@ -19,7 +21,8 @@ describe('PlayerService', () => {
 
     let player: Player;
     let service: PlayerService;
-    let playerAI: Player;
+    let playerAI: PlayerAI;
+    let playerAiService: jasmine.SpyObj<PlayerAIService>;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
@@ -34,7 +37,7 @@ describe('PlayerService', () => {
         whiteLetter = RESERVE[26];
 
         player = new Player(1, 'Player 1', [letterA]);
-        playerAI = new Player(2, 'Player AI', [letterB]);
+        playerAI = new PlayerAI(2, 'Player AI', [letterB], playerAiService);
     });
 
     it('should be created', () => {

@@ -9,9 +9,12 @@ import { Orientation } from '@app/classes/scrabble-board-pattern';
 import { Player } from '@app/models/player.model';
 import { EndGameService } from '@app/services/end-game.service';
 import { Socket } from 'socket.io-client';
+import { PlayerAI } from '@app/models/player-ai.model';
+import { PlayerAIService } from './player-ia.service';
 
 describe('EndGameService', () => {
     let service: EndGameService;
+    let playerAiService: jasmine.SpyObj<PlayerAIService>;
 
     let letterA: Letter;
     let letterB: Letter;
@@ -29,7 +32,7 @@ describe('EndGameService', () => {
         letterB = RESERVE[1];
 
         player = new Player(1, 'Player 1', [letterA]);
-        playerAI = new Player(2, 'Player IA', [letterB]);
+        playerAI = new PlayerAI(2, 'Player IA', [letterB], playerAiService);
     });
 
     it('should be created', () => {

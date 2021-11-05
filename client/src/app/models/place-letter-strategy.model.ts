@@ -25,7 +25,7 @@ export class PlaceLetters {
         this.board = [];
     }
 
-    execute(playerAiService: PlayerAIService): void {
+    async execute(playerAiService: PlayerAIService): Promise<void> {
         const playerAi = playerAiService.playerService.players[INDEX_PLAYER_AI] as PlayerAI;
         const isFirstRound = playerAiService.placeLetterService.isFirstRound;
         const scrabbleBoard = playerAiService.placeLetterService.scrabbleBoard;
@@ -48,7 +48,7 @@ export class PlaceLetters {
         playerAiService.sortDecreasingPoints(allPossibleWords);
         matchingPointingRangeWords = playerAiService.filterByRange(allPossibleWords, this.pointingRange);
 
-        this.computeResults(allPossibleWords, matchingPointingRangeWords, playerAiService);
+        await this.computeResults(allPossibleWords, matchingPointingRangeWords, playerAiService);
 
         setTimeout(() => {
             playerAiService.debugService.receiveAIDebugPossibilities(allPossibleWords.concat(matchingPointingRangeWords));
@@ -56,17 +56,21 @@ export class PlaceLetters {
         }, DELAY_TO_PASS_TURN);
     }
 
-    private computeResults(allPossibleWords: PossibleWords[], matchingPointingRangeWords: PossibleWords[], playerAiService: PlayerAIService): void {
+    private async computeResults(
+        allPossibleWords: PossibleWords[],
+        matchingPointingRangeWords: PossibleWords[],
+        playerAiService: PlayerAIService,
+    ): Promise<void> {
         let index: number = this.placementAttempt(matchingPointingRangeWords, playerAiService);
         if (index !== NO_PLAYABLE_WORD) {
-            playerAiService.place(matchingPointingRangeWords[index]);
+            await playerAiService.place(matchingPointingRangeWords[index]);
             matchingPointingRangeWords.splice(index, 1);
             return;
         }
 
         index = this.placementAttempt(allPossibleWords, playerAiService);
         if (index !== NO_PLAYABLE_WORD) {
-            playerAiService.place(allPossibleWords[index]);
+            await playerAiService.place(allPossibleWords[index]);
             allPossibleWords.splice(index, 1);
             return;
         }
@@ -86,7 +90,7 @@ export class PlaceLetters {
                 orientation = Orientation.Horizontal;
             } else {
                 start = { x: word.startIdx, y: word.line };
-                orientation = Orientation.Horizontal;
+                orientation = Orientation.Vertical;
             }
 
             let scrabbleBoard: string[][] = JSON.parse(JSON.stringify(playerAiService.placeLetterService.scrabbleBoard));
