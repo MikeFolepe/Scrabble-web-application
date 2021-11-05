@@ -18,17 +18,16 @@
                 </button>
             </div>
             <ng-template #gameStillOnGoing>
-                <div *ngIf="this.endGameService.isEndGame">
-                    <button mat-raised-button color="primary" id="pass-button"
-                        (click)="this.endGameService.clearAllData()" routerLink="/home">
-                        Abandonner
-                    </button>
-                </div>
+                <button mat-raised-button color="primary" id="pass-button"
+                    (click)="this.endGameService.clearAllData()" routerLink="/home">
+                    Abandonner
+                </button>
             </ng-template>
             <app-font-size [fontSize]="fontSize" (sizeChange)="handleFontSizeEvent($event)"></app-font-size>
         </div>
     </div>
-    <app-play-area id="play-area"></app-play-area>
+    <app-scrabble-board id="scrabble-board" tabindex="0"></app-scrabble-board> 
+    <app-letter-easel id="letter-easel"></app-letter-easel>
     <app-chatbox id="chatbox"></app-chatbox>
 </div>
 <app-background></app-background>

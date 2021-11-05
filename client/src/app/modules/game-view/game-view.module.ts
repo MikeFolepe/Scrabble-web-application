@@ -8,7 +8,6 @@ import { GameViewComponent } from '@app/modules/game-view/game-view/game-view.co
 import { InformationPanelComponent } from '@app/modules/game-view/information-panel/information-panel.component';
 import { LetterEaselComponent } from '@app/modules/game-view/letter-easel/letter-easel.component';
 import { NgModule } from '@angular/core';
-import { PlayAreaComponent } from '@app/modules/game-view/play-area/play-area.component';
 import { PlayerAIComponent } from '@app/modules/game-view/player-ai/player-ai.component';
 import { ScrabbleBoardComponent } from '@app/modules/game-view/scrabble-board/scrabble-board.component';
 import { SharedModule } from '@app/modules/shared/shared.module';
@@ -19,7 +18,6 @@ import { SharedModule } from '@app/modules/shared/shared.module';
         ScrabbleBoardComponent,
         InformationPanelComponent,
         LetterEaselComponent,
-        PlayAreaComponent,
         PlayerAIComponent,
         FontSizeComponent,
         ChatboxComponent,
