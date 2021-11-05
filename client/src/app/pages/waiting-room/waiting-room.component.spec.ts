@@ -1,3 +1,4 @@
+/* eslint-disable dot-notation */
 /* eslint-disable sort-imports */
 /* eslint-disable @typescript-eslint/quotes */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
