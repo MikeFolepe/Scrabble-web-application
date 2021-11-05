@@ -20,17 +20,24 @@
     </button>
     <div style="display: flex; width: 15vw; height: 85vh; justify-content: flex-start; flex-direction: column; flex-wrap: wrap; gap: 5vh">
         <app-letter-easel></app-letter-easel>
-        <div *ngIf="this.endGameService.isEndGame; else gameStillOnGoing">
-            <button mat-raised-button color="primary" id="pass-button" (click)="this.endGameService.clearAllData()" routerLink="/home">
+        <div *ngIf="!this.endGameService.isEndGame && gamesettingsService.isSoloMode">
+            <button mat-raised-button color="primary" id="Pass-button" (click)="this.endGameService.clearAllData()" routerLink="/home">
+                Abandonner
+            </button>
+        </div>
+        <div *ngIf="this.endGameService.isEndGame && gamesettingsService.isSoloMode">
+            <button mat-raised-button color="primary" id="Pass-button" (click)="this.endGameService.clearAllData()" routerLink="/home">
                 Quitter
             </button>
         </div>
-        <ng-template #gameStillOnGoing>
-            <div *ngIf="this.endGameService.isEndGame">
-                <button mat-raised-button color="primary" id="pass-button" (click)="this.endGameService.clearAllData()" routerLink="/home">
-                    Abandonner
-                </button>
-            </div>
-        </ng-template>
+        <div *ngIf="!gamesettingsService.isSoloMode && !endGameService.isEndGame">
+            <button mat-raised-button color="primary" id="Pass-button" (click)="giveUpGame()">Abandonner</button>
+        </div>
+
+        <div *ngIf="endGameService.isEndGame && !gamesettingsService.isSoloMode">
+            <button mat-raised-button color="primary" id="Pass-button" (click)="this.endGameService.clearAllData()" routerLink="/home">
+                Quitter
+            </button>
+        </div>
     </div>
 </div>

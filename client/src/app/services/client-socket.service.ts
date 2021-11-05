@@ -1,9 +1,9 @@
-import { Socket, io } from 'node_modules/socket.io-client/build/esm';
-import { GameSettings } from '@common/game-settings';
-import { GameSettingsService } from '@app/services/game-settings.service';
 import { Injectable } from '@angular/core';
-import { Room } from '@common/room';
 import { Router } from '@angular/router';
+import { GameSettingsService } from '@app/services/game-settings.service';
+import { GameSettings } from '@common/game-settings';
+import { Room } from '@common/room';
+import { io, Socket } from 'socket.io-client';
 @Injectable({
     providedIn: 'root',
 })
@@ -13,12 +13,11 @@ export class ClientSocketService {
     socket: Socket;
     rooms: Room[];
     roomId: string;
-    private urlString: string;
+    private url: string;
 
-    constructor(private router: Router, private gameSettingsService: GameSettingsService) {
-        this.rooms = [];
-        this.urlString = `http://${window.location.hostname}:3000`;
-        this.socket = io(this.urlString);
+    constructor(private gameSettingsService: GameSettingsService, private router: Router) {
+        this.url = `http://${window.location.hostname}:3000`;
+        this.socket = io(this.url);
         this.initializeRoomId();
         this.initializeGameSettings();
         this.route();

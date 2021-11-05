@@ -1,32 +1,49 @@
+/* eslint-disable sort-imports */
 /* eslint-disable dot-notation */
+// import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { AI_NAME_DATABASE } from '@app/classes/constants';
-import { FormComponent } from './form.component';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { WaitingRoomComponent } from '@app/pages/waiting-room/waiting-room.component';
+import { AI_NAME_DATABASE } from '@app/classes/constants';
 import { StartingPlayer } from '@common/game-settings';
+import { FormComponent } from './form.component';
 
 describe('FormComponent', () => {
     let component: FormComponent;
     let fixture: ComponentFixture<FormComponent>;
-    RouterTestingModule.withRoutes([{ path: 'multiplayer-mode-waiting-room', component: WaitingRoomComponent }]);
+    let router: jasmine.SpyObj<Router>;
+    // RouterTestingModule.withRoutes([{ path: 'game', component: GameViewComponent }]);
+    // RouterTestingModule.withRoutes([{ path: 'multiplayer-mode-waiting-room', component: WaitingRoomComponent }]);
 
     beforeEach(async () => {
-        RouterTestingModule.withRoutes([{ path: 'multiplayer-mode-waiting-room', component: WaitingRoomComponent }]);
+        // RouterTestingModule.withRoutes([{ path: 'game', component: GameViewComponent }]);
+        // RouterTestingModule.withRoutes([{ path: 'multiplayer-mode-waiting-room', component: WaitingRoomComponent }]);
+        router = jasmine.createSpyObj('Router', ['navigate']);
         await TestBed.configureTestingModule({
             declarations: [FormComponent],
+            providers: [{ provide: Router, useValue: router }],
             imports: [RouterTestingModule],
-            schemas: [NO_ERRORS_SCHEMA],
+            // schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
+        router = TestBed.inject(Router) as jasmine.SpyObj<Router>;
     });
 
     beforeEach(() => {
         fixture = TestBed.createComponent(FormComponent);
         component = fixture.componentInstance;
+        // RouterTestingModule.withRoutes([{ path: 'game', component: GameViewComponent }]);
         fixture.detectChanges();
+        component.form = new FormGroup({
+            playerName: new FormControl(''),
+            minuteInput: new FormControl('70'),
+            secondInput: new FormControl('00'),
+            levelInput: new FormControl('Facile'),
+            randomBonus: new FormControl('Désactiver'),
+        });
 
         component.gameSettingsService.gameSettings.playersName[0] = 'player 1';
+        component.gameSettingsService.isSoloMode = true;
     });
 
     it('should create', () => {
@@ -56,21 +73,48 @@ describe('FormComponent', () => {
     });
 
     it('should call chooseRandomAIName()', async () => {
-        spyOn(component['router'], 'navigate');
-        const spy = spyOn(component, 'chooseRandomAIName');
+        // spyOn(component['router'], 'navigate');
+        const chooseRandomAINameSpy = spyOn(component, 'chooseRandomAIName');
         component.initGame();
-        expect(spy).toHaveBeenCalled();
+        expect(chooseRandomAINameSpy).toHaveBeenCalled();
     });
 
     it('should call chooseStartingPlayer()', () => {
-        spyOn(component['router'], 'navigate');
-        const spy = spyOn(component, 'chooseStartingPlayer');
+        // spyOn(component['router'], 'navigate');
+        const chooseStartingPlayerSpy = spyOn(component, 'chooseStartingPlayer');
         component.initGame();
-        expect(spy).toHaveBeenCalled();
+        expect(chooseStartingPlayerSpy).toHaveBeenCalled();
     });
 
-    // it('should initialize all GameSettings elements', () => {
-    //     component.initGame();
-    //     expect(gameSettingsServiceSpy.initializeSettings).toHaveBeenCalled();
-    // });
+    it('should route to game if it is soloGame', () => {
+        // const snapshotSettingsSpy = spyOn(component, 'snapshotSettings');
+        component.gameSettingsService.isSoloMode = true;
+        component.initGame();
+        // expect(snapshotSettingsSpy).toHaveBeenCalled();
+        expect(router.navigate).toHaveBeenCalledWith(['game']);
+    });
+
+    it('should route to multiplayer-mode-waiting-room if it is not soloGame', () => {
+        // const snapshotSettingsSpy = spyOn(component, 'snapshotSettings');
+        component.gameSettingsService.isSoloMode = false;
+        component.initGame();
+        // expect(snapshotSettingsSpy).toHaveBeenCalled();
+        expect(router.navigate).toHaveBeenCalledWith(['multiplayer-mode-waiting-room']);
+    });
+
+    it('should call shuffleBonusPositons of randomBonusService if randomBonus are activated in the form', () => {
+        const shuffleBonusPositionsSpy = spyOn(component['randomBonusService'], 'shuffleBonusPositions').and.returnValue(
+            new Map<string, string>([['A1', 'doubleLetter']]),
+        );
+        component.form = new FormGroup({
+            playerName: new FormControl(''),
+            minuteInput: new FormControl('01'),
+            secondInput: new FormControl('00'),
+            levelInput: new FormControl('Facile'),
+            randomBonus: new FormControl('Activer'),
+        });
+        const bonus = component.getRightBonusPositions();
+        expect(bonus).toBeInstanceOf(String);
+        expect(shuffleBonusPositionsSpy).toHaveBeenCalled();
+    });
 });

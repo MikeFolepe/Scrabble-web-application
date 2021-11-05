@@ -1,10 +1,11 @@
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { INDEX_PLAYER_AI, INDEX_PLAYER_ONE, ONE_SECOND_DELAY } from '@app/classes/constants';
-import { TypeMessage } from '@app/classes/enum';
 import { BoardHandlerService } from '@app/services/board-handler.service';
 import { ChatboxService } from '@app/services/chatbox.service';
 import { EndGameService } from '@app/services/end-game.service';
 import { SendMessageService } from '@app/services/send-message.service';
+import { TypeMessage } from '@app/classes/enum';
+import { SkipTurnService } from '@app/services/skip-turn.service';
 
 @Component({
     selector: 'app-chatbox',
@@ -28,6 +29,7 @@ export class ChatboxComponent implements OnInit, AfterViewInit {
         private sendMessageService: SendMessageService,
         public endGameService: EndGameService,
         private boardHandlerService: BoardHandlerService,
+        private skipTurnService: SkipTurnService,
     ) {}
 
     // Disable the current placement on the board when a click occurs in the chatbox
@@ -78,6 +80,7 @@ export class ChatboxComponent implements OnInit, AfterViewInit {
             this.endGameService.getFinalScore(INDEX_PLAYER_ONE);
             this.endGameService.getFinalScore(INDEX_PLAYER_AI);
             if (this.endGameService.isEndGame) {
+                this.skipTurnService.stopTimer();
                 clearInterval(findEnd);
             }
         }, ONE_SECOND_DELAY);

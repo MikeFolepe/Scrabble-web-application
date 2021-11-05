@@ -1,6 +1,7 @@
+import { OUT_BOUND_INDEX_OF_SOCKET } from '@app/classes/constants';
 import { GameSettings, StartingPlayer } from '@common/game-settings';
-import { Room, State } from '@common/room';
 import { PlayerIndex } from '@common/PlayerIndex';
+import { Room, State } from '@common/room';
 import { Service } from 'typedi';
 
 @Service()
@@ -89,6 +90,21 @@ export class RoomManagerService {
         }
         return '';
     }
+
+    findLoserIndex(socketId: string): number {
+        for (const room of this.rooms) {
+            for (const ids of room.socketIds) {
+                if (ids === socketId) return room.socketIds.indexOf(ids) as number;
+            }
+        }
+        return OUT_BOUND_INDEX_OF_SOCKET;
+    }
+
+    getWinnerName(roomId: string, indexofLoser: number): string {
+        const room = this.find(roomId) as Room;
+        if (indexofLoser === 0) return room.gameSettings.playersName[1];
+        else return room.gameSettings.playersName[0];
+    }
     isNotAvailable(roomId: string): boolean {
         const room = this.find(roomId);
 
@@ -99,7 +115,7 @@ export class RoomManagerService {
         return room.state === State.Playing;
     }
 
-    find(roomId: string): Room | undefined {
-        return this.rooms.find((room) => room.id === roomId);
+    find(roomId: string): Room {
+        return this.rooms.find((room) => room.id === roomId) as Room;
     }
 }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable max-lines */
 /* eslint-disable dot-notation */
 import { HttpClientTestingModule } from '@angular/common/http/testing';
@@ -5,8 +6,8 @@ import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { BOARD_COLUMNS, BOARD_ROWS, FONT_SIZE_MAX, FONT_SIZE_MIN, INDEX_INVALID, RESERVE } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
-import { PlayerAI } from '@app/models/player-ai.model';
 import { Player } from '@app/models/player.model';
+import { Socket } from 'socket.io-client';
 import { PlayerService } from './player.service';
 
 describe('PlayerService', () => {
@@ -18,7 +19,7 @@ describe('PlayerService', () => {
 
     let player: Player;
     let service: PlayerService;
-    let playerAI: PlayerAI;
+    let playerAI: Player;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
@@ -33,7 +34,7 @@ describe('PlayerService', () => {
         whiteLetter = RESERVE[26];
 
         player = new Player(1, 'Player 1', [letterA]);
-        playerAI = new PlayerAI(2, 'Player AI', [letterB]);
+        playerAI = new Player(2, 'Player AI', [letterB]);
     });
 
     it('should be created', () => {
@@ -51,6 +52,20 @@ describe('PlayerService', () => {
         service['players'].push(playerAI);
         service.clearPlayers();
         expect(service['players']).toHaveSize(0);
+    });
+
+    it('should update the score when receiving response from the server', () => {
+        service['players'].push(player);
+        service['clientSocketService'].socket = {
+            on: (eventName: string, callback: (score: number, indexPlayer: number) => void) => {
+                if (eventName === 'receiveScoreInfo') {
+                    callback(50, 0);
+                }
+            },
+        } as unknown as Socket;
+
+        service.receiveScoreFromServer();
+        expect(service.players[0].score).toEqual(50);
     });
 
     it('should add players when addPlayer() is called', () => {

@@ -6,8 +6,8 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { INDEX_PLAYER_ONE, RESERVE } from '@app/classes/constants';
 import { TypeMessage } from '@app/classes/enum';
 import { Orientation, PossibleWords } from '@app/classes/scrabble-board-pattern';
-import { ChatboxService } from '@app/services/chatbox.service';
 import { Player } from '@app/models/player.model';
+import { ChatboxService } from '@app/services/chatbox.service';
 
 describe('ChatboxService', () => {
     let service: ChatboxService;
@@ -113,16 +113,16 @@ describe('ChatboxService', () => {
     });
 
     it('using command !passer should display the respective message', () => {
-        spyOn(service['skipTurn'], 'switchTurn');
-        service['skipTurn'].isTurn = true;
+        spyOn(service['skipTurnService'], 'switchTurn');
+        service['skipTurnService'].isTurn = true;
         service['command'] = 'passer';
         service.sendPlayerMessage('!passer');
         expect(service['message']).toEqual('!passer');
     });
 
     it('using a valid command !placer should display the respective message', async () => {
-        spyOn(service['skipTurn'], 'switchTurn');
-        service['skipTurn'].isTurn = true;
+        spyOn(service['skipTurnService'], 'switchTurn');
+        service['skipTurnService'].isTurn = true;
         spyOn(service['placeLetterService'], 'placeCommand').and.returnValue(Promise.resolve(true));
         service['command'] = 'placer';
         service['message'] = '!placer h8h hello';
@@ -132,8 +132,8 @@ describe('ChatboxService', () => {
     });
 
     it('using a valid command !échanger should display the respective message', () => {
-        spyOn(service['skipTurn'], 'switchTurn');
-        service['skipTurn'].isTurn = true;
+        spyOn(service['skipTurnService'], 'switchTurn');
+        service['skipTurnService'].isTurn = true;
         spyOn(service['swapLetterService'], 'swapCommand').and.returnValue(true);
         service['command'] = 'echanger';
         service.sendPlayerMessage('!échanger abc');
@@ -156,21 +156,21 @@ describe('ChatboxService', () => {
     });
 
     it('using command !passer while it is not your turn should display an error', () => {
-        service['skipTurn'].isTurn = false;
+        service['skipTurnService'].isTurn = false;
         service['command'] = 'passer';
         service.sendPlayerMessage('!passer');
         expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith("ERREUR : Ce n'est pas ton tour", TypeMessage.Error);
     });
 
     it('using command !échanger while it is not your turn should display an error', () => {
-        service['skipTurn'].isTurn = false;
+        service['skipTurnService'].isTurn = false;
         service['command'] = 'echanger';
         service.sendPlayerMessage('!échanger');
         expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith("ERREUR : Ce n'est pas ton tour", TypeMessage.Error);
     });
 
     it('using command !placer while it is not your turn should display an error', async () => {
-        service['skipTurn'].isTurn = false;
+        service['skipTurnService'].isTurn = false;
         service['command'] = 'placer';
         await service.executePlace();
         expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith("ERREUR : Ce n'est pas ton tour", TypeMessage.Error);
@@ -198,8 +198,8 @@ describe('ChatboxService', () => {
     });
 
     it('should not write a message if swapCommand is false in executeSwap()', () => {
-        service['skipTurn'].isTurn = true;
-        const spy = spyOn(service['skipTurn'], 'switchTurn');
+        service['skipTurnService'].isTurn = true;
+        const spy = spyOn(service['skipTurnService'], 'switchTurn');
         spyOn(service['swapLetterService'], 'swapCommand').and.returnValue(false);
         service['message'] = '!échanger *s';
         service.executeSwap();
@@ -213,8 +213,8 @@ describe('ChatboxService', () => {
     });
 
     it('should not display message if place is false when executePlace() is called', async () => {
-        service['skipTurn'].isTurn = true;
-        const spy = spyOn(service['skipTurn'], 'switchTurn');
+        service['skipTurnService'].isTurn = true;
+        const spy = spyOn(service['skipTurnService'], 'switchTurn');
         spyOn(service['placeLetterService'], 'placeCommand').and.returnValue(Promise.resolve(false));
         service['message'] = '!placer h8h test';
         await service.executePlace();

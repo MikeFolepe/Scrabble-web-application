@@ -28,12 +28,6 @@ describe('WaitingRoomComponent', () => {
         fixture.detectChanges();
     });
 
-    beforeEach(() => {
-        fixture = TestBed.createComponent(WaitingRoomComponent);
-        component = fixture.componentInstance;
-        fixture.detectChanges();
-    });
-
     it('should create', () => {
         expect(component).toBeTruthy();
     });
@@ -85,7 +79,6 @@ describe('WaitingRoomComponent', () => {
         const spy1 = spyOn(component, 'waitBeforeChangeStatus');
         const spy2 = spyOn(component, 'handleReloadErrors');
         component['clientSocket'].socket.connected = true;
-
         component.playAnimation();
         jasmine.clock().tick(5000);
         expect(spy1).toHaveBeenCalled();

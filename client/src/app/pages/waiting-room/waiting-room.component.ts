@@ -16,7 +16,7 @@ export class WaitingRoomComponent implements OnInit {
 
     constructor(private router: Router, private gameSettingsService: GameSettingsService, private clientSocket: ClientSocketService) {
         this.status = '';
-        this.isWaiting = false;
+        this.isWaiting = true;
         this.clientSocket.route();
     }
 

@@ -1,3 +1,4 @@
+/* eslint-disable sort-imports */
 import { Injectable } from '@angular/core';
 import { INDEX_PLAYER_ONE, MAX_NUMBER_OF_POSSIBILITY } from '@app/classes/constants';
 import { TypeMessage } from '@app/classes/enum';
@@ -31,7 +32,7 @@ export class ChatboxService {
         private sendMessageService: SendMessageService,
         public endGameService: EndGameService,
         public letterService: LetterService,
-        public skipTurn: SkipTurnService,
+        public skipTurnService: SkipTurnService,
     ) {
         this.message = '';
         this.command = '';
@@ -84,10 +85,10 @@ export class ChatboxService {
     }
 
     executeSkipTurn() {
-        if (this.skipTurn.isTurn) {
+        if (this.skipTurnService.isTurn) {
             this.endGameService.addActionsLog('passer');
             this.sendMessageService.displayMessageByType(this.message, this.typeMessage);
-            this.skipTurn.switchTurn();
+            this.skipTurnService.switchTurn();
         } else {
             this.sendMessageService.displayMessageByType(this.notTurnErrorMessage, TypeMessage.Error);
         }
@@ -107,13 +108,13 @@ export class ChatboxService {
     }
 
     executeSwap() {
-        if (this.skipTurn.isTurn) {
+        if (this.skipTurnService.isTurn) {
             const messageSplitted = this.message.split(/\s/);
 
             if (this.swapLetterService.swapCommand(messageSplitted[1], INDEX_PLAYER_ONE)) {
                 this.message = this.playerService.players[INDEX_PLAYER_ONE].name + ' : ' + this.message;
                 this.sendMessageService.displayMessageByType(this.message, this.typeMessage);
-                this.skipTurn.switchTurn();
+                this.skipTurnService.switchTurn();
             }
         } else {
             this.sendMessageService.displayMessageByType(this.notTurnErrorMessage, TypeMessage.Error);
@@ -121,7 +122,7 @@ export class ChatboxService {
     }
 
     async executePlace() {
-        if (this.skipTurn.isTurn) {
+        if (this.skipTurnService.isTurn) {
             const messageSplitted = this.message.split(/\s/);
             const positionSplitted = messageSplitted[1].split(/([0-9]+)/);
 
@@ -130,7 +131,7 @@ export class ChatboxService {
                 x: Number(positionSplitted[1]) - 1,
                 y: positionSplitted[0].charCodeAt(0) - 'a'.charCodeAt(0),
             };
-            const orientation = Orientation[positionSplitted[2] as keyof typeof Orientation];
+            const orientation = positionSplitted[2] === 'h' ? Orientation.Horizontal : Orientation.Vertical;
 
             if (await this.placeLetterService.placeCommand(position, orientation, messageSplitted[2], INDEX_PLAYER_ONE)) {
                 this.sendMessageService.displayMessageByType(this.message, this.typeMessage);
