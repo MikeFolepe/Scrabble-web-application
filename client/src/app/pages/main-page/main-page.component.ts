@@ -17,7 +17,6 @@ export class MainPageComponent {
 
     // TODO: 0,1,2... chiffre magique
     route(): void {
-        console.log('router traverse le form');
         switch (this.selectedGameMode) {
             case this.gameModes[0]: {
                 this.gameSettingsService.isSoloMode = true;

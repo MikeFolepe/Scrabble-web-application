@@ -1,22 +1,11 @@
 /* eslint-disable sort-imports */
-import {
-    BOARD_COLUMNS,
-    BOARD_ROWS,
-    CENTRAL_CASE_POSITION_X,
-    DELAY_TO_PASS_TURN,
-    DICTIONARY,
-    INDEX_INVALID,
-    INDEX_PLAYER_AI,
-    MAX_DIMENSIONS,
-    NO_PLAYABLE_WORD,
-} from '@app/classes/constants';
+import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSITION_X, DICTIONARY, INDEX_INVALID, INDEX_PLAYER_AI } from '@app/classes/constants';
 import { Range } from '@app/classes/range';
 import { BoardPattern, Orientation, PatternInfo, PossibleWords } from '@app/classes/scrabble-board-pattern';
-import { Vec2 } from '@app/classes/vec2';
 import { PlayerAIService } from '@app/services/player-ia.service';
+import { Vec2 } from '@common/vec2';
 import { PlayerAI } from './player-ai.model';
-
-export class PlaceLetters {
+export class PlaceLetterStrategy {
     dictionary: string[];
     private board: string[][][];
 
@@ -49,11 +38,8 @@ export class PlaceLetters {
         matchingPointingRangeWords = playerAiService.filterByRange(allPossibleWords, this.pointingRange);
 
         await this.computeResults(allPossibleWords, matchingPointingRangeWords, playerAiService);
-
-        setTimeout(() => {
-            playerAiService.debugService.receiveAIDebugPossibilities(allPossibleWords.concat(matchingPointingRangeWords));
-            playerAiService.endGameService.actionsLog.push('placer');
-        }, DELAY_TO_PASS_TURN);
+        playerAiService.debugService.receiveAIDebugPossibilities(allPossibleWords.concat(matchingPointingRangeWords));
+        playerAiService.endGameService.actionsLog.push('placer');
     }
 
     private async computeResults(
@@ -62,14 +48,15 @@ export class PlaceLetters {
         playerAiService: PlayerAIService,
     ): Promise<void> {
         let index: number = this.placementAttempt(matchingPointingRangeWords, playerAiService);
-        if (index !== NO_PLAYABLE_WORD) {
+        const noPlayableWord = -1;
+        if (index !== noPlayableWord) {
             await playerAiService.place(matchingPointingRangeWords[index]);
             matchingPointingRangeWords.splice(index, 1);
             return;
         }
 
         index = this.placementAttempt(allPossibleWords, playerAiService);
-        if (index !== NO_PLAYABLE_WORD) {
+        if (index !== noPlayableWord) {
             await playerAiService.place(allPossibleWords[index]);
             allPossibleWords.splice(index, 1);
             return;
@@ -80,7 +67,7 @@ export class PlaceLetters {
 
     private placementAttempt(possibilities: PossibleWords[], playerAiService: PlayerAIService): number {
         let i = 0;
-
+        const noPlayableWord = -1;
         for (i = 0; i < possibilities.length; i++) {
             const word = possibilities[i];
             let start: Vec2;
@@ -103,7 +90,7 @@ export class PlaceLetters {
             }
         }
 
-        return NO_PLAYABLE_WORD;
+        return noPlayableWord;
     }
 
     private initializeArray(scrabbleBoard: string[][]) {
@@ -125,17 +112,17 @@ export class PlaceLetters {
 
     private removeIfNotDisposable(allPossibleWords: PossibleWords[]): PossibleWords[] {
         const filteredWords: PossibleWords[] = [];
-        const re1 = new RegExp('(?<=[A-Za-z])(,?)(?=[A-Za-z])', 'g');
-        const re2 = new RegExp('[,]', 'g');
-        const re3 = new RegExp('[a-z]{1,}', 'g');
+        const regex1 = new RegExp('(?<=[A-Za-z])(,?)(?=[A-Za-z])', 'g');
+        const regex2 = new RegExp('[,]', 'g');
+        const regex3 = new RegExp('[a-z]{1,}', 'g');
         for (const word of allPossibleWords) {
             let line = this.board[word.orientation][word.line]
                 .map((element: string) => {
                     return element === '' ? ' ' : element;
                 })
                 .toString();
-            line = line.replace(re2, '');
-            const radixes = this.board[word.orientation][word.line].toString().replace(re1, '').match(re3) as string[];
+            line = line.replace(regex2, '');
+            const radixes = this.board[word.orientation][word.line].toString().replace(regex1, '').match(regex3) as string[];
             if (this.isWordFitting(line, word, radixes)) {
                 filteredWords.push(word);
             }
@@ -191,10 +178,11 @@ export class PlaceLetters {
         for (const word of allPossibleWords) {
             let isWordValid = true;
             for (const letter of word.word) {
-                const re = new RegExp(letter, 'g');
-                const re1 = new RegExp('[,]{1,}', 'g');
-                const amountOfLetterNeeded: number = (word.word.match(re) || []).length;
-                const amountOfLetterPresent: number = (this.board[word.orientation][word.line].toString().replace(re1, '').match(re) || []).length;
+                const regex1 = new RegExp(letter, 'g');
+                const regex2 = new RegExp('[,]{1,}', 'g');
+                const amountOfLetterNeeded: number = (word.word.match(regex1) || []).length;
+                const amountOfLetterPresent: number = (this.board[word.orientation][word.line].toString().replace(regex2, '').match(regex1) || [])
+                    .length;
                 const playerAmount: number = player.playerQuantityOf(letter);
 
                 if (amountOfLetterNeeded > playerAmount + amountOfLetterPresent) {
@@ -215,18 +203,18 @@ export class PlaceLetters {
         const allWords: PossibleWords[] = [];
 
         for (const pattern of patterns.horizontal) {
-            const regExp = new RegExp(pattern.pattern, 'g');
+            const regex = new RegExp(pattern.pattern, 'g');
             for (const word of dictionaryToLookAt) {
-                if (regExp.test(word) && this.checkIfWordIsPresent(pattern.pattern, word)) {
+                if (regex.test(word) && this.checkIfWordIsPresent(pattern.pattern, word)) {
                     allWords.push({ word, orientation: Orientation.Horizontal, line: pattern.line, startIdx: 0, point: 0 });
                 }
             }
         }
 
         for (const pattern of patterns.vertical) {
-            const regExp = new RegExp(pattern.pattern, 'g');
+            const regex = new RegExp(pattern.pattern, 'g');
             for (const word of dictionaryToLookAt) {
-                if (regExp.test(word) && this.checkIfWordIsPresent(pattern.pattern, word)) {
+                if (regex.test(word) && this.checkIfWordIsPresent(pattern.pattern, word)) {
                     allWords.push({ word, orientation: Orientation.Vertical, line: pattern.line, startIdx: 0, point: 0 });
                 }
             }
@@ -236,8 +224,8 @@ export class PlaceLetters {
     }
 
     private checkIfWordIsPresent(pattern: string, word: string): boolean {
-        const re = new RegExp('(?<=[*])(([a-z]*)?)', 'g');
-        const wordPresent = pattern.match(re);
+        const regex = new RegExp('(?<=[*])(([a-z]*)?)', 'g');
+        const wordPresent = pattern.match(regex);
 
         for (let i = 0; wordPresent !== null && i < wordPresent.length; i++) {
             if (wordPresent[i] === word) {
@@ -267,14 +255,14 @@ export class PlaceLetters {
     private generatePattern(orientation: Orientation, playerHand: string): PatternInfo[] {
         const patternArray: PatternInfo[] = [];
 
-        const re1 = new RegExp('(?<=[A-Za-z])(,?)(?=[A-Za-z])', 'g');
-        const re2 = new RegExp('[,]{1,}', 'g');
+        const regex1 = new RegExp('(?<=[A-Za-z])(,?)(?=[A-Za-z])', 'g');
+        const regex2 = new RegExp('[,]{1,}', 'g');
 
         for (let line = 0; line < BOARD_COLUMNS; line++) {
             let pattern = this.board[orientation][line]
                 .toString()
-                .replace(re1, '')
-                .replace(re2, playerHand + '*')
+                .replace(regex1, '')
+                .replace(regex2, playerHand + '*')
                 .toLowerCase();
             // If it's not an empty row
             if (pattern !== playerHand.toLowerCase() + '*') {
@@ -292,18 +280,20 @@ export class PlaceLetters {
         this.initializeArray(scrabbleBoard);
         const wordsOnBoard: string[] = [];
 
-        const re1 = new RegExp('[,]', 'g');
-        const re2 = new RegExp('[ ]{1}', 'g');
+        const regex1 = new RegExp('[,]', 'g');
+        const regex2 = new RegExp('[ ]{1}', 'g');
 
-        for (let dimension = 0; dimension < MAX_DIMENSIONS; dimension++) {
+        const maxDimensions = Object.keys(Orientation).length / 2;
+
+        for (let dimension = 0; dimension < maxDimensions; dimension++) {
             for (let i = 0; i < BOARD_COLUMNS; i++) {
                 this.board[dimension][i]
                     .map((element: string) => {
                         return element === '' ? ' ' : element;
                     })
                     .toString()
-                    .replace(re1, '')
-                    .split(re2)
+                    .replace(regex1, '')
+                    .split(regex2)
                     .forEach((word) => {
                         if (word.length > 1 && word !== '') wordsOnBoard.push(word);
                     });
@@ -317,7 +307,6 @@ export class PlaceLetters {
                 return false;
             }
         }
-
         this.board = save;
         return true;
     }

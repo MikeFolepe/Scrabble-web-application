@@ -13,8 +13,8 @@ import { PlayerService } from './player.service';
 export class EndGameService {
     actionsLog: string[] = [];
     isEndGame: boolean = false;
-    isEndGamebyGiveUp = false;
-    winnerNamebyGiveUp = '';
+    isEndGameByGiveUp = false;
+    winnerNameByGiveUp = '';
 
     constructor(
         public clientSocketService: ClientSocketService,
@@ -38,9 +38,9 @@ export class EndGameService {
         });
     }
     receiveEndGameByGiveUp(): void {
-        this.clientSocketService.socket.on('receiveEndGamebyGiveup', (isEndGamebyGiveup: boolean, winnerName: string) => {
-            this.isEndGamebyGiveUp = isEndGamebyGiveup;
-            this.winnerNamebyGiveUp = winnerName;
+        this.clientSocketService.socket.on('receiveEndGameByGiveUp', (isEndGameByGiveUp: boolean, winnerName: string) => {
+            this.isEndGameByGiveUp = isEndGameByGiveUp;
+            this.winnerNameByGiveUp = winnerName;
         });
     }
 
@@ -59,13 +59,14 @@ export class EndGameService {
         }
         return this.playerService.players[0].name + '  ' + this.playerService.players[1].name;
     }
+
     addActionsLog(actionLog: string): void {
         this.actionsLog.push(actionLog);
         this.clientSocketService.socket.emit('sendActions', this.actionsLog, this.clientSocketService.roomId);
     }
 
     checkEndGame(): void {
-        this.isEndGame = this.isEndGameByActions() || this.isEndGameByEasel() || this.isEndGamebyGiveUp;
+        this.isEndGame = this.isEndGameByActions() || this.isEndGameByEasel() || this.isEndGameByGiveUp;
 
         if (this.isEndGame) {
             this.clientSocketService.socket.emit('sendEndGame', this.isEndGame, this.clientSocketService.roomId);
@@ -89,8 +90,8 @@ export class EndGameService {
     clearAllData(): void {
         this.playerService.players = [];
         this.letterService.reserve = JSON.parse(JSON.stringify(RESERVE));
-        this.isEndGamebyGiveUp = false;
-        this.winnerNamebyGiveUp = '';
+        this.isEndGameByGiveUp = false;
+        this.winnerNameByGiveUp = '';
         this.isEndGame = false;
         this.actionsLog = [];
         this.debugService.debugServiceMessage = [];

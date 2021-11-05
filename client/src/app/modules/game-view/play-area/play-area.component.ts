@@ -31,7 +31,7 @@ export class PlayAreaComponent {
             // if user closes the dialog box without input nothing
             if (!decision) return;
             // if decision is true the EndGame occures
-            this.clientSocketService.socket.emit('sendEndGamebyGiveUp', decision, this.clientSocketService.roomId);
+            this.clientSocketService.socket.emit('sendEndGameByGiveUp', decision, this.clientSocketService.roomId);
         });
     }
 }

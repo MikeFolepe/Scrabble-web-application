@@ -4,12 +4,12 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { INDEX_PLAYER_AI, INDEX_PLAYER_ONE, RESERVE, THREE_SECONDS_DELAY } from '@app/classes/constants';
-import { Letter } from '@app/classes/letter';
 import { Orientation } from '@app/classes/scrabble-board-pattern';
-import { Vec2 } from '@app/classes/vec2';
 import { Player } from '@app/models/player.model';
 import { GridService } from '@app/services/grid.service';
 import { PlaceLetterService } from '@app/services/place-letter.service';
+import { Letter } from '@common/letter';
+import { Vec2 } from '@common/vec2';
 import { Socket } from 'socket.io-client';
 import { CommunicationService } from './communication.service';
 
