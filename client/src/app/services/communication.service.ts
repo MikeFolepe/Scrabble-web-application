@@ -1,10 +1,9 @@
-/* eslint-disable sort-imports */
+import { Observable, of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { Injectable } from '@angular/core';
 import { Message } from '@app/classes/message';
-import { Observable, of } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
@@ -28,7 +27,7 @@ export class CommunicationService {
             this.wordsToValidate.push(word);
         }
         return this.http
-            .post<boolean>(`${this.baseUrl}/validation/words`, this.wordsToValidate)
+            .post<boolean>(`${this.baseUrl}/multiplayer/validateWords`, this.wordsToValidate)
             .pipe(catchError(this.handleError<boolean>('validationPost')));
     }
 

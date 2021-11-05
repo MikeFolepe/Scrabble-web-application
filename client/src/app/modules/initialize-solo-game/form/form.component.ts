@@ -1,10 +1,11 @@
-/* eslint-disable sort-imports */
+import { AI_NAME_DATABASE, BONUS_POSITIONS } from '@app/classes/constants';
 import { Component, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { Router } from '@angular/router';
-import { AI_NAME_DATABASE } from '@app/classes/constants';
-import { GameSettingsService } from '@app/services/game-settings.service';
 import { GameSettings, StartingPlayer } from '@common/game-settings';
+import { GameSettingsService } from '@app/services/game-settings.service';
+import { RandomBonusesService } from '@app/services/random-bonuses.service';
+import { Router } from '@angular/router';
+
 @Component({
     selector: 'app-form',
     templateUrl: './form.component.html',
@@ -13,7 +14,7 @@ import { GameSettings, StartingPlayer } from '@common/game-settings';
 export class FormComponent implements OnDestroy {
     form: FormGroup;
 
-    constructor(public gameSettingsService: GameSettingsService, private router: Router) {
+    constructor(public gameSettingsService: GameSettingsService, private router: Router, private randomBonusService: RandomBonusesService) {
         this.form = new FormGroup({
             playerName: new FormControl(this.gameSettingsService.gameSettings.playersName[0]),
             minuteInput: new FormControl(this.gameSettingsService.gameSettings.timeMinute),
@@ -23,31 +24,15 @@ export class FormComponent implements OnDestroy {
         });
     }
 
-    // Generates a random name for the AI
-    chooseRandomAIName(): string {
-        let randomName: string;
-        do {
-            // Number of seconds since 1st january 1970
-            let randomNumber = new Date().getTime();
-            // Multiplication by a random number [0,1[, which we get the floor
-            randomNumber = Math.floor(Math.random() * randomNumber);
-            // Random value [0, aiNameDatabase.length[
-            randomName = AI_NAME_DATABASE[randomNumber % AI_NAME_DATABASE.length];
-        } while (randomName === this.form.controls.playerName.value);
-        return randomName;
+    getRightBonusPositions(): string {
+        let bonusPositions;
+        if (this.form.controls.randomBonus.value === 'Activer') {
+            bonusPositions = this.randomBonusService.shuffleBonusesPositions();
+        } else {
+            bonusPositions = BONUS_POSITIONS;
+        }
+        return JSON.stringify(Array.from(bonusPositions));
     }
-
-    // Chooses randomly the player that will play first
-    chooseStartingPlayer(): StartingPlayer {
-        const enumLength = Object.keys(StartingPlayer).length / 2;
-        // Number of seconds since 1st january 1970
-        let randomNumber = new Date().getTime();
-        // Multiplication by a random number [0,1[, which we get the floor
-        randomNumber = Math.floor(Math.random() * randomNumber);
-        // Random value [0, enum.length[
-        return randomNumber % enumLength;
-    }
-
     // Initializes the game with its settings
     initGame(): void {
         if (this.gameSettingsService.isSoloMode) {
@@ -57,7 +42,6 @@ export class FormComponent implements OnDestroy {
         }
         this.initSoloGame();
         this.initMultiplayerGame();
-        this.initSoloGame();
         this.router.navigate(['multiplayer-mode-waiting-room']);
     }
 
@@ -70,6 +54,7 @@ export class FormComponent implements OnDestroy {
             this.form.controls.secondInput.value,
             this.form.controls.levelInput.value,
             this.form.controls.randomBonus.value,
+            this.getRightBonusPositions(),
             'dictionary.json',
         );
     }
@@ -81,5 +66,19 @@ export class FormComponent implements OnDestroy {
     ngOnDestroy(): void {
         this.gameSettingsService.isRedirectedFromMultiplayerGame = false;
         return;
+    }
+
+    chooseStartingPlayer(): StartingPlayer {
+        return Math.floor((Math.random() * Object.keys(StartingPlayer).length) / 2);
+    }
+
+    chooseRandomAIName(): string {
+        let randomName: string;
+        do {
+            // Random value [0, AI_NAME_DATABASE.length[
+            const randomNumber = Math.floor(Math.random() * AI_NAME_DATABASE.length);
+            randomName = AI_NAME_DATABASE[randomNumber];
+        } while (randomName === this.form.controls.playerName.value);
+        return randomName;
     }
 }

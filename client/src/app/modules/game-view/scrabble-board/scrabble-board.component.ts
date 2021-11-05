@@ -1,46 +1,40 @@
-import { AfterViewInit, Component, ElementRef, HostListener, ViewChild, OnDestroy } from '@angular/core';
-import { Vec2 } from '@app/classes/vec2';
+import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { BoardHandlerService } from '@app/services/board-handler.service';
 import { GridService } from '@app/services/grid.service';
-import { MouseHandlerService } from '@app/services/mouse-handler.service';
 
 @Component({
     selector: 'app-scrabble-board',
     templateUrl: './scrabble-board.component.html',
     styleUrls: ['./scrabble-board.component.scss'],
 })
-export class ScrabbleBoardComponent implements /* OnInit,*/ AfterViewInit, OnDestroy {
-    @ViewChild('gridCanvas', { static: false }) private gridCanvas!: ElementRef<HTMLCanvasElement>;
-    @ViewChild('gridCanvasLayer', { static: false }) private gridCanvasLayer!: ElementRef<HTMLCanvasElement>;
+export class ScrabbleBoardComponent implements /* OnInit,*/ AfterViewInit {
+    @ViewChild('gridCanvas', { static: false }) private boardLayer!: ElementRef<HTMLCanvasElement>;
+    @ViewChild('gridCanvasLettersLayer', { static: false }) private lettersLayer!: ElementRef<HTMLCanvasElement>;
+    @ViewChild('gridCanvasPlacementLayer', { static: false }) private placementLayer!: ElementRef<HTMLCanvasElement>;
 
-    mousePosition: Vec2 = { x: 0, y: 0 };
-    buttonPressed = '';
-    constructor(private readonly gridService: GridService, private mouseService: MouseHandlerService) {}
+    constructor(private readonly gridService: GridService, private boardHandlerService: BoardHandlerService) {}
 
     @HostListener('keydown', ['$event'])
     buttonDetect(event: KeyboardEvent) {
-        this.buttonPressed = event.key;
+        this.boardHandlerService.buttonDetect(event);
+    }
+
+    mouseHitDetect(event: MouseEvent) {
+        this.boardHandlerService.mouseHitDetect(event);
     }
 
     ngAfterViewInit(): void {
-        this.gridService.gridContextLayer = this.gridCanvasLayer.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        this.gridService.gridContext = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        this.gridService.gridContextBoardLayer = this.boardLayer.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        this.gridService.gridContextLettersLayer = this.lettersLayer.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        this.gridService.gridContextPlacementLayer = this.placementLayer.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.gridService.drawGrid();
-        this.gridCanvas.nativeElement.focus();
-        this.gridService.setGridContext(this.gridService.gridContext);
+        this.gridService.setGridContext(this.gridService.gridContextBoardLayer);
     }
 
     get width(): number {
         return this.gridService.width;
     }
-
     get height(): number {
         return this.gridService.height;
-    }
-
-    mouseHitDetect(event: MouseEvent) {
-        this.mouseService.mouseHitDetect(event);
-    }
-    ngOnDestroy(): void {
-        this.gridCanvasLayer.nativeElement.remove();
     }
 }

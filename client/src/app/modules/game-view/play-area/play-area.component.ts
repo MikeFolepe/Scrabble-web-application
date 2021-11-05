@@ -1,9 +1,7 @@
-/* eslint-disable import/namespace */
-/* eslint-disable import/no-deprecated */
-/* eslint-disable sort-imports */
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { GiveUpGameDialogComponent } from '@app/modules/initialize-solo-game/give-up-game-dialog/give-up-game-dialog.component';
+import { BoardHandlerService } from '@app/services/board-handler.service';
 import { ChatboxService } from '@app/services/chatbox.service';
 import { ClientSocketService } from '@app/services/client-socket.service';
 import { EndGameService } from '@app/services/end-game.service';
@@ -17,12 +15,13 @@ import { SkipTurnService } from '@app/services/skip-turn.service';
 })
 export class PlayAreaComponent {
     constructor(
-        public chatBox: ChatboxService,
         public gamesettingsService: GameSettingsService,
-        public skipTurn: SkipTurnService,
         public endGameService: EndGameService,
-        public dialog: MatDialog,
+        public chatBoxService: ChatboxService,
+        public boardHandlerService: BoardHandlerService,
+        public skipTurnService: SkipTurnService,
         private clientSocketService: ClientSocketService,
+        public dialog: MatDialog,
     ) {}
 
     giveUpGame(): void {

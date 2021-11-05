@@ -1,7 +1,9 @@
-import { HttpClientModule } from '@angular/common/http';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
+/* eslint-disable dot-notation */
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClientModule } from '@angular/common/http';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('MainPageComponent', () => {
     let component: MainPageComponent;
@@ -9,7 +11,7 @@ describe('MainPageComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [HttpClientModule],
+            imports: [HttpClientModule, RouterTestingModule],
             declarations: [MainPageComponent],
             schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
@@ -25,30 +27,33 @@ describe('MainPageComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('should be able to reset radio buttons', () => {
-        component.selectedMode = component.games[0];
-        fixture.detectChanges();
+    it('should route to solo-game-ia when selected mode is solo', () => {
+        const spyNavigate = spyOn(component['router'], 'navigate');
 
-        component.resetRadios();
-        fixture.detectChanges();
-
-        expect(component.selectedMode).toBeUndefined();
+        component.selectedGameMode = 'Jouer une partie en solo';
+        component.route();
+        expect(component.gameSettingsService.isSoloMode).toBeTrue();
+        expect(spyNavigate).toHaveBeenCalledOnceWith(['solo-game-ai']);
     });
 
-    it('should disable buttons if nothing is selected', () => {
-        const resetButton = fixture.debugElement.nativeElement.querySelector('#resetButton');
-        const playButton = fixture.debugElement.nativeElement.querySelector('#playButton');
+    it('should route to multiplayer-mode when selected mode is multiplayer', () => {
+        const spyNavigate = spyOn(component['router'], 'navigate');
 
-        component.selectedMode = component.modes[0];
-        fixture.detectChanges();
+        component.selectedGameMode = 'Créer une partie multijoueur';
+        component.route();
+        expect(component.gameSettingsService.isSoloMode).toBeFalse();
+        expect(spyNavigate).toHaveBeenCalledWith(['multiplayer-mode']);
 
-        expect(resetButton.disabled).toBeFalsy();
-        expect(playButton.disabled).toBeFalsy();
+        component.selectedGameMode = 'Joindre une partie multijoueur';
+        component.route();
+        expect(spyNavigate).toHaveBeenCalledWith(['multiplayer-mode']);
+    });
 
-        component.resetRadios();
-        fixture.detectChanges();
+    it('should route to join-room when selected mode is join multiplayer', () => {
+        const spyNavigate = spyOn(component['router'], 'navigate');
 
-        expect(resetButton.disabled).toBeTruthy();
-        expect(playButton.disabled).toBeTruthy();
+        component.selectedGameMode = 'Joindre une partie multijoueur';
+        component.route();
+        expect(spyNavigate).toHaveBeenCalledWith(['join-room']);
     });
 });

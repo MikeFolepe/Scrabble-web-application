@@ -7,7 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { RouterTestingModule } from '@angular/router/testing';
 
-fdescribe('GiveUpGameDialogComponent', () => {
+describe('GiveUpGameDialogComponent', () => {
     let component: GiveUpGameDialogComponent;
     let fixture: ComponentFixture<GiveUpGameDialogComponent>;
 

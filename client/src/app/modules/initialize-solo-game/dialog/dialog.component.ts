@@ -17,15 +17,14 @@ export class DialogComponent implements OnInit {
     };
     // Special character that are allowed
     specialChar: string = '@#$%^&*_';
-    // Validation pattern which is combination of required pattern and special char
+    // JUSTIFICATION : Validation pattern which is combination of required pattern and special char
     // eslint-disable-next-line no-invalid-this
     validationPattern: string = '^([A-Za-z][A-Za-z][A-Za-z][A-Za-z])[A-Za-z0-9' + this.specialChar + ']*';
     constructor(public dialogRef: MatDialogRef<DialogComponent>) {
-        this.form = new FormControl('Djido');
+        this.form = new FormControl();
     }
 
     ngOnInit(): void {
-        // The playerName field is required for form submit
         this.form.setValidators([
             Validators.required,
             Validators.pattern(this.validationPattern),
@@ -33,11 +32,4 @@ export class DialogComponent implements OnInit {
             Validators.maxLength(this.charRange.max),
         ]);
     }
-
-    // quit() {
-    //     this.dialogRef.close(null);
-    // }
-    // confirm() {
-    //     this.dialogRef.close(this.form.value);
-    // }
 }

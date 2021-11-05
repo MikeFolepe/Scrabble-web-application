@@ -3,31 +3,41 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable no-unused-vars */
-import { TestBed } from '@angular/core/testing';
-import { PlayerAIComponent } from '@app/modules/game-view/player-ai/player-ai.component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { LetterService } from '@app/services/letter.service';
-import { PlayerAI } from './player-ai.model';
-import { SwapLetter } from './swap-letter-strategy.model';
+import { PlayerAI } from '@app/models/player-ai.model';
+import { PlayerAIComponent } from '@app/modules/game-view/player-ai/player-ai.component';
+import { RESERVE } from '@app/classes/constants';
+import { RouterTestingModule } from '@angular/router/testing';
+import { SwapLetter } from '@app/models/swap-letter-strategy.model';
+import { TestBed } from '@angular/core/testing';
+// import { SkipTurn } from './skip-turn-strategy.model';
 
 describe('SwapLetter', () => {
+    const id = 0;
+    const name = 'Player 1';
+
+    const letterA = RESERVE[0];
+    const letterB = RESERVE[1];
+    const letterC = RESERVE[2];
+    const letterD = RESERVE[3];
+    const letterE = RESERVE[4];
+    const letterF = RESERVE[5];
+    const letterG = RESERVE[6];
+    const letterTable = [letterA, letterB, letterC, letterD, letterE, letterF, letterG];
+
     let playerAI: PlayerAI;
     let swapStrategy: SwapLetter;
     let context: PlayerAIComponent;
     let letterService: LetterService;
 
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [HttpClientTestingModule, RouterTestingModule],
+        }).compileComponents();
+    });
+
     beforeEach(() => {
-        const id = 0;
-        const name = 'Player 1';
-        const letterTable = [
-            { value: 'A', quantity: 0, points: 0 },
-            { value: 'B', quantity: 0, points: 0 },
-            { value: 'C', quantity: 0, points: 0 },
-            { value: 'D', quantity: 0, points: 0 },
-            { value: 'E', quantity: 0, points: 0 },
-            { value: 'F', quantity: 0, points: 0 },
-            { value: 'G', quantity: 0, points: 0 },
-        ];
         // Create all dependencies
         swapStrategy = new SwapLetter();
         playerAI = new PlayerAI(id, name, letterTable);
@@ -53,6 +63,7 @@ describe('SwapLetter', () => {
     //     const startingHand = '[ABCDEFG]';
     //     const spy = spyOn<any>(playerAI, 'replaceStrategy');
     //     spyOn<any>(letterService, 'getReserveSize').and.returnValue(7);
+    // });
 
     // it('should be SkipTurn if there is not enough letters in the reserve to change', () => {
     //     spyOn(playerAI, 'play');

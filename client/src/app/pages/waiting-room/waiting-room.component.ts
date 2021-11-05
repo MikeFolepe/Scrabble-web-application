@@ -4,6 +4,8 @@ import { ClientSocketService } from '@app/services/client-socket.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { PlayerIndex } from '@common/PlayerIndex';
 import { Router } from '@angular/router';
+
+// TODO: enlever tout les string et les temps
 @Component({
     selector: 'app-waiting-room',
     templateUrl: './waiting-room.component.html',
@@ -13,7 +15,7 @@ export class WaitingRoomComponent implements OnInit {
     status: string;
     isWaiting: boolean;
 
-    constructor(public router: Router, public gameSettingsService: GameSettingsService, public clientSocket: ClientSocketService) {
+    constructor(private router: Router, private gameSettingsService: GameSettingsService, private clientSocket: ClientSocketService) {
         this.status = '';
         this.isWaiting = false;
         this.clientSocket.route();

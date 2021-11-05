@@ -1,5 +1,5 @@
-/* eslint-disable import/no-deprecated */
 import { GameSettings, StartingPlayer } from '@common/game-settings';
+import { BONUS_POSITIONS } from '@app/classes/constants';
 import { Injectable } from '@angular/core';
 
 @Injectable({
@@ -12,7 +12,8 @@ export class GameSettingsService {
         timeMinute: '01',
         timeSecond: '00',
         level: 'Facile',
-        randomBonus: 'Non',
+        randomBonus: 'Désactiver',
+        bonusPositions: JSON.stringify(Array.from(BONUS_POSITIONS)),
         dictionary: '',
     };
     isSoloMode: boolean;

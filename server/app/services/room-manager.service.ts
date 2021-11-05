@@ -1,12 +1,11 @@
-/* eslint-disable @typescript-eslint/no-magic-numbers */
-import { GameSettings, StartingPlayer } from '@common/game-settings';
-import { Room, State } from '@common/room';
 import { OUT_BOUND_INDEX_OF_SOCKET } from '@app/classes/constants';
+import { GameSettings, StartingPlayer } from '@common/game-settings';
 import { PlayerIndex } from '@common/PlayerIndex';
+import { Room, State } from '@common/room';
 import { Service } from 'typedi';
 
 @Service()
-export class RoomManager {
+export class RoomManagerService {
     rooms: Room[];
 
     constructor() {
@@ -65,7 +64,7 @@ export class RoomManager {
             gameSettings.timeSecond,
             gameSettings.level,
             gameSettings.randomBonus,
-            // gameSettings.bonusPositions,
+            gameSettings.bonusPositions,
             gameSettings.dictionary,
         );
 
@@ -74,20 +73,20 @@ export class RoomManager {
 
     deleteRoom(roomId: string) {
         this.rooms.forEach((room, roomIndex) => {
-            if (room.roomId === roomId) this.rooms.splice(roomIndex, 1);
+            if (room.id === roomId) this.rooms.splice(roomIndex, 1);
         });
     }
 
-    findRoomIdOf(socketID: string): string {
+    findRoomIdOf(socketId: string): string {
         const room = this.rooms.find((rooms) => {
-            for (const socketId of rooms.socketIds) {
-                if (socketId === socketID) return true;
+            for (const id of rooms.socketIds) {
+                if (socketId === id) return true;
             }
             return false;
         });
 
         if (room !== undefined) {
-            return room.roomId;
+            return room.id;
         }
         return '';
     }
@@ -116,7 +115,7 @@ export class RoomManager {
         return room.state === State.Playing;
     }
 
-    find(roomId: string): Room {
-        return this.rooms.find((room) => room.roomId === roomId) as Room;
+    find(roomId: string): Room | undefined {
+        return this.rooms.find((room) => room.id === roomId);
     }
 }

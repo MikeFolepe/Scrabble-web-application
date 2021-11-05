@@ -1,13 +1,10 @@
-/* eslint-disable import/namespace */
-/* eslint-disable import/no-deprecated */
-/* eslint-disable sort-imports */
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { INDEX_PLAYER_AI, INDEX_REAL_PLAYER, ONE_SECOND_TIME } from '@app/classes/constants';
+import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { INDEX_PLAYER_AI, INDEX_PLAYER_ONE, ONE_SECOND_DELAY } from '@app/classes/constants';
+import { TypeMessage } from '@app/classes/enum';
+import { BoardHandlerService } from '@app/services/board-handler.service';
 import { ChatboxService } from '@app/services/chatbox.service';
-import { DebugService } from '@app/services/debug.service';
 import { EndGameService } from '@app/services/end-game.service';
-import { GameSettingsService } from '@app/services/game-settings.service';
-import { ClientSocketService } from './../../../services/client-socket.service';
+import { SendMessageService } from '@app/services/send-message.service';
 
 @Component({
     selector: 'app-chatbox',
@@ -17,82 +14,72 @@ import { ClientSocketService } from './../../../services/client-socket.service';
 export class ChatboxComponent implements OnInit, AfterViewInit {
     @ViewChild('scrollMe') private myScrollContainer: ElementRef;
 
-    typeMessage: string = '';
     message: string = '';
-
     listMessages: string[] = [];
-    listTypes: string[] = [];
-    debugMessage: { word: string; nbPt: number }[] = [];
-    // Table to stock debug message from IA test avec des strings aléatoires
+    listTypes: TypeMessage[] = [];
+
+    // Used to access TypeMessage enum in the HTML
+    htmlTypeMessage = TypeMessage;
+
+    private typeMessage: TypeMessage;
 
     constructor(
         private chatBoxService: ChatboxService,
-        public debugService: DebugService,
+        private sendMessageService: SendMessageService,
         public endGameService: EndGameService,
-        private clientSocketService: ClientSocketService,
-        private gameSettingsService: GameSettingsService,
+        private boardHandlerService: BoardHandlerService,
     ) {}
 
+    // Disable the current placement on the board when a click occurs in the chatbox
+    @HostListener('mouseup', ['$event'])
+    @HostListener('contextmenu', ['$event'])
+    clickInChatBox() {
+        this.boardHandlerService.cancelPlacement();
+    }
+
     ngOnInit(): void {
-        this.chatBoxService.bindDisplay(this.displayAnyMessageByType.bind(this));
-        this.receiveMessageFromOpponent();
+        this.sendMessageService.displayBound(this.displayMessageByType.bind(this));
     }
 
     handleKeyEvent(event: KeyboardEvent) {
         if (event.key === 'Enter') {
             event.preventDefault();
             this.chatBoxService.sendPlayerMessage(this.message);
-            this.sendMessageToOpponent(this.message, this.gameSettingsService.gameSettings.playersName[0]);
             this.message = ''; // Clear input
 
-            setTimeout(() => {
-                // Timeout is used to update the scroll after the last element added
-                this.scrollToBottom();
-            }, 1);
+            this.scrollToBottom();
         }
     }
 
-    displayAnyMessageByType() {
-        this.listTypes.push(this.chatBoxService.typeMessage);
-        this.listMessages.push(this.chatBoxService.message);
+    displayMessageByType() {
+        this.listTypes.push(this.sendMessageService.typeMessage);
+        this.listMessages.push(this.sendMessageService.message);
+        this.scrollToBottom();
     }
 
     sendSystemMessage(systemMessage: string) {
-        this.typeMessage = 'system';
+        this.typeMessage = TypeMessage.System;
         this.listTypes.push(this.typeMessage);
         this.listMessages.push(systemMessage);
     }
 
-    sendMessageToOpponent(message: string, myName: string) {
-        this.clientSocketService.socket.emit('sendRoomMessage', 'Message de ' + myName + ' : ' + message, this.clientSocketService.roomId);
-    }
-
-    receiveMessageFromOpponent() {
-        this.clientSocketService.socket.on('receiveRoomMessage', (message: string) => {
-            this.sendOpponentMessage(message);
-        });
-    }
-
-    sendOpponentMessage(opponentMessage: string) {
-        this.typeMessage = 'opponent';
-        this.listTypes.push(this.typeMessage);
-        this.listMessages.push(opponentMessage);
-    }
-
     scrollToBottom(): void {
-        this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
+        setTimeout(() => {
+            // Timeout is used to update the scroll after the last element added
+            this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
+        }, 1);
     }
 
     ngAfterViewInit() {
         const findEnd = setInterval(() => {
             this.endGameService.checkEndGame();
-            this.chatBoxService.displayFinalMessage(INDEX_REAL_PLAYER);
+            this.chatBoxService.displayFinalMessage(INDEX_PLAYER_ONE);
             this.chatBoxService.displayFinalMessage(INDEX_PLAYER_AI);
-            this.endGameService.getFinalScore(INDEX_REAL_PLAYER);
+            this.endGameService.getFinalScore(INDEX_PLAYER_ONE);
             this.endGameService.getFinalScore(INDEX_PLAYER_AI);
             if (this.endGameService.isEndGame) {
                 clearInterval(findEnd);
             }
-        }, ONE_SECOND_TIME);
+        }, ONE_SECOND_DELAY);
     }
 }

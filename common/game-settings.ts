@@ -11,7 +11,7 @@ export class GameSettings {
         public timeSecond: string,
         public level: string,
         public randomBonus: string,
-        // public bonusPositions: string,
+        public bonusPositions: string,
         public dictionary: string,
     ) {}
 }

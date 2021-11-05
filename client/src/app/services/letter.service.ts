@@ -1,5 +1,6 @@
 import { EASEL_SIZE, RESERVE } from '@app/classes/constants';
 import { BehaviorSubject } from 'rxjs';
+import { ClientSocketService } from '@app/services/client-socket.service';
 import { Injectable } from '@angular/core';
 import { Letter } from '@app/classes/letter';
 @Injectable({
@@ -12,47 +13,12 @@ export class LetterService {
     reserve: Letter[] = JSON.parse(JSON.stringify(RESERVE));
     reserveSize: number;
     messageSource = new BehaviorSubject('default message');
-    // eslint-disable-next-line no-invalid-this
 
-    constructor() {
-        this.updateReserveSize();
-    }
-
-    // Returns a random letter from the reserve if reserve is not empty
-    getRandomLetter(): Letter {
-        const letterEmpty: Letter = {
-            value: '',
-            quantity: 0,
-            points: 0,
-        };
-
-        if (this.isReserveEmpty()) {
-            return letterEmpty;
-        }
-
-        let letter: Letter;
-
-        do {
-            this.randomElement = Math.floor(Math.random() * this.reserve.length);
-            letter = this.reserve[this.randomElement];
-        } while (letter.quantity === 0);
-
-        // Update reserve
-        letter.quantity--;
-        this.updateReserveSize();
-        return letter;
-    }
-
-    isReserveEmpty(): boolean {
-        for (const letter of this.reserve) {
-            if (letter.quantity > 0) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    updateReserveSize(): void {
+    constructor(private clientSocketService: ClientSocketService) {
+        this.clientSocketService.socket.on('receiveReserve', (reserve: Letter[], reserveSize: number) => {
+            this.reserve = reserve;
+            this.reserveSize = reserveSize;
+        });
         let size = 0;
         for (const letter of this.reserve) {
             size += letter.quantity;
@@ -60,12 +26,49 @@ export class LetterService {
         this.reserveSize = size;
     }
 
+    // Returns a random letter from the reserve if reserve is not empty
+    getRandomLetter(): Letter {
+        if (this.reserveSize === 0) {
+            // Return an empty letter
+            return {
+                value: '',
+                quantity: 0,
+                points: 0,
+                isSelectedForSwap: false,
+                isSelectedForManipulation: false,
+            };
+        }
+        let letter: Letter;
+        do {
+            this.randomElement = Math.floor(Math.random() * this.reserve.length);
+            letter = this.reserve[this.randomElement];
+        } while (letter.quantity === 0);
+
+        // Update reserve
+        letter.quantity--;
+        this.reserveSize--;
+        this.clientSocketService.socket.emit('sendReserve', this.reserve, this.reserveSize, this.clientSocketService.roomId);
+        return letter;
+    }
+
     addLetterToReserve(letter: string): void {
         for (const letterReserve of this.reserve) {
             if (letter.toUpperCase() === letterReserve.value) {
                 letterReserve.quantity++;
-                this.updateReserveSize();
+                this.reserveSize++;
+                this.clientSocketService.socket.emit('sendReserve', this.reserve, this.reserveSize, this.clientSocketService.roomId);
                 return;
+            }
+        }
+    }
+
+    removeLettersFromReserve(letters: Letter[]): void {
+        for (const letter of letters) {
+            for (const letterReserve of this.reserve) {
+                if (letter.value === letterReserve.value) {
+                    letterReserve.quantity--;
+                    this.reserveSize--;
+                }
             }
         }
     }
@@ -80,6 +83,8 @@ export class LetterService {
                 value: letter.value,
                 quantity: letter.quantity,
                 points: letter.points,
+                isSelectedForSwap: letter.isSelectedForSwap,
+                isSelectedForManipulation: letter.isSelectedForManipulation,
             };
         }
         return tab;
