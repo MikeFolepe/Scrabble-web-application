@@ -2,7 +2,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
-import { ERROR_MESSAGE_DELAY } from '@app/classes/constants';
+import { DELAY_BEFORE_ERROR_MESSAGE } from '@app/classes/constants';
 import { DialogComponent } from '@app/modules/initialize-solo-game/dialog/dialog.component';
 import { ClientSocketService } from '@app/services/client-socket.service';
 import { PlayerIndex } from '@common/PlayerIndex';
@@ -41,7 +41,7 @@ export class JoinRoomComponent implements OnInit {
             this.isRoomStillAvailable = false;
             setTimeout(() => {
                 this.isRoomStillAvailable = true;
-            }, ERROR_MESSAGE_DELAY);
+            }, DELAY_BEFORE_ERROR_MESSAGE);
             return;
         });
     }
@@ -70,7 +70,7 @@ export class JoinRoomComponent implements OnInit {
                 this.isNameValid = false;
                 setTimeout(() => {
                     this.isNameValid = true;
-                }, ERROR_MESSAGE_DELAY);
+                }, DELAY_BEFORE_ERROR_MESSAGE);
                 return;
             }
             this.clientSocketService.socket.emit('newRoomCustomer', playerName, room.id);
