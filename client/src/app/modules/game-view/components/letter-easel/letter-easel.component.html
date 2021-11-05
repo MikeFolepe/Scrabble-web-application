@@ -1,9 +1,0 @@
-<div class="easel-container">
-    <div class="letter-container" *ngFor="let letter of letterEaselTab">
-        <h2 [style.font-size.px]="fontSize * 2">{{ letter.value }}</h2>
-        <p [style.font-size.px]="fontSize">{{ letter.points }}</p>
-    </div>
-</div>
-<div id="fontSize">
-    <app-font-size [fontSize]="fontSize" (sizeChange)="handleFontSizeEvent($event)"></app-font-size>
-</div>

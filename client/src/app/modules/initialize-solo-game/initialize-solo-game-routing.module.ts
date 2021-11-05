@@ -1,8 +1,7 @@
-import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-// eslint-disable-next-line no-restricted-imports
-import { GameViewComponent } from '../game-view/components/game-view/game-view.component';
 import { FormComponent } from './form/form.component';
+import { GameViewComponent } from '@app/modules/game-view/game-view/game-view.component';
+import { NgModule } from '@angular/core';
 
 const routes: Routes = [
     { path: '', component: FormComponent },

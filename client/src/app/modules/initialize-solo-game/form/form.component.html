@@ -4,20 +4,26 @@
 <form id="main-form-box">
     <fieldset>
         <legend id="main-form-name">Paramètres de la partie</legend>
-        <fieldset class="form-section" id="player-name-box">
+        <fieldset *ngIf="!gameSettingsService.isRedirectedFromMultiplayerGame" class="form-section" id="player-name-box">
             <legend>Informations du joueur</legend>
             <app-player-name-field [formGroup]="form" [parentForm]="form"></app-player-name-field>
         </fieldset>
 
-        <fieldset class="form-section">
+        <fieldset *ngIf="!gameSettingsService.isRedirectedFromMultiplayerGame" class="form-section">
             <legend>Durée</legend>
             <app-timer-field [formGroup]="form" [parentForm]="form"></app-timer-field>
         </fieldset>
-
-        <fieldset class="form-section">
+        <fieldset *ngIf="gameSettingsService.isSoloMode" class="form-section">
             <legend>Difficulté de l'IA</legend>
             <app-level-field [formGroup]="form" [parentForm]="form"></app-level-field>
         </fieldset>
+        <fieldset *ngIf="!gameSettingsService.isRedirectedFromMultiplayerGame" class="form-section">
+            <legend>Bonus Aléatoire</legend>
+            <app-random-bonus [formGroup]="form" [parentForm]="form"></app-random-bonus>
+        </fieldset>
     </fieldset>
 </form>
-<button mat-raised-button (click)="initGame()" id="submit-button" color="warn" [disabled]="!form.valid" routerLink="/game">Continue</button>
+<button mat-raised-button (click)="initGame()" id="submit-button" color="warn" [disabled]="!form.valid">Continue</button>
+
+<!-- {{form.value | json}}
+{{gameSettingsService | json}} -->

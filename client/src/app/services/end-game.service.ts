@@ -1,6 +1,9 @@
+/* eslint-disable sort-imports */
 import { Injectable } from '@angular/core';
-import { NUMBER_OF_SKIP, RESERVE } from '@app/classes/constants';
-import { DebugService } from './debug.service';
+import { INDEX_PLAYER_AI, INDEX_PLAYER_ONE, NUMBER_OF_SKIP, RESERVE } from '@app/classes/constants';
+import { DebugService } from '@app/services/debug.service';
+import { ClientSocketService } from './client-socket.service';
+import { GameSettingsService } from './game-settings.service';
 import { LetterService } from './letter.service';
 import { PlayerService } from './player.service';
 
@@ -10,30 +13,58 @@ import { PlayerService } from './player.service';
 export class EndGameService {
     actionsLog: string[] = [];
     isEndGame: boolean = false;
+    isEndGamebyGiveUp = false;
+    winnerNamebyGiveUp = '';
 
-    constructor(public letterService: LetterService, public playerService: PlayerService, public debugService: DebugService) {}
+    constructor(
+        public clientSocketService: ClientSocketService,
+        public letterService: LetterService,
+        public playerService: PlayerService,
+        public debugService: DebugService,
+        public gameSettingsService: GameSettingsService,
+    ) {
+        this.clientSocketService.socket.on('receiveActions', (actionsLog: string[]) => {
+            this.actionsLog = actionsLog;
+        });
+        this.clientSocketService.socket.on('receiveEndGame', (isEndGame: boolean) => {
+            this.isEndGame = isEndGame;
+        });
+        this.clientSocketService.socket.on('receiveEndGamebyGiveup', (isEndGamebyGiveup: boolean, winnerName: string) => {
+            this.isEndGamebyGiveUp = isEndGamebyGiveup;
+            this.winnerNamebyGiveUp = winnerName;
+        });
+        this.clearAllData();
+    }
 
     getWinnerName(): string {
         if (this.playerService.players[0].score > this.playerService.players[1].score) {
             return this.playerService.players[0].name;
-        } else if (this.playerService.players[0].score < this.playerService.players[1].score) {
-            return this.playerService.players[1].name;
-        } else {
-            return this.playerService.players[0].name + '  ' + this.playerService.players[1].name;
         }
+        if (this.playerService.players[0].score < this.playerService.players[1].score) {
+            return this.playerService.players[1].name;
+        }
+        return this.playerService.players[0].name + '  ' + this.playerService.players[1].name;
+    }
+    addActionsLog(actionLog: string): void {
+        this.actionsLog.push(actionLog);
+        this.clientSocketService.socket.emit('sendActions', this.actionsLog, this.clientSocketService.roomId);
     }
 
     checkEndGame(): void {
-        this.isEndGame = this.isEndGameByActions() || this.isEndGameByEasel();
+        this.isEndGame = this.isEndGameByActions() || this.isEndGameByEasel() || this.isEndGamebyGiveUp;
+
+        if (this.isEndGame) {
+            this.clientSocketService.socket.emit('sendEndGame', this.isEndGame, this.clientSocketService.roomId);
+        }
     }
 
     getFinalScore(indexPlayer: number): void {
         if (!this.isEndGame || this.playerService.players[indexPlayer].score === 0) {
             return;
         }
-        for (const letter of this.playerService.getLettersEasel(indexPlayer)) {
+        for (const letter of this.playerService.players[indexPlayer].letterTable) {
             this.playerService.players[indexPlayer].score -= letter.points;
-            // Check if score decrease under 0 after soustraction
+            // Check if score decrease under 0 after subtraction
             if (this.playerService.players[indexPlayer].score < 0) {
                 this.playerService.players[indexPlayer].score = 0;
                 return;
@@ -44,11 +75,14 @@ export class EndGameService {
     clearAllData(): void {
         this.playerService.players = [];
         this.letterService.reserve = JSON.parse(JSON.stringify(RESERVE));
+        this.isEndGamebyGiveUp = false;
+        this.winnerNamebyGiveUp = '';
         this.isEndGame = false;
         this.actionsLog = [];
         this.debugService.debugServiceMessage = [];
     }
-    private isEndGameByActions(): boolean {
+
+    isEndGameByActions(): boolean {
         if (this.actionsLog.length < NUMBER_OF_SKIP) {
             return false;
         }
@@ -61,10 +95,10 @@ export class EndGameService {
         return true;
     }
 
-    private isEndGameByEasel(): boolean {
+    isEndGameByEasel(): boolean {
         return (
-            this.letterService.getReserveSize() === 0 &&
-            (this.playerService.getLettersEasel(0).length === 0 || this.playerService.getLettersEasel(1).length === 0)
+            this.letterService.reserveSize === 0 &&
+            (this.playerService.isEaselEmpty(INDEX_PLAYER_ONE) || this.playerService.isEaselEmpty(INDEX_PLAYER_AI))
         );
     }
 }

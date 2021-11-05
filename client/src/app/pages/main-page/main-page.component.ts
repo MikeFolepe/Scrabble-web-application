@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { GameSettingsService } from '@app/services/game-settings.service';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-main-page',
@@ -6,11 +8,29 @@ import { Component } from '@angular/core';
     styleUrls: ['./main-page.component.scss'],
 })
 export class MainPageComponent {
-    selectedGameIndex: number = 0;
-    selectedMode?: string;
-    readonly games: string[] = ['Scrabble classique', 'Scrabble LOG2990'];
-    readonly modes: string[] = ['Jouer une partie en solo', 'Créer une partie multijoueur', 'Joindre une partie multijoueur'];
-    resetRadios() {
-        this.selectedMode = undefined;
+    selectedGameTypeIndex = 0;
+    selectedGameMode?: string;
+    readonly gameTypes = ['Scrabble classique', 'Scrabble LOG2990'];
+    readonly gameModes = ['Jouer une partie en solo', 'Créer une partie multijoueur', 'Joindre une partie multijoueur'];
+
+    constructor(public gameSettingsService: GameSettingsService, private router: Router) {}
+
+    route(): void {
+        switch (this.selectedGameMode) {
+            case this.gameModes[0]: {
+                this.gameSettingsService.isSoloMode = true;
+                this.router.navigate(['solo-game-ai']);
+                break;
+            }
+            case this.gameModes[1]: {
+                this.gameSettingsService.isSoloMode = false;
+                this.router.navigate(['multiplayer-mode']);
+                break;
+            }
+            case this.gameModes[2]: {
+                this.router.navigate(['join-room']);
+                break;
+            }
+        }
     }
 }

@@ -1,7 +1,9 @@
+/* eslint-disable dot-notation */
+import { HttpClientModule } from '@angular/common/http';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { TestBed } from '@angular/core/testing';
-import { Message } from '@app/classes/message';
 import { CommunicationService } from '@app/services/communication.service';
+import { Message } from '@app/classes/message';
+import { TestBed } from '@angular/core/testing';
 
 describe('CommunicationService', () => {
     let httpMock: HttpTestingController;
@@ -10,7 +12,7 @@ describe('CommunicationService', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            imports: [HttpClientTestingModule],
+            imports: [HttpClientTestingModule, HttpClientModule],
         });
         service = TestBed.inject(CommunicationService);
         httpMock = TestBed.inject(HttpTestingController);
@@ -61,5 +63,15 @@ describe('CommunicationService', () => {
         expect(req.request.method).toBe('GET');
         req.error(new ErrorEvent('Random error occurred'));
     });
-    // });
+
+    it('should return the result of a validation request', () => {
+        const newPlayedWords: Map<string, string[]> = new Map<string, string[]>([['ma', ['H8', 'H9']]]);
+        // eslint-disable-next-line prefer-const
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        service.validationPost(newPlayedWords).subscribe(() => {}, fail);
+        expect(service['wordsToValidate']).toEqual(['ma']);
+        const req = httpMock.expectOne(`${baseUrl}/multiplayer/validateWords`);
+        expect(req.request.method).toBe('POST');
+        req.flush(newPlayedWords);
+    });
 });
