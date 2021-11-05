@@ -144,10 +144,8 @@ export class LetterEaselComponent implements OnInit {
         if (this.letterEaselTab[indexLetter].isSelectedForSwap) {
             this.letterEaselTab[indexLetter].isSelectedForSwap = false;
         }
-        // Do not select to swap if the letter is already selected for manipulation
-        else if (this.letterEaselTab[indexLetter].isSelectedForManipulation) {
-            this.letterEaselTab[indexLetter].isSelectedForSwap = false;
-        } else {
+        // Select to swap if the letter is not already selected for manipulation
+        else if (!this.letterEaselTab[indexLetter].isSelectedForManipulation) {
             this.letterEaselTab[indexLetter].isSelectedForSwap = true;
         }
     }

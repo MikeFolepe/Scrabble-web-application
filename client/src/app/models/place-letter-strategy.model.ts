@@ -58,13 +58,13 @@ export class PlaceLetters extends PlayStrategy {
             const randomIdx = Math.floor(Math.random() * possibilities.length);
             const word = possibilities[randomIdx];
             let start: Vec2;
-            let orientation: string;
-            if (word.orientation === Orientation.HorizontalOrientation) {
+            let orientation: Orientation;
+            if (word.orientation === Orientation.Horizontal) {
                 start = { x: word.line, y: word.startIdx };
-                orientation = 'h';
+                orientation = Orientation.Horizontal;
             } else {
                 start = { x: word.startIdx, y: word.line };
-                orientation = 'v';
+                orientation = Orientation.Horizontal;
             }
             context.placeLetterService.placeMethodAdapter({ start, orientation, word: word.word, indexPlayer: INDEX_PLAYER_AI });
             attempt++;
@@ -75,16 +75,16 @@ export class PlaceLetters extends PlayStrategy {
 
     initializeArray(scrabbleBoard: string[][]) {
         const array: string[][][] = new Array(Object.keys(Orientation).length / 2);
-        array[Orientation.HorizontalOrientation] = new Array(BOARD_COLUMNS);
-        array[Orientation.VerticalOrientation] = new Array(BOARD_ROWS);
+        array[Orientation.Horizontal] = new Array(BOARD_COLUMNS);
+        array[Orientation.Vertical] = new Array(BOARD_ROWS);
 
         for (let i = 0; i < BOARD_ROWS; i++) {
-            array[Orientation.HorizontalOrientation][i] = scrabbleBoard[i];
+            array[Orientation.Horizontal][i] = scrabbleBoard[i];
             const column: string[] = [];
             for (let j = 0; j < BOARD_COLUMNS; j++) {
                 column.push(scrabbleBoard[j][i]);
             }
-            array[Orientation.VerticalOrientation][i] = column;
+            array[Orientation.Vertical][i] = column;
         }
 
         this.board = array;
@@ -201,7 +201,7 @@ export class PlaceLetters extends PlayStrategy {
             const regExp = new RegExp(pattern.pattern, 'g');
             for (const word of dictionaryToLookAt) {
                 if (regExp.test(word) && this.checkIfWordIsPresent(pattern.pattern, word)) {
-                    allWords.push({ word, orientation: Orientation.HorizontalOrientation, line: pattern.line, startIdx: 0, point: 0 });
+                    allWords.push({ word, orientation: Orientation.Horizontal, line: pattern.line, startIdx: 0, point: 0 });
                 }
             }
         }
@@ -210,7 +210,7 @@ export class PlaceLetters extends PlayStrategy {
             const regExp = new RegExp(pattern.pattern, 'g');
             for (const word of dictionaryToLookAt) {
                 if (regExp.test(word) && this.checkIfWordIsPresent(pattern.pattern, word)) {
-                    allWords.push({ word, orientation: Orientation.VerticalOrientation, line: pattern.line, startIdx: 0, point: 0 });
+                    allWords.push({ word, orientation: Orientation.Vertical, line: pattern.line, startIdx: 0, point: 0 });
                 }
             }
         }
@@ -245,7 +245,7 @@ export class PlaceLetters extends PlayStrategy {
         const re2 = new RegExp('[,]{1,}', 'g');
 
         for (let rowIndex = 0; rowIndex < BOARD_COLUMNS; rowIndex++) {
-            let pattern = this.board[Orientation.HorizontalOrientation][rowIndex]
+            let pattern = this.board[Orientation.Horizontal][rowIndex]
                 .toString()
                 .replace(re1, '')
                 .replace(re2, playerHand + '*')
@@ -257,7 +257,7 @@ export class PlaceLetters extends PlayStrategy {
             }
         }
         for (let columnIndex = 0; columnIndex < BOARD_COLUMNS; columnIndex++) {
-            let pattern = this.board[Orientation.VerticalOrientation][columnIndex]
+            let pattern = this.board[Orientation.Vertical][columnIndex]
                 .toString()
                 .replace(re1, '')
                 .replace(re2, playerHand + '*')

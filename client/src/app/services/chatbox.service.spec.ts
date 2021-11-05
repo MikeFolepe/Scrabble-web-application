@@ -26,7 +26,7 @@ describe('ChatboxService', () => {
         const firstPlayerEasel = [letterA, letterA, letterB, letterB, letterC, letterC, letterA];
         const firstPlayer = new Player(1, 'Player 1', firstPlayerEasel);
         service['playerService'].addPlayer(firstPlayer);
-        possibleWord = { word: 'test', orientation: Orientation.HorizontalOrientation, line: 0, startIdx: 0, point: 1 };
+        possibleWord = { word: 'test', orientation: Orientation.Horizontal, line: 0, startIdx: 0, point: 1 };
 
         spyOn(service['sendMessageService'], 'displayMessageByType');
     });
@@ -145,7 +145,7 @@ describe('ChatboxService', () => {
 
         service.command = 'debug';
         const table: { word: string; orientation: Orientation; line: number; startIdx: number; point: number }[] = [
-            { word: 'message de debug', orientation: Orientation.HorizontalOrientation, line: 0, startIdx: 0, point: 1 },
+            { word: 'message de debug', orientation: Orientation.Horizontal, line: 0, startIdx: 0, point: 1 },
         ];
 
         service['debugService'].debugServiceMessage = table;
@@ -186,9 +186,7 @@ describe('ChatboxService', () => {
     });
 
     it('should display the right debug message if at least one possibility has been found', () => {
-        service['debugService'].debugServiceMessage = [
-            { word: 'test', orientation: Orientation.HorizontalOrientation, line: 0, startIdx: 0, point: 3 },
-        ];
+        service['debugService'].debugServiceMessage = [{ word: 'test', orientation: Orientation.Horizontal, line: 0, startIdx: 0, point: 3 }];
         service.displayDebugMessage();
         expect(service.message).toEqual('test: -- 3');
     });

@@ -10,6 +10,7 @@ import { PlayerService } from '@app/services/player.service';
 import { SendMessageService } from '@app/services/send-message.service';
 import { SkipTurnService } from '@app/services/skip-turn.service';
 import { SwapLetterService } from '@app/services/swap-letter.service';
+import { Orientation } from '@app/classes/scrabble-board-pattern';
 
 @Injectable({
     providedIn: 'root',
@@ -125,7 +126,8 @@ export class ChatboxService {
                 x: Number(positionSplitted[1]) - 1,
                 y: positionSplitted[0].charCodeAt(0) - 'a'.charCodeAt(0),
             };
-            const orientation = positionSplitted[2];
+            const orientation = Orientation[positionSplitted[2] as keyof typeof Orientation];
+
             if (await this.placeLetterService.placeCommand(position, orientation, messageSplitted[2], INDEX_PLAYER_ONE)) {
                 this.sendMessageService.displayMessageByType(this.message, this.typeMessage);
             }

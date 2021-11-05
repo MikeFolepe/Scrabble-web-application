@@ -1,8 +1,11 @@
+/* eslint-disable dot-notation */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
-import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/classes/constants';
-import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
-import { GridService } from '@app/services/grid.service';
 import { TestBed } from '@angular/core/testing';
+import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
+import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/classes/constants';
+import { GridService } from '@app/services/grid.service';
+import { Orientation } from '@app/classes/scrabble-board-pattern';
 
 describe('GridService', () => {
     let service: GridService;
@@ -73,20 +76,20 @@ describe('GridService', () => {
 
     it('drawBonusesBoxes should call colorBonusBox and writeBonusName', () => {
         const bonusPositionsStub = new Map<string, string>([
-            ['A1', 'tripleword'],
-            ['A4', 'doubleletter'],
-            ['A8', 'tripleletter'],
-            ['A12', 'doubleword'],
-            ['A15', 'tripleword'],
-            ['B2', 'doubleword'],
-            ['B6', 'tripleletter'],
-            ['B10', 'doubleletter'],
-            ['B14', 'doubleword'],
+            ['A1', 'tripleWord'],
+            ['A4', 'doubleLetter'],
+            ['A8', 'tripleLetter'],
+            ['A12', 'doubleWord'],
+            ['A15', 'tripleWord'],
+            ['B2', 'doubleWord'],
+            ['B6', 'tripleLetter'],
+            ['B10', 'doubleLetter'],
+            ['B14', 'doubleWord'],
             ['C3', ''],
         ]);
-        const colorBonusBoxSpy = spyOn(service, 'colorBonusBox').and.callThrough();
-        const writeBonusNameSpy = spyOn(service, 'writeBonusName').and.callThrough();
-        service.drawBonusBoxes(bonusPositionsStub);
+        const colorBonusBoxSpy = spyOn<any>(service, 'colorBonusBox').and.callThrough();
+        const writeBonusNameSpy = spyOn<any>(service, 'writeBonusName').and.callThrough();
+        service['drawBonusBoxes'](bonusPositionsStub);
         expect(colorBonusBoxSpy).toHaveBeenCalled();
         expect(writeBonusNameSpy).toHaveBeenCalled();
     });
@@ -99,8 +102,8 @@ describe('GridService', () => {
     it('drawArrow should call stroke and fill on the canvas', () => {
         const strokeSpy = spyOn(service.gridContextPlacementLayer, 'stroke');
         const fillSpy = spyOn(service.gridContextPlacementLayer, 'fill');
-        service.drawArrow(service.gridContextPlacementLayer, { x: 7, y: 7 }, 'h');
-        service.drawArrow(service.gridContextPlacementLayer, { x: 7, y: 7 }, 'v');
+        service.drawArrow(service.gridContextPlacementLayer, { x: 7, y: 7 }, Orientation.Horizontal);
+        service.drawArrow(service.gridContextPlacementLayer, { x: 7, y: 7 }, Orientation.Vertical);
         expect(strokeSpy).toHaveBeenCalledTimes(2);
         expect(fillSpy).toHaveBeenCalledTimes(2);
     });
