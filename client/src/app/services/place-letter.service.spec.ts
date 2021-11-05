@@ -1,3 +1,4 @@
+/* eslint-disable sort-imports */
 /* eslint-disable dot-notation */
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';

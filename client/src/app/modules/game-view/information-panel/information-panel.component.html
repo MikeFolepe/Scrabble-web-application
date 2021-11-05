@@ -27,8 +27,11 @@
                 </div>
             </div>
         </li>
-        <div *ngIf="this.endGameService.isEndGame">
+        <div *ngIf="endGameService.isEndGameByActions() || (endGameService.isEndGameByEasel() && !endGameService.isEndGamebyGiveUp)">
             Ceci est une fin de partie Félicitations à: {{ this.endGameService.getWinnerName() }} qui est le vainqueur!!
+        </div>
+        <div *ngIf="!endGameService.isEndGameByActions() && !endGameService.isEndGameByEasel() && endGameService.isEndGamebyGiveUp">
+            Ceci est une fin de partie Félicitations à: {{ this.endGameService.winnerNamebyGiveUp }} qui le vainqueur!!
         </div>
     </ul>
 </div>

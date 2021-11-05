@@ -1,3 +1,4 @@
+/* eslint-disable sort-imports */
 /* eslint-disable dot-notation */
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AI_NAME_DATABASE } from '@app/classes/constants';
