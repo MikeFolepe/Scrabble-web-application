@@ -3,7 +3,6 @@ import {
     BOARD_COLUMNS,
     BOARD_ROWS,
     CENTRAL_CASE_POSITION_X,
-    DELAY_TO_PASS_TURN,
     DICTIONARY,
     INDEX_INVALID,
     INDEX_PLAYER_AI,
@@ -50,10 +49,8 @@ export class PlaceLetters {
 
         await this.computeResults(allPossibleWords, matchingPointingRangeWords, playerAiService);
 
-        setTimeout(() => {
-            playerAiService.debugService.receiveAIDebugPossibilities(allPossibleWords.concat(matchingPointingRangeWords));
-            playerAiService.endGameService.actionsLog.push('placer');
-        }, DELAY_TO_PASS_TURN);
+        playerAiService.debugService.receiveAIDebugPossibilities(allPossibleWords.concat(matchingPointingRangeWords));
+        playerAiService.endGameService.actionsLog.push('placer');
     }
 
     private async computeResults(

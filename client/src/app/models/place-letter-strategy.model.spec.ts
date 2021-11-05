@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
@@ -190,9 +191,9 @@ describe('Place Letter', () => {
         expect(placeStrategy['removeIfNotDisposable'](possibleWord)).toEqual(expected);
     });
 
-    it('should play from the center at first round', async () => {
-        jasmine.clock().install();
-        // TODO: test crash
+    it('should play from the center at first round', () => {
+        // jasmine.clock().install();
+        // TODO: test crash sur gitlab?
         const myDictionary: string[] = ['maths', 'math', 'lundi', 'mardi', 'on'];
 
         playerAi.letterTable = [
@@ -220,10 +221,10 @@ describe('Place Letter', () => {
         const expectedMatching: PossibleWords[] = [];
         expectedMatching.push(word1);
         expectedMatching.push(word2);
-        await placeStrategy.execute(playerAiService);
-        jasmine.clock().tick(6000);
+        placeStrategy.execute(playerAiService);
+        // jasmine.clock().tick(6000);
         expect(spyOnPlace).toHaveBeenCalledWith(word1);
-        jasmine.clock().uninstall();
+        // jasmine.clock().uninstall();
     });
 
     it('should swap if no possibility', () => {
