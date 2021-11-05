@@ -7,6 +7,8 @@ import { EndGameService } from '@app/services/end-game.service';
 import { ChatboxService } from '@app/services/chatbox.service';
 import { BoardHandlerService } from '@app/services/board-handler.service';
 import { SkipTurnService } from '@app/services/skip-turn.service';
+import { DEFAULT_FONT_SIZE } from '@app/classes/constants';
+import { PlayerService } from '@app/services/player.service';
 
 @Component({
     selector: 'app-game-view',
@@ -14,6 +16,8 @@ import { SkipTurnService } from '@app/services/skip-turn.service';
     styleUrls: ['./game-view.component.scss'],
 })
 export class GameViewComponent implements OnInit {
+    fontSize: number = DEFAULT_FONT_SIZE;
+
     constructor(
         public endGameService: EndGameService,
         public clientSocketService: ClientSocketService,
@@ -23,6 +27,7 @@ export class GameViewComponent implements OnInit {
         public chatBoxService: ChatboxService,
         public boardHandlerService: BoardHandlerService,
         public skipTurnService: SkipTurnService,
+        private playerService: PlayerService,
     ) {}
 
     ngOnInit() {
@@ -34,5 +39,10 @@ export class GameViewComponent implements OnInit {
         this.clientSocketService.socket.on('goToMainMenu', () => {
             this.router.navigate(['home']);
         });
+    }
+
+    handleFontSizeEvent(fontSizeEvent: number) {
+        this.fontSize = fontSizeEvent;
+        this.playerService.updateFontSize(this.fontSize);
     }
 }
