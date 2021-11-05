@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-=======
 import { DELAY_OF_DISCONNECT } from '@app/classes/constants';
->>>>>>> dcdd8de46b7e9c43ea2110be7ccda1e398e71373
 import { RoomManagerService } from '@app/services/room-manager.service';
 import { GameSettings } from '@common/game-settings';
 import { PlayerIndex } from '@common/PlayerIndex';
@@ -42,18 +39,9 @@ export class SocketManagerService {
                     socket.emit('roomAlreadyToken');
                     return;
                 }
-                console.log('ok');
                 this.roomManagerService.addCustomer(playerName, roomId);
                 // Search the good room and set the custommer ID
-<<<<<<< HEAD
                 this.roomManagerService.setSocket(this.roomManagerService.find(roomId), socket.id);
-=======
-                const myroom = this.roomManagerService.find(roomId);
-                // Check if the roon isn't undefined
-                if (myroom !== undefined) {
-                    this.roomManagerService.setSocket(myroom, socket.id);
-                }
->>>>>>> dcdd8de46b7e9c43ea2110be7ccda1e398e71373
                 this.roomManagerService.setState(roomId, State.Playing);
                 // block someone else entry from room selection
                 this.sio.emit('roomConfiguration', this.roomManagerService.rooms);
@@ -81,17 +69,6 @@ export class SocketManagerService {
                 this.sio.emit('roomConfiguration', this.roomManagerService.rooms);
                 socket.disconnect();
             });
-
-<<<<<<< HEAD
-            socket.on('disconnect', () => {
-                const roomId = this.roomManagerService.findRoomIdOf(socket.id);
-                this.roomManagerService.deleteRoom(roomId);
-                this.sio.emit('roomConfiguration', this.roomManagerService.rooms);
-                this.sio.in(roomId).emit('goToMainMenu');
-            });
-
-=======
->>>>>>> dcdd8de46b7e9c43ea2110be7ccda1e398e71373
             socket.on('sendReserve', (reserve: unknown, reserveSize: number, roomId: string) => {
                 socket.to(roomId).emit('receiveReserve', reserve, reserveSize);
             });
@@ -150,6 +127,7 @@ export class SocketManagerService {
             });
             socket.on('disconnect', () => {
                 const roomId = this.roomManagerService.findRoomIdOf(socket.id);
+
                 setTimeout(() => {
                     socket
                         .to(roomId)
