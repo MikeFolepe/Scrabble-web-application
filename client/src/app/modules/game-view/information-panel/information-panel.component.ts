@@ -1,5 +1,6 @@
+/* eslint-disable sort-imports */
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { INDEX_PLAYER_AI, INDEX_PLAYER_ONE } from '@app/classes/constants';
+import { DELAY_BEFORE_PLAY, INDEX_PLAYER_AI, INDEX_PLAYER_ONE } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { PlayerAI } from '@app/models/player-ai.model';
 import { Player } from '@app/models/player.model';
@@ -7,10 +8,10 @@ import { ClientSocketService } from '@app/services/client-socket.service';
 import { EndGameService } from '@app/services/end-game.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { LetterService } from '@app/services/letter.service';
+import { PlayerAIService } from '@app/services/player-ia.service';
 import { PlayerService } from '@app/services/player.service';
 import { SkipTurnService } from '@app/services/skip-turn.service';
 import { GameSettings } from '@common/game-settings';
-
 @Component({
     selector: 'app-information-panel',
     templateUrl: './information-panel.component.html',
@@ -25,6 +26,7 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
         public skipTurnService: SkipTurnService,
         public endGameService: EndGameService,
         private clientSocketService: ClientSocketService,
+        public playerAiService: PlayerAIService,
     ) {
         this.gameSettings = gameSettingsService.gameSettings;
     }
@@ -37,14 +39,22 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
             this.letterService.removeLettersFromReserve(this.playerService.players[INDEX_PLAYER_ONE].letterTable);
         });
         this.initializeFirstTurn();
-        if (this.gameSettingsService.isSoloMode) this.skipTurnService.startTimer();
+        this.skipTurnService.startTimer();
+
+        if (!this.skipTurnService.isTurn) {
+            const playerAi = this.playerService.players[INDEX_PLAYER_AI] as PlayerAI;
+            setTimeout(() => {
+                playerAi.play();
+            }, DELAY_BEFORE_PLAY);
+        }
     }
 
     initializePlayers(): void {
-        let player = new Player(1, this.gameSettings.playersName[INDEX_PLAYER_ONE], this.letterService.getRandomLetters());
+        // TODO: INDEX REAL PLAYER absent
+        let player = new Player(1, this.gameSettings.playersName[0], this.letterService.getRandomLetters());
         this.playerService.addPlayer(player);
         if (this.gameSettingsService.isSoloMode) {
-            player = new PlayerAI(2, this.gameSettings.playersName[INDEX_PLAYER_AI], this.letterService.getRandomLetters());
+            player = new PlayerAI(2, this.gameSettings.playersName[INDEX_PLAYER_AI], this.letterService.getRandomLetters(), this.playerAiService);
             this.playerService.addPlayer(player);
         } else {
             this.clientSocketService.socket.emit('sendPlayerTwo', player.letterTable, this.clientSocketService.roomId);

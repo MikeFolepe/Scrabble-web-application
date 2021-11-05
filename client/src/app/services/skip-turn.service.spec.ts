@@ -155,13 +155,6 @@ describe('SkipTurnService', () => {
         expect(service.isTurn).toEqual(newturn);
     });
 
-    it('should stop the timer if it is an end of game of start timer ', () => {
-        endGameService.isEndGame = true;
-        const spyOnStop = spyOn(service, 'stopTimer');
-        service.startTimer();
-        expect(spyOnStop).toHaveBeenCalled();
-    });
-
     it('should bind to the playerAi play function', () => {
         const testFn = () => {
             let x = 0;

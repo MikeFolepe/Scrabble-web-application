@@ -1,13 +1,14 @@
 /* eslint-disable dot-notation */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 import { TestBed } from '@angular/core/testing';
-import { CASE_SIZE, INDEX_INVALID } from '@app/classes/constants';
+import { GRID_CASE_SIZE, INDEX_INVALID } from '@app/classes/constants';
 import { Vec2 } from '@app/classes/vec2';
 import { BoardHandlerService } from './board-handler.service';
 import { GridService } from './grid.service';
 import { RouterTestingModule } from '@angular/router/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TypeMessage } from '@app/classes/enum';
+import { Orientation } from '@app/classes/scrabble-board-pattern';
 
 describe('BoardHandlerService', () => {
     let service: BoardHandlerService;
@@ -38,7 +39,7 @@ describe('BoardHandlerService', () => {
     });
 
     it('left clicking a case on the board should select it as the starting case', () => {
-        const gridPosition: Vec2 = { x: 7 * CASE_SIZE + CASE_SIZE, y: 7 * CASE_SIZE + CASE_SIZE };
+        const gridPosition: Vec2 = { x: 7 * GRID_CASE_SIZE + GRID_CASE_SIZE, y: 7 * GRID_CASE_SIZE + GRID_CASE_SIZE };
         const mouseEvent = {
             offsetX: gridPosition.x,
             offsetY: gridPosition.y,
@@ -49,7 +50,7 @@ describe('BoardHandlerService', () => {
     });
 
     it('left clicking an out of bounds case should not select it', () => {
-        const gridPosition: Vec2 = { x: -1 * CASE_SIZE + CASE_SIZE, y: -1 * CASE_SIZE + CASE_SIZE };
+        const gridPosition: Vec2 = { x: -1 * GRID_CASE_SIZE + GRID_CASE_SIZE, y: -1 * GRID_CASE_SIZE + GRID_CASE_SIZE };
         const mouseEvent = {
             offsetX: gridPosition.x,
             offsetY: gridPosition.y,
@@ -61,14 +62,14 @@ describe('BoardHandlerService', () => {
 
     it('left clicking on the current selected case should switch the orientation of the placement', () => {
         service.currentCase = { x: 7, y: 7 };
-        const gridPosition: Vec2 = { x: 7 * CASE_SIZE + CASE_SIZE, y: 7 * CASE_SIZE + CASE_SIZE };
+        const gridPosition: Vec2 = { x: 7 * GRID_CASE_SIZE + GRID_CASE_SIZE, y: 7 * GRID_CASE_SIZE + GRID_CASE_SIZE };
         const mouseEvent = {
             offsetX: gridPosition.x,
             offsetY: gridPosition.y,
             button: 0,
         } as MouseEvent;
         service.mouseHitDetect(mouseEvent);
-        expect(service.orientation).toEqual('v');
+        expect(service.orientation).toEqual(Orientation.Vertical);
     });
 
     it('pressing multiple keyboard buttons that are valid letters should all be placed', async () => {
@@ -134,7 +135,7 @@ describe('BoardHandlerService', () => {
         service.firstCase = { x: 7, y: 7 };
         service.currentCase = { x: 7, y: 7 };
         service.isFirstCasePicked = true;
-        service.orientation = 'v';
+        service.orientation = Orientation.Vertical;
         let keyboardEvent;
 
         const wordToPlace = 'Frite';
@@ -235,7 +236,7 @@ describe('BoardHandlerService', () => {
         service.firstCase = { x: 7, y: 10 };
         service.currentCase = { x: 7, y: 10 };
         service.isFirstCasePicked = true;
-        service.orientation = 'v';
+        service.orientation = Orientation.Vertical;
         const wordToPlace = 'ees';
 
         await service.placeLetter(wordToPlace[0]);

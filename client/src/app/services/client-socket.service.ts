@@ -4,7 +4,6 @@ import { GameSettingsService } from '@app/services/game-settings.service';
 import { GameSettings } from '@common/game-settings';
 import { Room } from '@common/room';
 import { io, Socket } from 'socket.io-client';
-// import { io, Socket } from 'node_modules/socket.io-client/build/esm';
 @Injectable({
     providedIn: 'root',
 })
@@ -29,11 +28,6 @@ export class ClientSocketService {
         });
     }
 
-    goToMainMenu(): void {
-        this.socket.on('goToMainMenu', () => {
-            this.router.navigate(['home']);
-        });
-    }
     initializeRoomId(): void {
         this.socket.on('yourRoomId', (roomIdFromServer: string) => {
             this.roomId = roomIdFromServer;

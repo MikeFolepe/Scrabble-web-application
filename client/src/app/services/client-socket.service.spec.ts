@@ -1,30 +1,32 @@
+/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable no-unused-vars */
 /* eslint-disable dot-notation */
 /* eslint-disable sort-imports */
 import { TestBed } from '@angular/core/testing';
-// import { Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
+import { GameViewComponent } from '@app/modules/game-view/game-view/game-view.component';
 import { ClientSocketService } from '@app/services/client-socket.service';
 import { GameSettings } from '@common/game-settings';
 import { Socket } from 'socket.io-client';
 
 describe('ClientSocketService', () => {
     let service: ClientSocketService;
-    // let routerSpy: Router;
-    beforeEach(() => {
-        //routerSpy = jasmine.createSpyObj('Router', ['navigate']);
-    });
+    let router: jasmine.SpyObj<Router>;
+    RouterTestingModule.withRoutes([{ path: 'game', component: GameViewComponent }]);
 
-    beforeEach(() => {
-        TestBed.configureTestingModule({
-            imports: [RouterTestingModule],
-            // providers: [{ provide: Router, useValue: routerSpy }],
-        });
+    beforeEach(async () => {
+        RouterTestingModule.withRoutes([{ path: 'game', component: GameViewComponent }]);
+        router = jasmine.createSpyObj('Router', ['navigate']);
+        await TestBed.configureTestingModule({
+            providers: [{ provide: Router, useValue: router }],
+        }).compileComponents();
+
         service = TestBed.inject(ClientSocketService);
+        router = TestBed.inject(Router) as jasmine.SpyObj<Router>;
     });
 
     it('should navigate to game page on goToGameView event', () => {
-        const navigateSpy = spyOn(service['router'], 'navigate').and.callThrough();
-        // RouterTestingModule.withRoutes([{ path: 'game', component: GameViewComponent }]);
         service.socket = {
             // eslint-disable-next-line no-unused-vars
             on: (eventName: string, callback: () => void) => {
@@ -34,7 +36,7 @@ describe('ClientSocketService', () => {
             },
         } as unknown as Socket;
         service.route();
-        expect(navigateSpy).toHaveBeenCalledWith(['game']);
+        expect(router.navigate).toHaveBeenCalledWith(['game']);
     });
 
     it('should initialize roomId with argument', () => {

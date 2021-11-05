@@ -1,96 +1,125 @@
-import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSITION_X, DICTIONARY, INDEX_INVALID, INDEX_PLAYER_AI } from '@app/classes/constants';
-import { BoardPattern, Orientation, PatternInfo, PossibleWords } from '@app/classes/scrabble-board-pattern';
-import { PlayStrategy } from '@app/models/abstract-strategy.model';
-import { PlayerAI } from '@app/models/player-ai.model';
-import { PlayerAIComponent } from '@app/modules/game-view/player-ai/player-ai.component';
+/* eslint-disable sort-imports */
+import {
+    BOARD_COLUMNS,
+    BOARD_ROWS,
+    CENTRAL_CASE_POSITION_X,
+    DICTIONARY,
+    INDEX_INVALID,
+    INDEX_PLAYER_AI,
+    MAX_DIMENSIONS,
+    NO_PLAYABLE_WORD,
+    WAITING_AFTER_PLAYED,
+} from '@app/classes/constants';
 import { Range } from '@app/classes/range';
-import { SwapLetter } from '@app/models/swap-letter-strategy.model';
+import { BoardPattern, Orientation, PatternInfo, PossibleWords } from '@app/classes/scrabble-board-pattern';
 import { Vec2 } from '@app/classes/vec2';
-
-export class PlaceLetters extends PlayStrategy {
+import { PlayerAIService } from '@app/services/player-ia.service';
+import { PlayerAI } from './player-ai.model';
+export class PlaceLetters {
     dictionary: string[];
     private board: string[][][];
     constructor(public pointingRange: Range) {
-        super();
         this.dictionary = DICTIONARY;
         this.board = [];
     }
 
-    execute(player: PlayerAI, context: PlayerAIComponent): void {
-        this.initializeArray(context.placeLetterService.scrabbleBoard);
+    execute(playerAiService: PlayerAIService): void {
+        const playerAi = playerAiService.playerService.players[INDEX_PLAYER_AI] as PlayerAI;
+        const isFirstRound = playerAiService.placeLetterService.isFirstRound;
+        const scrabbleBoard = playerAiService.placeLetterService.scrabbleBoard;
+
+        this.initializeArray(scrabbleBoard);
         let allPossibleWords: PossibleWords[];
         let matchingPointingRangeWords: PossibleWords[] = [];
 
-        const patterns = this.generateAllPatterns(player.getHand(), context.playerAIService.isFirstRound);
+        const patterns = this.generateAllPatterns(playerAi.getHand(), isFirstRound);
         allPossibleWords = this.generateAllWords(this.dictionary, patterns);
-        allPossibleWords = this.removeIfNotEnoughLetter(allPossibleWords, context.aiPlayer);
+        allPossibleWords = this.removeIfNotEnoughLetter(allPossibleWords, playerAi);
 
-        if (context.playerAIService.isFirstRound) {
+        if (isFirstRound) {
             allPossibleWords.forEach((word) => (word.startIdx = CENTRAL_CASE_POSITION_X));
         } else {
             allPossibleWords = this.removeIfNotDisposable(allPossibleWords);
         }
 
-        context.playerAIService.calculatePoints(allPossibleWords, context.placeLetterService.scrabbleBoard);
-        context.playerAIService.sortDecreasingPoints(allPossibleWords);
-        matchingPointingRangeWords = context.playerAIService.filterByRange(allPossibleWords, this.pointingRange);
+        playerAiService.calculatePoints(allPossibleWords, scrabbleBoard);
+        playerAiService.sortDecreasingPoints(allPossibleWords);
+        matchingPointingRangeWords = playerAiService.filterByRange(allPossibleWords, this.pointingRange);
 
-        this.computeResults(allPossibleWords, matchingPointingRangeWords, context);
+        this.computeResults(allPossibleWords, matchingPointingRangeWords, playerAiService);
+
+        setTimeout(() => {
+            playerAiService.debugService.receiveAIDebugPossibilities(allPossibleWords.concat(matchingPointingRangeWords));
+            playerAiService.endGameService.actionsLog.push('placer');
+            // TODO: DIRE A LA CHATBOX
+            playerAiService.skipTurnService.switchTurn();
+        }, WAITING_AFTER_PLAYED);
     }
 
-    computeResults(allPossibleWords: PossibleWords[], matchingPointingRangeWords: PossibleWords[], context: PlayerAIComponent): void {
-        if (matchingPointingRangeWords.length !== 0 && this.attempt(matchingPointingRangeWords, context)) {
-            context.playerService.refillEasel(1);
-            context.sendPossibilities(matchingPointingRangeWords);
+    private computeResults(allPossibleWords: PossibleWords[], matchingPointingRangeWords: PossibleWords[], playerAiService: PlayerAIService): void {
+        let index: number = this.placementAttempt(matchingPointingRangeWords, playerAiService);
+        if (index !== NO_PLAYABLE_WORD) {
+            playerAiService.place(matchingPointingRangeWords[index]);
+            matchingPointingRangeWords.splice(index, 1);
             return;
-        } else if (allPossibleWords.length !== 0 && this.attempt(allPossibleWords, context)) {
-            context.playerService.refillEasel(1);
-            context.sendPossibilities(allPossibleWords);
-            return;
-        } else {
-            context.aiPlayer.replaceStrategy(new SwapLetter());
         }
+
+        index = this.placementAttempt(allPossibleWords, playerAiService);
+        if (index !== NO_PLAYABLE_WORD) {
+            playerAiService.place(allPossibleWords[index]);
+            allPossibleWords.splice(index, 1);
+            return;
+        }
+
+        playerAiService.swap();
     }
 
-    attempt(possibilities: PossibleWords[], context: PlayerAIComponent): boolean {
-        let attempt = 0;
-        do {
-            const randomIdx = Math.floor(Math.random() * possibilities.length);
-            const word = possibilities[randomIdx];
+    private placementAttempt(possibilities: PossibleWords[], playerAiService: PlayerAIService): number {
+        let i = 0;
+
+        for (i = 0; i < possibilities.length; i++) {
+            const word = possibilities[i];
             let start: Vec2;
-            let orientation: string;
-            if (word.orientation === Orientation.HorizontalOrientation) {
+            let orientation: Orientation;
+            if (word.orientation === Orientation.Horizontal) {
                 start = { x: word.line, y: word.startIdx };
-                orientation = 'h';
+                orientation = Orientation.Horizontal;
             } else {
                 start = { x: word.startIdx, y: word.line };
-                orientation = 'v';
+                orientation = Orientation.Horizontal;
             }
-            context.placeLetterService.placeMethodAdapter({ start, orientation, word: word.word, indexPlayer: INDEX_PLAYER_AI });
-            attempt++;
-            // !!! skip turn after each placement that called validation !!!
-        } while (attempt < possibilities.length && context.playerAIService.isFirstRound === false);
-        return context.playerAIService.isPlacementValid;
+
+            let scrabbleBoard: string[][] = JSON.parse(JSON.stringify(playerAiService.placeLetterService.scrabbleBoard));
+            // TODO: Etienne prendre des orientations???
+            scrabbleBoard = playerAiService.placeWordOnBoard(scrabbleBoard, word.word, start, orientation ? 'v' : 'h');
+            const isValid = this.validateWord(scrabbleBoard);
+
+            if (isValid) {
+                return i;
+            }
+        }
+
+        return NO_PLAYABLE_WORD;
     }
 
-    initializeArray(scrabbleBoard: string[][]) {
+    private initializeArray(scrabbleBoard: string[][]) {
         const array: string[][][] = new Array(Object.keys(Orientation).length / 2);
-        array[Orientation.HorizontalOrientation] = new Array(BOARD_COLUMNS);
-        array[Orientation.VerticalOrientation] = new Array(BOARD_ROWS);
+        array[Orientation.Horizontal] = new Array(BOARD_COLUMNS);
+        array[Orientation.Vertical] = new Array(BOARD_ROWS);
 
         for (let i = 0; i < BOARD_ROWS; i++) {
-            array[Orientation.HorizontalOrientation][i] = scrabbleBoard[i];
+            array[Orientation.Horizontal][i] = scrabbleBoard[i];
             const column: string[] = [];
             for (let j = 0; j < BOARD_COLUMNS; j++) {
                 column.push(scrabbleBoard[j][i]);
             }
-            array[Orientation.VerticalOrientation][i] = column;
+            array[Orientation.Vertical][i] = column;
         }
 
         this.board = array;
     }
 
-    removeIfNotDisposable(allPossibleWords: PossibleWords[]): PossibleWords[] {
+    private removeIfNotDisposable(allPossibleWords: PossibleWords[]): PossibleWords[] {
         const filteredWords: PossibleWords[] = [];
         const re1 = new RegExp('(?<=[A-Za-z])(,?)(?=[A-Za-z])', 'g');
         const re2 = new RegExp('[,]', 'g');
@@ -98,15 +127,12 @@ export class PlaceLetters extends PlayStrategy {
         for (const word of allPossibleWords) {
             let line = this.board[word.orientation][word.line]
                 .map((element: string) => {
-                    if (element === '') return ' ';
-                    else {
-                        return element;
-                    }
+                    return element === '' ? ' ' : element;
                 })
                 .toString();
             line = line.replace(re2, '');
             const radixes = this.board[word.orientation][word.line].toString().replace(re1, '').match(re3) as string[];
-            if (this.isWordNotOverflowing(line, word.word, radixes) && this.isWordFitting(line, word, radixes)) {
+            if (this.isWordFitting(line, word, radixes)) {
                 filteredWords.push(word);
             }
         }
@@ -114,20 +140,7 @@ export class PlaceLetters extends PlayStrategy {
         return filteredWords;
     }
 
-    isWordNotOverflowing(line: string, wordToPlace: string, radixes: string[]): boolean {
-        const startIdxWord = wordToPlace.indexOf(radixes[0]);
-
-        const startIdxRadix = line.indexOf(radixes[radixes.length - 1]);
-        const endIdxRadix = startIdxRadix + radixes.length;
-
-        if (startIdxWord > line.search(radixes[0])) {
-            return false;
-        }
-
-        return radixes[0] !== radixes[radixes.length - 1] && endIdxRadix >= BOARD_COLUMNS;
-    }
-
-    isWordFitting(line: string, wordToPlace: PossibleWords, radixes: string[]): boolean {
+    private isWordFitting(line: string, wordToPlace: PossibleWords, radixes: string[]): boolean {
         const isEmptyCase = new Array<boolean>(wordToPlace.word.length);
         isEmptyCase.fill(true);
 
@@ -156,7 +169,7 @@ export class PlaceLetters extends PlayStrategy {
         return this.isWordOverWriting(line, start, end, wordToPlace.word.length) === false;
     }
 
-    isWordOverWriting(line: string, startIdx: number, endIdx: number, wordLength: number): boolean {
+    private isWordOverWriting(line: string, startIdx: number, endIdx: number, wordLength: number): boolean {
         if (wordLength !== BOARD_ROWS) {
             const touchOtherWordByRight = startIdx === 0 && line[endIdx + 1] !== ' ';
             const touchOtherWordByLeft = endIdx === BOARD_ROWS && line[startIdx - 1] !== ' ';
@@ -168,7 +181,7 @@ export class PlaceLetters extends PlayStrategy {
         return false;
     }
 
-    removeIfNotEnoughLetter(allPossibleWords: PossibleWords[], player: PlayerAI) {
+    private removeIfNotEnoughLetter(allPossibleWords: PossibleWords[], player: PlayerAI) {
         const filteredWords: PossibleWords[] = [];
 
         for (const word of allPossibleWords) {
@@ -176,11 +189,11 @@ export class PlaceLetters extends PlayStrategy {
             for (const letter of word.word) {
                 const re = new RegExp(letter, 'g');
                 const re1 = new RegExp('[,]{1,}', 'g');
-                const amntOfLetterNeeded: number = (word.word.match(re) || []).length;
-                const amntOfLetterAlrdyPrsnt: number = (this.board[word.orientation][word.line].toString().replace(re1, '').match(re) || []).length;
-                const plQ: number = player.playerQuantityOf(letter);
+                const amountOfLetterNeeded: number = (word.word.match(re) || []).length;
+                const amountOfLetterPresent: number = (this.board[word.orientation][word.line].toString().replace(re1, '').match(re) || []).length;
+                const playerAmount: number = player.playerQuantityOf(letter);
 
-                if (amntOfLetterNeeded > plQ + amntOfLetterAlrdyPrsnt) {
+                if (amountOfLetterNeeded > playerAmount + amountOfLetterPresent) {
                     isWordValid = false;
                     break;
                 }
@@ -194,14 +207,14 @@ export class PlaceLetters extends PlayStrategy {
         return filteredWords;
     }
 
-    generateAllWords(dictionaryToLookAt: string[], patterns: BoardPattern) {
+    private generateAllWords(dictionaryToLookAt: string[], patterns: BoardPattern) {
         const allWords: PossibleWords[] = [];
 
         for (const pattern of patterns.horizontal) {
             const regExp = new RegExp(pattern.pattern, 'g');
             for (const word of dictionaryToLookAt) {
                 if (regExp.test(word) && this.checkIfWordIsPresent(pattern.pattern, word)) {
-                    allWords.push({ word, orientation: Orientation.HorizontalOrientation, line: pattern.line, startIdx: 0, point: 0 });
+                    allWords.push({ word, orientation: Orientation.Horizontal, line: pattern.line, startIdx: 0, point: 0 });
                 }
             }
         }
@@ -210,7 +223,7 @@ export class PlaceLetters extends PlayStrategy {
             const regExp = new RegExp(pattern.pattern, 'g');
             for (const word of dictionaryToLookAt) {
                 if (regExp.test(word) && this.checkIfWordIsPresent(pattern.pattern, word)) {
-                    allWords.push({ word, orientation: Orientation.VerticalOrientation, line: pattern.line, startIdx: 0, point: 0 });
+                    allWords.push({ word, orientation: Orientation.Vertical, line: pattern.line, startIdx: 0, point: 0 });
                 }
             }
         }
@@ -218,7 +231,7 @@ export class PlaceLetters extends PlayStrategy {
         return allWords;
     }
 
-    checkIfWordIsPresent(pattern: string, word: string): boolean {
+    private checkIfWordIsPresent(pattern: string, word: string): boolean {
         const re = new RegExp('(?<=[*])(([a-z]*)?)', 'g');
         const wordPresent = pattern.match(re);
 
@@ -232,8 +245,8 @@ export class PlaceLetters extends PlayStrategy {
     }
 
     private generateAllPatterns(playerHand: string, isFirstRound: boolean): BoardPattern {
-        const horizontal: PatternInfo[] = [];
-        const vertical: PatternInfo[] = [];
+        let horizontal: PatternInfo[] = [];
+        let vertical: PatternInfo[] = [];
 
         if (isFirstRound) {
             horizontal.push({ line: CENTRAL_CASE_POSITION_X, pattern: '^' + playerHand.toLowerCase() + '*$' });
@@ -241,11 +254,20 @@ export class PlaceLetters extends PlayStrategy {
             return { horizontal, vertical };
         }
 
+        horizontal = this.generatePattern(Orientation.Horizontal, playerHand);
+        vertical = this.generatePattern(Orientation.Vertical, playerHand);
+
+        return { horizontal, vertical };
+    }
+
+    private generatePattern(orientation: Orientation, playerHand: string): PatternInfo[] {
+        const patternArray: PatternInfo[] = [];
+
         const re1 = new RegExp('(?<=[A-Za-z])(,?)(?=[A-Za-z])', 'g');
         const re2 = new RegExp('[,]{1,}', 'g');
 
-        for (let rowIndex = 0; rowIndex < BOARD_COLUMNS; rowIndex++) {
-            let pattern = this.board[Orientation.HorizontalOrientation][rowIndex]
+        for (let line = 0; line < BOARD_COLUMNS; line++) {
+            let pattern = this.board[orientation][line]
                 .toString()
                 .replace(re1, '')
                 .replace(re2, playerHand + '*')
@@ -253,22 +275,46 @@ export class PlaceLetters extends PlayStrategy {
             // If it's not an empty row
             if (pattern !== playerHand.toLowerCase() + '*') {
                 pattern = '^' + pattern + '$';
-                horizontal.push({ line: rowIndex, pattern });
-            }
-        }
-        for (let columnIndex = 0; columnIndex < BOARD_COLUMNS; columnIndex++) {
-            let pattern = this.board[Orientation.VerticalOrientation][columnIndex]
-                .toString()
-                .replace(re1, '')
-                .replace(re2, playerHand + '*')
-                .toLowerCase();
-            // If it's not an empty row
-            if (pattern !== playerHand.toLowerCase() + '*') {
-                pattern = '^' + pattern + '$';
-                vertical.push({ line: columnIndex, pattern });
+                patternArray.push({ line, pattern });
             }
         }
 
-        return { horizontal, vertical };
+        return patternArray;
+    }
+
+    private validateWord(scrabbleBoard: string[][]): boolean {
+        const save = JSON.parse(JSON.stringify(this.board));
+
+        this.initializeArray(scrabbleBoard);
+        const wordsOnBoard: string[] = [];
+
+        const re1 = new RegExp('[,]', 'g');
+        const re2 = new RegExp('[ ]{1}', 'g');
+
+        for (let dimension = 0; dimension < MAX_DIMENSIONS; dimension++) {
+            for (let i = 0; i < BOARD_COLUMNS; i++) {
+                this.board[dimension][i]
+                    .map((element: string) => {
+                        return element === '' ? ' ' : element;
+                    })
+                    .toString()
+                    .replace(re1, '')
+                    .split(re2)
+                    .forEach((word) => {
+                        if (word.length > 1 && word !== '') wordsOnBoard.push(word);
+                    });
+            }
+        }
+
+        for (const word of wordsOnBoard) {
+            const found = this.dictionary.find((element) => element === word);
+            if (found === undefined) {
+                this.board = save;
+                return false;
+            }
+        }
+
+        this.board = save;
+        return true;
     }
 }

@@ -33,19 +33,32 @@ export class FormComponent implements OnDestroy {
         }
         return JSON.stringify(Array.from(bonusPositions));
     }
+
+    chooseRandomAIName(): string {
+        let randomName: string;
+        do {
+            // Random value [0, AI_NAME_DATABASE.length[
+            const randomNumber = Math.floor(Math.random() * AI_NAME_DATABASE.length);
+            randomName = AI_NAME_DATABASE[randomNumber];
+        } while (randomName === this.form.controls.playerName.value);
+        return randomName;
+    }
+
     // Initializes the game with its settings
     initGame(): void {
+        this.snapshotSettings();
         if (this.gameSettingsService.isSoloMode) {
-            this.initSoloGame();
             this.router.navigate(['game']);
             return;
         }
-        this.initSoloGame();
-        this.initMultiplayerGame();
         this.router.navigate(['multiplayer-mode-waiting-room']);
     }
 
-    initSoloGame(): void {
+    chooseStartingPlayer(): StartingPlayer {
+        return Math.floor((Math.random() * Object.keys(StartingPlayer).length) / 2);
+    }
+
+    snapshotSettings(): void {
         const playersName: string[] = [this.form.controls.playerName.value, this.chooseRandomAIName()];
         this.gameSettingsService.gameSettings = new GameSettings(
             playersName,
@@ -59,26 +72,8 @@ export class FormComponent implements OnDestroy {
         );
     }
 
-    initMultiplayerGame(): void {
-        return;
-    }
-
     ngOnDestroy(): void {
         this.gameSettingsService.isRedirectedFromMultiplayerGame = false;
         return;
-    }
-
-    chooseStartingPlayer(): StartingPlayer {
-        return Math.floor((Math.random() * Object.keys(StartingPlayer).length) / 2);
-    }
-
-    chooseRandomAIName(): string {
-        let randomName: string;
-        do {
-            // Random value [0, AI_NAME_DATABASE.length[
-            const randomNumber = Math.floor(Math.random() * AI_NAME_DATABASE.length);
-            randomName = AI_NAME_DATABASE[randomNumber];
-        } while (randomName === this.form.controls.playerName.value);
-        return randomName;
     }
 }
