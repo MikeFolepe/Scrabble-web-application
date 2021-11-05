@@ -17,14 +17,7 @@ export class Room {
         this.socketIds[PlayerIndex.OWNER] = socketId;
         this.gameSettings = gameSettings;
         this.state = state;
-        // this.socketIds = new Array<string>(2);
     }
 
-    addCustomer(customerName: string) {
-        this.gameSettings.playersName[PlayerIndex.CUSTOMER] = customerName;
-    }
-
-    setSocketId(customerSocketId : string){
-        this.socketIds.push(customerSocketId);
-    }
+    
 }

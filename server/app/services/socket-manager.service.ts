@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable sort-imports */
+import { DELAY_OF_DISCONNECT } from '@app/classes/constants';
 import { GameSettings } from '@common/game-settings';
 import { PlayerIndex } from '@common/PlayerIndex';
 import { State } from '@common/room';
@@ -71,23 +72,21 @@ export class SocketManager {
 
             socket.on('disconnect', () => {
                 const roomId = this.roomManager.findRoomIdOf(socket.id);
-                // Code pour winner
-                const indexOfLoser = this.roomManager.findLoserIndex(socket.id);
-                const winnerName = this.roomManager.getWinnerName(roomId, indexOfLoser);
                 setTimeout(() => {
-                    socket.to(roomId).emit('receiveEndGamebyGiveup', true, winnerName);
+                    socket
+                        .to(roomId)
+                        .emit('receiveEndGamebyGiveup', true, this.roomManager.getWinnerName(roomId, this.roomManager.findLoserIndex(socket.id)));
                     this.roomManager.deleteRoom(roomId);
                     this.sio.emit('roomConfiguration', this.roomManager.rooms);
                     this.sio.socketsLeave(roomId);
-                }, 5000);
+                }, DELAY_OF_DISCONNECT);
             });
 
             // Receive the Endgame from the give up game or the natural EndGame by easel or by actions
-            socket.on('sendEndGame', (isEndGame: boolean, roomId: string) => {
-                // code winner
-                const indexOfLoser = this.roomManager.findLoserIndex(socket.id);
-                const winnerName = this.roomManager.getWinnerName(roomId, indexOfLoser as number);
-                socket.to(roomId).emit('receiveEndGamebyGiveup', isEndGame, winnerName);
+            socket.on('sendEndGamebyGiveUp', (isEndGame: boolean, roomId: string) => {
+                socket
+                    .to(roomId)
+                    .emit('receiveEndGamebyGiveup', isEndGame, this.roomManager.getWinnerName(roomId, this.roomManager.findLoserIndex(socket.id)));
                 this.roomManager.deleteRoom(roomId);
                 this.sio.emit('roomConfiguration', this.roomManager.rooms);
                 this.sio.socketsLeave(roomId);

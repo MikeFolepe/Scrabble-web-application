@@ -25,9 +25,9 @@ export class EndGameService {
         public skipturnService: SkipTurnService,
         public gameSettingsService: GameSettingsService,
     ) {
-        this.clientSocketService.socket.on('receiveEndGamebyGiveup', (isEndGame: boolean, myWinner: string) => {
-            this.isEndGamebyGiveUp = isEndGame;
-            this.winnerNamebyGiveUp = myWinner;
+        this.clientSocketService.socket.on('receiveEndGamebyGiveup', (isEndGamebyGiveup: boolean, winnerName: string) => {
+            this.isEndGamebyGiveUp = isEndGamebyGiveup;
+            this.winnerNamebyGiveUp = winnerName;
         });
         this.clearAllData();
     }

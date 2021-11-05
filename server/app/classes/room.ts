@@ -18,12 +18,4 @@ export class Room {
         this.state = state;
         this.socketIds.push(socketID);
     }
-
-    addCustomer(customerName: string) {
-        this.gameSettings.playersName[1] = customerName;
-    }
-
-    setSocketId(customerSocketID: string) {
-        this.socketIds.push(customerSocketID);
-    }
 }

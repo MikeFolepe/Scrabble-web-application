@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 import { GameSettings, StartingPlayer } from '@common/game-settings';
 import { Room, State } from '@common/room';
+import { OUT_BOUND_INDEX_OF_SOCKET } from '@app/classes/constants';
 import { PlayerIndex } from '@common/PlayerIndex';
 import { Service } from 'typedi';
 
@@ -33,7 +34,8 @@ export class RoomManager {
         if (room === undefined) {
             return false;
         }
-        room.addCustomer(customerName);
+        room.gameSettings.playersName[PlayerIndex.CUSTOMER] = customerName;
+
         return true;
     }
 
@@ -42,8 +44,8 @@ export class RoomManager {
         room.state = state;
     }
 
-    setSocket(room: Room, customerSocketId: string) {
-        room.setSocketId(customerSocketId);
+    setSocket(room: Room, socketId: string) {
+        room.socketIds.push(socketId);
     }
 
     getGameSettings(roomId: string) {
@@ -61,8 +63,9 @@ export class RoomManager {
             startingPlayer,
             gameSettings.timeMinute,
             gameSettings.timeSecond,
+            gameSettings.level,
             gameSettings.randomBonus,
-            gameSettings.randomBonus,
+            // gameSettings.bonusPositions,
             gameSettings.dictionary,
         );
 
@@ -95,7 +98,7 @@ export class RoomManager {
                 if (ids === socketId) return room.socketIds.indexOf(ids) as number;
             }
         }
-        return 5;
+        return OUT_BOUND_INDEX_OF_SOCKET;
     }
 
     getWinnerName(roomId: string, indexofLoser: number): string {

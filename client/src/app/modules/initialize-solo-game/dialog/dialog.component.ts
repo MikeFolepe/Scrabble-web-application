@@ -34,10 +34,10 @@ export class DialogComponent implements OnInit {
         ]);
     }
 
-    quit() {
-        this.dialogRef.close(null);
-    }
-    confirm() {
-        this.dialogRef.close(this.form.value);
-    }
+    // quit() {
+    //     this.dialogRef.close(null);
+    // }
+    // confirm() {
+    //     this.dialogRef.close(this.form.value);
+    // }
 }
