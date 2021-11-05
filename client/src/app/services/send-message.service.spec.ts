@@ -5,11 +5,10 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { TypeMessage } from '@app/classes/enum';
 import { SendMessageService } from '@app/services/send-message.service';
 import { io, Socket } from 'socket.io-client';
-import { ClientSocketService } from './client-socket.service';
 
 describe('SendMessageService', () => {
     let service: SendMessageService;
-    let clientSocketServiceSpy: jasmine.SpyObj<ClientSocketService>;
+    // let clientSocketServiceSpy: jasmine.SpyObj<ClientSocketService>;
     let url: string;
 
     beforeEach(() => {
@@ -38,7 +37,6 @@ describe('SendMessageService', () => {
     });
 
     it('should sendOpponentMessage on receiveMessageFromOpponent', () => {
-        clientSocketServiceSpy.socket = jasmine.createSpyObj('Socket', ['on']) as unknown as Socket;
         const sendOpponentMessageSpy = spyOn(service, 'sendOpponentMessage');
         service['clientSocketService'].socket = {
             // eslint-disable-next-line no-unused-vars

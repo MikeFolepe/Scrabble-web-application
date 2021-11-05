@@ -35,7 +35,7 @@ describe('SkipTurnService', () => {
     });
 
     beforeEach(() => {
-        const urlString = 'http://${window.location.hostname}:3000';
+        const urlString = `http://${window.location.hostname}:3000`;
         clientSocketService.socket = io(urlString);
         jasmine.clock().install();
     });
@@ -77,10 +77,6 @@ describe('SkipTurnService', () => {
         service.isTurn = true;
         const newTurn = false;
         endGameService.isEndGame = false;
-
-        service['playAiTurn'] = () => {
-            return;
-        };
         const spyStart = spyOn(service, 'startTimer');
         service.switchTurn();
         jasmine.clock().tick(THREE_SECONDS_DELAY + 1);
@@ -132,15 +128,6 @@ describe('SkipTurnService', () => {
         const newturn = false;
         service.switchTurn();
         expect(service.isTurn).toEqual(newturn);
-    });
-
-    it('should bind to the playerAi play function', () => {
-        const testFn = () => {
-            let x = 0;
-            return x++;
-        };
-        service.bindAiTurn(testFn);
-        expect(service['playAiTurn']).toEqual(testFn);
     });
 
     it('should stop the timer and then switch turn when the countdown is done ', () => {

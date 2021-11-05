@@ -3,16 +3,24 @@
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 import { BOARD_COLUMNS, BOARD_ROWS } from '@app/classes/constants';
 import { Orientation, PossibleWords } from '@app/classes/scrabble-board-pattern';
 import { Vec2 } from '@app/classes/vec2';
 import { PlayerAIService } from '@app/services/player-ia.service';
 import { PlayerAI } from './../models/player-ai.model';
 
-fdescribe('PlayerAIService', () => {
+describe('PlayerAIService', () => {
     let service: PlayerAIService;
     const scrabbleBoard: string[][] = [];
+
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [HttpClientTestingModule, RouterTestingModule],
+        }).compileComponents();
+    });
 
     beforeEach(() => {
         TestBed.configureTestingModule({});
@@ -192,17 +200,17 @@ fdescribe('PlayerAIService', () => {
 
     it('should ask placeLetterService to place some word on the board', () => {
         const word = { word: 'MAJID', orientation: Orientation.Vertical, line: 5, startIdx: 0, point: 0 };
-        const spyOnPlace = spyOn<any>(service.placeLetterService, 'place').and.returnValue(true);
+        const spyOnPlace = spyOn<any>(service.placeLetterService, 'placeCommand').and.returnValue(true);
         service.place(word);
-        expect(spyOnPlace).toHaveBeenCalledOnceWith({ x: word.startIdx, y: word.line }, 'v', word.word);
+        expect(spyOnPlace).toHaveBeenCalledOnceWith({ x: word.startIdx, y: word.line }, word.orientation, word.word);
     });
 
     it('should swap if placement fails (placement should never fails from the AI placement)', () => {
         const word = { word: 'MAJID', orientation: Orientation.Horizontal, line: 5, startIdx: 0, point: 0 };
-        const spyOnPlace = spyOn<any>(service.placeLetterService, 'place').and.returnValue(false);
+        const spyOnPlace = spyOn<any>(service.placeLetterService, 'placeCommand').and.returnValue(false);
         const spyOnSwap = spyOn<any>(service, 'swap').and.returnValue(true);
         service.place(word);
-        expect(spyOnPlace).toHaveBeenCalledOnceWith({ x: word.line, y: word.startIdx }, 'h', word.word);
+        expect(spyOnPlace).toHaveBeenCalledOnceWith({ x: word.line, y: word.startIdx }, word.orientation, word.word);
         expect(spyOnSwap).toHaveBeenCalledTimes(1);
     });
 

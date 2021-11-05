@@ -77,6 +77,7 @@ describe('JoinRoomComponent', () => {
         expect(component.shouldDisplayJoinError).toEqual(true);
         jasmine.clock().tick(ERROR_MESSAGE_DELAY);
         expect(component.shouldDisplayJoinError).toEqual(false);
+        jasmine.clock().uninstall();
     });
 
     it('should correctly compute the room item index onPageChange', () => {

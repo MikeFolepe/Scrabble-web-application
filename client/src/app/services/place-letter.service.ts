@@ -74,6 +74,7 @@ export class PlaceLetterService {
 
         if (!this.isPossible(position, orientation, wordNoAccents, indexPlayer)) {
             this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', TypeMessage.Error);
+            console.log('is possible a retourné false');
             return false;
         }
 
@@ -83,6 +84,7 @@ export class PlaceLetterService {
                 // If the placement of one letter is invalid, we erase all letters placed
                 this.handleInvalidPlacement(position, orientation, wordNoAccents, indexPlayer);
                 this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', TypeMessage.Error);
+                console.log('La methode place letter a retourné false');
                 return false;
             }
             this.updatePosition(currentPosition, orientation);

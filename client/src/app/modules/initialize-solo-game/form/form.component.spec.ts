@@ -9,7 +9,7 @@ import { AI_NAME_DATABASE } from '@app/classes/constants';
 import { StartingPlayer } from '@common/game-settings';
 import { FormComponent } from './form.component';
 
-fdescribe('FormComponent', () => {
+describe('FormComponent', () => {
     let component: FormComponent;
     let fixture: ComponentFixture<FormComponent>;
     let router: jasmine.SpyObj<Router>;

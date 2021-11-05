@@ -71,7 +71,7 @@ export class PlayerAIService {
         }
 
         // TODO: DIRE A LA CHATBOX
-
+        console.log('swap');
         return true;
     }
 

@@ -58,7 +58,7 @@ export class JoinRoomComponent implements OnInit {
             if (room.gameSettings.playersName[PlayerIndex.OWNER] === playerName) {
                 this.shouldDisplayNameError = true;
                 setTimeout(() => {
-                    this.shouldDisplayNameError = true;
+                    this.shouldDisplayNameError = false;
                 }, ERROR_MESSAGE_DELAY);
                 return;
             }

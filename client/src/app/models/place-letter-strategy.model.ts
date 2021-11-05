@@ -86,7 +86,7 @@ export class PlaceLetters {
                 orientation = Orientation.Horizontal;
             } else {
                 start = { x: word.startIdx, y: word.line };
-                orientation = Orientation.Horizontal;
+                orientation = Orientation.Vertical;
             }
 
             let scrabbleBoard: string[][] = JSON.parse(JSON.stringify(playerAiService.placeLetterService.scrabbleBoard));

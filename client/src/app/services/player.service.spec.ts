@@ -7,6 +7,7 @@ import { BOARD_COLUMNS, BOARD_ROWS, FONT_SIZE_MAX, FONT_SIZE_MIN, INDEX_INVALID,
 import { Letter } from '@app/classes/letter';
 import { PlayerAI } from '@app/models/player-ai.model';
 import { Player } from '@app/models/player.model';
+import { PlayerAIService } from './player-ia.service';
 import { PlayerService } from './player.service';
 
 describe('PlayerService', () => {
@@ -18,6 +19,7 @@ describe('PlayerService', () => {
     let player: Player;
     let service: PlayerService;
     let playerAI: PlayerAI;
+    let playerAiService: jasmine.SpyObj<PlayerAIService>;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
@@ -31,7 +33,7 @@ describe('PlayerService', () => {
         letterD = RESERVE[3];
 
         player = new Player(1, 'Player 1', [letterA]);
-        playerAI = new PlayerAI(2, 'Player AI', [letterB]);
+        playerAI = new PlayerAI(2, 'Player AI', [letterB], playerAiService);
     });
 
     it('should be created', () => {

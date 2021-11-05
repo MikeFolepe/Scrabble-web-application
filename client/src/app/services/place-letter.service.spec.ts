@@ -216,16 +216,6 @@ describe('PlaceLetterService', () => {
 
         jasmine.clock().uninstall();
     });
-    it('calling placeMethodAdapter() should call placeCommand()', async () => {
-        service['wordValidationService'].validateAllWordsOnBoard = jasmine.createSpy().and.returnValue({ validation: false, score: 0 });
-        const spy = spyOn(service, 'placeCommand').and.callThrough();
-        const start: Vec2 = { x: 7, y: 7 };
-        const orientation = Orientation.Horizontal;
-        const word = 'dab';
-        const object = { start, orientation, word, indexPlayer: 1 };
-        await service.placeMethodAdapter(object);
-        expect(spy).toHaveBeenCalled();
-    });
 
     it('placing letters in the easel with the keyboard should be valid', async () => {
         const position: Vec2 = { x: 7, y: 7 };
