@@ -74,13 +74,13 @@ p {
     flex-grow: 1;
     word-break: break-word;
     padding: 0 1em 1em;
-    
-    -ms-overflow-style: none;  /* Internet Explorer 10+ */
-    scrollbar-width: none;  /* Firefox */
+
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+    scrollbar-width: none; /* Firefox */
 }
 
-#players-list::-webkit-scrollbar { 
-    display: none;  /* Safari and Chrome */
+#players-list::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
 }
 
 .timer {
