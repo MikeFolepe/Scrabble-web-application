@@ -10,7 +10,6 @@ import { WaitingRoomComponent } from './waiting-room.component';
 describe('WaitingRoomComponent', () => {
     let component: WaitingRoomComponent;
     let fixture: ComponentFixture<WaitingRoomComponent>;
-
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [WaitingRoomComponent],
@@ -26,6 +25,12 @@ describe('WaitingRoomComponent', () => {
         spyOn(component['clientSocket'].socket, 'connect');
         spyOn(component['clientSocket'].socket, 'on');
         spyOn(component['clientSocket'].socket, 'disconnect');
+        fixture.detectChanges();
+    });
+
+    beforeEach(() => {
+        fixture = TestBed.createComponent(WaitingRoomComponent);
+        component = fixture.componentInstance;
         fixture.detectChanges();
     });
 
