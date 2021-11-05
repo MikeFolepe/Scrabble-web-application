@@ -84,6 +84,11 @@ h1 {
     font-size: 30px;
 }
 
+h1::selection {
+    color: black;
+    background-color: #b3d9ca;
+}
+
 header {
     display: flex;
     justify-content: center;

@@ -58,6 +58,11 @@ p {
     line-height: 1.6;
 }
 
+::selection {
+    color: black;
+    background-color: white;
+}
+
 #reserve-info {
     color: #eeff00;
 }
