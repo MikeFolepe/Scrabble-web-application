@@ -20,6 +20,7 @@ export class ClientSocketService {
         this.socket = io(this.urlString);
         this.initializeRoomId();
         this.initializeGameSettings();
+        this.route();
     }
 
     route(): void {
