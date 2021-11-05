@@ -5,9 +5,9 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { BOARD_COLUMNS, BOARD_ROWS, FONT_SIZE_MAX, FONT_SIZE_MIN, INDEX_INVALID, RESERVE } from '@app/classes/constants';
-import { Letter } from '@app/classes/letter';
 import { PlayerAI } from '@app/models/player-ai.model';
 import { Player } from '@app/models/player.model';
+import { Letter } from '@common/letter';
 import { Socket } from 'socket.io-client';
 import { PlayerAIService } from './player-ia.service';
 import { PlayerService } from './player.service';
@@ -22,14 +22,14 @@ describe('PlayerService', () => {
     let player: Player;
     let service: PlayerService;
     let playerAI: PlayerAI;
-    let playerAiService: jasmine.SpyObj<PlayerAIService>;
+    let playerAiService: PlayerAIService;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [HttpClientTestingModule, RouterTestingModule],
         });
         service = TestBed.inject(PlayerService);
-
+        playerAiService = TestBed.inject(PlayerAIService);
         letterA = RESERVE[0];
         letterB = RESERVE[1];
         letterC = RESERVE[2];

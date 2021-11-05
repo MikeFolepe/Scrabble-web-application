@@ -1,4 +1,4 @@
-import { Letter } from '@app/classes/letter';
+import { Letter } from '@common/letter';
 
 export class Player {
     score: number;

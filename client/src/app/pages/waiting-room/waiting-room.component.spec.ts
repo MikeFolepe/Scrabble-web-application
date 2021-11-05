@@ -28,10 +28,6 @@ describe('WaitingRoomComponent', () => {
         fixture.detectChanges();
     });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
-    });
-
     it('should redirect to home page if the Owner name is empty', () => {
         jasmine.clock().install();
 

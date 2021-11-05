@@ -77,8 +77,8 @@ export class JoinRoomComponent implements OnInit {
     }
 
     configureRooms() {
-        this.clientSocketService.socket.on('roomConfiguration', (room: Room[]) => {
-            this.rooms = room;
+        this.clientSocketService.socket.on('roomConfiguration', (rooms: Room[]) => {
+            this.rooms = rooms;
         });
     }
 }

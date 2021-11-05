@@ -1,14 +1,14 @@
 /* eslint-disable dot-notation */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
-import { TestBed } from '@angular/core/testing';
-import { GRID_CASE_SIZE, INDEX_INVALID } from '@app/classes/constants';
-import { Vec2 } from '@app/classes/vec2';
-import { BoardHandlerService } from './board-handler.service';
-import { GridService } from './grid.service';
-import { RouterTestingModule } from '@angular/router/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { TestBed } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
+import { GRID_CASE_SIZE, INDEX_INVALID } from '@app/classes/constants';
 import { TypeMessage } from '@app/classes/enum';
 import { Orientation } from '@app/classes/scrabble-board-pattern';
+import { Vec2 } from '@common/vec2';
+import { BoardHandlerService } from './board-handler.service';
+import { GridService } from './grid.service';
 
 describe('BoardHandlerService', () => {
     let service: BoardHandlerService;

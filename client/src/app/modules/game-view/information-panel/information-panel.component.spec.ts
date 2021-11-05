@@ -4,7 +4,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { INDEX_PLAYER_AI, INDEX_PLAYER_TWO, RESERVE } from '@app/classes/constants';
-import { Letter } from '@app/classes/letter';
+import { Letter } from '@common/letter';
 import { SkipTurnService } from '@app/services/skip-turn.service';
 import { GameSettings } from '@common/game-settings';
 import { Socket } from 'socket.io-client';
