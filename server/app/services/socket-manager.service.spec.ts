@@ -156,63 +156,63 @@
 //         expect(spy.called).to.equal(true);
 //     });
 
-//     // it('should call deleteGame', () => {
-//     //     const fakeSocket = {
-//     //         // eslint-disable-next-line no-unused-vars
-//     //         on: (eventName: string, callback: (roomId: string) => void) => {
-//     //             if (eventName === 'deleteGame') {
-//     //                 callback('mike1234');
-//     //                 // return;
-//     //             }
-//     //         },
-//     //         // eslint-disable-next-line @typescript-eslint/no-empty-function
-//     //         emit: () => {},
-//     //         // eslint-disable-next-line @typescript-eslint/no-empty-function
-//     //         disconnect: () => {},
-//     //     } as unknown as io.Socket;
-//     //     const spy = Sinon.spy(fakeSocket, 'disconnect');
-//     //     service['sio'] = {
-//     //         on: (eventName: string, callback: (socket: any) => void) => {
-//     //             if (eventName === 'connection') {
-//     //                 callback(fakeSocket);
-//     //             }
-//     //         },
-//     //         // eslint-disable-next-line @typescript-eslint/no-empty-function
-//     //         emit: () => {},
-//     //     } as unknown as io.Server;
+//     it('should call deleteGame', () => {
+//         const fakeSocket = {
+//             // eslint-disable-next-line no-unused-vars
+//             on: (eventName: string, callback: (roomId: string) => void) => {
+//                 if (eventName === 'deleteGame') {
+//                     callback('mike1234');
+//                     // return;
+//                 }
+//             },
+//             // eslint-disable-next-line @typescript-eslint/no-empty-function
+//             emit: () => {},
+//             // eslint-disable-next-line @typescript-eslint/no-empty-function
+//             disconnect: () => {},
+//         } as unknown as io.Socket;
+//         const spy = Sinon.spy(fakeSocket, 'disconnect');
+//         service['sio'] = {
+//             on: (eventName: string, callback: (socket: any) => void) => {
+//                 if (eventName === 'connection') {
+//                     callback(fakeSocket);
+//                 }
+//             },
+//             // eslint-disable-next-line @typescript-eslint/no-empty-function
+//             emit: () => {},
+//         } as unknown as io.Server;
 
-//     //     service.handleSockets();
-//     //     expect(spy.called).to.equal(true);
-//     //     expect(roomManagerService.deleteRoom.called).to.equal(true);
-//     // });
+//         service.handleSockets();
+//         expect(spy.called).to.equal(true);
+//         expect(roomManagerService.deleteRoom.called).to.equal(true);
+//     });
 
-//     // it('should call disconnect', () => {
-//     //     const fakeSocket = {
-//     //         // eslint-disable-next-line no-unused-vars
-//     //         on: (eventName: string, callback: () => void) => {
-//     //             if (eventName === 'disconnect') {
-//     //                 callback();
-//     //                 // return;
-//     //             }
-//     //         },
-//     //     } as unknown as io.Socket;
-//     //     service['sio'] = {
-//     //         on: (eventName: string, callback: (socket: any) => void) => {
-//     //             if (eventName === 'connection') {
-//     //                 callback(fakeSocket);
-//     //             }
-//     //         },
-//     //         // eslint-disable-next-line @typescript-eslint/no-empty-function
-//     //         emit: () => {},
+//     it('should call disconnect', () => {
+//         const fakeSocket = {
+//             // eslint-disable-next-line no-unused-vars
+//             on: (eventName: string, callback: () => void) => {
+//                 if (eventName === 'disconnect') {
+//                     callback();
+//                     // return;
+//                 }
+//             },
+//         } as unknown as io.Socket;
+//         service['sio'] = {
+//             on: (eventName: string, callback: (socket: any) => void) => {
+//                 if (eventName === 'connection') {
+//                     callback(fakeSocket);
+//                 }
+//             },
+//             // eslint-disable-next-line @typescript-eslint/no-empty-function
+//             emit: () => {},
 
-//     //         in: () => {
-//     //             return fakeIn;
-//     //         },
-//     //     } as unknown as io.Server;
+//             in: () => {
+//                 return fakeIn;
+//             },
+//         } as unknown as io.Server;
 
-//     //     service.handleSockets();
-//     //     expect(roomManagerService.deleteRoom.called).to.equal(true);
-//     // });
+//         service.handleSockets();
+//         expect(roomManagerService.deleteRoom.called).to.equal(true);
+//     });
 
 //     it('should send a message', () => {
 //         const fakeSocket = {

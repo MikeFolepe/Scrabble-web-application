@@ -4,6 +4,7 @@ import { PlayerIndex } from '@common/PlayerIndex';
 export enum State {
     Playing,
     Waiting,
+    Finish,
 }
 
 export class Room {
