@@ -1,3 +1,5 @@
+/* eslint-disable import/no-deprecated */
+/* eslint-disable sort-imports */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-explicit-any */

@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+import { DELAY_OF_DISCONNECT } from '@app/classes/constants';
+>>>>>>> dcdd8de46b7e9c43ea2110be7ccda1e398e71373
 import { RoomManagerService } from '@app/services/room-manager.service';
 import { GameSettings } from '@common/game-settings';
 import { PlayerIndex } from '@common/PlayerIndex';
@@ -41,7 +45,15 @@ export class SocketManagerService {
                 console.log('ok');
                 this.roomManagerService.addCustomer(playerName, roomId);
                 // Search the good room and set the custommer ID
+<<<<<<< HEAD
                 this.roomManagerService.setSocket(this.roomManagerService.find(roomId), socket.id);
+=======
+                const myroom = this.roomManagerService.find(roomId);
+                // Check if the roon isn't undefined
+                if (myroom !== undefined) {
+                    this.roomManagerService.setSocket(myroom, socket.id);
+                }
+>>>>>>> dcdd8de46b7e9c43ea2110be7ccda1e398e71373
                 this.roomManagerService.setState(roomId, State.Playing);
                 // block someone else entry from room selection
                 this.sio.emit('roomConfiguration', this.roomManagerService.rooms);
@@ -70,6 +82,7 @@ export class SocketManagerService {
                 socket.disconnect();
             });
 
+<<<<<<< HEAD
             socket.on('disconnect', () => {
                 const roomId = this.roomManagerService.findRoomIdOf(socket.id);
                 this.roomManagerService.deleteRoom(roomId);
@@ -77,6 +90,8 @@ export class SocketManagerService {
                 this.sio.in(roomId).emit('goToMainMenu');
             });
 
+=======
+>>>>>>> dcdd8de46b7e9c43ea2110be7ccda1e398e71373
             socket.on('sendReserve', (reserve: unknown, reserveSize: number, roomId: string) => {
                 socket.to(roomId).emit('receiveReserve', reserve, reserveSize);
             });
@@ -100,12 +115,54 @@ export class SocketManagerService {
                 socket.to(roomId).emit('receiveActions', actions);
             });
 
+            socket.on('deleteGame', (roomId: string) => {
+                this.roomManagerService.deleteRoom(roomId);
+                this.sio.emit('roomConfiguration', this.roomManagerService.rooms);
+                this.sio.socketsLeave(roomId);
+            });
+
+            // Receive the Endgame from the give up game or the natural EndGame by easel or by actions
+            socket.on('sendEndGamebyGiveUp', (isEndGame: boolean, roomId: string) => {
+                socket
+                    .to(roomId)
+                    .emit(
+                        'receiveEndGamebyGiveup',
+                        isEndGame,
+                        this.roomManagerService.getWinnerName(roomId, this.roomManagerService.findLoserIndex(socket.id)),
+                    );
+                this.sio.in(roomId).emit('stopStimer');
+                this.roomManagerService.deleteRoom(roomId);
+                this.sio.emit('roomConfiguration', this.roomManagerService.rooms);
+                this.sio.socketsLeave(roomId);
+            });
+
+            socket.on('sendRoomMessage', (message: string, roomId: string) => {
+                socket.to(roomId).emit('receiveRoomMessage', message);
+            });
+
             socket.on('sendEndGame', (isEndGame: boolean, roomId: string) => {
                 this.sio.in(roomId).emit('receiveEndGame', isEndGame);
+                this.sio.in(roomId).emit('stopStimer');
             });
             // TODO: Commoniser
             socket.on('sendPlayerTwo', (letterTable: unknown, roomId: string) => {
                 socket.to(roomId).emit('receivePlayerTwo', letterTable);
+            });
+            socket.on('disconnect', () => {
+                const roomId = this.roomManagerService.findRoomIdOf(socket.id);
+                setTimeout(() => {
+                    socket
+                        .to(roomId)
+                        .emit(
+                            'receiveEndGamebyGiveup',
+                            true,
+                            this.roomManagerService.getWinnerName(roomId, this.roomManagerService.findLoserIndex(socket.id)),
+                        );
+                    this.sio.in(roomId).emit('stopStimer');
+                    this.roomManagerService.deleteRoom(roomId);
+                    this.sio.emit('roomConfiguration', this.roomManagerService.rooms);
+                    this.sio.socketsLeave(roomId);
+                }, DELAY_OF_DISCONNECT);
             });
         });
     }

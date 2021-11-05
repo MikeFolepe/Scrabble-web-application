@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable no-unused-vars */
 /* eslint-disable dot-notation */
@@ -9,6 +10,11 @@ import { GameViewComponent } from '@app/modules/game-view/game-view/game-view.co
 import { ClientSocketService } from '@app/services/client-socket.service';
 import { GameSettings } from '@common/game-settings';
 import { Socket } from 'socket.io-client';
+=======
+import { TestBed } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
+import { ClientSocketService } from '@app/services/client-socket.service';
+>>>>>>> dcdd8de46b7e9c43ea2110be7ccda1e398e71373
 
 describe('ClientSocketService', () => {
     let service: ClientSocketService;

@@ -3,8 +3,12 @@ import { Router } from '@angular/router';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { GameSettings } from '@common/game-settings';
 import { Room } from '@common/room';
+<<<<<<< HEAD
 import { io, Socket } from 'socket.io-client';
 // import { io, Socket } from 'node_modules/socket.io-client/build/esm';
+=======
+import { io, Socket } from 'node_modules/socket.io-client/build/esm';
+>>>>>>> dcdd8de46b7e9c43ea2110be7ccda1e398e71373
 @Injectable({
     providedIn: 'root',
 })

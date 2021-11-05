@@ -1,5 +1,10 @@
+/* eslint-disable sort-imports */
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { INDEX_PLAYER_AI, INDEX_PLAYER_ONE } from '@app/classes/constants';
+<<<<<<< HEAD
+=======
+import { EndGameService } from '@app/services/end-game.service';
+>>>>>>> dcdd8de46b7e9c43ea2110be7ccda1e398e71373
 import { Letter } from '@app/classes/letter';
 import { PlayerAI } from '@app/models/player-ai.model';
 import { Player } from '@app/models/player.model';

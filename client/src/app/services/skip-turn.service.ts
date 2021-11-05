@@ -1,3 +1,4 @@
+/* eslint-disable sort-imports */
 import { Injectable } from '@angular/core';
 import { ONE_SECOND_DELAY, THREE_SECONDS_DELAY } from '@app/classes/constants';
 import { ClientSocketService } from '@app/services/client-socket.service';
@@ -24,15 +25,18 @@ export class SkipTurnService {
             this.stopTimer();
             this.startTimer();
         });
+        this.clientSocket.socket.on('stopStimer', () => {
+            this.stopTimer();
+        });
     }
     bindAiTurn(fn: () => void) {
         this.playAiTurn = fn;
     }
 
     switchTurn(): void {
-        if (this.endGameService.isEndGame) {
-            return;
-        }
+        // if (this.endGameService.isEndGame) {
+        //     return;
+        // }
         this.stopTimer();
         setTimeout(() => {
             if (this.gameSettingsService.isSoloMode) {
@@ -54,10 +58,6 @@ export class SkipTurnService {
     }
 
     startTimer(): void {
-        if (this.endGameService.isEndGame) {
-            this.stopTimer();
-            return;
-        }
         this.minutes = parseInt(this.gameSettingsService.gameSettings.timeMinute, 10);
         this.seconds = parseInt(this.gameSettingsService.gameSettings.timeSecond, 10);
         this.intervalID = setInterval(() => {
