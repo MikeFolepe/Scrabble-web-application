@@ -1,9 +1,9 @@
-import { Socket, io } from 'node_modules/socket.io-client/build/esm';
-import { GameSettings } from '@common/game-settings';
-import { GameSettingsService } from '@app/services/game-settings.service';
 import { Injectable } from '@angular/core';
-import { Room } from '@common/room';
 import { Router } from '@angular/router';
+import { GameSettingsService } from '@app/services/game-settings.service';
+import { GameSettings } from '@common/game-settings';
+import { Room } from '@common/room';
+import { io, Socket } from 'node_modules/socket.io-client/build/esm';
 @Injectable({
     providedIn: 'root',
 })

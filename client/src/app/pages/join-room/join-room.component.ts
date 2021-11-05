@@ -1,10 +1,9 @@
-/* eslint-disable sort-imports */
 import { Component, OnInit } from '@angular/core';
+import { ClientSocketService } from '@app/services/client-socket.service';
+import { DialogComponent } from '@app/modules/initialize-solo-game/dialog/dialog.component';
+import { ERROR_MESSAGE_DELAY } from '@app/classes/constants';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
-import { ERROR_MESSAGE_DELAY } from '@app/classes/constants';
-import { DialogComponent } from '@app/modules/initialize-solo-game/dialog/dialog.component';
-import { ClientSocketService } from '@app/services/client-socket.service';
 import { PlayerIndex } from '@common/PlayerIndex';
 import { Room, State } from '@common/room';
 
@@ -54,7 +53,6 @@ export class JoinRoomComponent implements OnInit {
         if (state === State.Waiting) {
             return 'En attente';
         }
-
         return 'Indisponible';
     }
 
