@@ -38,6 +38,7 @@ export class SocketManagerService {
                     socket.emit('roomAlreadyToken');
                     return;
                 }
+                console.log('ok');
                 this.roomManagerService.addCustomer(playerName, roomId);
                 // Search the good room and set the custommer ID
                 this.roomManagerService.setSocket(this.roomManagerService.find(roomId), socket.id);
@@ -102,7 +103,7 @@ export class SocketManagerService {
             socket.on('sendEndGame', (isEndGame: boolean, roomId: string) => {
                 this.sio.in(roomId).emit('receiveEndGame', isEndGame);
             });
-
+            // TODO: Commoniser
             socket.on('sendPlayerTwo', (letterTable: unknown, roomId: string) => {
                 socket.to(roomId).emit('receivePlayerTwo', letterTable);
             });
