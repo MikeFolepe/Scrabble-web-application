@@ -7,24 +7,18 @@
     margin-top: 1em;
     justify-content: flex-start;
     flex-direction: row;
-    gap: 5em;
+    gap: 2em;
 }
 
-.board-container {
+#scrabble-board {
     outline: none;
 }
 
-button {
-    height: 3em;
-    width: 8em;
-}
-
-#pass-button {
-    height: 3em;
-    width: 8em;
-}
-
-#play-button {
-    height: 3em;
-    width: 8em;
+#letter-easel {
+    display: flex;
+    width: 15vw;
+    height: 85vh;
+    justify-content: flex-start;
+    flex-direction: column;
+    gap: 2vh;
 }

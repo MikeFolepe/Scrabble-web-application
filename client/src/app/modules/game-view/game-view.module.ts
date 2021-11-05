@@ -12,7 +12,6 @@ import { PlayAreaComponent } from '@app/modules/game-view/play-area/play-area.co
 import { PlayerAIComponent } from '@app/modules/game-view/player-ai/player-ai.component';
 import { ScrabbleBoardComponent } from '@app/modules/game-view/scrabble-board/scrabble-board.component';
 import { SharedModule } from '@app/modules/shared/shared.module';
-import { SidebarComponent } from '@app/modules/game-view/sidebar/sidebar.component';
 
 @NgModule({
     declarations: [
@@ -21,7 +20,6 @@ import { SidebarComponent } from '@app/modules/game-view/sidebar/sidebar.compone
         InformationPanelComponent,
         LetterEaselComponent,
         PlayAreaComponent,
-        SidebarComponent,
         PlayerAIComponent,
         FontSizeComponent,
         ChatboxComponent,

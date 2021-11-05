@@ -1,15 +1,15 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { INDEX_PLAYER_AI, INDEX_PLAYER_ONE } from '@app/classes/constants';
-import { EndGameService } from '@app/services/end-game.service';
-import { GameSettings } from '@common/game-settings';
 import { Letter } from '@app/classes/letter';
 import { PlayerAI } from '@app/models/player-ai.model';
 import { Player } from '@app/models/player.model';
 import { ClientSocketService } from '@app/services/client-socket.service';
+import { EndGameService } from '@app/services/end-game.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { LetterService } from '@app/services/letter.service';
 import { PlayerService } from '@app/services/player.service';
 import { SkipTurnService } from '@app/services/skip-turn.service';
+import { GameSettings } from '@common/game-settings';
 
 @Component({
     selector: 'app-information-panel',
@@ -53,6 +53,15 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
 
     initializeFirstTurn(): void {
         this.skipTurn.isTurn = Boolean(this.gameSettings.startingPlayer.valueOf());
+    }
+
+    displaySeconds(): string {
+        let secondsFormatted: string;
+        const seconds = this.skipTurn.seconds;
+        secondsFormatted = seconds > 0 ? seconds.toString() : '0';
+        const BIGGER_NUMBER_ONE_DIGIT = 9;
+        if (seconds <= BIGGER_NUMBER_ONE_DIGIT) secondsFormatted = '0' + secondsFormatted;
+        return secondsFormatted;
     }
 
     ngOnDestroy(): void {

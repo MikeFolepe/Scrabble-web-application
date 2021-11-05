@@ -1,5 +1,53 @@
-.container {
-    height: 90vh;
+#container {
+    height: 100vh;
     width: 100vw;
+    display: flex;
+    border: 10px solid black;
+    border-radius: 6px;
+}
+
+#side-bar {
+    display: flex;
+    height: 88vh;
+    width: 20%;
+    flex-direction: column;
+    margin: 1em;
+    justify-content: flex-start;
+    gap: 1em;
+    border: 8px solid black;
+    border-radius: 6px;
+}
+
+#information-panel {
+    height: 100%;
+    width: 100%;
+}
+
+#buttons {
+    height: 30%;
+    border: 8px solid black;
+    border-radius: 6px;
+}
+
+#pass-button {
+    height: 3em;
+    width: 8em;
+}
+
+#play-button {
+    height: 3em;
+    width: 8em;
+}
+
+#play-area {
+    height: 100%;
+    width: 50%;
+    border: 8px solid green;
+    border-radius: 6px;
+}
+
+#chatbox {
+    height: 100%;
+    width: 30%;
     display: flex;
 }
