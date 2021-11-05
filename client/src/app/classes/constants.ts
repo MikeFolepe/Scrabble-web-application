@@ -1,6 +1,13 @@
 import { Letter } from '@app/classes/letter';
 // eslint-disable-next-line no-restricted-imports
 import dictionaryData from '../../assets/dictionary.json';
+
+export const WAITING_AFTER_PLAYED = 5000;
+export const DELAY_BEFORE_PLAY = 3000;
+export const NO_PLAYABLE_WORD = -1;
+export const INVALID = -1;
+export const MAX_DIMENSIONS = 2;
+
 export const DEFAULT_WIDTH = 750;
 export const DEFAULT_HEIGHT = 750;
 export const ONE_SECOND_TIME = 1000;

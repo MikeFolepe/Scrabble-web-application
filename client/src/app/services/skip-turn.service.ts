@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ONE_SECOND_TIME } from '@app/classes/constants';
+import { DELAY_BEFORE_PLAY, INDEX_PLAYER_AI, ONE_SECOND_TIME } from '@app/classes/constants';
 import { PlayerAI } from '@app/models/player-ai.model';
 import { EndGameService } from '@app/services/end-game.service';
 import { GameSettingsService } from './game-settings.service';
@@ -26,11 +26,10 @@ export class SkipTurnService {
             if (this.isTurn) {
                 this.isTurn = false;
                 this.startTimer();
-                const playerAi = this.playerService.players[1] as PlayerAI;
-                // TODO: enlever nombre magique
+                const playerAi = this.playerService.players[INDEX_PLAYER_AI] as PlayerAI;
                 setTimeout(() => {
                     playerAi.play();
-                }, 3000);
+                }, DELAY_BEFORE_PLAY);
             } else {
                 this.isTurn = true;
                 this.startTimer();

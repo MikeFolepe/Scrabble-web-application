@@ -1,17 +1,20 @@
-/* eslint-disable @typescript-eslint/member-ordering */
-/* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable sort-imports */
-import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSITION_X, DICTIONARY } from '@app/classes/constants';
+import {
+    BOARD_COLUMNS,
+    BOARD_ROWS,
+    CENTRAL_CASE_POSITION_X,
+    DICTIONARY,
+    INDEX_PLAYER_AI,
+    INVALID,
+    MAX_DIMENSIONS,
+    NO_PLAYABLE_WORD,
+    WAITING_AFTER_PLAYED
+} from '@app/classes/constants';
 import { Range } from '@app/classes/range';
 import { BoardPattern, Orientation, PatternInfo, PossibleWords } from '@app/classes/scrabble-board-pattern';
 import { Vec2 } from '@app/classes/vec2';
 import { PlayerAIService } from '@app/services/player-ia.service';
 import { PlayerAI } from './player-ai.model';
-
-// TODO: caser ces variables qquepart
-const NO_PLAYABLE_WORD = -1;
-const INVALID = -1;
-const MAX_DIMENSIONS = 2;
 export class PlaceLetters {
     dictionary: string[];
     private board: string[][][];
@@ -21,7 +24,7 @@ export class PlaceLetters {
     }
 
     execute(playerAiService: PlayerAIService): void {
-        const playerAi = playerAiService.playerService.players[1] as PlayerAI;
+        const playerAi = playerAiService.playerService.players[INDEX_PLAYER_AI] as PlayerAI;
         const isFirstRound = playerAiService.placeLetterService.isFirstRound;
         const scrabbleBoard = playerAiService.placeLetterService.scrabbleBoard;
 
@@ -48,9 +51,9 @@ export class PlaceLetters {
         setTimeout(() => {
             playerAiService.debugService.receiveAIDebugPossibilities(allPossibleWords.concat(matchingPointingRangeWords));
             playerAiService.endGameService.actionsLog.push('placer');
+            // TODO: DIRE A LA CHATBOX
             playerAiService.skipTurnService.switchTurn();
-            // TODO: enlever nombre magique
-        }, 5000);
+        }, WAITING_AFTER_PLAYED);
     }
 
     private computeResults(allPossibleWords: PossibleWords[], matchingPointingRangeWords: PossibleWords[], playerAiService: PlayerAIService): void {

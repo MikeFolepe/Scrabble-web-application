@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable sort-imports */
 import { Injectable } from '@angular/core';
 import { EASEL_SIZE, MIN_RESERVE_SIZE_TO_SWAP, RESERVE } from '@app/classes/constants';
@@ -71,9 +70,7 @@ export class PlayerAIService {
             playerAi.letterTable[index] = this.letterService.getRandomLetter();
         }
 
-        // TODO: arranger l'affichage
-        // this.endGameService.actionsLog.push('echanger');
-        // this.chatBoxService.displayMessageByType('joueur virtuel echange', 'opponent');
+        // TODO: DIRE A LA CHATBOX
 
         return true;
     }
