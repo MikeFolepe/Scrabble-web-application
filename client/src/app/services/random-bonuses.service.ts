@@ -1,5 +1,5 @@
-import { BONUS_POSITIONS } from '@app/classes/constants';
 import { Injectable } from '@angular/core';
+import { BONUS_POSITIONS } from '@app/classes/constants';
 
 @Injectable({
     providedIn: 'root',
@@ -21,7 +21,7 @@ export class RandomBonusesService {
     }
 
     // Put into the bonus map the shuffled values obtained from the array of bonuses made in the previous method.
-    shuffleBonusesPositions(): Map<string, string> {
+    shuffleBonusPositions(): Map<string, string> {
         const bonuses = this.shuffleBonuses();
         this.bonusPositions.forEach((bonus: string, position: string) => {
             this.bonusPositions.set(position, bonuses.pop() as string);

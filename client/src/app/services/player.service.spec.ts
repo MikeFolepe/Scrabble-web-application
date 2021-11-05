@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable max-lines */
 /* eslint-disable dot-notation */
 import { HttpClientTestingModule } from '@angular/common/http/testing';
@@ -7,6 +8,8 @@ import { BOARD_COLUMNS, BOARD_ROWS, FONT_SIZE_MAX, FONT_SIZE_MIN, INDEX_INVALID,
 import { Letter } from '@app/classes/letter';
 import { PlayerAI } from '@app/models/player-ai.model';
 import { Player } from '@app/models/player.model';
+import { Socket } from 'socket.io-client';
+import { PlayerAIService } from './player-ia.service';
 import { PlayerService } from './player.service';
 
 describe('PlayerService', () => {
@@ -14,10 +17,12 @@ describe('PlayerService', () => {
     let letterB: Letter;
     let letterC: Letter;
     let letterD: Letter;
+    let whiteLetter: Letter;
 
     let player: Player;
     let service: PlayerService;
     let playerAI: PlayerAI;
+    let playerAiService: jasmine.SpyObj<PlayerAIService>;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
@@ -29,9 +34,10 @@ describe('PlayerService', () => {
         letterB = RESERVE[1];
         letterC = RESERVE[2];
         letterD = RESERVE[3];
+        whiteLetter = RESERVE[26];
 
         player = new Player(1, 'Player 1', [letterA]);
-        playerAI = new PlayerAI(2, 'Player AI', [letterB]);
+        playerAI = new PlayerAI(2, 'Player AI', [letterB], playerAiService);
     });
 
     it('should be created', () => {
@@ -51,6 +57,20 @@ describe('PlayerService', () => {
         expect(service['players']).toHaveSize(0);
     });
 
+    it('should update the score when receiving response from the server', () => {
+        service['players'].push(player);
+        service['clientSocketService'].socket = {
+            on: (eventName: string, callback: (score: number, indexPlayer: number) => void) => {
+                if (eventName === 'receiveScoreInfo') {
+                    callback(50, 0);
+                }
+            },
+        } as unknown as Socket;
+
+        service.receiveScoreFromServer();
+        expect(service.players[0].score).toEqual(50);
+    });
+
     it('should add players when addPlayer() is called', () => {
         service.addPlayer(player);
         expect(service['players']).toHaveSize(1);
@@ -66,15 +86,15 @@ describe('PlayerService', () => {
             ['A', 'B', 'C', 'D'],
         ];
         service.updateScrabbleBoard(testBoard);
-        expect(service.scrabbleBoard).toEqual(testBoard);
+        expect(service['scrabbleBoard']).toEqual(testBoard);
     });
 
     it('should change font size when updateFontSize() is called', () => {
-        service.scrabbleBoard = []; // Initializes the array with empty letters
+        service['scrabbleBoard'] = []; // Initializes the array with empty letters
         for (let i = 0; i < BOARD_ROWS; i++) {
-            service.scrabbleBoard[i] = [];
+            service['scrabbleBoard'][i] = [];
             for (let j = 0; j < BOARD_COLUMNS; j++) {
-                service.scrabbleBoard[i][j] = '';
+                service['scrabbleBoard'][i][j] = '';
             }
         }
         const newFontSize = 18;
@@ -83,11 +103,11 @@ describe('PlayerService', () => {
     });
 
     it('should give font size a valid value', () => {
-        service.scrabbleBoard = []; // Initializes the array with empty letters
+        service['scrabbleBoard'] = []; // Initializes the array with empty letters
         for (let i = 0; i < BOARD_ROWS; i++) {
-            service.scrabbleBoard[i] = [];
+            service['scrabbleBoard'][i] = [];
             for (let j = 0; j < BOARD_COLUMNS; j++) {
-                service.scrabbleBoard[i][j] = '';
+                service['scrabbleBoard'][i][j] = '';
             }
         }
         const tooSmallValue = -2;
@@ -119,20 +139,20 @@ describe('PlayerService', () => {
     });
 
     it('should call the right times functions that updates the grid font size when updateGridFontSize() is called', () => {
-        service.scrabbleBoard = []; // Initializes the array with empty letters
+        service['scrabbleBoard'] = []; // Initializes the array with empty letters
         let numberLettersOnGrid = 0;
         for (let i = 0; i < BOARD_ROWS; i++) {
-            service.scrabbleBoard[i] = [];
+            service['scrabbleBoard'][i] = [];
             for (let j = 0; j < BOARD_COLUMNS; j++) {
                 // To generate a grid with some letters anywhere on it
                 // eslint-disable-next-line @typescript-eslint/no-magic-numbers
                 if ((i + j) % 11 === 0) {
-                    service.scrabbleBoard[i][j] = 'X';
+                    service['scrabbleBoard'][i][j] = 'X';
                 } else {
-                    service.scrabbleBoard[i][j] = '';
+                    service['scrabbleBoard'][i][j] = '';
                 }
             }
-            numberLettersOnGrid += service.scrabbleBoard[i].filter(Boolean).length;
+            numberLettersOnGrid += service['scrabbleBoard'][i].filter(Boolean).length;
         }
         // Return value is meaningless because it's only used to be called as a parameter
         // for the two following functions. And the results of these functions are meaningless regarding this test
@@ -246,9 +266,10 @@ describe('PlayerService', () => {
 
     it('should add letters when addLetterToEasel() is called', () => {
         service['players'].push(player);
-        const expectedEasel = [letterA, letterB, letterD];
+        const expectedEasel = [letterA, letterB, letterD, whiteLetter];
         service.addLetterToEasel('b', 0);
         service.addLetterToEasel('d', 0);
+        service.addLetterToEasel('*', 0);
         expect(service['players'][0].letterTable).toEqual(expectedEasel);
     });
 

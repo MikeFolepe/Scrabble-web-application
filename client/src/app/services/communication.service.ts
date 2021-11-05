@@ -10,8 +10,11 @@ import { Message } from '@app/classes/message';
 })
 export class CommunicationService {
     private readonly baseUrl: string = environment.serverUrl;
-    private wordsToValidate: string[] = [];
-    constructor(private readonly http: HttpClient) {}
+    private wordsToValidate: string[];
+
+    constructor(private readonly http: HttpClient) {
+        this.wordsToValidate = [];
+    }
 
     basicGet(): Observable<Message> {
         return this.http.get<Message>(`${this.baseUrl}/example`).pipe(catchError(this.handleError<Message>('basicGet')));

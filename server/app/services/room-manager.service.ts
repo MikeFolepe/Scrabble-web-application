@@ -115,7 +115,7 @@ export class RoomManagerService {
         return room.state === State.Playing;
     }
 
-    find(roomId: string): Room | undefined {
-        return this.rooms.find((room) => room.id === roomId);
+    find(roomId: string): Room {
+        return this.rooms.find((room) => room.id === roomId) as Room;
     }
 }

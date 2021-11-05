@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { ClientSocketService } from '@app/services/client-socket.service';
-import { DialogComponent } from '@app/modules/initialize-solo-game/dialog/dialog.component';
-import { ERROR_MESSAGE_DELAY } from '@app/classes/constants';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
+import { ERROR_MESSAGE_DELAY } from '@app/classes/constants';
+import { DialogComponent } from '@app/modules/initialize-solo-game/dialog/dialog.component';
+import { ClientSocketService } from '@app/services/client-socket.service';
 import { PlayerIndex } from '@common/PlayerIndex';
 import { Room, State } from '@common/room';
 
@@ -14,16 +14,17 @@ import { Room, State } from '@common/room';
     styleUrls: ['./join-room.component.scss'],
 })
 export class JoinRoomComponent implements OnInit {
-    rooms: Room[] = [];
+    rooms: Room[];
     pageSize: number;
-    startIdx: number;
-    isNameValid: boolean;
-    isRoomStillAvailable: boolean;
+    roomItemIndex: number;
+    shouldDisplayNameError: boolean;
+    shouldDisplayJoinError: boolean;
 
     constructor(private clientSocketService: ClientSocketService, public dialog: MatDialog) {
-        this.isNameValid = true;
-        this.isRoomStillAvailable = true;
-        this.startIdx = 0;
+        this.rooms = [];
+        this.shouldDisplayNameError = false;
+        this.shouldDisplayJoinError = false;
+        this.roomItemIndex = 0;
         this.pageSize = 2; // 2 rooms per page
         this.clientSocketService.socket.connect();
         this.clientSocketService.socket.emit('getRoomsConfiguration');
@@ -31,22 +32,13 @@ export class JoinRoomComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.clientSocketService.socket.on('roomConfiguration', (room: Room[]) => {
-            this.rooms = room;
-        });
-
-        this.clientSocketService.socket.on('roomAlreadyToken', () => {
-            this.isRoomStillAvailable = false;
-            setTimeout(() => {
-                this.isRoomStillAvailable = true;
-            }, ERROR_MESSAGE_DELAY);
-            return;
-        });
+        this.configureRooms();
+        this.handleRoomUnavailability();
     }
 
     onPageChange(event: PageEvent) {
         // set the offset for the view
-        this.startIdx = event.pageSize * event.pageIndex;
+        this.roomItemIndex = event.pageSize * event.pageIndex;
     }
 
     computeRoomState(state: State): string {
@@ -64,13 +56,29 @@ export class JoinRoomComponent implements OnInit {
             if (playerName === null) return;
             // if names are equals
             if (room.gameSettings.playersName[PlayerIndex.OWNER] === playerName) {
-                this.isNameValid = false;
+                this.shouldDisplayNameError = true;
                 setTimeout(() => {
-                    this.isNameValid = true;
+                    this.shouldDisplayNameError = false;
                 }, ERROR_MESSAGE_DELAY);
                 return;
             }
             this.clientSocketService.socket.emit('newRoomCustomer', playerName, room.id);
+        });
+    }
+
+    handleRoomUnavailability() {
+        this.clientSocketService.socket.on('roomAlreadyToken', () => {
+            this.shouldDisplayJoinError = true;
+            setTimeout(() => {
+                this.shouldDisplayJoinError = false;
+            }, ERROR_MESSAGE_DELAY);
+            return;
+        });
+    }
+
+    configureRooms() {
+        this.clientSocketService.socket.on('roomConfiguration', (room: Room[]) => {
+            this.rooms = room;
         });
     }
 }

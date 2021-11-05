@@ -13,6 +13,7 @@ export class GameViewComponent implements OnInit {
         private gridService: GridService,
         private gameSettingsService: GameSettingsService,
     ) {}
+
     ngOnInit() {
         const mapBonus = new Map<string, string>();
         JSON.parse(this.gameSettingsService.gameSettings.bonusPositions).map((element: string[]) => {

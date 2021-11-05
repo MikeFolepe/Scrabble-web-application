@@ -23,7 +23,6 @@ export class SendMessageService {
     displayMessageByType(message: string, typeMessage: TypeMessage) {
         this.message = message;
         this.typeMessage = typeMessage;
-        // TODO Switch case by command
         if (this.typeMessage === TypeMessage.Player) {
             this.sendMessageToOpponent(this.message, this.gameSettingsService.gameSettings.playersName[0]);
         }
@@ -34,15 +33,15 @@ export class SendMessageService {
         this.clientSocketService.socket.emit('sendRoomMessage', 'Message de ' + myName + ' : ' + message, this.clientSocketService.roomId);
     }
 
-    receiveMessageFromOpponent() {
-        this.clientSocketService.socket.on('receiveRoomMessage', (message: string) => {
-            this.sendOpponentMessage(message);
-        });
-    }
-
     sendOpponentMessage(opponentMessage: string) {
         this.typeMessage = TypeMessage.Opponent;
         this.message = opponentMessage;
         this.displayMessage();
+    }
+
+    receiveMessageFromOpponent() {
+        this.clientSocketService.socket.on('receiveRoomMessage', (message: string) => {
+            this.sendOpponentMessage(message);
+        });
     }
 }

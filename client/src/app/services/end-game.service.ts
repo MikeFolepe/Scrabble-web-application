@@ -23,17 +23,31 @@ export class EndGameService {
         public debugService: DebugService,
         public gameSettingsService: GameSettingsService,
     ) {
-        this.clientSocketService.socket.on('receiveActions', (actionsLog: string[]) => {
-            this.actionsLog = actionsLog;
-        });
+        this.clearAllData();
+        this.actionsLog = [];
+        this.isEndGame = false;
+
+        this.receiveEndGameFromServer();
+        this.receiveActionsFromServer();
+        this.receiveEndGameByGiveUp();
+    }
+
+    receiveEndGameFromServer(): void {
         this.clientSocketService.socket.on('receiveEndGame', (isEndGame: boolean) => {
             this.isEndGame = isEndGame;
         });
+    }
+    receiveEndGameByGiveUp(): void {
         this.clientSocketService.socket.on('receiveEndGamebyGiveup', (isEndGamebyGiveup: boolean, winnerName: string) => {
             this.isEndGamebyGiveUp = isEndGamebyGiveup;
             this.winnerNamebyGiveUp = winnerName;
         });
-        this.clearAllData();
+    }
+
+    receiveActionsFromServer(): void {
+        this.clientSocketService.socket.on('receiveActions', (actionsLog: string[]) => {
+            this.actionsLog = actionsLog;
+        });
     }
 
     getWinnerName(): string {

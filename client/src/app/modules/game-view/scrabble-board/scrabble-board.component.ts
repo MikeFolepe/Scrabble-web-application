@@ -7,7 +7,7 @@ import { GridService } from '@app/services/grid.service';
     templateUrl: './scrabble-board.component.html',
     styleUrls: ['./scrabble-board.component.scss'],
 })
-export class ScrabbleBoardComponent implements /* OnInit,*/ AfterViewInit {
+export class ScrabbleBoardComponent implements AfterViewInit {
     @ViewChild('gridCanvas', { static: false }) private boardLayer!: ElementRef<HTMLCanvasElement>;
     @ViewChild('gridCanvasLettersLayer', { static: false }) private lettersLayer!: ElementRef<HTMLCanvasElement>;
     @ViewChild('gridCanvasPlacementLayer', { static: false }) private placementLayer!: ElementRef<HTMLCanvasElement>;

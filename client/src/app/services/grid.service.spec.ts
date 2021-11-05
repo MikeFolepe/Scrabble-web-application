@@ -9,15 +9,15 @@ import { Orientation } from '@app/classes/scrabble-board-pattern';
 
 describe('GridService', () => {
     let service: GridService;
-    let ctxStub: CanvasRenderingContext2D;
+    let contextStub: CanvasRenderingContext2D;
 
     beforeEach(() => {
         TestBed.configureTestingModule({});
         service = TestBed.inject(GridService);
-        ctxStub = CanvasTestHelper.createCanvas(DEFAULT_WIDTH, DEFAULT_HEIGHT).getContext('2d') as CanvasRenderingContext2D;
-        service.gridContextBoardLayer = ctxStub;
-        service.gridContextLettersLayer = ctxStub;
-        service.gridContextPlacementLayer = ctxStub;
+        contextStub = CanvasTestHelper.createCanvas(DEFAULT_WIDTH, DEFAULT_HEIGHT).getContext('2d') as CanvasRenderingContext2D;
+        service.gridContextBoardLayer = contextStub;
+        service.gridContextLettersLayer = contextStub;
+        service.gridContextPlacementLayer = contextStub;
     });
 
     it('should be created', () => {
@@ -95,8 +95,8 @@ describe('GridService', () => {
     });
 
     it('should set grid context', () => {
-        service.setGridContext(ctxStub);
-        expect(service.gridContextBoardLayer).toBe(ctxStub);
+        service.setGridContext(contextStub);
+        expect(service.gridContextBoardLayer).toBe(contextStub);
     });
 
     it('drawArrow should call stroke and fill on the canvas', () => {
