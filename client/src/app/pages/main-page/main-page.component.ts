@@ -16,6 +16,7 @@ export class MainPageComponent {
     constructor(public gameSettingsService: GameSettingsService, private router: Router) {}
 
     route(): void {
+        console.log('router traverse le form');
         switch (this.selectedGameMode) {
             case this.gameModes[0]: {
                 this.gameSettingsService.isSoloMode = true;
