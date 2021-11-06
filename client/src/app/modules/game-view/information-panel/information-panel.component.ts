@@ -72,6 +72,15 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
         this.skipTurnService.isTurn = Boolean(this.gameSettings.startingPlayer.valueOf());
     }
 
+    displaySeconds(): string {
+        let secondsFormatted: string;
+        const seconds = this.skipTurnService.seconds;
+        secondsFormatted = seconds > 0 ? seconds.toString() : '0';
+        const BIGGER_NUMBER_ONE_DIGIT = 9;
+        if (seconds <= BIGGER_NUMBER_ONE_DIGIT) secondsFormatted = '0' + secondsFormatted;
+        return secondsFormatted;
+    }
+
     ngOnDestroy(): void {
         this.playerService.clearPlayers();
         this.skipTurnService.stopTimer();

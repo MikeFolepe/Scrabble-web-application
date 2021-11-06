@@ -14,7 +14,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 describe('LetterEaselComponent', () => {
     let component: LetterEaselComponent;
     let fixture: ComponentFixture<LetterEaselComponent>;
-    let getLettersSpy: any;
+    let getLettersSpy: jasmine.Spy<(indexPlayer: number) => Letter[]>;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
@@ -53,14 +53,6 @@ describe('LetterEaselComponent', () => {
         component.ngOnInit();
         expect(updateSpy).toHaveBeenCalled();
         expect(getLettersSpy).toHaveBeenCalled();
-    });
-
-    it('should update component fontSize and playerService fontSize with new fontSize', () => {
-        spyOn(component['playerService'], 'updateFontSize');
-        const fontSize = 10;
-        component.handleFontSizeEvent(fontSize);
-        expect(component.fontSize).toEqual(fontSize);
-        expect(component['playerService'].updateFontSize).toHaveBeenCalled();
     });
 
     it('left clicking on a letter in the easel should call onLeftClick()', () => {

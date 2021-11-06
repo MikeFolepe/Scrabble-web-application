@@ -1,5 +1,5 @@
 import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
-import { DEFAULT_FONT_SIZE, EASEL_SIZE, INDEX_PLAYER_ONE } from '@app/classes/constants';
+import { EASEL_SIZE, INDEX_PLAYER_ONE } from '@app/classes/constants';
 import { TypeMessage } from '@app/classes/enum';
 import { BoardHandlerService } from '@app/services/board-handler.service';
 import { EndGameService } from '@app/services/end-game.service';
@@ -19,11 +19,10 @@ import { Letter } from '@common/letter';
 export class LetterEaselComponent implements OnInit {
     @ViewChild('easel') easel: ElementRef;
 
-    letterEaselTab: Letter[];
-    fontSize: number;
+    letterEaselTab: Letter[] = [];
 
     constructor(
-        private playerService: PlayerService,
+        public playerService: PlayerService,
         private letterService: LetterService,
         private swapLetterService: SwapLetterService,
         private boardHandlerService: BoardHandlerService,
@@ -33,7 +32,6 @@ export class LetterEaselComponent implements OnInit {
         private endGameService: EndGameService,
     ) {
         this.letterEaselTab = [];
-        this.fontSize = DEFAULT_FONT_SIZE;
     }
 
     @HostListener('document:click', ['$event'])
@@ -80,11 +78,6 @@ export class LetterEaselComponent implements OnInit {
 
     onEaselClick(): void {
         this.boardHandlerService.cancelPlacement();
-    }
-
-    handleFontSizeEvent(fontSizeEvent: number): void {
-        this.fontSize = fontSizeEvent;
-        this.playerService.updateFontSize(this.fontSize);
     }
 
     swap(): void {
