@@ -20,7 +20,7 @@ export class SendMessageService {
         this.displayMessage = fn;
     }
 
-    displayMessageByType(message: string, typeMessage: TypeMessage) {
+    displayMessageByType(message: string, typeMessage: TypeMessage): void {
         this.message = message;
         this.typeMessage = typeMessage;
         if (this.typeMessage === TypeMessage.Player) {
@@ -29,17 +29,17 @@ export class SendMessageService {
         this.displayMessage();
     }
 
-    sendMessageToOpponent(message: string, myName: string) {
+    sendMessageToOpponent(message: string, myName: string): void {
         this.clientSocketService.socket.emit('sendRoomMessage', 'Message de ' + myName + ' : ' + message, this.clientSocketService.roomId);
     }
 
-    sendOpponentMessage(opponentMessage: string) {
+    sendOpponentMessage(opponentMessage: string): void {
         this.typeMessage = TypeMessage.Opponent;
         this.message = opponentMessage;
         this.displayMessage();
     }
 
-    receiveMessageFromOpponent() {
+    receiveMessageFromOpponent(): void {
         this.clientSocketService.socket.on('receiveRoomMessage', (message: string) => {
             this.sendOpponentMessage(message);
         });

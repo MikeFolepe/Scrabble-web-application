@@ -1,7 +1,8 @@
 import { AIStrategy } from '@app/classes/enum';
 import { Letter } from '@common/letter';
-// eslint-disable-next-line no-restricted-imports
 import dictionaryData from '@common/dictionary.json';
+
+export const WHITE_LETTER_POSITION = 26;
 
 export const DELAY_TO_PASS_TURN = 5000;
 export const DELAY_BEFORE_PLAY = 3000;
@@ -53,6 +54,8 @@ export const DOUBLE_LETTER = 2;
 export const MIN_RESERVE_SIZE_TO_SWAP = 7;
 
 export const MAX_SOLUTION = 3;
+
+export const COLOR_BLACK = 'black';
 
 export const AI_NAME_DATABASE: string[] = ['Mister_Bucky', 'Mister_Samy', 'Miss_Betty'];
 

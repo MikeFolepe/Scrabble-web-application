@@ -1,4 +1,3 @@
-/* eslint-disable sort-imports */
 import { Injectable } from '@angular/core';
 import { DELAY_BEFORE_PLAY, INDEX_PLAYER_AI, ONE_SECOND_DELAY, THREE_SECONDS_DELAY } from '@app/classes/constants';
 import { PlayerAI } from '@app/models/player-ai.model';
@@ -29,19 +28,20 @@ export class SkipTurnService {
         this.receiveStopFromServer();
     }
 
-    receiveNewTurn() {
+    receiveNewTurn(): void {
         this.clientSocket.socket.on('turnSwitched', (turn: boolean) => {
             this.isTurn = turn;
         });
     }
 
-    receiveStartFromServer() {
+    receiveStartFromServer(): void {
         this.clientSocket.socket.on('startTimer', () => {
             this.stopTimer();
             this.startTimer();
         });
     }
-    receiveStopFromServer() {
+
+    receiveStopFromServer(): void {
         this.clientSocket.socket.on('stopTimer', () => {
             this.stopTimer();
         });

@@ -17,6 +17,6 @@ export interface PossibleWords {
     word: string;
     orientation: Orientation;
     line: number;
-    startIdx: number;
+    startIndex: number;
     point: number;
 }

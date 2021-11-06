@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { EASEL_SIZE, INDEX_PLAYER_AI, MIN_RESERVE_SIZE_TO_SWAP, RESERVE, DELAY_TO_PASS_TURN } from '@app/classes/constants';
+import { DELAY_TO_PASS_TURN, EASEL_SIZE, INDEX_PLAYER_AI, MIN_RESERVE_SIZE_TO_SWAP, RESERVE } from '@app/classes/constants';
+import { TypeMessage } from '@app/classes/enum';
 import { Range } from '@app/classes/range';
-import { Board, Earning } from '@app/classes/scrabble-board';
+import { Earning } from '@app/classes/earning';
 import { Orientation, PossibleWords } from '@app/classes/scrabble-board-pattern';
 import { Vec2 } from '@common/vec2';
 import { PlayerAI } from '@app/models/player-ai.model';
@@ -11,13 +12,10 @@ import { EndGameService } from './end-game.service';
 import { LetterService } from './letter.service';
 import { PlaceLetterService } from './place-letter.service';
 import { PlayerService } from './player.service';
+import { RandomBonusesService } from './random-bonuses.service';
+import { SendMessageService } from './send-message.service';
 import { SkipTurnService } from './skip-turn.service';
 import { WordValidationService } from './word-validation.service';
-import { SendMessageService } from './send-message.service';
-import { TypeMessage } from '@app/classes/enum';
-
-const ROW_OFFSET = 65;
-const COLUMN_OFFSET = 1;
 
 @Injectable({
     providedIn: 'root',
@@ -34,6 +32,7 @@ export class PlayerAIService {
         public chatBoxService: ChatboxService,
         public debugService: DebugService,
         public sendMessageService: SendMessageService,
+        public randomBonusService: RandomBonusesService,
     ) {}
 
     skip(): void {
@@ -83,8 +82,8 @@ export class PlayerAIService {
         return true;
     }
 
-    async place(word: PossibleWords) {
-        const startPos = word.orientation ? { x: word.line, y: word.startIdx } : { x: word.startIdx, y: word.line };
+    async place(word: PossibleWords): Promise<void> {
+        const startPos = word.orientation ? { x: word.line, y: word.startIndex } : { x: word.startIndex, y: word.line };
         const isValid = await this.placeLetterService.placeCommand(startPos, word.orientation, word.word);
 
         if (isValid) {
@@ -100,12 +99,12 @@ export class PlayerAIService {
         this.swap();
     }
 
-    placeWordOnBoard(scrabbleBoard: string[][], word: string, start: Vec2, orientation: string) {
-        for (let j = 0; orientation === 'h' && j < word.length; j++) {
+    placeWordOnBoard(scrabbleBoard: string[][], word: string, start: Vec2, orientation: Orientation): string[][] {
+        for (let j = 0; orientation === Orientation.Horizontal && j < word.length; j++) {
             scrabbleBoard[start.x][start.y + j] = word[j];
         }
 
-        for (let i = 0; orientation === 'v' && i < word.length; i++) {
+        for (let i = 0; orientation === Orientation.Vertical && i < word.length; i++) {
             scrabbleBoard[start.x + i][start.y] = word[i];
         }
 
@@ -113,13 +112,17 @@ export class PlayerAIService {
     }
 
     sortDecreasing = (word1: PossibleWords, word2: PossibleWords) => {
-        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-        if (word1.point > word2.point) return -1;
-        if (word2.point < word1.point) return 1;
-        return 0;
+        const EQUAL_SORT_NUMBER = 0;
+        const BIGGER_SORT_NUMBER = 1;
+        const SMALLER_SORT_NUMBER = -1;
+
+        if (word1.point === word2.point) return EQUAL_SORT_NUMBER;
+        return word1.point < word2.point ? BIGGER_SORT_NUMBER : SMALLER_SORT_NUMBER;
     };
 
-    calculatePoints(allPossibleWords: PossibleWords[], scrabbleBoard: string[][]) {
+    calculatePoints(allPossibleWords: PossibleWords[], scrabbleBoard: string[][]): void {
+        const rowOffset = 65;
+        const columnOffset = 1;
         for (const word of allPossibleWords) {
             let totalPoint = 0;
             let wordFactor = 1;
@@ -128,14 +131,14 @@ export class PlayerAIService {
                 let matrixPos: Vec2;
 
                 if (word.orientation === Orientation.Horizontal) {
-                    key = String.fromCharCode(word.line + ROW_OFFSET) + (word.startIdx + COLUMN_OFFSET + i).toString();
-                    matrixPos = { x: word.line, y: word.startIdx + i };
+                    key = String.fromCharCode(word.line + rowOffset) + (word.startIndex + columnOffset + i).toString();
+                    matrixPos = { x: word.line, y: word.startIndex + i };
                 } else {
-                    key = String.fromCharCode(word.startIdx + ROW_OFFSET + i) + (word.line + COLUMN_OFFSET).toString();
-                    matrixPos = { x: word.startIdx + i, y: word.line };
+                    key = String.fromCharCode(word.startIndex + rowOffset + i) + (word.line + columnOffset).toString();
+                    matrixPos = { x: word.startIndex + i, y: word.line };
                 }
                 // Letter value : A = 1, B = 3, C = 3 ...etc
-                const letterContribution: number = RESERVE[word.word[i].toUpperCase().charCodeAt(0) - ROW_OFFSET].points;
+                const letterContribution: number = RESERVE[word.word[i].toUpperCase().charCodeAt(0) - rowOffset].points;
                 // Total earning for the letter (word[i]) at position (x, y)
                 const earning: Earning = this.computeCell(key, letterContribution, matrixPos, scrabbleBoard);
                 totalPoint += earning.letterPoint;
@@ -145,7 +148,7 @@ export class PlayerAIService {
         }
     }
 
-    sortDecreasingPoints(allPossibleWords: PossibleWords[]) {
+    sortDecreasingPoints(allPossibleWords: PossibleWords[]): void {
         allPossibleWords.sort(this.sortDecreasing);
     }
 
@@ -163,7 +166,7 @@ export class PlayerAIService {
         // compute the earning (in letterFactor and wordFactor) of the cell at matrixPox
         let letterPoint = 0;
         let wordFactor = 1;
-        switch (Board[keyCell as keyof typeof Board]) {
+        switch (this.randomBonusService.bonusPositions.get(keyCell)) {
             case 'doubleLetter':
                 letterPoint = letterValue * this.bonusFactor(2, matrixPos, scrabbleBoard);
                 break;
