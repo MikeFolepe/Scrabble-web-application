@@ -32,6 +32,12 @@ describe('SendMessageService', () => {
         expect(service.typeMessage).toEqual(TypeMessage.Player);
     });
 
+    it('displaying a message should display the respective message and its type', () => {
+        service.displayMessageByType('I am the system', TypeMessage.System);
+        expect(service.message).toEqual('I am the system');
+        expect(service.typeMessage).toEqual(TypeMessage.System);
+    });
+
     it('should sendOpponentMessage on receiveMessageFromOpponent', () => {
         const sendOpponentMessageSpy = spyOn(service, 'sendOpponentMessage');
         service['clientSocketService'].socket = {

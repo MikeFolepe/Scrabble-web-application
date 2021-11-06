@@ -12,7 +12,7 @@ export class PlayerAI extends Player {
         this.strategy = new PlaceLetterStrategy(this.pointingRange());
     }
 
-    play() {
+    play(): void {
         this.strategy.execute(this.playerAiService);
     }
 

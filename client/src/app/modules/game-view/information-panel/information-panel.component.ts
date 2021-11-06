@@ -36,13 +36,7 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
         this.receivePlayerTwo();
         this.initializeFirstTurn();
         this.skipTurnService.startTimer();
-
-        if (!this.skipTurnService.isTurn) {
-            const playerAi = this.playerService.players[INDEX_PLAYER_AI] as PlayerAI;
-            setTimeout(() => {
-                playerAi.play();
-            }, DELAY_BEFORE_PLAY);
-        }
+        this.callThePlayerAiOnItsTurn();
     }
 
     receivePlayerTwo(): void {
@@ -51,6 +45,15 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
             this.playerService.addPlayer(player);
             this.letterService.removeLettersFromReserve(this.playerService.players[INDEX_PLAYER_ONE].letterTable);
         });
+    }
+
+    callThePlayerAiOnItsTurn(): void {
+        if (!this.skipTurnService.isTurn) {
+            const playerAi = this.playerService.players[INDEX_PLAYER_AI] as PlayerAI;
+            setTimeout(() => {
+                playerAi.play();
+            }, DELAY_BEFORE_PLAY);
+        }
     }
 
     initializePlayers(): void {

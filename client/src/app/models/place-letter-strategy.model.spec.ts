@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
 import { HttpClientTestingModule } from '@angular/common/http/testing';
@@ -11,7 +10,7 @@ import { PlayerAI } from '@app/models/player-ai.model';
 import { PlayerAIService } from '@app/services/player-ia.service';
 import { PlaceLetterStrategy } from './place-letter-strategy.model';
 
-describe('Place Letter', () => {
+describe('Place Letter strategy', () => {
     let playerAi: PlayerAI;
     let placeStrategy: PlaceLetterStrategy;
     placeStrategy = new PlaceLetterStrategy({ min: 7, max: 12 });
