@@ -1,5 +1,4 @@
 import { HttpException } from '@app/classes/http.exception';
-/* eslint-disable sort-imports */
 import * as logger from 'morgan';
 import * as swaggerJSDoc from 'swagger-jsdoc';
 import * as swaggerUi from 'swagger-ui-express';

@@ -13,7 +13,7 @@ export class WordValidationService {
     private newPlayedWords: Map<string, string[]>;
     private newPositions: string[];
     private bonusesPositions: Map<string, string>;
-    private validationState = false;
+    private validationState;
     private foundWords: string[];
 
     constructor(private httpServer: CommunicationService, private randomBonusService: RandomBonusesService) {

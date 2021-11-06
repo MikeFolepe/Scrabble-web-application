@@ -1,4 +1,3 @@
-/* eslint-disable sort-imports */
 import { Injectable } from '@angular/core';
 import { INDEX_PLAYER_AI, INDEX_PLAYER_ONE, INDEX_PLAYER_TWO, NUMBER_OF_SKIP, RESERVE } from '@app/classes/constants';
 import { DebugService } from '@app/services/debug.service';
