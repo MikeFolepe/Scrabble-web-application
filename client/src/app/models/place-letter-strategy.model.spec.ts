@@ -1,4 +1,3 @@
-/* eslint-disable max-lines */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
@@ -15,6 +14,7 @@ import { PlaceLetters } from './place-letter-strategy.model';
 describe('Place Letter', () => {
     let playerAi: PlayerAI;
     let placeStrategy: PlaceLetters;
+    placeStrategy = new PlaceLetters({ min: 7, max: 12 });
     let playerAiService: PlayerAIService;
     const scrabbleBoard: string[][] = [];
     let letterTable: Letter[] = [];
@@ -22,7 +22,9 @@ describe('Place Letter', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [HttpClientTestingModule, RouterTestingModule],
+            providers: [{ provide: PlaceLetters, useValue: placeStrategy }],
         }).compileComponents();
+        placeStrategy = TestBed.inject(PlaceLetters);
     });
 
     beforeEach(() => {
@@ -192,7 +194,6 @@ describe('Place Letter', () => {
     });
 
     it('should play from the center at first round', () => {
-        // jasmine.clock().install();
         // TODO: test crash sur gitlab?
         const myDictionary: string[] = ['maths', 'math', 'lundi', 'mardi', 'on'];
 
@@ -205,7 +206,6 @@ describe('Place Letter', () => {
             { value: 'A', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
             { value: 'R', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
         ];
-
         placeStrategy.dictionary = myDictionary;
         placeStrategy.pointingRange = { min: 1, max: 4 };
 
@@ -222,9 +222,7 @@ describe('Place Letter', () => {
         expectedMatching.push(word1);
         expectedMatching.push(word2);
         placeStrategy.execute(playerAiService);
-        // jasmine.clock().tick(6000);
         expect(spyOnPlace).toHaveBeenCalledWith(word1);
-        // jasmine.clock().uninstall();
     });
 
     it('should swap if no possibility', () => {

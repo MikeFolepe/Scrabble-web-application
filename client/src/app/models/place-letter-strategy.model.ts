@@ -3,7 +3,6 @@ import {
     BOARD_COLUMNS,
     BOARD_ROWS,
     CENTRAL_CASE_POSITION_X,
-    DICTIONARY,
     INDEX_INVALID,
     INDEX_PLAYER_AI,
     MAX_DIMENSIONS,
@@ -14,13 +13,14 @@ import { BoardPattern, Orientation, PatternInfo, PossibleWords } from '@app/clas
 import { Vec2 } from '@app/classes/vec2';
 import { PlayerAIService } from '@app/services/player-ia.service';
 import { PlayerAI } from './player-ai.model';
+import * as dictionaryData from '@common/dictionary.json';
 
 export class PlaceLetters {
     dictionary: string[];
     private board: string[][][];
 
     constructor(public pointingRange: Range) {
-        this.dictionary = DICTIONARY;
+        this.dictionary = JSON.parse(JSON.stringify(dictionaryData)).words;
         this.board = [];
     }
 
