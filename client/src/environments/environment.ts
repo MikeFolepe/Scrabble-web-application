@@ -4,7 +4,7 @@
 
 export const environment = {
     production: false,
-    serverUrl: 'https://ec2-35-183-103-185.ca-central-1.compute.amazonaws.com:3000',
+    serverUrl: 'http://localhost:3000/api',
 };
 
 /*
