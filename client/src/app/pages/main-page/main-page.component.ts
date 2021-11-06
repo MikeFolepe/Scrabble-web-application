@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { GameSettingsService } from '@app/services/game-settings.service';
 import { Router } from '@angular/router';
+import { GameSettingsService } from '@app/services/game-settings.service';
 
 @Component({
     selector: 'app-main-page',
@@ -15,6 +15,7 @@ export class MainPageComponent {
 
     constructor(public gameSettingsService: GameSettingsService, private router: Router) {}
 
+    // TODO: 0,1,2... chiffre magique
     route(): void {
         switch (this.selectedGameMode) {
             case this.gameModes[0]: {

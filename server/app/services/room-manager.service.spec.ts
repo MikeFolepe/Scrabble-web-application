@@ -1,5 +1,6 @@
-import { GameSettings, StartingPlayer } from '@common/game-settings';
+import { OUT_BOUND_INDEX_OF_SOCKET } from '@app/classes/constants';
 import { RoomManagerService } from '@app/services/room-manager.service';
+import { GameSettings, StartingPlayer } from '@common/game-settings';
 import { State } from '@common/room';
 import { expect } from 'chai';
 
@@ -108,5 +109,40 @@ describe('RoomManagerService', () => {
     it('should return false if the room  is available ', () => {
         roomManagerService.createRoom(socketId1, id, settings);
         expect(roomManagerService.isNotAvailable(id)).to.equal(false);
+    });
+    it('should return the index of the player who leave the game', () => {
+        roomManagerService.createRoom(socketId1, id, settings);
+        const socketId2 = 'socketId2';
+        roomManagerService.setSocket(roomManagerService.rooms[0], socketId2);
+        expect(roomManagerService.findLoserIndex(socketId2)).to.equal(1);
+    });
+
+    it('should return the index of the player who leave the game', () => {
+        roomManagerService.createRoom(socketId1, id, settings);
+        const socketId2 = 'socketId2';
+        roomManagerService.setSocket(roomManagerService.rooms[0], socketId2);
+        expect(roomManagerService.findLoserIndex(socketId2)).to.equal(1);
+    });
+
+    it('should return the outbound index of socket if the socketId of the player who leave the game is not in the room', () => {
+        roomManagerService.createRoom(socketId1, id, settings);
+        const socketId2 = 'socketId2';
+        const fakeSocket = 'socketId3';
+        roomManagerService.setSocket(roomManagerService.rooms[0], socketId2);
+        expect(roomManagerService.findLoserIndex(fakeSocket)).to.equal(OUT_BOUND_INDEX_OF_SOCKET);
+    });
+
+    it('should return 1 the winner name depend of the index  the player who give up the game ', () => {
+        roomManagerService.createRoom(socketId1, id, settings);
+        const socketId2 = 'socket2';
+        roomManagerService.setSocket(roomManagerService.rooms[0], socketId2);
+        expect(roomManagerService.getWinnerName(id, roomManagerService.findLoserIndex(socketId2))).to.equal('Paul');
+    });
+    it('should return the winner name depend of the index  the player who give up the game ', () => {
+        roomManagerService.rooms = [];
+        roomManagerService.createRoom(socketId1, id, settings);
+        const socketId2 = 'socket2';
+        roomManagerService.setSocket(roomManagerService.rooms[0], socketId2);
+        expect(roomManagerService.getWinnerName(id, roomManagerService.findLoserIndex(socketId1))).to.equal('Paul');
     });
 });

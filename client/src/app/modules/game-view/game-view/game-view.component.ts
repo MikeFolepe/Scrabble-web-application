@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { ClientSocketService } from '@app/services/client-socket.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { GridService } from '@app/services/grid.service';
-import { Router } from '@angular/router';
 import { EndGameService } from '@app/services/end-game.service';
 import { ChatboxService } from '@app/services/chatbox.service';
 import { BoardHandlerService } from '@app/services/board-handler.service';
@@ -21,7 +20,6 @@ export class GameViewComponent implements OnInit {
     constructor(
         public endGameService: EndGameService,
         public clientSocketService: ClientSocketService,
-        private router: Router,
         private gridService: GridService,
         private gameSettingsService: GameSettingsService,
         public chatBoxService: ChatboxService,
@@ -36,9 +34,6 @@ export class GameViewComponent implements OnInit {
             mapBonus.set(element[0], element[1]);
         });
         this.gridService.bonusPositions = mapBonus;
-        this.clientSocketService.socket.on('goToMainMenu', () => {
-            this.router.navigate(['home']);
-        });
     }
 
     handleFontSizeEvent(fontSizeEvent: number) {

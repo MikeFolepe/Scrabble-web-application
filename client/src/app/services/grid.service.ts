@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 import { Injectable } from '@angular/core';
 import { BOARD_ROWS, DEFAULT_HEIGHT, DEFAULT_WIDTH, GRID_CASE_SIZE, RESERVE } from '@app/classes/constants';
-import { Vec2 } from '@app/classes/vec2';
+import { Vec2 } from '@common/vec2';
 import { Orientation } from '@app/classes/scrabble-board-pattern';
 
 const COLOR_BLACK = 'black';

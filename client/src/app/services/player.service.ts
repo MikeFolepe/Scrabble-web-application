@@ -1,3 +1,4 @@
+/* eslint-disable sort-imports */
 import { Injectable } from '@angular/core';
 import {
     BOARD_COLUMNS,
@@ -9,7 +10,7 @@ import {
     INDEX_INVALID,
     RESERVE,
 } from '@app/classes/constants';
-import { Letter } from '@app/classes/letter';
+import { Letter } from '@common/letter';
 import { Player } from '@app/models/player.model';
 import { GridService } from '@app/services/grid.service';
 import { LetterService } from '@app/services/letter.service';
@@ -19,21 +20,25 @@ import { ClientSocketService } from './client-socket.service';
     providedIn: 'root',
 })
 export class PlayerService {
-    scrabbleBoard: string[][];
     fontSize = DEFAULT_FONT_SIZE;
     players: Player[] = new Array<Player>();
+    private scrabbleBoard: string[][];
 
     private updateEasel: () => void;
 
     constructor(private letterService: LetterService, private gridService: GridService, private clientSocketService: ClientSocketService) {
-        this.clientSocketService.socket.on('receiveScoreInfo', (score: number, indexPlayer: number) => {
-            this.players[indexPlayer].score = score;
-        });
+        this.receiveScoreFromServer();
         this.fontSize = DEFAULT_FONT_SIZE;
     }
 
     bindUpdateEasel(fn: () => void) {
         this.updateEasel = fn;
+    }
+
+    receiveScoreFromServer() {
+        this.clientSocketService.socket.on('receiveScoreInfo', (score: number, indexPlayer: number) => {
+            this.players[indexPlayer].score = score;
+        });
     }
 
     addPlayer(user: Player) {

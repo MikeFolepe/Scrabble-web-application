@@ -1,7 +1,8 @@
+/* eslint-disable sort-imports */
 import { Injectable } from '@angular/core';
 import { INDEX_PLAYER_ONE, MAX_NUMBER_OF_POSSIBILITY } from '@app/classes/constants';
 import { TypeMessage } from '@app/classes/enum';
-import { Vec2 } from '@app/classes/vec2';
+import { Vec2 } from '@common/vec2';
 import { DebugService } from '@app/services/debug.service';
 import { EndGameService } from '@app/services/end-game.service';
 import { LetterService } from '@app/services/letter.service';
@@ -16,10 +17,10 @@ import { Orientation } from '@app/classes/scrabble-board-pattern';
     providedIn: 'root',
 })
 export class ChatboxService {
-    message: string = '';
-    typeMessage: TypeMessage;
-    command: string = '';
-    endGameEasel: string = '';
+    private message: string;
+    private typeMessage: TypeMessage;
+    private command: string;
+    private endGameEasel: string;
 
     private readonly notTurnErrorMessage = "ERREUR : Ce n'est pas ton tour";
 
@@ -31,8 +32,12 @@ export class ChatboxService {
         private sendMessageService: SendMessageService,
         public endGameService: EndGameService,
         public letterService: LetterService,
-        public skipTurn: SkipTurnService,
-    ) {}
+        public skipTurnService: SkipTurnService,
+    ) {
+        this.message = '';
+        this.command = '';
+        this.endGameEasel = '';
+    }
 
     sendPlayerMessage(message: string) {
         this.typeMessage = TypeMessage.Player;
@@ -80,10 +85,10 @@ export class ChatboxService {
     }
 
     executeSkipTurn() {
-        if (this.skipTurn.isTurn) {
+        if (this.skipTurnService.isTurn) {
             this.endGameService.addActionsLog('passer');
             this.sendMessageService.displayMessageByType(this.message, this.typeMessage);
-            this.skipTurn.switchTurn();
+            this.skipTurnService.switchTurn();
         } else {
             this.sendMessageService.displayMessageByType(this.notTurnErrorMessage, TypeMessage.Error);
         }
@@ -103,13 +108,13 @@ export class ChatboxService {
     }
 
     executeSwap() {
-        if (this.skipTurn.isTurn) {
+        if (this.skipTurnService.isTurn) {
             const messageSplitted = this.message.split(/\s/);
 
             if (this.swapLetterService.swapCommand(messageSplitted[1], INDEX_PLAYER_ONE)) {
                 this.message = this.playerService.players[INDEX_PLAYER_ONE].name + ' : ' + this.message;
                 this.sendMessageService.displayMessageByType(this.message, this.typeMessage);
-                this.skipTurn.switchTurn();
+                this.skipTurnService.switchTurn();
             }
         } else {
             this.sendMessageService.displayMessageByType(this.notTurnErrorMessage, TypeMessage.Error);
@@ -117,7 +122,7 @@ export class ChatboxService {
     }
 
     async executePlace() {
-        if (this.skipTurn.isTurn) {
+        if (this.skipTurnService.isTurn) {
             const messageSplitted = this.message.split(/\s/);
             const positionSplitted = messageSplitted[1].split(/([0-9]+)/);
 
@@ -126,7 +131,7 @@ export class ChatboxService {
                 x: Number(positionSplitted[1]) - 1,
                 y: positionSplitted[0].charCodeAt(0) - 'a'.charCodeAt(0),
             };
-            const orientation = Orientation[positionSplitted[2] as keyof typeof Orientation];
+            const orientation = positionSplitted[2] === 'h' ? Orientation.Horizontal : Orientation.Vertical;
 
             if (await this.placeLetterService.placeCommand(position, orientation, messageSplitted[2], INDEX_PLAYER_ONE)) {
                 this.sendMessageService.displayMessageByType(this.message, this.typeMessage);

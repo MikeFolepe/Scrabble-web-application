@@ -1,7 +1,7 @@
 import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { EASEL_SIZE, INDEX_PLAYER_ONE } from '@app/classes/constants';
 import { BoardHandlerService } from '@app/services/board-handler.service';
-import { Letter } from '@app/classes/letter';
+import { Letter } from '@common/letter';
 import { LetterService } from '@app/services/letter.service';
 import { ManipulateService } from '@app/services/manipulate.service';
 import { PlayerService } from '@app/services/player.service';

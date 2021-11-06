@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BOARD_COLUMNS, BOARD_ROWS, GRID_CASE_SIZE, INDEX_INVALID, INDEX_PLAYER_ONE, LAST_INDEX } from '@app/classes/constants';
 import { MouseButton, TypeMessage } from '@app/classes/enum';
 import { Orientation } from '@app/classes/scrabble-board-pattern';
-import { Vec2 } from '@app/classes/vec2';
+import { Vec2 } from '@common/vec2';
 import { GridService } from './grid.service';
 import { PlaceLetterService } from './place-letter.service';
 import { SendMessageService } from './send-message.service';
@@ -12,22 +12,28 @@ import { SkipTurnService } from './skip-turn.service';
     providedIn: 'root',
 })
 export class BoardHandlerService {
-    currentCase: Vec2 = { x: INDEX_INVALID, y: INDEX_INVALID };
-    firstCase: Vec2 = { x: INDEX_INVALID, y: INDEX_INVALID };
-    word: string = '';
-    placedLetters: boolean[] = [];
-    // Attribut indexletters? pour track les letters déja placées
-
-    isFirstCasePicked = false;
-    isFirstCaseLocked = false;
-    orientation = Orientation.Horizontal;
+    word: string;
+    private currentCase: Vec2;
+    private firstCase: Vec2;
+    private placedLetters: boolean[];
+    private isFirstCasePicked: boolean;
+    private isFirstCaseLocked: boolean;
+    private orientation: Orientation;
 
     constructor(
         private gridService: GridService,
         private placeLetterService: PlaceLetterService,
         private sendMessageService: SendMessageService,
         private skipTurnService: SkipTurnService,
-    ) {}
+    ) {
+        this.currentCase = { x: INDEX_INVALID, y: INDEX_INVALID };
+        this.firstCase = { x: INDEX_INVALID, y: INDEX_INVALID };
+        this.word = '';
+        this.placedLetters = [];
+        this.isFirstCasePicked = false;
+        this.isFirstCaseLocked = false;
+        this.orientation = Orientation.Horizontal;
+    }
 
     buttonDetect(event: KeyboardEvent): void {
         switch (event.key) {
@@ -232,6 +238,7 @@ export class BoardHandlerService {
             this.gridService.drawArrow(this.gridService.gridContextPlacementLayer, this.currentCase, this.orientation);
             return;
         }
+        this.drawPlacementBorder();
         // Only display the arrow on the next empty tile if there is an empty tile in the direction of the orientation
         this.drawArrowOnNextEmpty();
     }

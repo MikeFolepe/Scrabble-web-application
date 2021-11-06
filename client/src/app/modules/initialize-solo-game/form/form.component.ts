@@ -1,10 +1,10 @@
-import { AI_NAME_DATABASE, BONUS_POSITIONS } from '@app/classes/constants';
 import { Component, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { GameSettings, StartingPlayer } from '@common/game-settings';
+import { Router } from '@angular/router';
+import { AI_NAME_DATABASE, BONUS_POSITIONS } from '@app/classes/constants';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { RandomBonusesService } from '@app/services/random-bonuses.service';
-import { Router } from '@angular/router';
+import { GameSettings, StartingPlayer } from '@common/game-settings';
 
 @Component({
     selector: 'app-form',
@@ -27,25 +27,38 @@ export class FormComponent implements OnDestroy {
     getRightBonusPositions(): string {
         let bonusPositions;
         if (this.form.controls.randomBonus.value === 'Activer') {
-            bonusPositions = this.randomBonusService.shuffleBonusesPositions();
+            bonusPositions = this.randomBonusService.shuffleBonusPositions();
         } else {
             bonusPositions = BONUS_POSITIONS;
         }
         return JSON.stringify(Array.from(bonusPositions));
     }
+
+    chooseRandomAIName(): string {
+        let randomName: string;
+        do {
+            // Random value [0, AI_NAME_DATABASE.length[
+            const randomNumber = Math.floor(Math.random() * AI_NAME_DATABASE.length);
+            randomName = AI_NAME_DATABASE[randomNumber];
+        } while (randomName === this.form.controls.playerName.value);
+        return randomName;
+    }
+
     // Initializes the game with its settings
     initGame(): void {
+        this.snapshotSettings();
         if (this.gameSettingsService.isSoloMode) {
-            this.initSoloGame();
             this.router.navigate(['game']);
             return;
         }
-        this.initSoloGame();
-        this.initMultiplayerGame();
         this.router.navigate(['multiplayer-mode-waiting-room']);
     }
 
-    initSoloGame(): void {
+    chooseStartingPlayer(): StartingPlayer {
+        return Math.floor((Math.random() * Object.keys(StartingPlayer).length) / 2);
+    }
+
+    snapshotSettings(): void {
         const playersName: string[] = [this.form.controls.playerName.value, this.chooseRandomAIName()];
         this.gameSettingsService.gameSettings = new GameSettings(
             playersName,
@@ -59,26 +72,8 @@ export class FormComponent implements OnDestroy {
         );
     }
 
-    initMultiplayerGame(): void {
-        return;
-    }
-
     ngOnDestroy(): void {
         this.gameSettingsService.isRedirectedFromMultiplayerGame = false;
         return;
-    }
-
-    chooseStartingPlayer(): StartingPlayer {
-        return Math.floor((Math.random() * Object.keys(StartingPlayer).length) / 2);
-    }
-
-    chooseRandomAIName(): string {
-        let randomName: string;
-        do {
-            // Random value [0, AI_NAME_DATABASE.length[
-            const randomNumber = Math.floor(Math.random() * AI_NAME_DATABASE.length);
-            randomName = AI_NAME_DATABASE[randomNumber];
-        } while (randomName === this.form.controls.playerName.value);
-        return randomName;
     }
 }

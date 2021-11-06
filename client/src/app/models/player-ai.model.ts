@@ -1,36 +1,20 @@
-import { AIStrategy, PlacingStrategy } from '@app/classes/enum';
-import { placingBallotBox, strategyBallotBox } from '@app/classes/constants';
-import { Letter } from '@app/classes/letter';
-import { PlaceLetters } from '@app/models/place-letter-strategy.model';
-import { PlayStrategy } from '@app/models/abstract-strategy.model';
-import { Player } from '@app/models/player.model';
-import { PlayerAIComponent } from '@app/modules/game-view/player-ai/player-ai.component';
+/* eslint-disable sort-imports */
+import { placingBallotBox, PlacingStrategy } from '@app/classes/constants';
 import { Range } from '@app/classes/range';
-import { SkipTurn } from '@app/models/skip-turn-strategy.model';
-import { SwapLetter } from '@app/models/swap-letter-strategy.model';
+import { PlayerAIService } from '@app/services/player-ia.service';
+import { Letter } from '@common/letter';
+import { PlaceLetterStrategy } from './place-letter-strategy.model';
+import { Player } from './player.model';
 
 export class PlayerAI extends Player {
-    context: PlayerAIComponent;
-    strategy: PlayStrategy;
-    constructor(id: number, name: string, letterTable: Letter[]) {
+    private strategy: PlaceLetterStrategy;
+    constructor(id: number, name: string, letterTable: Letter[], public playerAiService: PlayerAIService) {
         super(id, name, letterTable);
-        // Initialize the first concrete strategy to be executed later
-        this.strategy = new SkipTurn();
+        this.strategy = new PlaceLetterStrategy(this.pointingRange());
     }
 
     play() {
-        // Allow the ai to execute the current strategy whoever it is
-        this.strategy.execute(this, this.context);
-        // Set the next strategy for next tour
-        this.setStrategy();
-    }
-    setContext(context: PlayerAIComponent) {
-        this.context = context;
-    }
-
-    replaceStrategy(strategy: PlayStrategy) {
-        this.strategy = strategy;
-        this.play();
+        this.strategy.execute(this.playerAiService);
     }
 
     getHand(): string {
@@ -52,24 +36,6 @@ export class PlayerAI extends Player {
         }
 
         return quantity;
-    }
-    private setStrategy() {
-        const randomNumber = this.generateRandomNumber(strategyBallotBox.length);
-        switch (strategyBallotBox[randomNumber]) {
-            case AIStrategy.Skip:
-                this.strategy = new SkipTurn();
-                break;
-            case AIStrategy.Swap:
-                this.strategy = new SwapLetter();
-                break;
-            case AIStrategy.Place:
-                // Get a pointing range object which extends PlaceLetters
-                this.strategy = new PlaceLetters(this.pointingRange());
-                break;
-            default:
-                this.strategy = new SkipTurn();
-                break;
-        }
     }
 
     private pointingRange(): Range {
@@ -95,6 +61,6 @@ export class PlayerAI extends Player {
     }
 
     private generateRandomNumber(maxValue: number): number {
-        return Math.floor(Number(Math.random()) * maxValue);
+        return Math.floor(Math.random() * maxValue);
     }
 }

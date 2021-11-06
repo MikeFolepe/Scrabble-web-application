@@ -11,7 +11,7 @@
         <hr />
         <div
             *ngFor="let player of playerService.players"
-            [ngClass]="{ 'player-turn': skipTurn.isTurn && player.id === 1, 'opponent-turn': !skipTurn.isTurn && player.id === 2 }"
+            [ngClass]="{ 'player-turn': skipTurnService.isTurn && player.id === 1, 'opponent-turn': !skipTurnService.isTurn && player.id === 2 }"
         >
             <p>
                 <span *ngIf="skipTurn.isTurn && player.id === 1">></span>
@@ -24,11 +24,11 @@
 
             <div class="timer" *ngIf="skipTurn.isTurn && player.id === 1">
                 Joueur actif<br />
-                Temps restant au tour : {{ skipTurn.minutes }}:{{ displaySeconds() }}
+                Temps restant au tour : {{ skipTurnService.minutes }}:{{ displaySeconds() }}
             </div>
             <div class="timer" *ngIf="!skipTurn.isTurn && player.id === 2">
                 Joueur actif<br />
-                Temps restant au tour : {{ skipTurn.minutes }}:{{ displaySeconds() }}
+                Temps restant au tour : {{ skipTurnService.minutes }}:{{ displaySeconds() }}
             </div>
             <hr />
         </div>
@@ -36,5 +36,12 @@
             La partie est terminée. Félicitations à {{ this.endGameService.getWinnerName() }} qui est le vainqueur!!
         </div>
     </div>
+    <div
+            *ngIf="endGameService.isEndGameByActions() || (endGameService.isEndGameByEasel() && !endGameService.isEndGameByGiveUp)">
+            La partie est terminée. Félicitations à {{ this.endGameService.getWinnerName() }} qui est le vainqueur!!
+        </div>
+        <div
+            *ngIf="!endGameService.isEndGameByActions() && !endGameService.isEndGameByEasel() && endGameService.isEndGameByGiveUp">
+            L'adversaire a quitté la partie.La partie est donc terminée. Félicitations à {{ this.endGameService.winnerNameByGiveUp }} qui le vainqueur!!
+        </div>
 </div>
-<app-player-ai></app-player-ai>

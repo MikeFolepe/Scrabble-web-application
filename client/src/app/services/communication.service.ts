@@ -1,7 +1,6 @@
-import { Observable, of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Message } from '@app/classes/message';
+import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 
@@ -10,15 +9,10 @@ import { environment } from 'src/environments/environment';
 })
 export class CommunicationService {
     private readonly baseUrl: string = environment.serverUrl;
-    private wordsToValidate: string[] = [];
-    constructor(private readonly http: HttpClient) {}
+    private wordsToValidate: string[];
 
-    basicGet(): Observable<Message> {
-        return this.http.get<Message>(`${this.baseUrl}/example`).pipe(catchError(this.handleError<Message>('basicGet')));
-    }
-
-    basicPost(message: Message): Observable<void> {
-        return this.http.post<void>(`${this.baseUrl}/example/send`, message).pipe(catchError(this.handleError<void>('basicPost')));
+    constructor(private readonly http: HttpClient) {
+        this.wordsToValidate = [];
     }
 
     validationPost(newPlayedWords: Map<string, string[]>): Observable<boolean> {

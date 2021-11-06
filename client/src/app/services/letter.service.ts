@@ -2,7 +2,7 @@ import { EASEL_SIZE, RESERVE } from '@app/classes/constants';
 import { BehaviorSubject } from 'rxjs';
 import { ClientSocketService } from '@app/services/client-socket.service';
 import { Injectable } from '@angular/core';
-import { Letter } from '@app/classes/letter';
+import { Letter } from '@common/letter';
 @Injectable({
     providedIn: 'root',
 })
@@ -15,15 +15,19 @@ export class LetterService {
     messageSource = new BehaviorSubject('default message');
 
     constructor(private clientSocketService: ClientSocketService) {
-        this.clientSocketService.socket.on('receiveReserve', (reserve: Letter[], reserveSize: number) => {
-            this.reserve = reserve;
-            this.reserveSize = reserveSize;
-        });
+        this.receiveReserve();
         let size = 0;
         for (const letter of this.reserve) {
             size += letter.quantity;
         }
         this.reserveSize = size;
+    }
+
+    receiveReserve(): void {
+        this.clientSocketService.socket.on('receiveReserve', (reserve: Letter[], reserveSize: number) => {
+            this.reserve = reserve;
+            this.reserveSize = reserveSize;
+        });
     }
 
     // Returns a random letter from the reserve if reserve is not empty

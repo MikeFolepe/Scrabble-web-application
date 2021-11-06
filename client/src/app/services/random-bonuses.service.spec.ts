@@ -1,5 +1,5 @@
-import { RandomBonusesService } from '@app/services/random-bonuses.service';
 import { TestBed } from '@angular/core/testing';
+import { RandomBonusesService } from '@app/services/random-bonuses.service';
 
 describe('RandomBonusesService', () => {
     let service: RandomBonusesService;
@@ -22,7 +22,7 @@ describe('RandomBonusesService', () => {
 
     it('should return a map of all bonuses values shuffled', () => {
         const unshuffledBonuses = new Map<string, string>(service.bonusPositions);
-        service.shuffleBonusesPositions();
+        service.shuffleBonusPositions();
         const shuffledBonuses = new Map<string, string>(service.bonusPositions);
         expect(shuffledBonuses).not.toEqual(unshuffledBonuses);
         expect(shuffledBonuses.size).toEqual(unshuffledBonuses.size);
