@@ -95,7 +95,7 @@ describe('PlayerAIService', () => {
 
     it('should calculate the total amount of a word horizontally with empty bonus word and letter', () => {
         const possWord: PossibleWords[] = [];
-        possWord.push({ word: 'MAJID', orientation: Orientation.Horizontal, line: 14, startIdx: 0, point: 0 });
+        possWord.push({ word: 'MAJID', orientation: Orientation.Horizontal, line: 14, startIndex: 0, point: 0 });
         const expectedEarning = 45;
 
         service.calculatePoints(possWord, scrabbleBoard);
@@ -104,7 +104,7 @@ describe('PlayerAIService', () => {
 
     it('should calculate the total amount of a word vertically with bonus word and letter', () => {
         const possWord: PossibleWords[] = [];
-        possWord.push({ word: 'MAJID', orientation: Orientation.Vertical, line: 5, startIdx: 13, point: 0 });
+        possWord.push({ word: 'MAJID', orientation: Orientation.Vertical, line: 5, startIndex: 13, point: 0 });
         const expectedEarning = 18;
 
         service.calculatePoints(possWord, scrabbleBoard);
@@ -112,7 +112,7 @@ describe('PlayerAIService', () => {
     });
 
     it('should place word on board horizontally', () => {
-        const word = { word: 'MAJID', orientation: Orientation.Horizontal, line: 5, startIdx: 0, point: 0 };
+        const word = { word: 'MAJID', orientation: Orientation.Horizontal, line: 5, startIndex: 0, point: 0 };
         const expected = JSON.parse(JSON.stringify(scrabbleBoard));
         expected[5][0] = 'M';
         expected[5][1] = 'A';
@@ -120,13 +120,11 @@ describe('PlayerAIService', () => {
         expected[5][3] = 'I';
         expected[5][4] = 'D';
 
-        expect(service.placeWordOnBoard(scrabbleBoard, word.word, { x: word.line, y: word.startIdx }, word.orientation ? 'v' : 'h')).toEqual(
-            expected,
-        );
+        expect(service.placeWordOnBoard(scrabbleBoard, word.word, { x: word.line, y: word.startIndex }, word.orientation)).toEqual(expected);
     });
 
     it('should place word on board vertically', () => {
-        const word = { word: 'MAJID', orientation: Orientation.Vertical, line: 5, startIdx: 0, point: 0 };
+        const word = { word: 'MAJID', orientation: Orientation.Vertical, line: 5, startIndex: 0, point: 0 };
         const expected = JSON.parse(JSON.stringify(scrabbleBoard));
         expected[5][0] = 'M';
         expected[6][0] = 'A';
@@ -134,21 +132,19 @@ describe('PlayerAIService', () => {
         expected[8][0] = 'I';
         expected[9][0] = 'D';
 
-        expect(service.placeWordOnBoard(scrabbleBoard, word.word, { x: word.line, y: word.startIdx }, word.orientation ? 'v' : 'h')).toEqual(
-            expected,
-        );
+        expect(service.placeWordOnBoard(scrabbleBoard, word.word, { x: word.line, y: word.startIndex }, word.orientation)).toEqual(expected);
     });
 
     it('should sort words by points rewards', () => {
-        const word8: PossibleWords = { word: 'mare', orientation: Orientation.Vertical, line: 0, startIdx: 0, point: 2 };
-        const word1: PossibleWords = { word: 'amar', orientation: Orientation.Horizontal, line: 0, startIdx: 0, point: 15 };
-        const word2: PossibleWords = { word: 'maree', orientation: Orientation.Horizontal, line: 0, startIdx: 0, point: 15 };
-        const word3: PossibleWords = { word: 'martin', orientation: Orientation.Horizontal, line: 0, startIdx: 0, point: 3 };
-        const word4: PossibleWords = { word: 'mare', orientation: Orientation.Horizontal, line: 0, startIdx: 0, point: 4 };
+        const word8: PossibleWords = { word: 'mare', orientation: Orientation.Vertical, line: 0, startIndex: 0, point: 2 };
+        const word1: PossibleWords = { word: 'amar', orientation: Orientation.Horizontal, line: 0, startIndex: 0, point: 15 };
+        const word2: PossibleWords = { word: 'maree', orientation: Orientation.Horizontal, line: 0, startIndex: 0, point: 15 };
+        const word3: PossibleWords = { word: 'martin', orientation: Orientation.Horizontal, line: 0, startIndex: 0, point: 3 };
+        const word4: PossibleWords = { word: 'mare', orientation: Orientation.Horizontal, line: 0, startIndex: 0, point: 4 };
 
-        const word5: PossibleWords = { word: 'amar', orientation: Orientation.Vertical, line: 0, startIdx: 0, point: 8 };
-        const word6: PossibleWords = { word: 'maree', orientation: Orientation.Vertical, line: 0, startIdx: 0, point: 8 };
-        const word7: PossibleWords = { word: 'martin', orientation: Orientation.Vertical, line: 0, startIdx: 0, point: 3 };
+        const word5: PossibleWords = { word: 'amar', orientation: Orientation.Vertical, line: 0, startIndex: 0, point: 8 };
+        const word6: PossibleWords = { word: 'maree', orientation: Orientation.Vertical, line: 0, startIndex: 0, point: 8 };
+        const word7: PossibleWords = { word: 'martin', orientation: Orientation.Vertical, line: 0, startIndex: 0, point: 3 };
 
         const possibleWord: PossibleWords[] = [];
         possibleWord.push(word1);
@@ -176,15 +172,15 @@ describe('PlayerAIService', () => {
     });
 
     it('should remove words not matching the pointing range', () => {
-        const word6: PossibleWords = { word: 'maree', orientation: Orientation.Vertical, line: 0, startIdx: 0, point: 8 };
-        const word7: PossibleWords = { word: 'martin', orientation: Orientation.Vertical, line: 0, startIdx: 0, point: 9 };
-        const word8: PossibleWords = { word: 'mare', orientation: Orientation.Vertical, line: 0, startIdx: 0, point: 10 };
-        const word1: PossibleWords = { word: 'amar', orientation: Orientation.Horizontal, line: 0, startIdx: 0, point: 3 };
-        const word3: PossibleWords = { word: 'martin', orientation: Orientation.Horizontal, line: 0, startIdx: 0, point: 5 };
-        const word4: PossibleWords = { word: 'mare', orientation: Orientation.Horizontal, line: 0, startIdx: 0, point: 6 };
-        const word2: PossibleWords = { word: 'maree', orientation: Orientation.Horizontal, line: 0, startIdx: 0, point: 4 };
+        const word6: PossibleWords = { word: 'maree', orientation: Orientation.Vertical, line: 0, startIndex: 0, point: 8 };
+        const word7: PossibleWords = { word: 'martin', orientation: Orientation.Vertical, line: 0, startIndex: 0, point: 9 };
+        const word8: PossibleWords = { word: 'mare', orientation: Orientation.Vertical, line: 0, startIndex: 0, point: 10 };
+        const word1: PossibleWords = { word: 'amar', orientation: Orientation.Horizontal, line: 0, startIndex: 0, point: 3 };
+        const word3: PossibleWords = { word: 'martin', orientation: Orientation.Horizontal, line: 0, startIndex: 0, point: 5 };
+        const word4: PossibleWords = { word: 'mare', orientation: Orientation.Horizontal, line: 0, startIndex: 0, point: 6 };
+        const word2: PossibleWords = { word: 'maree', orientation: Orientation.Horizontal, line: 0, startIndex: 0, point: 4 };
 
-        const word5: PossibleWords = { word: 'amar', orientation: Orientation.Vertical, line: 0, startIdx: 0, point: 6 };
+        const word5: PossibleWords = { word: 'amar', orientation: Orientation.Vertical, line: 0, startIndex: 0, point: 6 };
 
         const possibleWord: PossibleWords[] = [];
         possibleWord.push(word1);
@@ -210,19 +206,19 @@ describe('PlayerAIService', () => {
     });
 
     it('should ask placeLetterService to place some word on the board', async () => {
-        const word = { word: 'MAJID', orientation: Orientation.Vertical, line: 5, startIdx: 0, point: 0 };
+        const word = { word: 'MAJID', orientation: Orientation.Vertical, line: 5, startIndex: 0, point: 0 };
         const spyOnPlace = spyOn<any>(service.placeLetterService, 'placeCommand').and.returnValue(Promise.resolve(true));
         spyOn(service, 'swap');
         await service.place(word);
-        expect(spyOnPlace).toHaveBeenCalledOnceWith({ x: word.line, y: word.startIdx }, word.orientation, word.word);
+        expect(spyOnPlace).toHaveBeenCalledOnceWith({ x: word.line, y: word.startIndex }, word.orientation, word.word);
     });
 
     it('should swap if placement fails (placement should never fails from the AI placement)', async () => {
-        const word = { word: 'MAJID', orientation: Orientation.Horizontal, line: 5, startIdx: 0, point: 0 };
+        const word = { word: 'MAJID', orientation: Orientation.Horizontal, line: 5, startIndex: 0, point: 0 };
         const spyOnPlace = spyOn<any>(service.placeLetterService, 'placeCommand').and.returnValue(Promise.resolve(false));
         const spyOnSwap = spyOn<any>(service, 'swap').and.returnValue(true);
         await service.place(word);
-        expect(spyOnPlace).toHaveBeenCalledOnceWith({ x: word.startIdx, y: word.line }, word.orientation, word.word);
+        expect(spyOnPlace).toHaveBeenCalledOnceWith({ x: word.startIndex, y: word.line }, word.orientation, word.word);
         expect(spyOnSwap).toHaveBeenCalledTimes(1);
     });
 

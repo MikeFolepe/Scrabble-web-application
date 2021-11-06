@@ -17,11 +17,12 @@ export class WordValidationService {
     private foundWords: string[];
 
     constructor(private httpServer: CommunicationService, private randomBonusService: RandomBonusesService) {
+        this.newWords = new Array<string>();
         this.playedWords = new Map<string, string[]>();
         this.newPlayedWords = new Map<string, string[]>();
-        this.newWords = new Array<string>();
         this.newPositions = new Array<string>();
         this.bonusesPositions = new Map<string, string>(this.randomBonusService.bonusPositions);
+        this.validationState = false;
         this.foundWords = new Array<string>();
     }
 
@@ -79,7 +80,7 @@ export class WordValidationService {
         return positions;
     }
 
-    passThroughAllRowsOrColumns(scrabbleBoard: string[][], isRow: boolean) {
+    passThroughAllRowsOrColumns(scrabbleBoard: string[][], isRow: boolean): void {
         let x = 0;
         let y = 0;
         for (let i = 0; i < BOARD_ROWS; i++) {
@@ -148,7 +149,7 @@ export class WordValidationService {
         return score;
     }
 
-    removeBonuses(map: Map<string, string[]>) {
+    removeBonuses(map: Map<string, string[]>): void {
         for (const positions of map.values()) {
             for (const position of positions) {
                 if (this.bonusesPositions.has(position)) {

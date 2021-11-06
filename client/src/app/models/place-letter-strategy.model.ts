@@ -20,17 +20,17 @@ export class PlaceLetterStrategy {
         const playerAi = playerAiService.playerService.players[INDEX_PLAYER_AI] as PlayerAI;
         const isFirstRound = playerAiService.placeLetterService.isFirstRound;
         const scrabbleBoard = playerAiService.placeLetterService.scrabbleBoard;
-
-        this.initializeArray(scrabbleBoard);
         let allPossibleWords: PossibleWords[];
         let matchingPointingRangeWords: PossibleWords[] = [];
+
+        this.initializeArray(scrabbleBoard);
 
         const patterns = this.generateAllPatterns(playerAi.getHand(), isFirstRound);
         allPossibleWords = this.generateAllWords(this.dictionary, patterns);
         allPossibleWords = this.removeIfNotEnoughLetter(allPossibleWords, playerAi);
 
         if (isFirstRound) {
-            allPossibleWords.forEach((word) => (word.startIdx = CENTRAL_CASE_POSITION_X));
+            allPossibleWords.forEach((word) => (word.startIndex = CENTRAL_CASE_POSITION_X));
         } else {
             allPossibleWords = this.removeIfNotDisposable(allPossibleWords);
         }
@@ -49,6 +49,7 @@ export class PlaceLetterStrategy {
         matchingPointingRangeWords: PossibleWords[],
         playerAiService: PlayerAIService,
     ): Promise<void> {
+        // First, try place word satisfying PointingRange.min < nbPt < PointingRange.max
         let index: number = this.placementAttempt(matchingPointingRangeWords, playerAiService);
         const noPlayableWord = -1;
         if (index !== noPlayableWord) {
@@ -57,6 +58,7 @@ export class PlaceLetterStrategy {
             return;
         }
 
+        // Second, try place the other words
         index = this.placementAttempt(allPossibleWords, playerAiService);
         if (index !== noPlayableWord) {
             await playerAiService.place(allPossibleWords[index]);
@@ -64,6 +66,7 @@ export class PlaceLetterStrategy {
             return;
         }
 
+        // No possibilities for this turn, player will swap for more possibilities on next turn
         playerAiService.swap();
     }
 
@@ -72,18 +75,16 @@ export class PlaceLetterStrategy {
         const noPlayableWord = -1;
         for (i = 0; i < possibilities.length; i++) {
             const word = possibilities[i];
-            let start: Vec2;
-            let orientation: Orientation;
-            if (word.orientation === Orientation.Horizontal) {
-                start = { x: word.line, y: word.startIdx };
-                orientation = Orientation.Horizontal;
-            } else {
-                start = { x: word.startIdx, y: word.line };
-                orientation = Orientation.Vertical;
-            }
-
+            const start: Vec2 = word.orientation ? { x: word.startIndex, y: word.line } : { x: word.line, y: word.startIndex };
+            const orientation: Orientation = word.orientation;
+            // Deep copy of the game scrabble board because of hypotetical placement
             let scrabbleBoard: string[][] = JSON.parse(JSON.stringify(playerAiService.placeLetterService.scrabbleBoard));
-            scrabbleBoard = playerAiService.placeWordOnBoard(scrabbleBoard, word.word, start, orientation ? 'v' : 'h');
+            scrabbleBoard = playerAiService.placeWordOnBoard(
+                scrabbleBoard,
+                word.word,
+                start,
+                orientation ? Orientation.Vertical : Orientation.Horizontal,
+            );
             const isValid = this.validateWord(scrabbleBoard);
 
             if (isValid) {
@@ -94,11 +95,12 @@ export class PlaceLetterStrategy {
         return noPlayableWord;
     }
 
-    private initializeArray(scrabbleBoard: string[][]) {
+    private initializeArray(scrabbleBoard: string[][]): void {
         const array: string[][][] = new Array(Object.keys(Orientation).length / 2);
         array[Orientation.Horizontal] = new Array(BOARD_COLUMNS);
         array[Orientation.Vertical] = new Array(BOARD_ROWS);
-
+        // Initialize the tridimensional array representing the scrabble board
+        // array[dimension][line][letter] <=> array[2 dimensions][15 line/dimensions][15 tile/row]
         for (let i = 0; i < BOARD_ROWS; i++) {
             array[Orientation.Horizontal][i] = scrabbleBoard[i];
             const column: string[] = [];
@@ -139,17 +141,20 @@ export class PlaceLetterStrategy {
         let pattern = '';
 
         for (const root of radixes) {
-            const startIdx = wordToPlace.word.search(root);
-            const endIdx = startIdx + root.length;
-            for (let i = startIdx; i < endIdx; i++) {
+            const startIndex = wordToPlace.word.search(root);
+            const endIdx = startIndex + root.length;
+            for (let i = startIndex; i < endIdx; i++) {
                 isEmptyCase[i] = false;
             }
         }
 
         for (let i = 0; i < isEmptyCase.length; i++) {
+            // Construct the word skeleton by replacing empty tiles in the row by spaces
+            // and the filled tiles by the letter value actually in the row
             pattern += isEmptyCase[i] ? ' ' : wordToPlace.word[i];
         }
 
+        // Search this skeleton in the row
         const start = line.search(pattern);
         const end = start + wordToPlace.word.length - 1;
 
@@ -157,15 +162,19 @@ export class PlaceLetterStrategy {
             return false;
         }
 
-        wordToPlace.startIdx = start;
+        // If found set the starting positing for later placing
+        wordToPlace.startIndex = start;
+        // If found the word must not touch the adjacent words
         return this.isWordOverWriting(line, start, end, wordToPlace.word.length) === false;
     }
 
-    private isWordOverWriting(line: string, startIdx: number, endIdx: number, wordLength: number): boolean {
+    private isWordOverWriting(line: string, startIndex: number, endIdx: number, wordLength: number): boolean {
         if (wordLength !== BOARD_ROWS) {
-            const touchOtherWordByRight = startIdx === 0 && line[endIdx + 1] !== ' ';
-            const touchOtherWordByLeft = endIdx === BOARD_ROWS && line[startIdx - 1] !== ' ';
-            const touchOtherWordByRightOrLeft = startIdx !== 0 && endIdx !== BOARD_ROWS && line[startIdx - 1] !== ' ' && line[endIdx + 1] !== ' ';
+            const touchOtherWordByRight = startIndex === 0 && line[endIdx + 1] !== ' ';
+            const touchOtherWordByLeft = endIdx === BOARD_ROWS && line[startIndex - 1] !== ' ';
+            const touchOtherWordByRightOrLeft = startIndex !== 0 && endIdx !== BOARD_ROWS && line[startIndex - 1] !== ' ' && line[endIdx + 1] !== ' ';
+
+            // The beginning and the end of the word must not touch another
             if (touchOtherWordByRight || touchOtherWordByLeft || touchOtherWordByRightOrLeft) {
                 return true;
             }
@@ -173,7 +182,7 @@ export class PlaceLetterStrategy {
         return false;
     }
 
-    private removeIfNotEnoughLetter(allPossibleWords: PossibleWords[], player: PlayerAI) {
+    private removeIfNotEnoughLetter(allPossibleWords: PossibleWords[], player: PlayerAI): PossibleWords[] {
         const filteredWords: PossibleWords[] = [];
 
         for (const word of allPossibleWords) {
@@ -187,6 +196,7 @@ export class PlaceLetterStrategy {
                 const playerAmount: number = player.playerQuantityOf(letter);
 
                 if (amountOfLetterNeeded > playerAmount + amountOfLetterPresent) {
+                    // Not add the words that need more letter than available
                     isWordValid = false;
                     break;
                 }
@@ -200,14 +210,14 @@ export class PlaceLetterStrategy {
         return filteredWords;
     }
 
-    private generateAllWords(dictionaryToLookAt: string[], patterns: BoardPattern) {
+    private generateAllWords(dictionaryToLookAt: string[], patterns: BoardPattern): PossibleWords[] {
+        // Generate all words satisfying the patterns found
         const allWords: PossibleWords[] = [];
-
         for (const pattern of patterns.horizontal) {
             const regex = new RegExp(pattern.pattern, 'g');
             for (const word of dictionaryToLookAt) {
                 if (regex.test(word) && this.checkIfWordIsPresent(pattern.pattern, word)) {
-                    allWords.push({ word, orientation: Orientation.Horizontal, line: pattern.line, startIdx: 0, point: 0 });
+                    allWords.push({ word, orientation: Orientation.Horizontal, line: pattern.line, startIndex: 0, point: 0 });
                 }
             }
         }
@@ -216,7 +226,7 @@ export class PlaceLetterStrategy {
             const regex = new RegExp(pattern.pattern, 'g');
             for (const word of dictionaryToLookAt) {
                 if (regex.test(word) && this.checkIfWordIsPresent(pattern.pattern, word)) {
-                    allWords.push({ word, orientation: Orientation.Vertical, line: pattern.line, startIdx: 0, point: 0 });
+                    allWords.push({ word, orientation: Orientation.Vertical, line: pattern.line, startIndex: 0, point: 0 });
                 }
             }
         }
@@ -242,6 +252,7 @@ export class PlaceLetterStrategy {
         let vertical: PatternInfo[] = [];
 
         if (isFirstRound) {
+            // At first round the only pattern is the letter in the player's easel
             horizontal.push({ line: CENTRAL_CASE_POSITION_X, pattern: '^' + playerHand.toLowerCase() + '*$' });
             vertical.push({ line: CENTRAL_CASE_POSITION_X, pattern: '^' + playerHand.toLowerCase() + '*$' });
             return { horizontal, vertical };
@@ -278,12 +289,14 @@ export class PlaceLetterStrategy {
     private validateWord(scrabbleBoard: string[][]): boolean {
         const save = JSON.parse(JSON.stringify(this.board));
 
+        // Place the word on the scrabble board to check the situation it would cause
         this.initializeArray(scrabbleBoard);
         const wordsOnBoard: string[] = [];
 
         const regex1 = new RegExp('[,]', 'g');
         const regex2 = new RegExp('[ ]{1}', 'g');
 
+        // Capture all groups of 2 letters or more
         const maxDimensions = Object.keys(Orientation).length / 2;
 
         for (let dimension = 0; dimension < maxDimensions; dimension++) {
@@ -301,6 +314,7 @@ export class PlaceLetterStrategy {
             }
         }
 
+        // Check if all groups of at least 2 letters are in the dictionary
         for (const word of wordsOnBoard) {
             const found = this.dictionary.find((element) => element === word);
             if (found === undefined) {
@@ -308,6 +322,8 @@ export class PlaceLetterStrategy {
                 return false;
             }
         }
+
+        // Restore the board
         this.board = save;
         return true;
     }

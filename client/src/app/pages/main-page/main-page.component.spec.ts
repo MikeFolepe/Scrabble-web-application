@@ -31,7 +31,7 @@ describe('MainPageComponent', () => {
         const spyNavigate = spyOn(component['router'], 'navigate');
 
         component.selectedGameMode = 'Jouer une partie en solo';
-        component.route();
+        component.routeToGameMode();
         expect(component.gameSettingsService.isSoloMode).toBeTrue();
         expect(spyNavigate).toHaveBeenCalledOnceWith(['solo-game-ai']);
     });
@@ -40,12 +40,12 @@ describe('MainPageComponent', () => {
         const spyNavigate = spyOn(component['router'], 'navigate');
 
         component.selectedGameMode = 'Créer une partie multijoueur';
-        component.route();
+        component.routeToGameMode();
         expect(component.gameSettingsService.isSoloMode).toBeFalse();
         expect(spyNavigate).toHaveBeenCalledWith(['multiplayer-mode']);
 
         component.selectedGameMode = 'Joindre une partie multijoueur';
-        component.route();
+        component.routeToGameMode();
         expect(spyNavigate).toHaveBeenCalledWith(['multiplayer-mode']);
     });
 
@@ -53,7 +53,7 @@ describe('MainPageComponent', () => {
         const spyNavigate = spyOn(component['router'], 'navigate');
 
         component.selectedGameMode = 'Joindre une partie multijoueur';
-        component.route();
+        component.routeToGameMode();
         expect(spyNavigate).toHaveBeenCalledWith(['join-room']);
     });
 });

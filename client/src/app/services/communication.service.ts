@@ -8,10 +8,11 @@ import { environment } from 'src/environments/environment';
     providedIn: 'root',
 })
 export class CommunicationService {
-    private readonly baseUrl: string = environment.serverUrl;
+    private readonly baseUrl: string;
     private wordsToValidate: string[];
 
     constructor(private readonly http: HttpClient) {
+        this.baseUrl = environment.serverUrl;
         this.wordsToValidate = [];
     }
 

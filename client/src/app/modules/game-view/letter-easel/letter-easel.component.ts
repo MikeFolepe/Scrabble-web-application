@@ -1,15 +1,15 @@
 import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { DEFAULT_FONT_SIZE, EASEL_SIZE, INDEX_PLAYER_ONE } from '@app/classes/constants';
+import { TypeMessage } from '@app/classes/enum';
 import { BoardHandlerService } from '@app/services/board-handler.service';
-import { Letter } from '@common/letter';
+import { EndGameService } from '@app/services/end-game.service';
 import { LetterService } from '@app/services/letter.service';
 import { ManipulateService } from '@app/services/manipulate.service';
 import { PlayerService } from '@app/services/player.service';
 import { SendMessageService } from '@app/services/send-message.service';
 import { SkipTurnService } from '@app/services/skip-turn.service';
-import { EndGameService } from '@app/services/end-game.service';
 import { SwapLetterService } from '@app/services/swap-letter.service';
-import { TypeMessage } from '@app/classes/enum';
+import { Letter } from '@common/letter';
 
 @Component({
     selector: 'app-letter-easel',
@@ -19,8 +19,8 @@ import { TypeMessage } from '@app/classes/enum';
 export class LetterEaselComponent implements OnInit {
     @ViewChild('easel') easel: ElementRef;
 
-    letterEaselTab: Letter[] = [];
-    fontSize: number = DEFAULT_FONT_SIZE;
+    letterEaselTab: Letter[];
+    fontSize: number;
 
     constructor(
         private playerService: PlayerService,
@@ -31,9 +31,11 @@ export class LetterEaselComponent implements OnInit {
         private manipulateService: ManipulateService,
         private skipTurnService: SkipTurnService,
         private endGameService: EndGameService,
-    ) {}
+    ) {
+        this.letterEaselTab = [];
+        this.fontSize = DEFAULT_FONT_SIZE;
+    }
 
-    // TODO Changer le font size ne deselect pas ?
     @HostListener('document:click', ['$event'])
     @HostListener('document:contextmenu', ['$event'])
     clickEvent(event: MouseEvent): void {
@@ -66,7 +68,6 @@ export class LetterEaselComponent implements OnInit {
         this.update();
         this.manipulateService.sendEasel(this.letterEaselTab);
     }
-
     onRightClick(event: MouseEvent, indexLetter: number): void {
         event.preventDefault();
         this.handleSwapSelection(indexLetter);
@@ -81,7 +82,7 @@ export class LetterEaselComponent implements OnInit {
         this.boardHandlerService.cancelPlacement();
     }
 
-    handleFontSizeEvent(fontSizeEvent: number) {
+    handleFontSizeEvent(fontSizeEvent: number): void {
         this.fontSize = fontSizeEvent;
         this.playerService.updateFontSize(this.fontSize);
     }

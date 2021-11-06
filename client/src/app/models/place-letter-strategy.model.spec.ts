@@ -125,9 +125,9 @@ describe('Place Letter', () => {
         const randomDictionary: string[] = ['moi', 'canada', 'inf2610', 'moins', 'a', 'o'];
 
         const expected: PossibleWords[] = [];
-        expected.push({ word: 'canada', orientation: Orientation.Horizontal, line: 0, startIdx: 0, point: 0 });
-        expected.push({ word: 'moi', orientation: Orientation.Vertical, line: 0, startIdx: 0, point: 0 });
-        expected.push({ word: 'moins', orientation: Orientation.Vertical, line: 0, startIdx: 0, point: 0 });
+        expected.push({ word: 'canada', orientation: Orientation.Horizontal, line: 0, startIndex: 0, point: 0 });
+        expected.push({ word: 'moi', orientation: Orientation.Vertical, line: 0, startIndex: 0, point: 0 });
+        expected.push({ word: 'moins', orientation: Orientation.Vertical, line: 0, startIndex: 0, point: 0 });
 
         placeStrategy = new PlaceLetterStrategy({ min: 0, max: 100 });
 
@@ -136,9 +136,9 @@ describe('Place Letter', () => {
 
     it('should retain only those he can play in letter quantity', () => {
         const possibleWords: PossibleWords[] = [];
-        const word1: PossibleWords = { word: 'abc', orientation: Orientation.Horizontal, line: 0, startIdx: 0, point: 0 };
-        const word2: PossibleWords = { word: 'aab', orientation: Orientation.Horizontal, line: 2, startIdx: 0, point: 0 };
-        const word3: PossibleWords = { word: 'abz', orientation: Orientation.Horizontal, line: 4, startIdx: 0, point: 0 };
+        const word1: PossibleWords = { word: 'abc', orientation: Orientation.Horizontal, line: 0, startIndex: 0, point: 0 };
+        const word2: PossibleWords = { word: 'aab', orientation: Orientation.Horizontal, line: 2, startIndex: 0, point: 0 };
+        const word3: PossibleWords = { word: 'abz', orientation: Orientation.Horizontal, line: 4, startIndex: 0, point: 0 };
 
         possibleWords.push(word1);
         possibleWords.push(word2);
@@ -162,15 +162,15 @@ describe('Place Letter', () => {
         scrabbleBoard[2][0] = 'r';
         scrabbleBoard[5][0] = 'n';
 
-        const word1: PossibleWords = { word: 'amar', orientation: Orientation.Horizontal, line: 0, startIdx: 0, point: 0 };
-        const word2: PossibleWords = { word: 'maree', orientation: Orientation.Horizontal, line: 0, startIdx: 0, point: 0 };
-        const word3: PossibleWords = { word: 'martin', orientation: Orientation.Horizontal, line: 0, startIdx: 0, point: 0 };
-        const word4: PossibleWords = { word: 'mare', orientation: Orientation.Horizontal, line: 0, startIdx: 0, point: 0 };
+        const word1: PossibleWords = { word: 'amar', orientation: Orientation.Horizontal, line: 0, startIndex: 0, point: 0 };
+        const word2: PossibleWords = { word: 'maree', orientation: Orientation.Horizontal, line: 0, startIndex: 0, point: 0 };
+        const word3: PossibleWords = { word: 'martin', orientation: Orientation.Horizontal, line: 0, startIndex: 0, point: 0 };
+        const word4: PossibleWords = { word: 'mare', orientation: Orientation.Horizontal, line: 0, startIndex: 0, point: 0 };
 
-        const word5: PossibleWords = { word: 'amar', orientation: Orientation.Vertical, line: 0, startIdx: 0, point: 0 };
-        const word6: PossibleWords = { word: 'maree', orientation: Orientation.Vertical, line: 0, startIdx: 0, point: 0 };
-        const word7: PossibleWords = { word: 'martin', orientation: Orientation.Vertical, line: 0, startIdx: 0, point: 0 };
-        const word8: PossibleWords = { word: 'mare', orientation: Orientation.Vertical, line: 0, startIdx: 0, point: 0 };
+        const word5: PossibleWords = { word: 'amar', orientation: Orientation.Vertical, line: 0, startIndex: 0, point: 0 };
+        const word6: PossibleWords = { word: 'maree', orientation: Orientation.Vertical, line: 0, startIndex: 0, point: 0 };
+        const word7: PossibleWords = { word: 'martin', orientation: Orientation.Vertical, line: 0, startIndex: 0, point: 0 };
+        const word8: PossibleWords = { word: 'mare', orientation: Orientation.Vertical, line: 0, startIndex: 0, point: 0 };
 
         const possibleWord: PossibleWords[] = [];
         possibleWord.push(word1);
@@ -210,8 +210,8 @@ describe('Place Letter', () => {
 
         const spyOnPlace = spyOn<any>(playerAiService, 'place');
 
-        const word1: PossibleWords = { word: 'on', orientation: Orientation.Horizontal, line: 7, startIdx: 7, point: 2 };
-        const word2: PossibleWords = { word: 'on', orientation: Orientation.Vertical, line: 7, startIdx: 7, point: 2 };
+        const word1: PossibleWords = { word: 'on', orientation: Orientation.Horizontal, line: 7, startIndex: 7, point: 2 };
+        const word2: PossibleWords = { word: 'on', orientation: Orientation.Vertical, line: 7, startIndex: 7, point: 2 };
 
         const allPoss: PossibleWords[] = [];
         allPoss.push(word1);
@@ -240,7 +240,7 @@ describe('Place Letter', () => {
     });
 
     it('should remove word that will cause a new word not in dictionary', () => {
-        const allPoss: PossibleWords[] = [{ word: 'ton', orientation: Orientation.Vertical, line: 3, startIdx: 3, point: 0 }];
+        const allPoss: PossibleWords[] = [{ word: 'ton', orientation: Orientation.Vertical, line: 3, startIndex: 3, point: 0 }];
         const NO_PLAYABLE_WORD = -1;
 
         scrabbleBoard[3][1] = 'm';
@@ -257,7 +257,7 @@ describe('Place Letter', () => {
     });
 
     it('should play alternatives when no matching pointing possibilities', async () => {
-        const allPossibleWords: PossibleWords[] = [{ word: 'ton', orientation: Orientation.Vertical, line: 3, startIdx: 3, point: 0 }];
+        const allPossibleWords: PossibleWords[] = [{ word: 'ton', orientation: Orientation.Vertical, line: 3, startIndex: 3, point: 0 }];
         const matchingPointingRangeWords: PossibleWords[] = [];
 
         placeStrategy = new PlaceLetterStrategy({ min: 6, max: 10 });
@@ -299,12 +299,12 @@ describe('Place Letter', () => {
             { value: 'R', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
         ];
 
-        const word1: PossibleWords = { word: 'maths', orientation: Orientation.Horizontal, line: 3, startIdx: 1, point: 9 };
-        const word2: PossibleWords = { word: 'rond', orientation: Orientation.Horizontal, line: 4, startIdx: 2, point: 10 };
-        const word3: PossibleWords = { word: 'thon', orientation: Orientation.Horizontal, line: 5, startIdx: 2, point: 9 };
-        const word4: PossibleWords = { word: 'thon', orientation: Orientation.Vertical, line: 3, startIdx: 3, point: 7 };
-        const word5: PossibleWords = { word: 'art', orientation: Orientation.Vertical, line: 3, startIdx: 1, point: 3 };
-        const word6: PossibleWords = { word: 'art', orientation: Orientation.Horizontal, line: 5, startIdx: 0, point: 5 };
+        const word1: PossibleWords = { word: 'maths', orientation: Orientation.Horizontal, line: 3, startIndex: 1, point: 9 };
+        const word2: PossibleWords = { word: 'rond', orientation: Orientation.Horizontal, line: 4, startIndex: 2, point: 10 };
+        const word3: PossibleWords = { word: 'thon', orientation: Orientation.Horizontal, line: 5, startIndex: 2, point: 9 };
+        const word4: PossibleWords = { word: 'thon', orientation: Orientation.Vertical, line: 3, startIndex: 3, point: 7 };
+        const word5: PossibleWords = { word: 'art', orientation: Orientation.Vertical, line: 3, startIndex: 1, point: 3 };
+        const word6: PossibleWords = { word: 'art', orientation: Orientation.Horizontal, line: 5, startIndex: 0, point: 5 };
 
         const expectedPoss: PossibleWords[] = [];
         expectedPoss.push(word2);
