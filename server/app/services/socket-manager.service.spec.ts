@@ -5,7 +5,6 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
-/* eslint-disable sort-imports */
 import { GameSettings } from '@common/game-settings';
 import { Room, State } from '@common/room';
 import { expect } from 'chai';

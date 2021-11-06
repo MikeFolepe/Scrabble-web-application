@@ -1,16 +1,18 @@
 /* eslint-disable sort-imports */
-import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSITION_X, DICTIONARY, INDEX_INVALID, INDEX_PLAYER_AI } from '@app/classes/constants';
+import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSITION_X, INDEX_INVALID, INDEX_PLAYER_AI } from '@app/classes/constants';
 import { Range } from '@app/classes/range';
 import { BoardPattern, Orientation, PatternInfo, PossibleWords } from '@app/classes/scrabble-board-pattern';
-import { PlayerAIService } from '@app/services/player-ia.service';
 import { Vec2 } from '@common/vec2';
+import { PlayerAIService } from '@app/services/player-ia.service';
 import { PlayerAI } from './player-ai.model';
+import * as dictionaryData from '@common/dictionary.json';
+
 export class PlaceLetterStrategy {
     dictionary: string[];
     private board: string[][][];
 
     constructor(public pointingRange: Range) {
-        this.dictionary = DICTIONARY;
+        this.dictionary = JSON.parse(JSON.stringify(dictionaryData)).words;
         this.board = [];
     }
 
@@ -77,10 +79,12 @@ export class PlaceLetterStrategy {
             const orientation: Orientation = word.orientation;
             // Deep copy of the game scrabble board because of hypotetical placement
             let scrabbleBoard: string[][] = JSON.parse(JSON.stringify(playerAiService.placeLetterService.scrabbleBoard));
-            // Place the hypotetic word on the copy of scrabble board
-            scrabbleBoard = playerAiService.placeWordOnBoard(scrabbleBoard, word.word, start, orientation);
-            // Pass the scrabble board for the validation
-            // TODO: isWordValid?
+            scrabbleBoard = playerAiService.placeWordOnBoard(
+                scrabbleBoard,
+                word.word,
+                start,
+                orientation ? Orientation.Vertical : Orientation.Horizontal,
+            );
             const isValid = this.validateWord(scrabbleBoard);
 
             if (isValid) {
@@ -209,7 +213,6 @@ export class PlaceLetterStrategy {
     private generateAllWords(dictionaryToLookAt: string[], patterns: BoardPattern): PossibleWords[] {
         // Generate all words satisfying the patterns found
         const allWords: PossibleWords[] = [];
-        // TODO: avoid duplication
         for (const pattern of patterns.horizontal) {
             const regex = new RegExp(pattern.pattern, 'g');
             for (const word of dictionaryToLookAt) {
