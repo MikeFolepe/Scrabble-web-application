@@ -240,4 +240,14 @@ describe('BoardHandlerService', () => {
         service.buttonDetect(keyboardEvent);
         expect(service.confirmPlacement).toHaveBeenCalled();
     });
+
+    it('pressing Enter while it is not your turn should call cancelPlacement', () => {
+        spyOn(service, 'cancelPlacement');
+        service.word = 'abc';
+        service['skipTurnService'].isTurn = false;
+
+        const keyboardEvent = new KeyboardEvent('keydown', { key: 'Enter' });
+        service.buttonDetect(keyboardEvent);
+        expect(service.cancelPlacement).toHaveBeenCalled();
+    });
 });
