@@ -1,7 +1,7 @@
 /* eslint-disable sort-imports */
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DELAY_BEFORE_PLAY, INDEX_PLAYER_AI, INDEX_PLAYER_ONE, INDEX_PLAYER_TWO } from '@app/classes/constants';
-import { Letter } from '@app/classes/letter';
+import { Letter } from '@common/letter';
 import { PlayerAI } from '@app/models/player-ai.model';
 import { Player } from '@app/models/player.model';
 import { ClientSocketService } from '@app/services/client-socket.service';

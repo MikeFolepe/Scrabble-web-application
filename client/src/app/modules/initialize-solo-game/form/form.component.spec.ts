@@ -14,12 +14,8 @@ describe('FormComponent', () => {
     let component: FormComponent;
     let fixture: ComponentFixture<FormComponent>;
     let router: jasmine.SpyObj<Router>;
-    // RouterTestingModule.withRoutes([{ path: 'game', component: GameViewComponent }]);
-    // RouterTestingModule.withRoutes([{ path: 'multiplayer-mode-waiting-room', component: WaitingRoomComponent }]);
 
     beforeEach(async () => {
-        // RouterTestingModule.withRoutes([{ path: 'game', component: GameViewComponent }]);
-        // RouterTestingModule.withRoutes([{ path: 'multiplayer-mode-waiting-room', component: WaitingRoomComponent }]);
         router = jasmine.createSpyObj('Router', ['navigate']);
         await TestBed.configureTestingModule({
             declarations: [FormComponent],
@@ -33,7 +29,6 @@ describe('FormComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(FormComponent);
         component = fixture.componentInstance;
-        // RouterTestingModule.withRoutes([{ path: 'game', component: GameViewComponent }]);
         fixture.detectChanges();
         component.form = new FormGroup({
             playerName: new FormControl(''),
@@ -74,32 +69,26 @@ describe('FormComponent', () => {
     });
 
     it('should call chooseRandomAIName()', async () => {
-        // spyOn(component['router'], 'navigate');
         const chooseRandomAINameSpy = spyOn(component, 'chooseRandomAIName');
         component.initGame();
         expect(chooseRandomAINameSpy).toHaveBeenCalled();
     });
 
     it('should call chooseStartingPlayer()', () => {
-        // spyOn(component['router'], 'navigate');
         const chooseStartingPlayerSpy = spyOn(component, 'chooseStartingPlayer');
         component.initGame();
         expect(chooseStartingPlayerSpy).toHaveBeenCalled();
     });
 
     it('should route to game if it is soloGame', () => {
-        // const snapshotSettingsSpy = spyOn(component, 'snapshotSettings');
         component.gameSettingsService.isSoloMode = true;
         component.initGame();
-        // expect(snapshotSettingsSpy).toHaveBeenCalled();
         expect(router.navigate).toHaveBeenCalledWith(['game']);
     });
 
     it('should route to multiplayer-mode-waiting-room if it is not soloGame', () => {
-        // const snapshotSettingsSpy = spyOn(component, 'snapshotSettings');
         component.gameSettingsService.isSoloMode = false;
         component.initGame();
-        // expect(snapshotSettingsSpy).toHaveBeenCalled();
         expect(router.navigate).toHaveBeenCalledWith(['multiplayer-mode-waiting-room']);
     });
 

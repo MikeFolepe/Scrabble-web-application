@@ -8,7 +8,7 @@ import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { BOARD_COLUMNS, BOARD_ROWS, RESERVE } from '@app/classes/constants';
 import { Orientation, PossibleWords } from '@app/classes/scrabble-board-pattern';
-import { Vec2 } from '@app/classes/vec2';
+import { Vec2 } from '@common/vec2';
 import { Player } from '@app/models/player.model';
 import { PlayerAIService } from '@app/services/player-ia.service';
 import { PlayerAI } from './../models/player-ai.model';

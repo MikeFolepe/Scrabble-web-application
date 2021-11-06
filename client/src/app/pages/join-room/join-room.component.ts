@@ -6,8 +6,6 @@ import { DialogComponent } from '@app/modules/initialize-solo-game/dialog/dialog
 import { ClientSocketService } from '@app/services/client-socket.service';
 import { PlayerIndex } from '@common/PlayerIndex';
 import { Room, State } from '@common/room';
-
-// TODO: enlever les messages
 @Component({
     selector: 'app-join-room',
     templateUrl: './join-room.component.html',
@@ -77,8 +75,8 @@ export class JoinRoomComponent implements OnInit {
     }
 
     configureRooms(): void {
-        this.clientSocketService.socket.on('roomConfiguration', (room: Room[]) => {
-            this.rooms = room;
+        this.clientSocketService.socket.on('roomConfiguration', (rooms: Room[]) => {
+            this.rooms = rooms;
         });
     }
 }

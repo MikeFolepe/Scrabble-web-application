@@ -1,5 +1,5 @@
 import { AIStrategy } from '@app/classes/enum';
-import { Letter } from '@app/classes/letter';
+import { Letter } from '@common/letter';
 import dictionaryData from '@common/dictionary.json';
 
 export const WHITE_LETTER_POSITION = 26;
@@ -54,6 +54,8 @@ export const DOUBLE_LETTER = 2;
 export const MIN_RESERVE_SIZE_TO_SWAP = 7;
 
 export const MAX_SOLUTION = 3;
+
+export const COLOR_BLACK = 'black';
 
 export const AI_NAME_DATABASE: string[] = ['Mister_Bucky', 'Mister_Samy', 'Miss_Betty'];
 

@@ -10,7 +10,7 @@ import {
     RESERVE,
     WHITE_LETTER_POSITION,
 } from '@app/classes/constants';
-import { Letter } from '@app/classes/letter';
+import { Letter } from '@common/letter';
 import { Player } from '@app/models/player.model';
 import { GridService } from '@app/services/grid.service';
 import { LetterService } from '@app/services/letter.service';

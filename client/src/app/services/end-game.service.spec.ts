@@ -4,7 +4,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { RESERVE } from '@app/classes/constants';
-import { Letter } from '@app/classes/letter';
+import { Letter } from '@common/letter';
 import { Orientation } from '@app/classes/scrabble-board-pattern';
 import { Player } from '@app/models/player.model';
 import { EndGameService } from '@app/services/end-game.service';
@@ -14,7 +14,7 @@ import { PlayerAIService } from './player-ia.service';
 
 describe('EndGameService', () => {
     let service: EndGameService;
-    let playerAiService: jasmine.SpyObj<PlayerAIService>;
+    let playerAiService: PlayerAIService;
 
     let letterA: Letter;
     let letterB: Letter;
@@ -27,6 +27,7 @@ describe('EndGameService', () => {
             imports: [HttpClientTestingModule, RouterTestingModule],
         });
         service = TestBed.inject(EndGameService);
+        playerAiService = TestBed.inject(PlayerAIService);
 
         letterA = RESERVE[0];
         letterB = RESERVE[1];
@@ -80,6 +81,20 @@ describe('EndGameService', () => {
 
         service.receiveEndGameFromServer();
         expect(service.isEndGame).toEqual(true);
+    });
+
+    it('should receive the notification of the give up from the opponent ', () => {
+        service['clientSocketService'].socket = {
+            on: (eventName: string, callback: (isEndGameByGiveUp: boolean, winnerName: string) => void) => {
+                if (eventName === 'receiveEndGameByGiveUp') {
+                    callback(true, 'Mike');
+                }
+            },
+        } as unknown as Socket;
+
+        service.receiveEndGameByGiveUp();
+        expect(service.isEndGameByGiveUp).toEqual(true);
+        expect(service.winnerNameByGiveUp).toEqual('Mike');
     });
 
     it('should return the right winner name when getWinnerName() is called', () => {
@@ -186,14 +201,4 @@ describe('EndGameService', () => {
         expect(service.actionsLog).toHaveSize(0);
         expect(service.debugService.debugServiceMessage).toHaveSize(0);
     });
-
-    // it('should know if it is end game due to easel', () => {
-    //     spyOn(service.letterService, 'isReserveEmpty').and.returnValues(true, false, true, false);
-    //     spyOn(service.playerService, 'isEaselEmpty').and.returnValues(true, true, true, false, false, false, false, false);
-
-    //     expect(service['isEndGameByEasel']()).toBeTrue();
-    //     expect(service['isEndGameByEasel']()).toBeFalse();
-    //     expect(service['isEndGameByEasel']()).toBeTrue();
-    //     expect(service['isEndGameByEasel']()).toBeFalse();
-    // });
 });

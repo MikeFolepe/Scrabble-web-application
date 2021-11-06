@@ -4,7 +4,7 @@ import { TypeMessage } from '@app/classes/enum';
 import { Range } from '@app/classes/range';
 import { Earning } from '@app/classes/earning';
 import { Orientation, PossibleWords } from '@app/classes/scrabble-board-pattern';
-import { Vec2 } from '@app/classes/vec2';
+import { Vec2 } from '@common/vec2';
 import { PlayerAI } from '@app/models/player-ai.model';
 import { ChatboxService } from './chatbox.service';
 import { DebugService } from './debug.service';

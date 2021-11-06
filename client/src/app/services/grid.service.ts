@@ -1,11 +1,8 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 import { Injectable } from '@angular/core';
-import { BOARD_ROWS, DEFAULT_HEIGHT, DEFAULT_WIDTH, GRID_CASE_SIZE, RESERVE } from '@app/classes/constants';
+import { BOARD_ROWS, COLOR_BLACK, DEFAULT_HEIGHT, DEFAULT_WIDTH, GRID_CASE_SIZE, RESERVE } from '@app/classes/constants';
 import { Orientation } from '@app/classes/scrabble-board-pattern';
-import { Vec2 } from '@app/classes/vec2';
-
-const COLOR_BLACK = 'black';
-
+import { Vec2 } from '@common/vec2';
 @Injectable({
     providedIn: 'root',
 })
@@ -39,7 +36,7 @@ export class GridService {
         this.writeGridIndexes(this.gridContextBoardLayer, this.gridLength);
         this.drawSimpleGrid(this.gridContextBoardLayer);
         this.drawBonusBoxes(this.bonusPositions);
-        this.drawCenterBoxe();
+        this.drawCenterBox();
     }
 
     drawBorder(context: CanvasRenderingContext2D, positionTab: Vec2): void {
@@ -195,7 +192,7 @@ export class GridService {
     }
 
     // color the center box of the grid then draw a star on it
-    private drawCenterBoxe(): void {
+    private drawCenterBox(): void {
         const centerPosition: Vec2 = { x: 8 * GRID_CASE_SIZE, y: 8 * GRID_CASE_SIZE };
         // coloring the box
         this.gridContextBoardLayer.fillStyle = 'pink';

@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 import { INDEX_PLAYER_ONE, MAX_NUMBER_OF_POSSIBILITY } from '@app/classes/constants';
 import { TypeMessage } from '@app/classes/enum';
 import { Orientation } from '@app/classes/scrabble-board-pattern';
-import { Vec2 } from '@app/classes/vec2';
 import { DebugService } from '@app/services/debug.service';
 import { EndGameService } from '@app/services/end-game.service';
 import { LetterService } from '@app/services/letter.service';
@@ -12,6 +11,7 @@ import { PlayerService } from '@app/services/player.service';
 import { SendMessageService } from '@app/services/send-message.service';
 import { SkipTurnService } from '@app/services/skip-turn.service';
 import { SwapLetterService } from '@app/services/swap-letter.service';
+import { Vec2 } from '@common/vec2';
 
 @Injectable({
     providedIn: 'root',
@@ -40,7 +40,7 @@ export class ChatboxService {
         this.notTurnErrorMessage = "ERREUR : Ce n'est pas ton tour";
     }
 
-    sendPlayerMessage(message: string) {
+    sendPlayerMessage(message: string): void {
         this.typeMessage = TypeMessage.Player;
         this.message = message;
         if (!this.isValid()) {
@@ -75,7 +75,7 @@ export class ChatboxService {
         this.command = ''; // reset value for next message
     }
 
-    executeDebug() {
+    executeDebug(): void {
         this.debugService.switchDebugMode();
         if (this.debugService.isDebugActive) {
             this.sendMessageService.displayMessageByType('affichages de débogage activés', TypeMessage.System);
@@ -85,7 +85,7 @@ export class ChatboxService {
         }
     }
 
-    executeSkipTurn() {
+    executeSkipTurn(): void {
         if (this.skipTurnService.isTurn) {
             this.endGameService.addActionsLog('passer');
             this.sendMessageService.displayMessageByType(this.message, this.typeMessage);
@@ -108,7 +108,7 @@ export class ChatboxService {
         }
     }
 
-    executeSwap() {
+    executeSwap(): void {
         if (this.skipTurnService.isTurn) {
             const messageSplitted = this.message.split(/\s/);
 
@@ -122,7 +122,7 @@ export class ChatboxService {
         }
     }
 
-    async executePlace() {
+    async executePlace(): Promise<void> {
         if (this.skipTurnService.isTurn) {
             const messageSplitted = this.message.split(/\s/);
             const positionSplitted = messageSplitted[1].split(/([0-9]+)/);

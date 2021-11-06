@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { EASEL_SIZE, RESERVE } from '@app/classes/constants';
-import { Letter } from '@app/classes/letter';
+import { Letter } from '@common/letter';
 import { ClientSocketService } from '@app/services/client-socket.service';
 @Injectable({
     providedIn: 'root',
@@ -8,7 +8,6 @@ import { ClientSocketService } from '@app/services/client-socket.service';
 export class LetterService {
     // Property witch return total number of letters available
     randomElement: number;
-    // Deep copy
     reserve: Letter[];
     reserveSize: number;
 
