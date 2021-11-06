@@ -1,4 +1,3 @@
-/* eslint-disable sort-imports */
 import { placingBallotBox, PlacingStrategy } from '@app/classes/constants';
 import { Letter } from '@common/letter';
 import { Range } from '@app/classes/range';
@@ -13,7 +12,7 @@ export class PlayerAI extends Player {
         this.strategy = new PlaceLetterStrategy(this.pointingRange());
     }
 
-    play() {
+    play(): void {
         this.strategy.execute(this.playerAiService);
     }
 

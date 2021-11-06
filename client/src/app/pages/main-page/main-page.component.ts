@@ -8,12 +8,13 @@ import { GameSettingsService } from '@app/services/game-settings.service';
     styleUrls: ['./main-page.component.scss'],
 })
 export class MainPageComponent {
-    selectedGameTypeIndex = 0;
+    selectedGameTypeIndex: number;
     selectedGameMode?: string;
     readonly gameTypes: string[];
     readonly gameModes: string[];
 
     constructor(public gameSettingsService: GameSettingsService, private router: Router) {
+        this.selectedGameTypeIndex = 0;
         this.gameTypes = ['Scrabble classique', 'Scrabble LOG2990'];
         this.gameModes = ['Jouer une partie en solo', 'Créer une partie multijoueur', 'Joindre une partie multijoueur'];
     }

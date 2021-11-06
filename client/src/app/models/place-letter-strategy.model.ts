@@ -1,11 +1,10 @@
-/* eslint-disable sort-imports */
 import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSITION_X, INDEX_INVALID, INDEX_PLAYER_AI } from '@app/classes/constants';
 import { Range } from '@app/classes/range';
 import { BoardPattern, Orientation, PatternInfo, PossibleWords } from '@app/classes/scrabble-board-pattern';
-import { Vec2 } from '@common/vec2';
 import { PlayerAIService } from '@app/services/player-ia.service';
-import { PlayerAI } from './player-ai.model';
 import * as dictionaryData from '@common/dictionary.json';
+import { Vec2 } from '@common/vec2';
+import { PlayerAI } from './player-ai.model';
 
 export class PlaceLetterStrategy {
     dictionary: string[];
@@ -79,19 +78,15 @@ export class PlaceLetterStrategy {
             const orientation: Orientation = word.orientation;
             // Deep copy of the game scrabble board because of hypotetical placement
             let scrabbleBoard: string[][] = JSON.parse(JSON.stringify(playerAiService.placeLetterService.scrabbleBoard));
-            scrabbleBoard = playerAiService.placeWordOnBoard(
-                scrabbleBoard,
-                word.word,
-                start,
-                orientation ? Orientation.Vertical : Orientation.Horizontal,
-            );
+            // Place the hypotetic word on the copy of scrabble board
+            scrabbleBoard = playerAiService.placeWordOnBoard(scrabbleBoard, word.word, start, orientation);
+            // Pass the scrabble board for the validation
             const isValid = this.validateWord(scrabbleBoard);
 
             if (isValid) {
                 return i;
             }
         }
-
         return noPlayableWord;
     }
 

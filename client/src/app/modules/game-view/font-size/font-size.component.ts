@@ -9,14 +9,14 @@ import { DEFAULT_FONT_SIZE, FONT_SIZE_MAX, FONT_SIZE_MIN, SIZE_VARIATION } from 
 export class FontSizeComponent {
     @Input() fontSize: number = DEFAULT_FONT_SIZE;
     @Output() sizeChange = new EventEmitter<number>();
-    decrement() {
+    decrement(): void {
         this.resize(-SIZE_VARIATION);
     }
-    increment() {
+    increment(): void {
         this.resize(+SIZE_VARIATION);
     }
 
-    resize(delta: number) {
+    resize(delta: number): void {
         this.fontSize = Math.min(FONT_SIZE_MAX, Math.max(FONT_SIZE_MIN, +this.fontSize + delta));
         this.sizeChange.emit(this.fontSize);
     }

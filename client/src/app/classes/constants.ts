@@ -27,6 +27,7 @@ export const TWO_POSSIBILITY = 2;
 export const NUMBER_OF_SKIP = 6;
 
 export const ONE_SECOND_DELAY = 1000;
+export const TWO_SECOND_DELAY = 2000;
 export const DELAY_TO_PLAY = 20000;
 export const ERROR_MESSAGE_DELAY = 4000;
 export const THREE_SECONDS_DELAY = 3000;
@@ -39,7 +40,6 @@ export const INDEX_INVALID = -1;
 export const INDEX_PLAYER_ONE = 0;
 export const INDEX_PLAYER_TWO = 1;
 export const INDEX_PLAYER_AI = 1;
-
 export const LAST_INDEX = -1;
 
 export const FONT_SIZE_MAX = 20;

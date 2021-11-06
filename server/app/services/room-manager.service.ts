@@ -29,7 +29,7 @@ export class RoomManagerService {
     }
 
     addCustomer(customerName: string, roomId: string): boolean {
-        const room = this.find(roomId) as Room;
+        const room = this.find(roomId);
         if (room === undefined) {
             return false;
         }
@@ -105,6 +105,7 @@ export class RoomManagerService {
         if (indexOfLoser === 0) return room.gameSettings.playersName[1];
         else return room.gameSettings.playersName[0];
     }
+
     isNotAvailable(roomId: string): boolean {
         const room = this.find(roomId);
 

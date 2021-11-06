@@ -33,7 +33,7 @@ export class GameViewComponent implements OnInit {
         this.fontSize = DEFAULT_FONT_SIZE;
     }
 
-    ngOnInit() {
+    ngOnInit(): void {
         const mapBonus = new Map<string, string>();
         JSON.parse(this.gameSettingsService.gameSettings.bonusPositions).map((element: string[]) => {
             mapBonus.set(element[0], element[1]);

@@ -1,6 +1,6 @@
-/* eslint-disable @typescript-eslint/no-magic-numbers */
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { ONE_SECOND_DELAY, TWO_SECOND_DELAY } from '@app/classes/constants';
 import { ClientSocketService } from '@app/services/client-socket.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { PlayerIndex } from '@common/PlayerIndex';
@@ -26,7 +26,7 @@ export class WaitingRoomComponent implements OnInit {
 
     playAnimation(): void {
         const startMessage = 'Connexion au serveur...';
-        this.waitBeforeChangeStatus(500, startMessage);
+        this.waitBeforeChangeStatus(ONE_SECOND_DELAY, startMessage);
         this.clientSocket.socket.connect();
 
         this.handleReloadErrors();
@@ -36,19 +36,19 @@ export class WaitingRoomComponent implements OnInit {
                 this.isWaiting = true;
                 this.waitBeforeChangeStatus(0, connexionSuccess);
                 const waitingMessage = 'En attente de joueur...';
-                this.waitBeforeChangeStatus(2000, waitingMessage);
+                this.waitBeforeChangeStatus(TWO_SECOND_DELAY, waitingMessage);
                 this.clientSocket.socket.emit('createRoom', this.gameSettingsService.gameSettings);
             } else {
                 this.status = 'Erreur de connexion...veuillez réessayer';
                 this.isWaiting = false;
             }
-        }, 2000);
+        }, TWO_SECOND_DELAY);
     }
 
     handleReloadErrors(): void {
         if (this.gameSettingsService.gameSettings.playersName[PlayerIndex.OWNER] === '') {
             const errorMessage = 'Une erreur est survenue';
-            this.waitBeforeChangeStatus(1000, errorMessage);
+            this.waitBeforeChangeStatus(ONE_SECOND_DELAY, errorMessage);
             this.router.navigate(['home']);
             return;
         }
