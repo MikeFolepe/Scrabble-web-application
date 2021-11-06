@@ -10,15 +10,16 @@
     flex-grow: 1;
 }
 
-.header-item {
+h2 {
     text-align: center;
     color: white;
     background-color: transparent;
     margin-bottom: 0px;
     padding: 10px 10px;
+    font-size: larger;
 }
 
-.fakeButtons {
+.fake-buttons {
     height: 10px;
     width: 10px;
     border-radius: 50%;
@@ -31,19 +32,19 @@
     display: inline-block;
 }
 
-.fakeMinimize {
+.fake-minimize {
     left: 11px;
     background-color: #ffc100;
     border-color: #9d802c;
 }
 
-.fakeZoom {
+.fake-zoom {
     left: 16px;
     background-color: #00d742;
     border-color: #049931;
 }
 
-.fakeMenu {
+.fake-menu {
     box-sizing: border-box;
     height: 25px;
     background-color: #bbb;
@@ -62,7 +63,7 @@
     opacity: 1; /* Firefox */
 }
 
-#listDisplay {
+#list-display {
     margin-left: 10px;
     line-height: 1.6;
 }

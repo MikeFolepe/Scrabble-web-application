@@ -4,6 +4,7 @@ import { GameSettingsService } from '@app/services/game-settings.service';
 import { GameSettings } from '@common/game-settings';
 import { Room } from '@common/room';
 import { io, Socket } from 'socket.io-client';
+
 @Injectable({
     providedIn: 'root',
 })
