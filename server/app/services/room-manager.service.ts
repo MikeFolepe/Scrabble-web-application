@@ -38,16 +38,16 @@ export class RoomManagerService {
         return true;
     }
 
-    setState(roomId: string, state: State) {
+    setState(roomId: string, state: State): void {
         const room = this.find(roomId) as Room;
         room.state = state;
     }
 
-    setSocket(room: Room, socketId: string) {
+    setSocket(room: Room, socketId: string): void {
         room.socketIds.push(socketId);
     }
 
-    getGameSettings(roomId: string) {
+    getGameSettings(roomId: string): GameSettings {
         const room = this.find(roomId) as Room;
         return room.gameSettings;
     }
@@ -71,7 +71,7 @@ export class RoomManagerService {
         return formattedGameSettings;
     }
 
-    deleteRoom(roomId: string) {
+    deleteRoom(roomId: string): void {
         this.rooms.forEach((room, roomIndex) => {
             if (room.id === roomId) this.rooms.splice(roomIndex, 1);
         });
@@ -100,9 +100,9 @@ export class RoomManagerService {
         return OUT_BOUND_INDEX_OF_SOCKET;
     }
 
-    getWinnerName(roomId: string, indexofLoser: number): string {
+    getWinnerName(roomId: string, indexOfLoser: number): string {
         const room = this.find(roomId) as Room;
-        if (indexofLoser === 0) return room.gameSettings.playersName[1];
+        if (indexOfLoser === 0) return room.gameSettings.playersName[1];
         else return room.gameSettings.playersName[0];
     }
     isNotAvailable(roomId: string): boolean {

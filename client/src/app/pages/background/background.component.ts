@@ -6,5 +6,8 @@ import { Component } from '@angular/core';
     styleUrls: ['./background.component.scss'],
 })
 export class BackgroundComponent {
-    isDark: boolean = false;
+    isDark: boolean;
+    constructor() {
+        this.isDark = false;
+    }
 }

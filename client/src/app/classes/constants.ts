@@ -1,7 +1,8 @@
 import { AIStrategy } from '@app/classes/enum';
 import { Letter } from '@app/classes/letter';
-// eslint-disable-next-line no-restricted-imports
 import dictionaryData from '@common/dictionary.json';
+
+export const WHITE_LETTER_POSITION = 26;
 
 export const DELAY_TO_PASS_TURN = 5000;
 export const DELAY_BEFORE_PLAY = 3000;

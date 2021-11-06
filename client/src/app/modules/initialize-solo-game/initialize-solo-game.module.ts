@@ -14,7 +14,7 @@ import { RandomBonusComponent } from './random-bonus/random-bonus.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from '@app/modules/shared/shared.module';
 import { TimerFieldComponent } from './timer-field/timer-field.component';
-import { GiveUpGameDialogComponent } from './give-up-game-dialog/give-up-game-dialog.component';
+import { GiveUpGameDialogComponent } from '../game-view/give-up-game-dialog/give-up-game-dialog.component';
 
 @NgModule({
     declarations: [

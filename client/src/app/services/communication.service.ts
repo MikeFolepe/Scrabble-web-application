@@ -9,10 +9,11 @@ import { Message } from '@app/classes/message';
     providedIn: 'root',
 })
 export class CommunicationService {
-    private readonly baseUrl: string = environment.serverUrl;
+    private readonly baseUrl: string;
     private wordsToValidate: string[];
 
     constructor(private readonly http: HttpClient) {
+        this.baseUrl = environment.serverUrl;
         this.wordsToValidate = [];
     }
 

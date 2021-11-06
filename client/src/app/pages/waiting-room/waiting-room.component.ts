@@ -17,14 +17,14 @@ export class WaitingRoomComponent implements OnInit {
     constructor(private router: Router, private gameSettingsService: GameSettingsService, private clientSocket: ClientSocketService) {
         this.status = '';
         this.isWaiting = true;
-        this.clientSocket.route();
+        this.clientSocket.routeToGameView();
     }
 
-    ngOnInit() {
+    ngOnInit(): void {
         this.playAnimation();
     }
 
-    playAnimation() {
+    playAnimation(): void {
         const startMessage = 'Connexion au serveur...';
         this.waitBeforeChangeStatus(500, startMessage);
         this.clientSocket.socket.connect();
@@ -45,7 +45,7 @@ export class WaitingRoomComponent implements OnInit {
         }, 2000);
     }
 
-    handleReloadErrors() {
+    handleReloadErrors(): void {
         if (this.gameSettingsService.gameSettings.playersName[PlayerIndex.OWNER] === '') {
             const errorMessage = 'Une erreur est survenue';
             this.waitBeforeChangeStatus(1000, errorMessage);
@@ -54,17 +54,17 @@ export class WaitingRoomComponent implements OnInit {
         }
     }
 
-    waitBeforeChangeStatus(waitingTime: number, message: string) {
+    waitBeforeChangeStatus(waitingTime: number, message: string): void {
         setTimeout(() => {
             this.status = message;
         }, waitingTime);
     }
 
-    delete() {
+    delete(): void {
         this.clientSocket.socket.emit('deleteGame', this.clientSocket.roomId);
     }
 
-    route() {
+    routeToGameView(): void {
         this.gameSettingsService.isSoloMode = true;
         this.gameSettingsService.isRedirectedFromMultiplayerGame = true;
         this.delete();

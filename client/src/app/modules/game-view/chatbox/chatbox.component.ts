@@ -1,10 +1,10 @@
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
-import { INDEX_PLAYER_AI, INDEX_PLAYER_ONE, ONE_SECOND_DELAY } from '@app/classes/constants';
+import { INDEX_PLAYER_ONE, INDEX_PLAYER_TWO, ONE_SECOND_DELAY } from '@app/classes/constants';
+import { TypeMessage } from '@app/classes/enum';
 import { BoardHandlerService } from '@app/services/board-handler.service';
 import { ChatboxService } from '@app/services/chatbox.service';
 import { EndGameService } from '@app/services/end-game.service';
 import { SendMessageService } from '@app/services/send-message.service';
-import { TypeMessage } from '@app/classes/enum';
 import { SkipTurnService } from '@app/services/skip-turn.service';
 
 @Component({
@@ -15,9 +15,9 @@ import { SkipTurnService } from '@app/services/skip-turn.service';
 export class ChatboxComponent implements OnInit, AfterViewInit {
     @ViewChild('scrollMe') private myScrollContainer: ElementRef;
 
-    message: string = '';
-    listMessages: string[] = [];
-    listTypes: TypeMessage[] = [];
+    message: string;
+    listMessages: string[];
+    listTypes: TypeMessage[];
 
     // Used to access TypeMessage enum in the HTML
     htmlTypeMessage = TypeMessage;
@@ -30,12 +30,16 @@ export class ChatboxComponent implements OnInit, AfterViewInit {
         public endGameService: EndGameService,
         private boardHandlerService: BoardHandlerService,
         private skipTurnService: SkipTurnService,
-    ) {}
+    ) {
+        this.message = '';
+        this.listMessages = [];
+        this.listTypes = [];
+    }
 
     // Disable the current placement on the board when a click occurs in the chatbox
     @HostListener('mouseup', ['$event'])
     @HostListener('contextmenu', ['$event'])
-    clickInChatBox() {
+    clickInChatBox(): void {
         this.boardHandlerService.cancelPlacement();
     }
 
@@ -43,7 +47,7 @@ export class ChatboxComponent implements OnInit, AfterViewInit {
         this.sendMessageService.displayBound(this.displayMessageByType.bind(this));
     }
 
-    handleKeyEvent(event: KeyboardEvent) {
+    handleKeyEvent(event: KeyboardEvent): void {
         if (event.key === 'Enter') {
             event.preventDefault();
             this.chatBoxService.sendPlayerMessage(this.message);
@@ -53,13 +57,13 @@ export class ChatboxComponent implements OnInit, AfterViewInit {
         }
     }
 
-    displayMessageByType() {
+    displayMessageByType(): void {
         this.listTypes.push(this.sendMessageService.typeMessage);
         this.listMessages.push(this.sendMessageService.message);
         this.scrollToBottom();
     }
 
-    sendSystemMessage(systemMessage: string) {
+    sendSystemMessage(systemMessage: string): void {
         this.typeMessage = TypeMessage.System;
         this.listTypes.push(this.typeMessage);
         this.listMessages.push(systemMessage);
@@ -72,13 +76,13 @@ export class ChatboxComponent implements OnInit, AfterViewInit {
         }, 1);
     }
 
-    ngAfterViewInit() {
+    ngAfterViewInit(): void {
         const findEnd = setInterval(() => {
             this.endGameService.checkEndGame();
             this.chatBoxService.displayFinalMessage(INDEX_PLAYER_ONE);
-            this.chatBoxService.displayFinalMessage(INDEX_PLAYER_AI);
+            this.chatBoxService.displayFinalMessage(INDEX_PLAYER_TWO);
             this.endGameService.getFinalScore(INDEX_PLAYER_ONE);
-            this.endGameService.getFinalScore(INDEX_PLAYER_AI);
+            this.endGameService.getFinalScore(INDEX_PLAYER_TWO);
             if (this.endGameService.isEndGame) {
                 this.skipTurnService.stopTimer();
                 clearInterval(findEnd);

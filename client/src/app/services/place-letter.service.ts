@@ -23,8 +23,6 @@ import { GameSettingsService } from './game-settings.service';
 import { SendMessageService } from './send-message.service';
 import { SkipTurnService } from './skip-turn.service';
 
-// TODO Changer nom des fonctions qui return des bools
-
 @Injectable({
     providedIn: 'root',
 })
@@ -35,10 +33,10 @@ export class PlaceLetterService {
     private startPosition: Vec2;
     private orientation: Orientation;
     private word: string;
-    private validLetters: boolean[] = []; // Array of the size of the word to place that tells which letter is valid
-    private isEaselSize: boolean = false; // If the bonus to form a word with all the letters from the easel applies
-    private numLettersUsedFromEasel: number = 0; // Number of letters used from the easel to form the word
-    private isRow: boolean = false;
+    private validLetters: boolean[]; // Array of the size of the word to place that tells which letter is valid
+    private isEaselSize: boolean; // If the bonus to form a word with all the letters from the easel applies
+    private numLettersUsedFromEasel: number; // Number of letters used from the easel to form the word
+    private isRow: boolean;
 
     constructor(
         private playerService: PlayerService,
@@ -51,6 +49,10 @@ export class PlaceLetterService {
         private endGameService: EndGameService,
     ) {
         this.scrabbleBoard = []; // Initializes the array with empty letters
+        this.validLetters = [];
+        this.isEaselSize = false;
+        this.numLettersUsedFromEasel = 0;
+        this.isRow = false;
         for (let i = 0; i < BOARD_ROWS; i++) {
             this.scrabbleBoard[i] = [];
             for (let j = 0; j < BOARD_COLUMNS; j++) {

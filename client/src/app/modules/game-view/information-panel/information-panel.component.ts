@@ -12,6 +12,7 @@ import { PlayerAIService } from '@app/services/player-ia.service';
 import { PlayerService } from '@app/services/player.service';
 import { SkipTurnService } from '@app/services/skip-turn.service';
 import { GameSettings } from '@common/game-settings';
+
 @Component({
     selector: 'app-information-panel',
     templateUrl: './information-panel.component.html',
@@ -54,15 +55,15 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
     }
 
     initializePlayers(): void {
-        // TODO: INDEX REAL PLAYER absent
-        let player = new Player(1, this.gameSettings.playersName[0], this.letterService.getRandomLetters());
+        let player = new Player(1, this.gameSettings.playersName[INDEX_PLAYER_ONE], this.letterService.getRandomLetters());
         this.playerService.addPlayer(player);
         if (this.gameSettingsService.isSoloMode) {
-            player = new PlayerAI(2, this.gameSettings.playersName[INDEX_PLAYER_AI], this.letterService.getRandomLetters(), this.playerAiService);
+            player = new PlayerAI(2, this.gameSettings.playersName[INDEX_PLAYER_TWO], this.letterService.getRandomLetters(), this.playerAiService);
             this.playerService.addPlayer(player);
-        } else {
-            this.clientSocketService.socket.emit('sendPlayerTwo', player.letterTable, this.clientSocketService.roomId);
+            return;
         }
+
+        this.clientSocketService.socket.emit('sendPlayerTwo', player.letterTable, this.clientSocketService.roomId);
     }
 
     initializeFirstTurn(): void {

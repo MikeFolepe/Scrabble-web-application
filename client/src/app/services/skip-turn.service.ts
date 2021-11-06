@@ -29,19 +29,19 @@ export class SkipTurnService {
         this.receiveStopFromServer();
     }
 
-    receiveNewTurn() {
+    receiveNewTurn(): void {
         this.clientSocket.socket.on('turnSwitched', (turn: boolean) => {
             this.isTurn = turn;
         });
     }
 
-    receiveStartFromServer() {
+    receiveStartFromServer(): void {
         this.clientSocket.socket.on('startTimer', () => {
             this.stopTimer();
             this.startTimer();
         });
     }
-    receiveStopFromServer() {
+    receiveStopFromServer(): void {
         this.clientSocket.socket.on('stopStimer', () => {
             this.stopTimer();
         });

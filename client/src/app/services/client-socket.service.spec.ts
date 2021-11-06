@@ -35,7 +35,7 @@ describe('ClientSocketService', () => {
                 }
             },
         } as unknown as Socket;
-        service.route();
+        service.routeToGameView();
         expect(router.navigate).toHaveBeenCalledWith(['game']);
     });
 

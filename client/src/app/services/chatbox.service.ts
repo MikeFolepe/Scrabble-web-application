@@ -2,6 +2,7 @@
 import { Injectable } from '@angular/core';
 import { INDEX_PLAYER_ONE, MAX_NUMBER_OF_POSSIBILITY } from '@app/classes/constants';
 import { TypeMessage } from '@app/classes/enum';
+import { Orientation } from '@app/classes/scrabble-board-pattern';
 import { Vec2 } from '@app/classes/vec2';
 import { DebugService } from '@app/services/debug.service';
 import { EndGameService } from '@app/services/end-game.service';
@@ -11,7 +12,6 @@ import { PlayerService } from '@app/services/player.service';
 import { SendMessageService } from '@app/services/send-message.service';
 import { SkipTurnService } from '@app/services/skip-turn.service';
 import { SwapLetterService } from '@app/services/swap-letter.service';
-import { Orientation } from '@app/classes/scrabble-board-pattern';
 
 @Injectable({
     providedIn: 'root',
@@ -22,7 +22,7 @@ export class ChatboxService {
     private command: string;
     private endGameEasel: string;
 
-    private readonly notTurnErrorMessage = "ERREUR : Ce n'est pas ton tour";
+    private readonly notTurnErrorMessage;
 
     constructor(
         private playerService: PlayerService,
@@ -37,6 +37,7 @@ export class ChatboxService {
         this.message = '';
         this.command = '';
         this.endGameEasel = '';
+        this.notTurnErrorMessage = "ERREUR : Ce n'est pas ton tour";
     }
 
     sendPlayerMessage(message: string) {

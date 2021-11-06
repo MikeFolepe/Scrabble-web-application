@@ -1,8 +1,7 @@
-import { EASEL_SIZE, RESERVE } from '@app/classes/constants';
-import { BehaviorSubject } from 'rxjs';
-import { ClientSocketService } from '@app/services/client-socket.service';
 import { Injectable } from '@angular/core';
+import { EASEL_SIZE, RESERVE } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
+import { ClientSocketService } from '@app/services/client-socket.service';
 @Injectable({
     providedIn: 'root',
 })
@@ -10,11 +9,11 @@ export class LetterService {
     // Property witch return total number of letters available
     randomElement: number;
     // Deep copy
-    reserve: Letter[] = JSON.parse(JSON.stringify(RESERVE));
+    reserve: Letter[];
     reserveSize: number;
-    messageSource = new BehaviorSubject('default message');
 
     constructor(private clientSocketService: ClientSocketService) {
+        this.reserve = JSON.parse(JSON.stringify(RESERVE));
         this.receiveReserve();
         let size = 0;
         for (const letter of this.reserve) {

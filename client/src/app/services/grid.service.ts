@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 import { Injectable } from '@angular/core';
 import { BOARD_ROWS, DEFAULT_HEIGHT, DEFAULT_WIDTH, GRID_CASE_SIZE, RESERVE } from '@app/classes/constants';
-import { Vec2 } from '@app/classes/vec2';
 import { Orientation } from '@app/classes/scrabble-board-pattern';
+import { Vec2 } from '@app/classes/vec2';
 
 const COLOR_BLACK = 'black';
 
@@ -15,11 +15,12 @@ export class GridService {
     gridContextPlacementLayer: CanvasRenderingContext2D;
     bonusPositions: Map<string, string>;
     private canvasSize: Vec2;
-    private readonly gridLength = BOARD_ROWS;
+    private readonly gridLength;
 
     constructor() {
         this.canvasSize = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
         this.bonusPositions = new Map<string, string>();
+        this.gridLength = BOARD_ROWS;
     }
 
     get width(): number {

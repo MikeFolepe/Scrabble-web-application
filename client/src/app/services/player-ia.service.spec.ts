@@ -120,9 +120,7 @@ describe('PlayerAIService', () => {
         expected[5][3] = 'I';
         expected[5][4] = 'D';
 
-        expect(service.placeWordOnBoard(scrabbleBoard, word.word, { x: word.line, y: word.startIdx }, word.orientation ? 'v' : 'h')).toEqual(
-            expected,
-        );
+        expect(service.placeWordOnBoard(scrabbleBoard, word.word, { x: word.line, y: word.startIdx }, word.orientation)).toEqual(expected);
     });
 
     it('should place word on board vertically', () => {
@@ -134,9 +132,7 @@ describe('PlayerAIService', () => {
         expected[8][0] = 'I';
         expected[9][0] = 'D';
 
-        expect(service.placeWordOnBoard(scrabbleBoard, word.word, { x: word.line, y: word.startIdx }, word.orientation ? 'v' : 'h')).toEqual(
-            expected,
-        );
+        expect(service.placeWordOnBoard(scrabbleBoard, word.word, { x: word.line, y: word.startIdx }, word.orientation)).toEqual(expected);
     });
 
     it('should sort words by points rewards', () => {

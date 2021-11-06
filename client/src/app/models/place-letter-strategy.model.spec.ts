@@ -192,7 +192,6 @@ describe('Place Letter', () => {
 
     it('should play from the center at first round', async () => {
         jasmine.clock().install();
-        // TODO: test crash
         const myDictionary: string[] = ['maths', 'math', 'lundi', 'mardi', 'on'];
 
         playerAi.letterTable = [

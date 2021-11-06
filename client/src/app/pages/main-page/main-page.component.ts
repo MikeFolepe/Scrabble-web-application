@@ -10,14 +10,15 @@ import { GameSettingsService } from '@app/services/game-settings.service';
 export class MainPageComponent {
     selectedGameTypeIndex = 0;
     selectedGameMode?: string;
-    readonly gameTypes = ['Scrabble classique', 'Scrabble LOG2990'];
-    readonly gameModes = ['Jouer une partie en solo', 'Créer une partie multijoueur', 'Joindre une partie multijoueur'];
+    readonly gameTypes: string[];
+    readonly gameModes: string[];
 
-    constructor(public gameSettingsService: GameSettingsService, private router: Router) {}
+    constructor(public gameSettingsService: GameSettingsService, private router: Router) {
+        this.gameTypes = ['Scrabble classique', 'Scrabble LOG2990'];
+        this.gameModes = ['Jouer une partie en solo', 'Créer une partie multijoueur', 'Joindre une partie multijoueur'];
+    }
 
-    // TODO: 0,1,2... chiffre magique
-    route(): void {
-        console.log('router traverse le form');
+    routeToGameMode(): void {
         switch (this.selectedGameMode) {
             case this.gameModes[0]: {
                 this.gameSettingsService.isSoloMode = true;

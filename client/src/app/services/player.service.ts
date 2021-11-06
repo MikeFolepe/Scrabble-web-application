@@ -1,4 +1,3 @@
-/* eslint-disable sort-imports */
 import { Injectable } from '@angular/core';
 import {
     BOARD_COLUMNS,
@@ -9,6 +8,7 @@ import {
     FONT_SIZE_MIN,
     INDEX_INVALID,
     RESERVE,
+    WHITE_LETTER_POSITION,
 } from '@app/classes/constants';
 import { Letter } from '@app/classes/letter';
 import { Player } from '@app/models/player.model';
@@ -20,28 +20,29 @@ import { ClientSocketService } from './client-socket.service';
     providedIn: 'root',
 })
 export class PlayerService {
-    fontSize = DEFAULT_FONT_SIZE;
-    players: Player[] = new Array<Player>();
+    fontSize: number;
+    players: Player[];
     private scrabbleBoard: string[][];
 
     private updateEasel: () => void;
 
     constructor(private letterService: LetterService, private gridService: GridService, private clientSocketService: ClientSocketService) {
-        this.receiveScoreFromServer();
         this.fontSize = DEFAULT_FONT_SIZE;
+        this.players = new Array<Player>();
+        this.receiveScoreFromServer();
     }
 
     bindUpdateEasel(fn: () => void) {
         this.updateEasel = fn;
     }
 
-    receiveScoreFromServer() {
+    receiveScoreFromServer(): void {
         this.clientSocketService.socket.on('receiveScoreInfo', (score: number, indexPlayer: number) => {
             this.players[indexPlayer].score = score;
         });
     }
 
-    addPlayer(user: Player) {
+    addPlayer(user: Player): void {
         this.players.push(user);
     }
 
@@ -79,7 +80,7 @@ export class PlayerService {
         }
     }
 
-    swap(indexToSwap: number, indexPlayer: number) {
+    swap(indexToSwap: number, indexPlayer: number): void {
         const letterFromReserve = this.letterService.getRandomLetter();
         // Add a copy of the random letter from the reserve
         const letterToAdd = {
@@ -102,33 +103,30 @@ export class PlayerService {
     addLetterToEasel(letterToAdd: string, indexPlayer: number): void {
         // If it is a white letter
         if (letterToAdd === letterToAdd.toUpperCase()) {
-            for (const letter of RESERVE) {
-                if (letter.value === '*') {
-                    this.players[indexPlayer].letterTable.push({
-                        value: letter.value,
-                        quantity: letter.quantity,
-                        points: letter.points,
-                        isSelectedForSwap: letter.isSelectedForSwap,
-                        isSelectedForManipulation: letter.isSelectedForManipulation,
-                    });
-                }
-            }
-        } else {
-            for (const letter of RESERVE) {
-                if (letterToAdd.toUpperCase() === letter.value) {
-                    this.players[indexPlayer].letterTable.push({
-                        value: letter.value,
-                        quantity: letter.quantity,
-                        points: letter.points,
-                        isSelectedForSwap: letter.isSelectedForSwap,
-                        isSelectedForManipulation: letter.isSelectedForManipulation,
-                    });
-                }
+            this.players[indexPlayer].letterTable.push({
+                value: RESERVE[WHITE_LETTER_POSITION].value,
+                quantity: RESERVE[WHITE_LETTER_POSITION].quantity,
+                points: RESERVE[WHITE_LETTER_POSITION].points,
+                isSelectedForSwap: RESERVE[WHITE_LETTER_POSITION].isSelectedForSwap,
+                isSelectedForManipulation: RESERVE[WHITE_LETTER_POSITION].isSelectedForManipulation,
+            });
+            return;
+        }
+
+        for (const letter of RESERVE) {
+            if (letterToAdd.toUpperCase() === letter.value) {
+                this.players[indexPlayer].letterTable.push({
+                    value: letter.value,
+                    quantity: letter.quantity,
+                    points: letter.points,
+                    isSelectedForSwap: letter.isSelectedForSwap,
+                    isSelectedForManipulation: letter.isSelectedForManipulation,
+                });
             }
         }
     }
 
-    addEaselLetterToReserve(indexInEasel: number, indexPlayer: number) {
+    addEaselLetterToReserve(indexInEasel: number, indexPlayer: number): void {
         this.letterService.addLetterToReserve(this.getEasel(indexPlayer)[indexInEasel].value);
     }
 
