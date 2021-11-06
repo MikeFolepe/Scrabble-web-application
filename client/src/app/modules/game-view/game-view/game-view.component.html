@@ -22,16 +22,25 @@
                     Passer son tour
                 </button>
 
-                <div *ngIf="this.endGameService.isEndGame; else gameStillOnGoing">
+                <div *ngIf="!this.endGameService.isEndGame && gameSettingsService.isSoloMode">
+                    <button mat-raised-button color="primary" id="regular-button" (click)="this.endGameService.clearAllData()" routerLink="/home">
+                        Abandonner
+                    </button>
+                </div>
+                <div *ngIf="this.endGameService.isEndGame && gameSettingsService.isSoloMode">
                     <button mat-raised-button color="primary" id="regular-button" (click)="this.endGameService.clearAllData()" routerLink="/home">
                         Quitter
                     </button>
                 </div>
-                <ng-template #gameStillOnGoing>
+                <div *ngIf="!gameSettingsService.isSoloMode && !endGameService.isEndGame">
+                    <button mat-raised-button color="primary" id="regular-button" (click)="giveUpGame()">Abandonner</button>
+                </div>
+        
+                <div *ngIf="endGameService.isEndGame && !gameSettingsService.isSoloMode">
                     <button mat-raised-button color="primary" id="regular-button" (click)="this.endGameService.clearAllData()" routerLink="/home">
-                        Abandonner
+                        Quitter
                     </button>
-                </ng-template>
+                </div>
             </div>
             <app-font-size id="font-size" [fontSize]="fontSize" (sizeChange)="handleFontSizeEvent($event)"> </app-font-size>
         </div>

@@ -8,6 +8,8 @@ import { BoardHandlerService } from '@app/services/board-handler.service';
 import { SkipTurnService } from '@app/services/skip-turn.service';
 import { DEFAULT_FONT_SIZE } from '@app/classes/constants';
 import { PlayerService } from '@app/services/player.service';
+import { GiveUpGameDialogComponent } from '@app/modules/initialize-solo-game/give-up-game-dialog/give-up-game-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
     selector: 'app-game-view',
@@ -21,11 +23,12 @@ export class GameViewComponent implements OnInit {
         public endGameService: EndGameService,
         public clientSocketService: ClientSocketService,
         private gridService: GridService,
-        private gameSettingsService: GameSettingsService,
+        public gameSettingsService: GameSettingsService,
         public chatBoxService: ChatboxService,
         public boardHandlerService: BoardHandlerService,
         public skipTurnService: SkipTurnService,
         private playerService: PlayerService,
+        public dialog: MatDialog,
     ) {}
 
     ngOnInit() {
@@ -39,5 +42,16 @@ export class GameViewComponent implements OnInit {
     handleFontSizeEvent(fontSizeEvent: number) {
         this.fontSize = fontSizeEvent;
         this.playerService.updateFontSize(this.fontSize);
+    }
+
+    giveUpGame(): void {
+        const ref = this.dialog.open(GiveUpGameDialogComponent, { disableClose: true });
+
+        ref.afterClosed().subscribe((decision: boolean) => {
+            // if user closes the dialog box without input nothing
+            if (!decision) return;
+            // if decision is true the EndGame occurres
+            this.clientSocketService.socket.emit('sendEndGameByGiveUp', decision, this.clientSocketService.roomId);
+        });
     }
 }
