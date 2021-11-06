@@ -1,4 +1,3 @@
-/* eslint-disable sort-imports */
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DELAY_BEFORE_PLAY, INDEX_PLAYER_AI, INDEX_PLAYER_ONE, INDEX_PLAYER_TWO } from '@app/classes/constants';
 import { Letter } from '@common/letter';

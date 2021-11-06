@@ -1,4 +1,3 @@
-/* eslint-disable max-lines */
 import { Injectable } from '@angular/core';
 import {
     BOARD_COLUMNS,
@@ -13,16 +12,15 @@ import {
 import { TypeMessage } from '@app/classes/enum';
 import { Orientation } from '@app/classes/scrabble-board-pattern';
 import { ScoreValidation } from '@app/classes/validation-score';
-import { Vec2 } from '@common/vec2';
 import { GridService } from '@app/services/grid.service';
 import { PlayerService } from '@app/services/player.service';
 import { WordValidationService } from '@app/services/word-validation.service';
+import { Vec2 } from '@common/vec2';
 import { ClientSocketService } from './client-socket.service';
 import { EndGameService } from './end-game.service';
 import { GameSettingsService } from './game-settings.service';
 import { SendMessageService } from './send-message.service';
 import { SkipTurnService } from './skip-turn.service';
-
 @Injectable({
     providedIn: 'root',
 })
@@ -268,15 +266,11 @@ export class PlaceLetterService {
         let isLetterExisting = false;
         let currentLetterIndex = this.playerService.indexLetterInEasel(letter, 0, indexPlayer);
 
-        if (currentLetterIndex !== INDEX_INVALID) {
-            isLetterExisting = true;
-        }
+        if (currentLetterIndex !== INDEX_INVALID) isLetterExisting = true;
         for (const index of indexLetters) {
             while (currentLetterIndex === index) {
                 currentLetterIndex = this.playerService.indexLetterInEasel(letter, currentLetterIndex + 1, indexPlayer);
-                if (currentLetterIndex === INDEX_INVALID) {
-                    isLetterExisting = false;
-                }
+                if (currentLetterIndex === INDEX_INVALID) isLetterExisting = false;
             }
         }
         if (isLetterExisting) {
@@ -306,12 +300,8 @@ export class PlaceLetterService {
 
         // Search each position around the word that are in bounds of the board
         for (let i = 0; i < word.length; i++) {
-            if (this.isPositionFilled({ x: currentPosition.x + y, y: currentPosition.y + x })) {
-                isWordTouching = true;
-            }
-            if (this.isPositionFilled({ x: currentPosition.x - y, y: currentPosition.y - x })) {
-                isWordTouching = true;
-            }
+            if (this.isPositionFilled({ x: currentPosition.x + y, y: currentPosition.y + x })) isWordTouching = true;
+            if (this.isPositionFilled({ x: currentPosition.x - y, y: currentPosition.y - x })) isWordTouching = true;
             if (this.isPositionFilled({ x: currentPosition.x + x, y: currentPosition.y + y })) {
                 if (word.length === 1 || i === word.length - 1) isWordTouching = true;
                 else if (this.validLetters[i + 1]) isWordTouching = true;

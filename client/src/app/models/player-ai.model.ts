@@ -1,4 +1,3 @@
-/* eslint-disable sort-imports */
 import { placingBallotBox, PlacingStrategy } from '@app/classes/constants';
 import { Range } from '@app/classes/range';
 import { PlayerAIService } from '@app/services/player-ia.service';

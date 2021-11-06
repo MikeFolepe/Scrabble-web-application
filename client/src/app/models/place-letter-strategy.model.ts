@@ -1,4 +1,3 @@
-/* eslint-disable sort-imports */
 import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSITION_X, DICTIONARY, INDEX_INVALID, INDEX_PLAYER_AI } from '@app/classes/constants';
 import { Range } from '@app/classes/range';
 import { BoardPattern, Orientation, PatternInfo, PossibleWords } from '@app/classes/scrabble-board-pattern';
@@ -80,7 +79,6 @@ export class PlaceLetterStrategy {
             // Place the hypotetic word on the copy of scrabble board
             scrabbleBoard = playerAiService.placeWordOnBoard(scrabbleBoard, word.word, start, orientation);
             // Pass the scrabble board for the validation
-            // TODO: isWordValid?
             const isValid = this.validateWord(scrabbleBoard);
 
             if (isValid) {
@@ -209,7 +207,6 @@ export class PlaceLetterStrategy {
     private generateAllWords(dictionaryToLookAt: string[], patterns: BoardPattern): PossibleWords[] {
         // Generate all words satisfying the patterns found
         const allWords: PossibleWords[] = [];
-        // TODO: avoid duplication
         for (const pattern of patterns.horizontal) {
             const regex = new RegExp(pattern.pattern, 'g');
             for (const word of dictionaryToLookAt) {

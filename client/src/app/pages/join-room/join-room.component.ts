@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { ERROR_MESSAGE_DELAY } from '@app/classes/constants';
-import { DialogComponent } from '@app/modules/initialize-solo-game/dialog/dialog.component';
+import { JoinDialogComponent } from '@app/modules/initialize-solo-game/join-dialog/join-dialog.component';
 import { ClientSocketService } from '@app/services/client-socket.service';
 import { PlayerIndex } from '@common/PlayerIndex';
 import { Room, State } from '@common/room';
@@ -47,7 +47,7 @@ export class JoinRoomComponent implements OnInit {
     }
 
     join(room: Room): void {
-        const ref = this.dialog.open(DialogComponent, { disableClose: true });
+        const ref = this.dialog.open(JoinDialogComponent, { disableClose: true });
 
         ref.afterClosed().subscribe((playerName: string) => {
             // if user closes the dialog box without input nothing
