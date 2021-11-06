@@ -14,7 +14,7 @@ export class GameViewComponent implements OnInit {
         private gameSettingsService: GameSettingsService,
     ) {}
 
-    ngOnInit() {
+    ngOnInit(): void {
         const mapBonus = new Map<string, string>();
         JSON.parse(this.gameSettingsService.gameSettings.bonusPositions).map((element: string[]) => {
             mapBonus.set(element[0], element[1]);

@@ -78,19 +78,13 @@ export class PlaceLetterStrategy {
             const orientation: Orientation = word.orientation;
             // Deep copy of the game scrabble board because of hypotetical placement
             let scrabbleBoard: string[][] = JSON.parse(JSON.stringify(playerAiService.placeLetterService.scrabbleBoard));
-            scrabbleBoard = playerAiService.placeWordOnBoard(
-                scrabbleBoard,
-                word.word,
-                start,
-                orientation ? Orientation.Vertical : Orientation.Horizontal,
-            );
+            scrabbleBoard = playerAiService.placeWordOnBoard(scrabbleBoard, word.word, start, orientation);
             const isValid = this.validateWord(scrabbleBoard);
 
             if (isValid) {
                 return i;
             }
         }
-
         return noPlayableWord;
     }
 
