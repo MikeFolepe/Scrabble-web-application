@@ -176,7 +176,7 @@ describe('EndGameService', () => {
         service.letterService.reserve = [letterA, letterB, letterA, letterB];
         service.isEndGame = true;
         service.actionsLog = ['passer', 'test'];
-        service.debugService.debugServiceMessage = [{ word: 'test', orientation: Orientation.Horizontal, line: 0, startIdx: 0, point: 1 }];
+        service.debugService.debugServiceMessage = [{ word: 'test', orientation: Orientation.Horizontal, line: 0, startIndex: 0, point: 1 }];
 
         service.clearAllData();
 

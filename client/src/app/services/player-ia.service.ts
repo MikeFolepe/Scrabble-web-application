@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { DELAY_TO_PASS_TURN, EASEL_SIZE, INDEX_PLAYER_AI, MIN_RESERVE_SIZE_TO_SWAP, RESERVE } from '@app/classes/constants';
 import { TypeMessage } from '@app/classes/enum';
 import { Range } from '@app/classes/range';
-import { Earning } from '@app/classes/scrabble-board';
+import { Earning } from '@app/classes/earning';
 import { Orientation, PossibleWords } from '@app/classes/scrabble-board-pattern';
 import { Vec2 } from '@app/classes/vec2';
 import { PlayerAI } from '@app/models/player-ai.model';
@@ -83,7 +83,7 @@ export class PlayerAIService {
     }
 
     async place(word: PossibleWords): Promise<void> {
-        const startPos = word.orientation ? { x: word.line, y: word.startIdx } : { x: word.startIdx, y: word.line };
+        const startPos = word.orientation ? { x: word.line, y: word.startIndex } : { x: word.startIndex, y: word.line };
         const isValid = await this.placeLetterService.placeCommand(startPos, word.orientation, word.word);
 
         if (isValid) {
@@ -131,11 +131,11 @@ export class PlayerAIService {
                 let matrixPos: Vec2;
 
                 if (word.orientation === Orientation.Horizontal) {
-                    key = String.fromCharCode(word.line + rowOffset) + (word.startIdx + columnOffset + i).toString();
-                    matrixPos = { x: word.line, y: word.startIdx + i };
+                    key = String.fromCharCode(word.line + rowOffset) + (word.startIndex + columnOffset + i).toString();
+                    matrixPos = { x: word.line, y: word.startIndex + i };
                 } else {
-                    key = String.fromCharCode(word.startIdx + rowOffset + i) + (word.line + columnOffset).toString();
-                    matrixPos = { x: word.startIdx + i, y: word.line };
+                    key = String.fromCharCode(word.startIndex + rowOffset + i) + (word.line + columnOffset).toString();
+                    matrixPos = { x: word.startIndex + i, y: word.line };
                 }
                 // Letter value : A = 1, B = 3, C = 3 ...etc
                 const letterContribution: number = RESERVE[word.word[i].toUpperCase().charCodeAt(0) - rowOffset].points;

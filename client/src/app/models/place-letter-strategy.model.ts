@@ -39,7 +39,7 @@ export class PlaceLetters {
         allPossibleWords = this.removeIfNotEnoughLetter(allPossibleWords, playerAi);
 
         if (isFirstRound) {
-            allPossibleWords.forEach((word) => (word.startIdx = CENTRAL_CASE_POSITION_X));
+            allPossibleWords.forEach((word) => (word.startIndex = CENTRAL_CASE_POSITION_X));
         } else {
             allPossibleWords = this.removeIfNotDisposable(allPossibleWords);
         }
@@ -86,7 +86,7 @@ export class PlaceLetters {
 
         for (i = 0; i < possibilities.length; i++) {
             const word = possibilities[i];
-            const start: Vec2 = word.orientation ? { x: word.startIdx, y: word.line } : { x: word.line, y: word.startIdx };
+            const start: Vec2 = word.orientation ? { x: word.startIndex, y: word.line } : { x: word.line, y: word.startIndex };
             const orientation: Orientation = word.orientation;
             // Deep copy of the game scrabble board because of hypotetical placement
             let scrabbleBoard: string[][] = JSON.parse(JSON.stringify(playerAiService.placeLetterService.scrabbleBoard));
@@ -151,9 +151,9 @@ export class PlaceLetters {
         let pattern = '';
 
         for (const root of radixes) {
-            const startIdx = wordToPlace.word.search(root);
-            const endIdx = startIdx + root.length;
-            for (let i = startIdx; i < endIdx; i++) {
+            const startIndex = wordToPlace.word.search(root);
+            const endIdx = startIndex + root.length;
+            for (let i = startIndex; i < endIdx; i++) {
                 isEmptyCase[i] = false;
             }
         }
@@ -173,16 +173,16 @@ export class PlaceLetters {
         }
 
         // If found set the starting positing for later placing
-        wordToPlace.startIdx = start;
+        wordToPlace.startIndex = start;
         // If found the word must not touch the adjacent words
         return this.isWordOverWriting(line, start, end, wordToPlace.word.length) === false;
     }
 
-    private isWordOverWriting(line: string, startIdx: number, endIdx: number, wordLength: number): boolean {
+    private isWordOverWriting(line: string, startIndex: number, endIdx: number, wordLength: number): boolean {
         if (wordLength !== BOARD_ROWS) {
-            const touchOtherWordByRight = startIdx === 0 && line[endIdx + 1] !== ' ';
-            const touchOtherWordByLeft = endIdx === BOARD_ROWS && line[startIdx - 1] !== ' ';
-            const touchOtherWordByRightOrLeft = startIdx !== 0 && endIdx !== BOARD_ROWS && line[startIdx - 1] !== ' ' && line[endIdx + 1] !== ' ';
+            const touchOtherWordByRight = startIndex === 0 && line[endIdx + 1] !== ' ';
+            const touchOtherWordByLeft = endIdx === BOARD_ROWS && line[startIndex - 1] !== ' ';
+            const touchOtherWordByRightOrLeft = startIndex !== 0 && endIdx !== BOARD_ROWS && line[startIndex - 1] !== ' ' && line[endIdx + 1] !== ' ';
 
             // The beginning and the end of the word must not touch another
             if (touchOtherWordByRight || touchOtherWordByLeft || touchOtherWordByRightOrLeft) {
@@ -227,7 +227,7 @@ export class PlaceLetters {
             const regExp = new RegExp(pattern.pattern, 'g');
             for (const word of dictionaryToLookAt) {
                 if (regExp.test(word) && this.checkIfWordIsPresent(pattern.pattern, word)) {
-                    allWords.push({ word, orientation: Orientation.Horizontal, line: pattern.line, startIdx: 0, point: 0 });
+                    allWords.push({ word, orientation: Orientation.Horizontal, line: pattern.line, startIndex: 0, point: 0 });
                 }
             }
         }
@@ -236,7 +236,7 @@ export class PlaceLetters {
             const regExp = new RegExp(pattern.pattern, 'g');
             for (const word of dictionaryToLookAt) {
                 if (regExp.test(word) && this.checkIfWordIsPresent(pattern.pattern, word)) {
-                    allWords.push({ word, orientation: Orientation.Vertical, line: pattern.line, startIdx: 0, point: 0 });
+                    allWords.push({ word, orientation: Orientation.Vertical, line: pattern.line, startIndex: 0, point: 0 });
                 }
             }
         }
