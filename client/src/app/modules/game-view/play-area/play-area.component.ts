@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { GiveUpGameDialogComponent } from '@app/modules/initialize-solo-game/give-up-game-dialog/give-up-game-dialog.component';
+import { GiveUpGameDialogComponent } from '@app/modules/game-view/give-up-game-dialog/give-up-game-dialog.component';
 import { BoardHandlerService } from '@app/services/board-handler.service';
 import { ChatboxService } from '@app/services/chatbox.service';
 import { ClientSocketService } from '@app/services/client-socket.service';
@@ -28,10 +28,10 @@ export class PlayAreaComponent {
         const ref = this.dialog.open(GiveUpGameDialogComponent, { disableClose: true });
 
         ref.afterClosed().subscribe((decision: boolean) => {
-            // if user closes the dialog box without input nothing
+            // if user closes the dialog box without do nothing
             if (!decision) return;
-            // if decision is true the EndGame occures
-            this.clientSocketService.socket.emit('sendEndGameByGiveUp', decision, this.clientSocketService.roomId);
+            // if decision is true EndGame occures
+            this.clientSocketService.socket.emit('sendEndGamebyGiveUp', decision, this.clientSocketService.roomId);
         });
     }
 }

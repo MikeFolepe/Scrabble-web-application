@@ -7,10 +7,12 @@ import { PlayerService } from '@app/services/player.service';
     providedIn: 'root',
 })
 export class ManipulateService {
-    letterEaselTab: Letter[] = [];
-    usedLetters: boolean[] = [];
+    letterEaselTab: Letter[];
+    usedLetters: boolean[];
 
     constructor(private playerService: PlayerService) {
+        this.letterEaselTab = [];
+        this.usedLetters = [];
         this.usedLetters.fill(false, 0, EASEL_SIZE);
     }
 
@@ -101,7 +103,7 @@ export class ManipulateService {
             }
             this.usedLetters[this.letterEaselTab.length - 1] = true;
             this.swapPositions(indexSelected, this.letterEaselTab.length - 1);
-            // On met tous les même lettres avant celle qu'on a swap comme used
+            // Set all letters before swap used
             for (let i = 0; i < this.letterEaselTab.length - 1; i++) {
                 if (this.letterEaselTab[i].value === this.letterEaselTab[this.letterEaselTab.length - 1].value) {
                     this.usedLetters[i] = true;
@@ -123,7 +125,7 @@ export class ManipulateService {
             this.usedLetters[0] = true;
             this.usedLetters[this.letterEaselTab.length - 1] = false;
             this.swapPositions(indexSelected, 0);
-            // toutes les lettres apres = false
+            // All letters except first one are unused
             for (let i = 1; i < this.letterEaselTab.length; i++) {
                 this.usedLetters[i] = false;
             }

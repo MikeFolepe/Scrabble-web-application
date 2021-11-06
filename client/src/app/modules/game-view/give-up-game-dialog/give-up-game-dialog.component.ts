@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { EndGameService } from '@app/services/end-game.service';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { EndGameService } from '@app/services/end-game.service';
 
 @Component({
     selector: 'app-give-up-game-dialog',

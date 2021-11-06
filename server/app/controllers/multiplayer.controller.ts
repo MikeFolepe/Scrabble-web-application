@@ -1,7 +1,7 @@
-import { Request, Response, Router } from 'express';
-import { Service } from 'typedi';
-import { StatusCodes } from 'http-status-codes';
 import { WordValidationService } from '@app/services/word-validation.service';
+import { Request, Response, Router } from 'express';
+import { StatusCodes } from 'http-status-codes';
+import { Service } from 'typedi';
 
 @Service()
 export class MultiplayerController {
@@ -15,17 +15,15 @@ export class MultiplayerController {
         /**
          * @swagger
          *
-         * /api/example:
-         *   get:
-         *     description: Return current time with hello world
+         * /api/multiplayer/validateWords:
+         *   post:
+         *     description: return the validation result of a placed word
          *     tags:
-         *       - Example
+         *       - Multiplayer
          *     produces:
-         *       - application/json
+         *       - a boolean that describe the result
          *     responses:
-         *       200:
-         *         schema:
-         *           $ref: '#/definitions/Message'
+         *       200
          *
          */
         this.router.post('/validateWords', (req: Request, res: Response) => {

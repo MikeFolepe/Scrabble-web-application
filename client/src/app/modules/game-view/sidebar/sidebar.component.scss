@@ -9,3 +9,14 @@
     justify-content: flex-start;
     gap: 1em;
 }
+
+#information-panel{
+    height: 45%; 
+    width: 100%
+}
+
+#chatbox{
+    height: 55%; 
+    width: 100%; 
+    display: flex;
+}
