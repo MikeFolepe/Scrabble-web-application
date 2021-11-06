@@ -1,4 +1,3 @@
-/* eslint-disable sort-imports */
 import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSITION_X, INDEX_INVALID, INDEX_PLAYER_AI } from '@app/classes/constants';
 import { Range } from '@app/classes/range';
 import { BoardPattern, Orientation, PatternInfo, PossibleWords } from '@app/classes/scrabble-board-pattern';

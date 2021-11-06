@@ -1,4 +1,3 @@
-/* eslint-disable sort-imports */
 import { Injectable } from '@angular/core';
 import { INDEX_PLAYER_ONE, MAX_NUMBER_OF_POSSIBILITY } from '@app/classes/constants';
 import { TypeMessage } from '@app/classes/enum';

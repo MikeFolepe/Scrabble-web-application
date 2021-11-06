@@ -1,4 +1,3 @@
-/* eslint-disable sort-imports */
 import { placingBallotBox, PlacingStrategy } from '@app/classes/constants';
 import { Letter } from '@common/letter';
 import { Range } from '@app/classes/range';
