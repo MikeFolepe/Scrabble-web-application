@@ -1,18 +1,20 @@
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { BOARD_COLUMNS, BOARD_ROWS } from '@app/classes/constants';
+import { Letter } from '@common/letter';
 import { BoardPattern, Orientation, PatternInfo, PossibleWords } from '@app/classes/scrabble-board-pattern';
 import { PlayerAI } from '@app/models/player-ai.model';
 import { PlayerAIService } from '@app/services/player-ia.service';
-import { Letter } from '@common/letter';
 import { PlaceLetterStrategy } from './place-letter-strategy.model';
 
-describe('Place Letter strategy', () => {
+describe('Place Letter', () => {
     let playerAi: PlayerAI;
     let placeStrategy: PlaceLetterStrategy;
+    placeStrategy = new PlaceLetterStrategy({ min: 7, max: 12 });
     let playerAiService: PlayerAIService;
     const scrabbleBoard: string[][] = [];
     let letterTable: Letter[] = [];
@@ -20,7 +22,9 @@ describe('Place Letter strategy', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [HttpClientTestingModule, RouterTestingModule],
+            providers: [{ provide: PlaceLetterStrategy, useValue: placeStrategy }],
         }).compileComponents();
+        placeStrategy = TestBed.inject(PlaceLetterStrategy);
     });
 
     beforeEach(() => {
@@ -201,7 +205,6 @@ describe('Place Letter strategy', () => {
             { value: 'A', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
             { value: 'R', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
         ];
-
         placeStrategy.dictionary = myDictionary;
         placeStrategy.pointingRange = { min: 1, max: 4 };
 
@@ -218,7 +221,6 @@ describe('Place Letter strategy', () => {
         expectedMatching.push(word1);
         expectedMatching.push(word2);
         placeStrategy.execute(playerAiService);
-
         expect(spyOnPlace).toHaveBeenCalledWith(word1);
     });
 

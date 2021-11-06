@@ -43,7 +43,11 @@ export class BoardHandlerService {
             }
             case 'Enter': {
                 if (this.word.length) {
-                    this.confirmPlacement();
+                    if (this.skipTurnService.isTurn) {
+                        this.confirmPlacement();
+                        break;
+                    }
+                    this.cancelPlacement();
                 }
                 break;
             }
