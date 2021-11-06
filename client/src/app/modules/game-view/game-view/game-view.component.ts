@@ -8,7 +8,7 @@ import { BoardHandlerService } from '@app/services/board-handler.service';
 import { SkipTurnService } from '@app/services/skip-turn.service';
 import { DEFAULT_FONT_SIZE } from '@app/classes/constants';
 import { PlayerService } from '@app/services/player.service';
-import { GiveUpGameDialogComponent } from '@app/modules/initialize-solo-game/give-up-game-dialog/give-up-game-dialog.component';
+import { GiveUpGameDialogComponent } from '@app/modules/game-view/give-up-game-dialog/give-up-game-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 
 @Component({
@@ -17,7 +17,7 @@ import { MatDialog } from '@angular/material/dialog';
     styleUrls: ['./game-view.component.scss'],
 })
 export class GameViewComponent implements OnInit {
-    fontSize: number = DEFAULT_FONT_SIZE;
+    fontSize: number;
 
     constructor(
         public endGameService: EndGameService,
@@ -29,7 +29,9 @@ export class GameViewComponent implements OnInit {
         public skipTurnService: SkipTurnService,
         private playerService: PlayerService,
         public dialog: MatDialog,
-    ) {}
+    ) {
+        this.fontSize = DEFAULT_FONT_SIZE;
+    }
 
     ngOnInit() {
         const mapBonus = new Map<string, string>();
@@ -39,7 +41,7 @@ export class GameViewComponent implements OnInit {
         this.gridService.bonusPositions = mapBonus;
     }
 
-    handleFontSizeEvent(fontSizeEvent: number) {
+    handleFontSizeEvent(fontSizeEvent: number): void {
         this.fontSize = fontSizeEvent;
         this.playerService.updateFontSize(this.fontSize);
     }

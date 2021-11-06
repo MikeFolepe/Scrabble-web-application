@@ -35,7 +35,7 @@
                 <div *ngIf="!gameSettingsService.isSoloMode && !endGameService.isEndGame">
                     <button mat-raised-button color="primary" id="regular-button" (click)="giveUpGame()">Abandonner</button>
                 </div>
-        
+
                 <div *ngIf="endGameService.isEndGame && !gameSettingsService.isSoloMode">
                     <button mat-raised-button color="primary" id="regular-button" (click)="this.endGameService.clearAllData()" routerLink="/home">
                         Quitter
