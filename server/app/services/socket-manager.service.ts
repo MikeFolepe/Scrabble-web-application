@@ -81,7 +81,7 @@ export class SocketManagerService {
             });
 
             socket.on('disconnect', () => {
-                const room = this.roomManagerService.find(this.roomManagerService.findRoomIdOf(socket.id)) as Room;
+                const room = this.roomManagerService.find(this.roomManagerService.findRoomIdOf(socket.id));
                 const roomId = this.roomManagerService.findRoomIdOf(socket.id);
 
                 if (room === undefined) return;

@@ -5,23 +5,24 @@ import { Range } from '@app/classes/range';
 
 @Component({
     selector: 'app-dialog',
-    templateUrl: './dialog.component.html',
-    styleUrls: ['./dialog.component.scss'],
+    templateUrl: './join-dialog.component.html',
+    styleUrls: ['./join-dialog.component.scss'],
 })
-export class DialogComponent implements OnInit {
+export class JoinDialogComponent implements OnInit {
     form: FormControl;
     // Number of character range validity
-    charRange: Range = {
-        min: 4, // should be >= 4
-        max: 12,
-    };
+    charRange: Range;
     // Special character that are allowed
-    specialChar: string = '@#$%^&*_';
-    // JUSTIFICATION : Validation pattern which is combination of required pattern and special char
-    // eslint-disable-next-line no-invalid-this
-    validationPattern: string = '^([A-Za-z][A-Za-z][A-Za-z][A-Za-z])[A-Za-z0-9' + this.specialChar + ']*';
-    constructor(public dialogRef: MatDialogRef<DialogComponent>) {
+    specialChar: string;
+    validationPattern: string;
+    constructor(public dialogRef: MatDialogRef<JoinDialogComponent>) {
         this.form = new FormControl();
+        this.charRange = {
+            min: 4,
+            max: 12,
+        };
+        this.specialChar = '@#$%^&*_';
+        this.validationPattern = '^([A-Za-z][A-Za-z][A-Za-z][A-Za-z])[A-Za-z0-9' + this.specialChar + ']*';
     }
 
     ngOnInit(): void {

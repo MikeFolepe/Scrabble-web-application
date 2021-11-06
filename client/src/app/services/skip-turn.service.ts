@@ -40,7 +40,6 @@ export class SkipTurnService {
             this.startTimer();
         });
     }
-
     receiveStopFromServer(): void {
         this.clientSocket.socket.on('stopTimer', () => {
             this.stopTimer();

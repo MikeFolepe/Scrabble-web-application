@@ -42,10 +42,15 @@ describe('InformationPanelComponent', () => {
             'français',
         );
         fixture.detectChanges();
+        jasmine.clock().install();
     });
 
     it('should create', () => {
         expect(component).toBeTruthy();
+    });
+
+    afterEach(() => {
+        jasmine.clock().uninstall();
     });
 
     it('should call clearPlayers on Destroy', () => {

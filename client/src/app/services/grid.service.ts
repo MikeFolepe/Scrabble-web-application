@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
+// JUSTIFICATION : We use  magic numbers to generate correct positions of the cases
 import { Injectable } from '@angular/core';
 import { BOARD_ROWS, COLOR_BLACK, DEFAULT_HEIGHT, DEFAULT_WIDTH, GRID_CASE_SIZE, RESERVE } from '@app/classes/constants';
 import { Orientation } from '@app/classes/scrabble-board-pattern';
