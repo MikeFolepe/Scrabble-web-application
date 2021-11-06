@@ -42,7 +42,7 @@ export class SkipTurnService {
         });
     }
     receiveStopFromServer() {
-        this.clientSocket.socket.on('stopStimer', () => {
+        this.clientSocket.socket.on('stopTimer', () => {
             this.stopTimer();
         });
     }

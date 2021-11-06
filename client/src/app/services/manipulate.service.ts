@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { EASEL_SIZE, INDEX_INVALID, INDEX_PLAYER_ONE } from '@app/classes/constants';
-import { Letter } from '@app/classes/letter';
+import { Letter } from '@common/letter';
 import { PlayerService } from '@app/services/player.service';
 
 @Injectable({

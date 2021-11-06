@@ -1,16 +1,16 @@
 /* eslint-disable sort-imports */
 import { placingBallotBox, PlacingStrategy } from '@app/classes/constants';
-import { Letter } from '@app/classes/letter';
+import { Letter } from '@common/letter';
 import { Range } from '@app/classes/range';
 import { PlayerAIService } from '@app/services/player-ia.service';
-import { PlaceLetters } from './place-letter-strategy.model';
+import { PlaceLetterStrategy } from './place-letter-strategy.model';
 import { Player } from './player.model';
 
 export class PlayerAI extends Player {
-    private strategy: PlaceLetters;
+    private strategy: PlaceLetterStrategy;
     constructor(id: number, name: string, letterTable: Letter[], public playerAiService: PlayerAIService) {
         super(id, name, letterTable);
-        this.strategy = new PlaceLetters(this.pointingRange());
+        this.strategy = new PlaceLetterStrategy(this.pointingRange());
     }
 
     play() {

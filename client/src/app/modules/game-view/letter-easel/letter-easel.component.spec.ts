@@ -5,7 +5,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { INDEX_PLAYER_ONE } from '@app/classes/constants';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { Letter } from '@app/classes/letter';
+import { Letter } from '@common/letter';
 import { LetterEaselComponent } from './letter-easel.component';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { Player } from '@app/models/player.model';

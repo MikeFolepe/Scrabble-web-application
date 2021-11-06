@@ -3,9 +3,9 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { INDEX_PLAYER_ONE, RESERVE } from '@app/classes/constants';
-import { Letter } from '@app/classes/letter';
 import { Player } from '@app/models/player.model';
 import { SwapLetterService } from '@app/services/swap-letter.service';
+import { Letter } from '@common/letter';
 
 describe('SwapLetterService', () => {
     let service: SwapLetterService;

@@ -32,6 +32,20 @@ describe('SendMessageService', () => {
         expect(service.typeMessage).toEqual(TypeMessage.Player);
     });
 
+    it('should sendOpponentMessage on receiveMessageFromOpponent', () => {
+        const sendOpponentMessageSpy = spyOn(service, 'sendOpponentMessage');
+        service['clientSocketService'].socket = {
+            // eslint-disable-next-line no-unused-vars
+            on: (eventName: string, callback: (message: string) => void) => {
+                if (eventName === 'receiveRoomMessage') {
+                    callback('fakeMessage');
+                }
+            },
+        } as unknown as Socket;
+        service.receiveMessageFromOpponent();
+        expect(sendOpponentMessageSpy).toHaveBeenCalledWith('fakeMessage');
+    });
+
     it('should send message as opponent when sendOpponentMessage() is called', () => {
         service.sendOpponentMessage('Opponent message');
         expect(service.message).toEqual('Opponent message');

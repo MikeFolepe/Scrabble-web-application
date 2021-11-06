@@ -3,7 +3,7 @@ import { EASEL_SIZE, INDEX_PLAYER_AI, MIN_RESERVE_SIZE_TO_SWAP, RESERVE, DELAY_T
 import { Range } from '@app/classes/range';
 import { Board, Earning } from '@app/classes/scrabble-board';
 import { Orientation, PossibleWords } from '@app/classes/scrabble-board-pattern';
-import { Vec2 } from '@app/classes/vec2';
+import { Vec2 } from '@common/vec2';
 import { PlayerAI } from '@app/models/player-ai.model';
 import { ChatboxService } from './chatbox.service';
 import { DebugService } from './debug.service';
@@ -185,13 +185,4 @@ export class PlayerAIService {
 
         return { letterPoint, wordFactor };
     }
-
-    // private sortDecreasing = (word1: PossibleWords, word2: PossibleWords) => {
-    //     const EQUAL_SORT_NUMBER = 0;
-    //     const BIGGER_SORT_NUMBER = 1;
-    //     const SMALLER_SORT_NUMBER = -1;
-
-    //     if (word1.point === word2.point) return EQUAL_SORT_NUMBER;
-    //     return word1.point < word2.point ? BIGGER_SORT_NUMBER : SMALLER_SORT_NUMBER;
-    // };
 }

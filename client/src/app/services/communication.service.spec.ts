@@ -1,15 +1,15 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable dot-notation */
 import { HttpClientModule } from '@angular/common/http';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { CommunicationService } from '@app/services/communication.service';
-import { Message } from '@app/classes/message';
 import { TestBed } from '@angular/core/testing';
+import { CommunicationService } from '@app/services/communication.service';
 
 describe('CommunicationService', () => {
     let httpMock: HttpTestingController;
     let service: CommunicationService;
     let baseUrl: string;
-
+    const newPlayedWords: Map<string, string[]> = new Map<string, string[]>([['ma', ['H8', 'H9']]]);
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [HttpClientTestingModule, HttpClientModule],
@@ -28,46 +28,17 @@ describe('CommunicationService', () => {
         expect(service).toBeTruthy();
     });
 
-    it('should return expected message (HttpClient called once)', () => {
-        const expectedMessage: Message = { body: 'Hello', title: 'World' };
-
-        // check the content of the mocked call
-        service.basicGet().subscribe((response: Message) => {
-            expect(response.title).toEqual(expectedMessage.title);
-            expect(response.body).toEqual(expectedMessage.body);
-        }, fail);
-
-        const req = httpMock.expectOne(`${baseUrl}/example`);
-        expect(req.request.method).toBe('GET');
-        // actually send the request
-        req.flush(expectedMessage);
-    });
-
-    it('should not return any message when sending a POST request (HttpClient called once)', () => {
-        const sentMessage: Message = { body: 'Hello', title: 'World' };
-        // subscribe to the mocked call
-        // eslint-disable-next-line @typescript-eslint/no-empty-function -- We explicitly need an empty function
-        service.basicPost(sentMessage).subscribe(() => {}, fail);
-        const req = httpMock.expectOne(`${baseUrl}/example/send`);
-        expect(req.request.method).toBe('POST');
-        // actually send the request
-        req.flush(sentMessage);
-    });
-
     it('should handle http error safely', () => {
-        service.basicGet().subscribe((response: Message) => {
+        service.validationPost(newPlayedWords).subscribe((response: boolean) => {
             expect(response).toBeUndefined();
         }, fail);
 
-        const req = httpMock.expectOne(`${baseUrl}/example`);
-        expect(req.request.method).toBe('GET');
+        const req = httpMock.expectOne(`${baseUrl}/multiplayer/validateWords`);
+        expect(req.request.method).toBe('POST');
         req.error(new ErrorEvent('Random error occurred'));
     });
 
     it('should return the result of a validation request', () => {
-        const newPlayedWords: Map<string, string[]> = new Map<string, string[]>([['ma', ['H8', 'H9']]]);
-        // eslint-disable-next-line prefer-const
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
         service.validationPost(newPlayedWords).subscribe(() => {}, fail);
         expect(service['wordsToValidate']).toEqual(['ma']);
         const req = httpMock.expectOne(`${baseUrl}/multiplayer/validateWords`);

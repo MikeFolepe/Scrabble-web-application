@@ -1,5 +1,5 @@
 import { AIStrategy } from '@app/classes/enum';
-import { Letter } from '@app/classes/letter';
+import { Letter } from '@common/letter';
 // eslint-disable-next-line no-restricted-imports
 import dictionaryData from '@common/dictionary.json';
 
