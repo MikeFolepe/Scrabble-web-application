@@ -28,6 +28,10 @@ describe('WaitingRoomComponent', () => {
         fixture.detectChanges();
     });
 
+    it('should create', () => {
+        expect(component).toBeTruthy();
+    });
+
     it('should redirect to home page if the Owner name is empty', () => {
         jasmine.clock().install();
 
@@ -62,7 +66,7 @@ describe('WaitingRoomComponent', () => {
         component['gameSettingsService'].gameSettings = new GameSettings(['Mike', ''], 1, '01', '00', 'Facile', 'Activer', 'null', 'francais');
         component['gameSettingsService'].isRedirectedFromMultiplayerGame = false;
         component['gameSettingsService'].isSoloMode = false;
-        component.route();
+        component.routeToGameView();
         jasmine.clock().tick(4000);
         expect(component['gameSettingsService'].isRedirectedFromMultiplayerGame).toEqual(true);
         expect(component['gameSettingsService'].isSoloMode).toEqual(true);

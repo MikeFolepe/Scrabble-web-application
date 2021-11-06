@@ -117,6 +117,21 @@ describe('SkipTurnService', () => {
         expect(service.startTimer).toHaveBeenCalled();
     });
 
+    it('should get the newTurn from the server', () => {
+        service['clientSocket'].socket = {
+            on: (eventName: string, callback: () => void) => {
+                if (eventName === 'startTimer') {
+                    callback();
+                }
+            },
+        } as unknown as Socket;
+        spyOn(service, 'stopTimer');
+        spyOn(service, 'startTimer');
+        service.receiveStartFromServer();
+        expect(service.stopTimer).toHaveBeenCalled();
+        expect(service.startTimer).toHaveBeenCalled();
+    });
+
     it('should stopTimer when switching turn', () => {
         endGameService.isEndGame = false;
         const spy = spyOn(service, 'stopTimer');

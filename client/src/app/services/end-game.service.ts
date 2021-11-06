@@ -1,6 +1,6 @@
 /* eslint-disable sort-imports */
 import { Injectable } from '@angular/core';
-import { INDEX_PLAYER_AI, INDEX_PLAYER_ONE, NUMBER_OF_SKIP, RESERVE } from '@app/classes/constants';
+import { INDEX_PLAYER_AI, INDEX_PLAYER_ONE, INDEX_PLAYER_TWO, NUMBER_OF_SKIP, RESERVE } from '@app/classes/constants';
 import { DebugService } from '@app/services/debug.service';
 import { ClientSocketService } from './client-socket.service';
 import { GameSettingsService } from './game-settings.service';
@@ -51,13 +51,13 @@ export class EndGameService {
     }
 
     getWinnerName(): string {
-        if (this.playerService.players[0].score > this.playerService.players[1].score) {
-            return this.playerService.players[0].name;
+        if (this.playerService.players[INDEX_PLAYER_ONE].score > this.playerService.players[INDEX_PLAYER_TWO].score) {
+            return this.playerService.players[INDEX_PLAYER_ONE].name;
         }
-        if (this.playerService.players[0].score < this.playerService.players[1].score) {
-            return this.playerService.players[1].name;
+        if (this.playerService.players[INDEX_PLAYER_ONE].score < this.playerService.players[INDEX_PLAYER_TWO].score) {
+            return this.playerService.players[INDEX_PLAYER_TWO].name;
         }
-        return this.playerService.players[0].name + '  ' + this.playerService.players[1].name;
+        return this.playerService.players[INDEX_PLAYER_ONE].name + '  ' + this.playerService.players[INDEX_PLAYER_TWO].name;
     }
 
     addActionsLog(actionLog: string): void {

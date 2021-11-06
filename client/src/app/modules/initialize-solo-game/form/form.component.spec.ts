@@ -29,6 +29,7 @@ describe('FormComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(FormComponent);
         component = fixture.componentInstance;
+        // RouterTestingModule.withRoutes([{ path: 'game', component: GameViewComponent }]);
         fixture.detectChanges();
         component.form = new FormGroup({
             playerName: new FormControl(''),

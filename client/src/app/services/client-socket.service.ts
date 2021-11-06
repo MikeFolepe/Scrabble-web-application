@@ -7,8 +7,6 @@ import { io, Socket } from 'socket.io-client';
 @Injectable({
     providedIn: 'root',
 })
-
-// All methods for recepting the game commands from the server are defined here
 export class ClientSocketService {
     socket: Socket;
     rooms: Room[];
@@ -24,10 +22,10 @@ export class ClientSocketService {
         this.socket = io(this.url);
         this.initializeRoomId();
         this.initializeGameSettings();
-        this.route();
+        this.routeToGameView();
     }
 
-    route(): void {
+    routeToGameView(): void {
         this.socket.on('goToGameView', () => {
             this.router.navigate(['game']);
         });
