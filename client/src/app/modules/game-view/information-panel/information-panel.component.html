@@ -14,19 +14,19 @@
             [ngClass]="{ 'player-turn': skipTurnService.isTurn && player.id === 1, 'opponent-turn': !skipTurnService.isTurn && player.id === 2 }"
         >
             <p>
-                <span *ngIf="skipTurn.isTurn && player.id === 1">></span>
-                <span *ngIf="!skipTurn.isTurn && player.id === 2">></span>
+                <span *ngIf="skipTurnService.isTurn && player.id === 1">></span>
+                <span *ngIf="!skipTurnService.isTurn && player.id === 2">></span>
                 Nom : {{ player.name }}
             </p>
 
             <p>Score : {{ player.score }}</p>
             <p *ngIf="player.letterTable.length !== 7">Nombre de lettres sur le chevalet : {{ player.letterTable.length }}</p>
 
-            <div class="timer" *ngIf="skipTurn.isTurn && player.id === 1">
+            <div class="timer" *ngIf="skipTurnService.isTurn && player.id === 1">
                 Joueur actif<br />
                 Temps restant au tour : {{ skipTurnService.minutes }}:{{ displaySeconds() }}
             </div>
-            <div class="timer" *ngIf="!skipTurn.isTurn && player.id === 2">
+            <div class="timer" *ngIf="!skipTurnService.isTurn && player.id === 2">
                 Joueur actif<br />
                 Temps restant au tour : {{ skipTurnService.minutes }}:{{ displaySeconds() }}
             </div>
