@@ -73,4 +73,10 @@ describe('SendMessageService', () => {
         service.displayBound(functionTest);
         expect(service['displayMessage']).toEqual(functionTest);
     });
+
+    it('displaying a message should display the respective message and its type', () => {
+        service.displayMessageByType('I am the system', TypeMessage.System);
+        expect(service.message).toEqual('I am the system');
+        expect(service.typeMessage).toEqual(TypeMessage.System);
+    });
 });

@@ -6,7 +6,7 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { BOARD_COLUMNS, BOARD_ROWS, RESERVE } from '@app/classes/constants';
+import { BOARD_COLUMNS, BOARD_ROWS, DELAY_TO_PASS_TURN, RESERVE } from '@app/classes/constants';
 import { Orientation, PossibleWords } from '@app/classes/scrabble-board-pattern';
 import { Vec2 } from '@common/vec2';
 import { Player } from '@app/models/player.model';
@@ -36,8 +36,8 @@ describe('PlayerAIService', () => {
         const letterC = RESERVE[2];
         const letterD = RESERVE[3];
 
-        const player = new Player(1, 'Player 1', [letterA, letterB, letterC, letterD]);
-        const playerAi = new Player(2, 'Player 2', [letterA, letterB, letterC, letterD]);
+        const player = new Player(1, 'Player 1', [letterA, letterB, letterC, letterD, letterD, letterB, letterA]);
+        const playerAi = new Player(2, 'Player 2', [letterA, letterB, letterC, letterD, letterA, letterB, letterC]);
         service.playerService.addPlayer(player);
         service.playerService.addPlayer(playerAi);
 
@@ -60,6 +60,15 @@ describe('PlayerAIService', () => {
         const bonusFactorAssociated = 1;
         scrabbleBoard[pos.x][pos.y] = 'a';
         expect(service['bonusFactor'](bonusFactorAssociated, pos, scrabbleBoard)).toEqual(bonusFactorAssociated);
+    });
+
+    it('should skipTurn on skip call', () => {
+        jasmine.clock().install();
+        const spyOnTurn = spyOn(service.skipTurnService, 'switchTurn');
+        service.skip();
+        jasmine.clock().tick(DELAY_TO_PASS_TURN + 1);
+        expect(spyOnTurn).toHaveBeenCalled();
+        jasmine.clock().uninstall();
     });
 
     it('should calculate the total amount of bonus free cell', () => {
@@ -91,6 +100,15 @@ describe('PlayerAIService', () => {
         const expectedEarning = { letterPoint: letterValue, wordFactor: 1 * bonusPos };
 
         expect(service['computeCell'](pos, letterValue, matrixPos, scrabbleBoard)).toEqual(expectedEarning);
+    });
+
+    it('should call switchTurn on swap', () => {
+        jasmine.clock().install();
+        const spyOnTurn = spyOn(service.skipTurnService, 'switchTurn');
+        service.swap();
+        jasmine.clock().tick(DELAY_TO_PASS_TURN + 1);
+        expect(spyOnTurn).toHaveBeenCalled();
+        jasmine.clock().uninstall();
     });
 
     it('should calculate the total amount of a word horizontally with empty bonus word and letter', () => {
