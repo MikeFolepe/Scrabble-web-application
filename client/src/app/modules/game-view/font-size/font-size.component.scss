@@ -1,12 +1,19 @@
 .container {
-    border: 3px solid teal;
     border-radius: 6px;
     display: flex;
     flex-direction: column;
     background-color: teal;
-    padding: 1em;
-    margin-top: 1em;
-    width: 70%;
+    width: 100%;
+    align-items: center;
+    padding: 1em 0;
+
+    /* not selectionnable */
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Old versions of Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
 }
 
 .button-container {
