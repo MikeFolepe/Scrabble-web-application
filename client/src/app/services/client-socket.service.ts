@@ -5,6 +5,7 @@ import { GameSettings } from '@common/game-settings';
 import { Room } from '@common/room';
 import { io, Socket } from 'socket.io-client';
 import { environment } from 'src/environments/environment';
+
 @Injectable({
     providedIn: 'root',
 })
