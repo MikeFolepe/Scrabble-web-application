@@ -29,7 +29,7 @@ export class ManipulateService {
                 break;
             }
             default: {
-                // Shift + * ?
+                if (event.key === 'Shift') return; // Pressing Shift doesn't unselect all so we can press Shift + 8 to select a '*'
                 if (/([a-zA-Z]|[*])+/g.test(event.key) && event.key.length === 1) {
                     const letterPressed = this.indexToSelect(event.key, INDEX_PLAYER_ONE);
                     if (letterPressed === INDEX_INVALID) {
