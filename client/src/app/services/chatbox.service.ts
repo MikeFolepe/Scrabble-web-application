@@ -66,7 +66,10 @@ export class ChatboxService {
                 this.executeReserve();
                 break;
             }
-
+            case 'aide': {
+                this.executeHelp();
+                break;
+            }
             default: {
                 break;
             }
@@ -74,40 +77,28 @@ export class ChatboxService {
         this.command = ''; // reset value for next message
     }
 
-    executeDebug(): void {
+    displayFinalMessage(indexPlayer: number): void {
+        if (!this.endGameService.isEndGame) return;
+        this.sendMessageService.displayMessageByType('Fin de partie - lettres restantes', TypeMessage.System);
+        for (const letter of this.playerService.players[indexPlayer].letterTable) {
+            this.endGameEasel += letter.value;
+        }
+        this.sendMessageService.displayMessageByType(this.playerService.players[indexPlayer].name + ' : ' + this.endGameEasel, TypeMessage.System);
+        // Clear the string
+        this.endGameEasel = '';
+    }
+
+    private executeDebug(): void {
         this.debugService.switchDebugMode();
         if (this.debugService.isDebugActive) {
-            this.sendMessageService.displayMessageByType('affichages de débogage activés', TypeMessage.System);
+            this.sendMessageService.displayMessageByType('Affichages de débogage activés', TypeMessage.System);
             this.displayDebugMessage();
         } else {
-            this.sendMessageService.displayMessageByType('affichages de débogage désactivés', TypeMessage.System);
+            this.sendMessageService.displayMessageByType('Affichages de débogage désactivés', TypeMessage.System);
         }
     }
 
-    executeSkipTurn(): void {
-        if (this.skipTurnService.isTurn) {
-            this.endGameService.addActionsLog('passer');
-            this.sendMessageService.displayMessageByType(this.message, this.typeMessage);
-            this.skipTurnService.switchTurn();
-        } else {
-            this.sendMessageService.displayMessageByType(this.notTurnErrorMessage, TypeMessage.Error);
-        }
-    }
-
-    executeReserve(): void {
-        if (!this.debugService.isDebugActive) {
-            this.sendMessageService.displayMessageByType('Commande non réalisable', TypeMessage.Error);
-            this.message = '';
-            return;
-        }
-        for (const letter of this.letterService.reserve) {
-            this.message = 'system';
-            this.sendMessageService.displayMessageByType(letter.value + ':' + letter.quantity.toString(), TypeMessage.System);
-            this.message = '';
-        }
-    }
-
-    executeSwap(): void {
+    private executeSwap(): void {
         if (this.skipTurnService.isTurn) {
             const messageSplitted = this.message.split(/\s/);
 
@@ -121,7 +112,17 @@ export class ChatboxService {
         }
     }
 
-    async executePlace(): Promise<void> {
+    private executeSkipTurn(): void {
+        if (this.skipTurnService.isTurn) {
+            this.endGameService.addActionsLog('passer');
+            this.sendMessageService.displayMessageByType(this.message, this.typeMessage);
+            this.skipTurnService.switchTurn();
+        } else {
+            this.sendMessageService.displayMessageByType(this.notTurnErrorMessage, TypeMessage.Error);
+        }
+    }
+
+    private async executePlace(): Promise<void> {
         if (this.skipTurnService.isTurn) {
             const messageSplitted = this.message.split(/\s/);
             const positionSplitted = messageSplitted[1].split(/([0-9]+)/);
@@ -141,19 +142,57 @@ export class ChatboxService {
         }
     }
 
-    // TODO rename isCommand et inverser les valeurs de retour partout
-    isValid(): boolean {
+    private executeReserve(): void {
+        if (!this.debugService.isDebugActive) {
+            this.sendMessageService.displayMessageByType('Commande non réalisable', TypeMessage.Error);
+            return;
+        }
+        for (const letter of this.letterService.reserve) {
+            this.sendMessageService.displayMessageByType(letter.value + ':' + letter.quantity.toString(), TypeMessage.System);
+        }
+    }
+
+    private executeHelp(): void {
+        const commands = new Map<string, string>([
+            ['aide', "Liste l'ensemble des commandes disponibles et explique brièvement leur utilisation. Ne prend aucun argument."],
+            [
+                'debug',
+                "Active et désactive l'affichage d'informations relatives aux choix de jeu faits par les joueurs virtuels. Ne prend aucun argument.",
+            ],
+            ['échanger', 'Échange une ou plusieurs lettres du chevalet. Entrer les lettres à échanger sans espace entre-elles.'],
+            ['passer', 'Passe son tour. Ne prend aucun argument.'],
+            [
+                'placer',
+                'Place une lettre sur le plateau. Entrer les coordonnées de la case de la première lettre,' +
+                    "suivi de l'orientation (h pour horizontal ou v pour vertical). Vient ensuite le mot à placer. " +
+                    'Une lettre en majuscule utilisera la lettre *.',
+            ],
+            ['réserve', "Affiche l'état courant de la réserve. Ne prend aucun argument."],
+        ]);
+
+        const DOUBLE_SPACE = '\n\n';
+        let finalMessage = 'Liste des commandes :' + DOUBLE_SPACE;
+
+        for (const command of commands.keys()) {
+            finalMessage += '!' + command + '\n';
+            finalMessage += commands.get(command) + DOUBLE_SPACE;
+        }
+        const LAST_TWO_SKIP_LINES = 2;
+        finalMessage = finalMessage.substring(0, finalMessage.length - LAST_TWO_SKIP_LINES);
+        this.sendMessageService.displayMessageByType(finalMessage, TypeMessage.System);
+    }
+
+    private isValid(): boolean {
         if (this.message[0] !== '!') {
             this.sendMessageService.displayMessageByType(this.message, this.typeMessage);
             return true; // If it's a normal message, it's always valid
         }
         // If it's a command, we call the validation
-        return this.isInputValid() && this.isSyntaxValid();
+        return this.isCommandValid() && this.isSyntaxValid();
     }
 
-    // TODO rename isCommandValid
-    isInputValid(): boolean {
-        const validInputs = [/^!debug/g, /^!passer/g, /^!échanger/g, /^!placer/g, /^!reserve/g];
+    private isCommandValid(): boolean {
+        const validInputs = [/^!debug/g, /^!passer/g, /^!échanger/g, /^!placer/g, /^!reserve/g, /^!aide/g];
 
         for (const input of validInputs) if (input.test(this.message)) return true;
 
@@ -161,13 +200,14 @@ export class ChatboxService {
         return false;
     }
 
-    isSyntaxValid(): boolean {
+    private isSyntaxValid(): boolean {
         const syntaxes = new Map<RegExp, string>([
             [/^!debug$/g, 'debug'],
             [/^!passer$/g, 'passer'],
             [/^!échanger\s([a-z]|[*]){1,7}$/g, 'echanger'],
             [/^!placer\s([a-o]([1-9]|1[0-5])[hv])\s([a-zA-Z\u00C0-\u00FF]|[*])+/g, 'placer'],
             [/^!reserve$/g, 'reserve'],
+            [/^!aide$/g, 'aide'],
         ]);
 
         for (const syntax of syntaxes.keys()) {
@@ -181,7 +221,7 @@ export class ChatboxService {
     }
 
     // Method which check the different size of table of possibility for the debug
-    displayDebugMessage(): void {
+    private displayDebugMessage(): void {
         const nbPossibilities = this.debugService.debugServiceMessage.length;
         if (nbPossibilities === 0) {
             this.sendMessageService.displayMessageByType('Aucune possibilité de placement trouvée!', TypeMessage.System);
@@ -192,16 +232,5 @@ export class ChatboxService {
             }
         }
         this.debugService.clearDebugMessage();
-    }
-
-    displayFinalMessage(indexPlayer: number): void {
-        if (!this.endGameService.isEndGame) return;
-        this.sendMessageService.displayMessageByType('Fin de partie - lettres restantes', TypeMessage.System);
-        for (const letter of this.playerService.players[indexPlayer].letterTable) {
-            this.endGameEasel += letter.value;
-        }
-        this.sendMessageService.displayMessageByType(this.playerService.players[indexPlayer].name + ' : ' + this.endGameEasel, TypeMessage.System);
-        // Clear the string
-        this.endGameEasel = '';
     }
 }
