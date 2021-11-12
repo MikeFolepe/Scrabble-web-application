@@ -8,6 +8,7 @@ export class WordValidationService {
     }
 
     isValidInDictionary(words: string[]): boolean {
+        if (words.length === 0) return false;
         let validWordsCount = 0;
         // JUSTIFICATION : the server console returns that words is not of type Iteratable <string>
         // eslint-disable-next-line @typescript-eslint/prefer-for-of
