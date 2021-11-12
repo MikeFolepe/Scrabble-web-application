@@ -58,6 +58,10 @@ export class ChatboxComponent implements OnInit, AfterViewInit {
     }
 
     displayMessageByType(): void {
+        if (this.sendMessageService.typeMessage === TypeMessage.Error) {
+            this.listTypes.push(this.sendMessageService.typeMessage);
+            this.listMessages.push(this.message);
+        }
         this.listTypes.push(this.sendMessageService.typeMessage);
         this.listMessages.push(this.sendMessageService.message);
         this.scrollToBottom();
