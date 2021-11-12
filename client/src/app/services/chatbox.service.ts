@@ -141,6 +141,7 @@ export class ChatboxService {
         }
     }
 
+    // TODO rename isCommand et inverser les valeurs de retour partout
     isValid(): boolean {
         if (this.message[0] !== '!') {
             this.sendMessageService.displayMessageByType(this.message, this.typeMessage);
@@ -150,6 +151,7 @@ export class ChatboxService {
         return this.isInputValid() && this.isSyntaxValid();
     }
 
+    // TODO rename isCommandValid
     isInputValid(): boolean {
         const validInputs = [/^!debug/g, /^!passer/g, /^!échanger/g, /^!placer/g, /^!reserve/g];
 
