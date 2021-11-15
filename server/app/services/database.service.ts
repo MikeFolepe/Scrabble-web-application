@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { DATABASE_URL } from '@app/classes/constants';
 import { beginnerNameModel } from '@app/classes/database.schema';
 import * as mongoose from 'mongoose';
