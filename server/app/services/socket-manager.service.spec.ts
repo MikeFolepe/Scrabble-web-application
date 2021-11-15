@@ -674,11 +674,8 @@ describe('SocketManagerService', () => {
                 return fakeIn;
             },
         } as unknown as io.Server;
-        // const spyOnEmit = Sinon.spy(fakeSocket, 'emit');
         const spyOnIn = Sinon.spy(service['sio'], 'in');
         service.handleSockets();
-
-        // expect(spyOnEmit.calledWith('receiveEndGame', true)).to.equal(true);
         expect(spyOnIn.calledWith('mike123')).to.equal(true);
     });
 
