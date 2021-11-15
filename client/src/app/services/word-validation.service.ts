@@ -80,7 +80,7 @@ export class WordValidationService {
         return positions;
     }
 
-     passThroughAllRowsOrColumns(scrabbleBoard: string[][], isRow: boolean): void {
+    passThroughAllRowsOrColumns(scrabbleBoard: string[][], isRow: boolean): void {
         let x = 0;
         let y = 0;
         for (let i = 0; i < BOARD_ROWS; i++) {
@@ -187,8 +187,8 @@ export class WordValidationService {
             this.newPlayedWords.clear();
             return { validation: this.validationState, score: scoreTotal };
         }
-        // debugger;
         scoreTotal += this.calculateTotalScore(scoreTotal, this.newPlayedWords);
+        if (scoreTotal === 0) debugger;
 
         if (isEaselSize) {
             scoreTotal += ALL_EASEL_BONUS;

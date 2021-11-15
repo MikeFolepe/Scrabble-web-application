@@ -9,6 +9,7 @@ import { Vec2 } from '@common/vec2';
 import { ChatboxService } from './chatbox.service';
 import { DebugService } from './debug.service';
 import { EndGameService } from './end-game.service';
+import { GameSettingsService } from './game-settings.service';
 import { LetterService } from './letter.service';
 import { PlaceLetterService } from './place-letter.service';
 import { PlayerService } from './player.service';
@@ -34,6 +35,7 @@ export class PlayerAIService {
         public sendMessageService: SendMessageService,
         public randomBonusService: RandomBonusesService,
         public wordValidationService: WordValidationService,
+        public gameSettingsService: GameSettingsService,
     ) {}
 
     skip(): void {
@@ -145,8 +147,10 @@ export class PlayerAIService {
                 totalPoint += earning.letterPoint;
                 wordFactor *= earning.wordFactor;
             }
-            const majid = totalPoint * wordFactor;
+            // debugger;
+            word.point = totalPoint * wordFactor;
             /** ***************************NOUVEAUTÉ***********************************8*/
+            const majid = totalPoint * wordFactor;
             const start: Vec2 = word.orientation ? { x: word.startIndex, y: word.line } : { x: word.line, y: word.startIndex };
             const orientation: Orientation = word.orientation;
             const currentBoard = JSON.parse(JSON.stringify(this.placeLetterService.scrabbleBoard));
@@ -161,17 +165,17 @@ export class PlayerAIService {
             word.point = (await value).score;
             const mike = (await value).score;
             if (majid !== mike && (await value).validation === true) {
+                const jaienvie = false;
                 debugger;
-                console.log(
+                if (jaienvie) {
                     this.wordValidation.validateAllWordsOnBoard(
                         updatedBoard,
                         // eslint-disable-next-line @typescript-eslint/no-magic-numbers
                         word.word.length === 7,
                         word.orientation === Orientation.Horizontal,
                         false,
-                    ),
-                );
-                debugger;
+                    );
+                }
             }
         }
     }

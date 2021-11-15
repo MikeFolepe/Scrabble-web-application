@@ -33,7 +33,6 @@ export class PlaceLetterStrategy {
         } else {
             allPossibleWords = this.removeIfNotDisposable(allPossibleWords);
         }
-        //debugger;
         await playerAiService.calculatePoints(allPossibleWords, scrabbleBoard);
         playerAiService.sortDecreasingPoints(allPossibleWords);
         matchingPointingRangeWords = playerAiService.filterByRange(allPossibleWords, this.pointingRange);
@@ -48,10 +47,10 @@ export class PlaceLetterStrategy {
         matchingPointingRangeWords: PossibleWords[],
         playerAiService: PlayerAIService,
     ): Promise<void> {
+        const noPlayableWord = -1;
         // First, try place word satisfying PointingRange.min < nbPt < PointingRange.max
         let index: number = this.placementAttempt(matchingPointingRangeWords, playerAiService);
-        const noPlayableWord = -1;
-        if (index !== noPlayableWord) {
+        if (playerAiService.gameSettingsService.gameSettings.level === 'facile' && index !== noPlayableWord) {
             await playerAiService.place(matchingPointingRangeWords[index]);
             matchingPointingRangeWords.splice(index, 1);
             return;
@@ -59,6 +58,7 @@ export class PlaceLetterStrategy {
 
         // Second, try place the other words
         index = this.placementAttempt(allPossibleWords, playerAiService);
+        // debugger;
         if (index !== noPlayableWord) {
             await playerAiService.place(allPossibleWords[index]);
             allPossibleWords.splice(index, 1);
