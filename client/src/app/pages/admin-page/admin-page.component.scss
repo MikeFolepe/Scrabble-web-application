@@ -1,4 +1,208 @@
-h2 {
+#title {
+    height: 3em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+mat-icon {
+    /* not selectionnable */
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Old versions of Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+    text-shadow: 0 0 0;
+}
+
+::selection {
+    color: black;
+    background-color: white;
+}
+
+#typing {
+    width: 10ch;
+    animation: typing 2s steps(10), blink 0.5s step-end infinite alternate;
+    white-space: nowrap;
+    overflow: hidden;
+    border-right: 3px solid;
+    font-family: monospace;
+    font-size: 24px;
     color: white;
-    font-size: 40px;
+    height: 25px;
+}
+
+@keyframes typing {
+    from {
+        width: 0;
+    }
+}
+
+@keyframes blink {
+    50% {
+        border-color: transparent;
+    }
+}
+
+#wrapper {
+    display: flex;
+    justify-content: center;
+    gap: 3em;
+    height: 85vh;
+    width: 100vw;
+    margin-top: 1em;
+}
+
+h2 {
+    text-align: center;
+    color: white;
+    background-color: transparent;
+    margin-bottom: 0px;
+    padding: 1em;
+    font-size: larger;
+}
+
+// TODO mettre classe dans styles.scss
+.window {
+    font: 1.3rem Inconsolata, monospace;
+    color: white;
+    text-shadow: 0 0 5px #c8c8c8;
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 6px;
+}
+
+#dictionaries {
+    width: 48%;
+}
+
+#right-bar {
+    width: 48%;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+
+.window-content {
+    padding: 0 1em 1em;
+}
+
+.accordion-buttons {
+    padding-bottom: 0.5em;
+}
+
+.mat-expansion-panel-header-title {
+    font-weight: bold;
+}
+
+// TODO renommer classes
+.example-headers-align .mat-expansion-panel-header-title,
+.example-headers-align .mat-expansion-panel-header-description {
+    flex-basis: 0;
+}
+
+.example-headers-align .mat-expansion-panel-header-description {
+    justify-content: space-between;
+    align-items: center;
+}
+
+.example-headers-align .mat-form-field + .mat-form-field {
+    margin-left: 8px;
+}
+
+.list {
+    width: 100%;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    gap: 0.25em;
+}
+
+.separator {
+    border: 3px solid green;
+    border-radius: 3px;
+    height: inherit;
+    margin: 0 0.25em;
+}
+
+.beginner {
+    width: 50%;
+    flex: 1;
+}
+
+.expert {
+    width: 50%;
+    flex: 1;
+}
+
+#virtual-names {
+    height: 85%;
+}
+
+.center {
+    text-align: center;
+    padding-top: 1em;
+}
+
+#reset {
+    text-align: center;
+    padding: 3em;
+    border-radius: 6px;
+    height: 15%;
+}
+
+#reset button {
+    height: 5em;
+    width: 12em;
+}
+
+#reset span {
+    font-size: large;
+    margin-left: 0.25em;
+}
+
+#add {
+    color: green;
+}
+
+.item {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin: 0;
+    border: 3px solid transparent;
+    border-radius: 6px;
+    width: 100%;
+}
+
+.icons {
+    visibility: hidden;
+    margin: 0.5em 0.5em 0.5em 0;
+}
+
+.item:hover {
+    border: 3px solid white;
+}
+
+.item:hover .icons {
+    visibility: visible;
+}
+
+.item .description {
+    visibility: hidden;
+}
+
+.item:hover .description {
+    visibility: visible;
+}
+
+.ai-name {
+    margin: 0.5em 0 0.5em 0.5em;
+}
+
+.name-title {
+    text-align: center;
+    font-weight: bold;
 }
