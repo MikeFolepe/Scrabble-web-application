@@ -188,7 +188,6 @@ export class WordValidationService {
             return { validation: this.validationState, score: scoreTotal };
         }
         scoreTotal += this.calculateTotalScore(scoreTotal, this.newPlayedWords);
-        if (scoreTotal === 0) debugger;
 
         if (isEaselSize) {
             scoreTotal += ALL_EASEL_BONUS;

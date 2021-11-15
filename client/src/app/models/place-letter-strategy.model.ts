@@ -3,7 +3,6 @@ import { Range } from '@app/classes/range';
 import { BoardPattern, Orientation, PatternInfo, PossibleWords } from '@app/classes/scrabble-board-pattern';
 import { PlayerAIService } from '@app/services/player-ia.service';
 import * as dictionaryData from '@common/dictionary.json';
-import { Vec2 } from '@common/vec2';
 import { PlayerAI } from './player-ai.model';
 
 export class PlaceLetterStrategy {
@@ -17,6 +16,7 @@ export class PlaceLetterStrategy {
 
     async execute(playerAiService: PlayerAIService): Promise<void> {
         const playerAi = playerAiService.playerService.players[INDEX_PLAYER_AI] as PlayerAI;
+        const level = playerAiService.gameSettingsService.gameSettings.level;
         const isFirstRound = playerAiService.placeLetterService.isFirstRound;
         const scrabbleBoard = playerAiService.placeLetterService.scrabbleBoard;
         let allPossibleWords: PossibleWords[];
@@ -33,61 +33,35 @@ export class PlaceLetterStrategy {
         } else {
             allPossibleWords = this.removeIfNotDisposable(allPossibleWords);
         }
-        await playerAiService.calculatePoints(allPossibleWords, scrabbleBoard);
+        await playerAiService.calculatePoints(allPossibleWords);
         playerAiService.sortDecreasingPoints(allPossibleWords);
         matchingPointingRangeWords = playerAiService.filterByRange(allPossibleWords, this.pointingRange);
+        allPossibleWords.forEach((word) => {
+            if (word.point === 0) debugger;
+        });
+        debugger;
+        if (level === 'Facile') await this.computeResults(matchingPointingRangeWords, playerAiService, false);
+        if (level === 'Difficile') await this.computeResults(allPossibleWords, playerAiService);
 
-        await this.computeResults(allPossibleWords, matchingPointingRangeWords, playerAiService);
         playerAiService.debugService.receiveAIDebugPossibilities(allPossibleWords.concat(matchingPointingRangeWords));
         playerAiService.endGameService.actionsLog.push('placer');
     }
 
-    private async computeResults(
-        allPossibleWords: PossibleWords[],
-        matchingPointingRangeWords: PossibleWords[],
-        playerAiService: PlayerAIService,
-    ): Promise<void> {
-        const noPlayableWord = -1;
-        // First, try place word satisfying PointingRange.min < nbPt < PointingRange.max
-        let index: number = this.placementAttempt(matchingPointingRangeWords, playerAiService);
-        if (playerAiService.gameSettingsService.gameSettings.level === 'facile' && index !== noPlayableWord) {
-            await playerAiService.place(matchingPointingRangeWords[index]);
-            matchingPointingRangeWords.splice(index, 1);
+    private async computeResults(possibilities: PossibleWords[], playerAiService: PlayerAIService, isDifficultMode = true): Promise<void> {
+        if (possibilities.length === 0) {
+            playerAiService.swap(isDifficultMode);
             return;
         }
 
-        // Second, try place the other words
-        index = this.placementAttempt(allPossibleWords, playerAiService);
-        // debugger;
-        if (index !== noPlayableWord) {
-            await playerAiService.place(allPossibleWords[index]);
-            allPossibleWords.splice(index, 1);
+        if (isDifficultMode) {
+            await playerAiService.place(possibilities[0]);
+            possibilities.splice(0, 1);
             return;
         }
 
-        // No possibilities for this turn, player will swap for more possibilities on next turn
-        playerAiService.swap();
-    }
-
-    private placementAttempt(possibilities: PossibleWords[], playerAiService: PlayerAIService): number {
-        let i = 0;
-        const noPlayableWord = -1;
-        for (i = 0; i < possibilities.length; i++) {
-            const word = possibilities[i];
-            const start: Vec2 = word.orientation ? { x: word.startIndex, y: word.line } : { x: word.line, y: word.startIndex };
-            const orientation: Orientation = word.orientation;
-            // Deep copy of the game scrabble board because of hypotetical placement
-            let scrabbleBoard: string[][] = JSON.parse(JSON.stringify(playerAiService.placeLetterService.scrabbleBoard));
-            // Place the hypotetic word on the copy of scrabble board
-            scrabbleBoard = playerAiService.placeWordOnBoard(scrabbleBoard, word.word, start, orientation);
-            // Pass the scrabble board for the validation
-            const isValid = this.validateWord(scrabbleBoard);
-
-            if (isValid) {
-                return i;
-            }
-        }
-        return noPlayableWord;
+        const index = playerAiService.generateRandomNumber(possibilities.length);
+        await playerAiService.place(possibilities[index]);
+        possibilities.splice(index, 1);
     }
 
     private initializeArray(scrabbleBoard: string[][]): void {
@@ -279,47 +253,5 @@ export class PlaceLetterStrategy {
         }
 
         return patternArray;
-    }
-
-    private validateWord(scrabbleBoard: string[][]): boolean {
-        const save = JSON.parse(JSON.stringify(this.board));
-
-        // Place the word on the scrabble board to check the situation it would cause
-        this.initializeArray(scrabbleBoard);
-        const wordsOnBoard: string[] = [];
-
-        const regex1 = new RegExp('[,]', 'g');
-        const regex2 = new RegExp('[ ]{1}', 'g');
-
-        // Capture all groups of 2 letters or more
-        const maxDimensions = Object.keys(Orientation).length / 2;
-
-        for (let dimension = 0; dimension < maxDimensions; dimension++) {
-            for (let i = 0; i < BOARD_COLUMNS; i++) {
-                this.board[dimension][i]
-                    .map((element: string) => {
-                        return element === '' ? ' ' : element;
-                    })
-                    .toString()
-                    .replace(regex1, '')
-                    .split(regex2)
-                    .forEach((word) => {
-                        if (word.length > 1 && word !== '') wordsOnBoard.push(word);
-                    });
-            }
-        }
-
-        // Check if all groups of at least 2 letters are in the dictionary
-        for (const word of wordsOnBoard) {
-            const found = this.dictionary.find((element) => element === word);
-            if (found === undefined) {
-                this.board = save;
-                return false;
-            }
-        }
-
-        // Restore the board
-        this.board = save;
-        return true;
     }
 }

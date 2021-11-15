@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { DELAY_TO_PASS_TURN, EASEL_SIZE, INDEX_PLAYER_AI, MIN_RESERVE_SIZE_TO_SWAP, RESERVE } from '@app/classes/constants';
-import { Earning } from '@app/classes/earning';
+import { DELAY_TO_PASS_TURN, EASEL_SIZE, INDEX_PLAYER_AI, MIN_RESERVE_SIZE_TO_SWAP } from '@app/classes/constants';
 import { TypeMessage } from '@app/classes/enum';
 import { Range } from '@app/classes/range';
 import { Orientation, PossibleWords } from '@app/classes/scrabble-board-pattern';
@@ -49,7 +48,7 @@ export class PlayerAIService {
         return Math.floor(Number(Math.random()) * maxValue);
     }
 
-    swap(): boolean {
+    swap(isDifficultMode: boolean): boolean {
         const playerAi = this.playerService.players[1] as PlayerAI;
         const lettersToSwap: string[] = [];
 
@@ -61,6 +60,8 @@ export class PlayerAIService {
         do {
             numberOfLetterToChange = this.generateRandomNumber(EASEL_SIZE);
         } while (numberOfLetterToChange === 0);
+
+        if (isDifficultMode) numberOfLetterToChange = EASEL_SIZE;
 
         // Choose the index of letters to be changed
         const indexOfLetterToBeChanged: number[] = [];
@@ -99,7 +100,6 @@ export class PlayerAIService {
             );
             return;
         }
-        this.swap();
     }
 
     placeWordOnBoard(scrabbleBoard: string[][], word: string, start: Vec2, orientation: Orientation): string[][] {
@@ -123,60 +123,23 @@ export class PlayerAIService {
         return word1.point < word2.point ? BIGGER_SORT_NUMBER : SMALLER_SORT_NUMBER;
     };
 
-    async calculatePoints(allPossibleWords: PossibleWords[], scrabbleBoard: string[][]): Promise<void> {
-        const rowOffset = 65;
-        const columnOffset = 1;
+    async calculatePoints(allPossibleWords: PossibleWords[]): Promise<void> {
+        let index = 0;
         for (const word of allPossibleWords) {
-            let totalPoint = 0;
-            let wordFactor = 1;
-            for (let i = 0; i < word.word.length; i++) {
-                let key: string;
-                let matrixPos: Vec2;
-
-                if (word.orientation === Orientation.Horizontal) {
-                    key = String.fromCharCode(word.line + rowOffset) + (word.startIndex + columnOffset + i).toString();
-                    matrixPos = { x: word.line, y: word.startIndex + i };
-                } else {
-                    key = String.fromCharCode(word.startIndex + rowOffset + i) + (word.line + columnOffset).toString();
-                    matrixPos = { x: word.startIndex + i, y: word.line };
-                }
-                // Letter value : A = 1, B = 3, C = 3 ...etc
-                const letterContribution: number = RESERVE[word.word[i].toUpperCase().charCodeAt(0) - rowOffset].points;
-                // Total earning for the letter (word[i]) at position (x, y)
-                const earning: Earning = this.computeCell(key, letterContribution, matrixPos, scrabbleBoard);
-                totalPoint += earning.letterPoint;
-                wordFactor *= earning.wordFactor;
-            }
-            // debugger;
-            word.point = totalPoint * wordFactor;
-            /** ***************************NOUVEAUTÉ***********************************8*/
-            const majid = totalPoint * wordFactor;
             const start: Vec2 = word.orientation ? { x: word.startIndex, y: word.line } : { x: word.line, y: word.startIndex };
             const orientation: Orientation = word.orientation;
             const currentBoard = JSON.parse(JSON.stringify(this.placeLetterService.scrabbleBoard));
             const updatedBoard = this.placeWordOnBoard(currentBoard, word.word, start, orientation);
-            const value = this.wordValidation.validateAllWordsOnBoard(
+            const scoreValidation = await this.wordValidation.validateAllWordsOnBoard(
                 updatedBoard,
-                // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-                word.word.length === 7,
+                word.word.length === EASEL_SIZE + 1,
                 word.orientation === Orientation.Horizontal,
                 false,
             );
-            word.point = (await value).score;
-            const mike = (await value).score;
-            if (majid !== mike && (await value).validation === true) {
-                const jaienvie = false;
-                debugger;
-                if (jaienvie) {
-                    this.wordValidation.validateAllWordsOnBoard(
-                        updatedBoard,
-                        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-                        word.word.length === 7,
-                        word.orientation === Orientation.Horizontal,
-                        false,
-                    );
-                }
-            }
+            word.point = (await scoreValidation).score;
+
+            if (word.point === 0) allPossibleWords.splice(index, 1);
+            index++;
         }
     }
 
@@ -188,36 +151,48 @@ export class PlayerAIService {
         return allPossibleWords.filter((word) => word.point >= pointingRange.min && word.point <= pointingRange.max);
     }
 
-    private bonusFactor(bonusFactor: number, matrixPos: Vec2, scrabbleBoard: string[][]): number {
-        const MULTIPLICATION_NEUTRAL = 1;
-        // Check if there is a word on the matrixPos
-        return scrabbleBoard[matrixPos.x][matrixPos.y] === '' ? bonusFactor : MULTIPLICATION_NEUTRAL;
-    }
-
-    private computeCell(keyCell: string, letterValue: number, matrixPos: Vec2, scrabbleBoard: string[][]): Earning {
-        // compute the earning (in letterFactor and wordFactor) of the cell at matrixPox
-        let letterPoint = 0;
-        let wordFactor = 1;
-        switch (this.randomBonusService.bonusPositions.get(keyCell)) {
-            case 'doubleLetter':
-                letterPoint = letterValue * this.bonusFactor(2, matrixPos, scrabbleBoard);
-                break;
-            case 'tripleLetter':
-                letterPoint = letterValue * this.bonusFactor(3, matrixPos, scrabbleBoard);
-                break;
-            case 'doubleWord':
-                letterPoint = letterValue;
-                wordFactor *= this.bonusFactor(2, matrixPos, scrabbleBoard);
-                break;
-            case 'tripleWord':
-                letterPoint = letterValue;
-                wordFactor *= this.bonusFactor(3, matrixPos, scrabbleBoard);
-                break;
-            default:
-                letterPoint += letterValue;
-                break;
+    removeInvalidWords(allPossibleWords: PossibleWords[]): void {
+        let index = 0;
+        for (const word of allPossibleWords) {
+            if (word.point === 0) delete allPossibleWords[index];
+            index++;
         }
 
-        return { letterPoint, wordFactor };
+        for (const word of allPossibleWords) {
+            if (word.point === 0) debugger;
+        }
     }
+
+    // private bonusFactor(bonusFactor: number, matrixPos: Vec2, scrabbleBoard: string[][]): number {
+    //     const MULTIPLICATION_NEUTRAL = 1;
+    //     // Check if there is a word on the matrixPos
+    //     return scrabbleBoard[matrixPos.x][matrixPos.y] === '' ? bonusFactor : MULTIPLICATION_NEUTRAL;
+    // }
+
+    // private computeCell(keyCell: string, letterValue: number, matrixPos: Vec2, scrabbleBoard: string[][]): Earning {
+    //     // compute the earning (in letterFactor and wordFactor) of the cell at matrixPox
+    //     let letterPoint = 0;
+    //     let wordFactor = 1;
+    //     switch (this.randomBonusService.bonusPositions.get(keyCell)) {
+    //         case 'doubleLetter':
+    //             letterPoint = letterValue * this.bonusFactor(2, matrixPos, scrabbleBoard);
+    //             break;
+    //         case 'tripleLetter':
+    //             letterPoint = letterValue * this.bonusFactor(3, matrixPos, scrabbleBoard);
+    //             break;
+    //         case 'doubleWord':
+    //             letterPoint = letterValue;
+    //             wordFactor *= this.bonusFactor(2, matrixPos, scrabbleBoard);
+    //             break;
+    //         case 'tripleWord':
+    //             letterPoint = letterValue;
+    //             wordFactor *= this.bonusFactor(3, matrixPos, scrabbleBoard);
+    //             break;
+    //         default:
+    //             letterPoint += letterValue;
+    //             break;
+    //     }
+
+    //     return { letterPoint, wordFactor };
+    // }
 }
