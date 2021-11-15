@@ -1,6 +1,5 @@
-/* eslint-disable prettier/prettier */
 import { DATABASE_URL } from '@app/classes/constants';
-import { beginnerNameModel } from '@app/classes/database.schema';
+import { BEGINNER_NAME_MODEL } from '@app/classes/database.schema';
 import * as mongoose from 'mongoose';
 import { Service } from 'typedi';
 
@@ -23,7 +22,7 @@ export class DatabaseService {
                 throw new Error('Distant database connection error');
             });
 
-        const beginnerName = new beginnerNameModel({
+        const beginnerName = new BEGINNER_NAME_MODEL({
             aiName: 'Mikeaha',
         });
         beginnerName.remove();
