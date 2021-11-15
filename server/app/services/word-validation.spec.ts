@@ -1,6 +1,6 @@
 /* eslint-disable dot-notation */
-import { WordValidationService } from './word-validation.service';
 import { expect } from 'chai';
+import { WordValidationService } from './word-validation.service';
 
 describe('WordValidation service', () => {
     let wordValidationService: WordValidationService;
@@ -18,5 +18,11 @@ describe('WordValidation service', () => {
         const words: string[] = ['manger', 'toi', 'eau', 'dormir'];
         const result = wordValidationService.isValidInDictionary(words);
         expect(result).to.equals(true);
+    });
+
+    it('should return false if there is no words provided', () => {
+        const words: string[] = [];
+        const result = wordValidationService.isValidInDictionary(words);
+        expect(result).to.equals(false);
     });
 });

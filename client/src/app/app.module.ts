@@ -16,6 +16,7 @@ import { NgModule } from '@angular/core';
 import { PageNotFoundComponent } from '@app/pages/page-not-found/page-not-found.component';
 import { SharedModule } from '@app/modules/shared/shared.module';
 import { WaitingRoomComponent } from '@app/pages/waiting-room/waiting-room.component';
+import { AdminPageComponent } from './pages/admin-page/admin-page.component';
 
 /**
  * Main module that is used in main.ts.
@@ -24,7 +25,7 @@ import { WaitingRoomComponent } from '@app/pages/waiting-room/waiting-room.compo
  * Otherwise Angular Cli will not know in which module to put new component
  */
 @NgModule({
-    declarations: [AppComponent, MainPageComponent, PageNotFoundComponent, WaitingRoomComponent, JoinRoomComponent],
+    declarations: [AppComponent, MainPageComponent, PageNotFoundComponent, WaitingRoomComponent, JoinRoomComponent, AdminPageComponent],
     imports: [
         AppMaterialModule,
         AppRoutingModule,
