@@ -21,6 +21,7 @@ export class JoinDialogComponent implements OnInit {
             min: 4,
             max: 12,
         };
+        // TODO mettre specialChar dans fichier constantes
         this.specialChar = '@#$%^&*_';
         this.validationPattern = '^([A-Za-z][A-Za-z][A-Za-z][A-Za-z])[A-Za-z0-9' + this.specialChar + ']*';
     }
