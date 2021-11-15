@@ -33,8 +33,8 @@ export class PlaceLetterStrategy {
         } else {
             allPossibleWords = this.removeIfNotDisposable(allPossibleWords);
         }
-
-        playerAiService.calculatePoints(allPossibleWords, scrabbleBoard);
+        //debugger;
+        await playerAiService.calculatePoints(allPossibleWords, scrabbleBoard);
         playerAiService.sortDecreasingPoints(allPossibleWords);
         matchingPointingRangeWords = playerAiService.filterByRange(allPossibleWords, this.pointingRange);
 

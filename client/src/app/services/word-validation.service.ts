@@ -80,7 +80,7 @@ export class WordValidationService {
         return positions;
     }
 
-    passThroughAllRowsOrColumns(scrabbleBoard: string[][], isRow: boolean): void {
+     passThroughAllRowsOrColumns(scrabbleBoard: string[][], isRow: boolean): void {
         let x = 0;
         let y = 0;
         for (let i = 0; i < BOARD_ROWS; i++) {
@@ -178,7 +178,7 @@ export class WordValidationService {
         return score;
     }
 
-    async validateAllWordsOnBoard(scrabbleBoard: string[][], isEaselSize: boolean, isRow: boolean): Promise<ScoreValidation> {
+    async validateAllWordsOnBoard(scrabbleBoard: string[][], isEaselSize: boolean, isRow: boolean, isPermanent = true): Promise<ScoreValidation> {
         let scoreTotal = 0;
         this.passThroughAllRowsOrColumns(scrabbleBoard, isRow);
         this.passThroughAllRowsOrColumns(scrabbleBoard, !isRow);
@@ -187,11 +187,16 @@ export class WordValidationService {
             this.newPlayedWords.clear();
             return { validation: this.validationState, score: scoreTotal };
         }
-
+        // debugger;
         scoreTotal += this.calculateTotalScore(scoreTotal, this.newPlayedWords);
 
         if (isEaselSize) {
             scoreTotal += ALL_EASEL_BONUS;
+        }
+
+        if (!isPermanent) {
+            this.newPlayedWords.clear();
+            return { validation: this.validationState, score: scoreTotal };
         }
 
         this.removeBonuses(this.newPlayedWords);

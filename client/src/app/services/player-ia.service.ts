@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { DELAY_TO_PASS_TURN, EASEL_SIZE, INDEX_PLAYER_AI, MIN_RESERVE_SIZE_TO_SWAP, RESERVE } from '@app/classes/constants';
+import { Earning } from '@app/classes/earning';
 import { TypeMessage } from '@app/classes/enum';
 import { Range } from '@app/classes/range';
-import { Earning } from '@app/classes/earning';
 import { Orientation, PossibleWords } from '@app/classes/scrabble-board-pattern';
-import { Vec2 } from '@common/vec2';
 import { PlayerAI } from '@app/models/player-ai.model';
+import { Vec2 } from '@common/vec2';
 import { ChatboxService } from './chatbox.service';
 import { DebugService } from './debug.service';
 import { EndGameService } from './end-game.service';
@@ -33,6 +33,7 @@ export class PlayerAIService {
         public debugService: DebugService,
         public sendMessageService: SendMessageService,
         public randomBonusService: RandomBonusesService,
+        public wordValidationService: WordValidationService,
     ) {}
 
     skip(): void {
@@ -120,7 +121,7 @@ export class PlayerAIService {
         return word1.point < word2.point ? BIGGER_SORT_NUMBER : SMALLER_SORT_NUMBER;
     };
 
-    calculatePoints(allPossibleWords: PossibleWords[], scrabbleBoard: string[][]): void {
+    async calculatePoints(allPossibleWords: PossibleWords[], scrabbleBoard: string[][]): Promise<void> {
         const rowOffset = 65;
         const columnOffset = 1;
         for (const word of allPossibleWords) {
@@ -144,7 +145,34 @@ export class PlayerAIService {
                 totalPoint += earning.letterPoint;
                 wordFactor *= earning.wordFactor;
             }
-            word.point = totalPoint * wordFactor;
+            const majid = totalPoint * wordFactor;
+            /** ***************************NOUVEAUTÉ***********************************8*/
+            const start: Vec2 = word.orientation ? { x: word.startIndex, y: word.line } : { x: word.line, y: word.startIndex };
+            const orientation: Orientation = word.orientation;
+            const currentBoard = JSON.parse(JSON.stringify(this.placeLetterService.scrabbleBoard));
+            const updatedBoard = this.placeWordOnBoard(currentBoard, word.word, start, orientation);
+            const value = this.wordValidation.validateAllWordsOnBoard(
+                updatedBoard,
+                // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+                word.word.length === 7,
+                word.orientation === Orientation.Horizontal,
+                false,
+            );
+            word.point = (await value).score;
+            const mike = (await value).score;
+            if (majid !== mike && (await value).validation === true) {
+                debugger;
+                console.log(
+                    this.wordValidation.validateAllWordsOnBoard(
+                        updatedBoard,
+                        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+                        word.word.length === 7,
+                        word.orientation === Orientation.Horizontal,
+                        false,
+                    ),
+                );
+                debugger;
+            }
         }
     }
 
