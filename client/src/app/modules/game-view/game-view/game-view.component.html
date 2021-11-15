@@ -1,48 +1,45 @@
 <div id="container">
     <div id="side-bar">
         <app-information-panel id="information-panel"></app-information-panel>
+        <!-- TODO changer couleurs boutons -->
         <div id="buttons">
-            <button
-                mat-raised-button
-                color="primary"
-                id="play-button"
+            <button mat-raised-button color="primary" id="play-button"
                 [disabled]="!this.boardHandlerService.word.length"
-                (click)="this.boardHandlerService.confirmPlacement()"
-            >
+                (click)="this.boardHandlerService.confirmPlacement()">
                 Jouer
             </button>
             <div id="wrapper">
-                <button
-                    mat-raised-button
-                    color="primary"
-                    id="regular-button"
-                    [disabled]="!this.skipTurnService.isTurn"
-                    (click)="this.chatBoxService.sendPlayerMessage('!passer')"
-                >
+                <button mat-raised-button color="primary" id="regular-button" [disabled]="!this.skipTurnService.isTurn"
+                    (click)="this.chatBoxService.sendPlayerMessage('!passer')">
                     Passer son tour
                 </button>
 
                 <div *ngIf="!this.endGameService.isEndGame && gameSettingsService.isSoloMode">
-                    <button mat-raised-button color="primary" id="regular-button" (click)="this.endGameService.clearAllData()" routerLink="/home">
+                    <button mat-raised-button color="primary" id="regular-button"
+                        (click)="this.endGameService.clearAllData()" routerLink="/home">
                         Abandonner
                     </button>
                 </div>
                 <div *ngIf="this.endGameService.isEndGame && gameSettingsService.isSoloMode">
-                    <button mat-raised-button color="primary" id="regular-button" (click)="this.endGameService.clearAllData()" routerLink="/home">
+                    <button mat-raised-button color="primary" id="regular-button"
+                        (click)="this.endGameService.clearAllData()" routerLink="/home">
                         Quitter
                     </button>
                 </div>
                 <div *ngIf="!gameSettingsService.isSoloMode && !endGameService.isEndGame">
-                    <button mat-raised-button color="primary" id="regular-button" (click)="giveUpGame()">Abandonner</button>
+                    <button mat-raised-button color="primary" id="regular-button"
+                        (click)="giveUpGame()">Abandonner</button>
                 </div>
 
                 <div *ngIf="endGameService.isEndGame && !gameSettingsService.isSoloMode">
-                    <button mat-raised-button color="primary" id="regular-button" (click)="this.endGameService.clearAllData()" routerLink="/home">
+                    <button mat-raised-button color="primary" id="regular-button"
+                        (click)="this.endGameService.clearAllData()" routerLink="/home">
                         Quitter
                     </button>
                 </div>
             </div>
-            <app-font-size id="font-size" [fontSize]="fontSize" (sizeChange)="handleFontSizeEvent($event)"> </app-font-size>
+            <app-font-size id="font-size" [fontSize]="fontSize" (sizeChange)="handleFontSizeEvent($event)">
+            </app-font-size>
         </div>
     </div>
     <app-scrabble-board id="scrabble-board" tabindex="0"></app-scrabble-board>
