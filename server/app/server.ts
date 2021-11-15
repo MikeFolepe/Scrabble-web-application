@@ -1,9 +1,10 @@
-import * as http from 'http';
-import { AddressInfo } from 'net';
 import { Application } from '@app/app';
 import { RoomManagerService } from '@app/services/room-manager.service';
-import { Service } from 'typedi';
 import { SocketManagerService } from '@app/services/socket-manager.service';
+import * as http from 'http';
+import { AddressInfo } from 'net';
+import { Service } from 'typedi';
+import { DatabaseService } from './services/database.service';
 
 @Service()
 export class Server {
@@ -13,6 +14,7 @@ export class Server {
     private server: http.Server;
     private socketManagerService: SocketManagerService;
     private roomManagerService: RoomManagerService;
+    private databaseService: DatabaseService;
     constructor(private readonly application: Application) {}
 
     private static normalizePort(val: number | string): number | string | boolean {
@@ -25,8 +27,10 @@ export class Server {
             return false;
         }
     }
-    init(): void {
+    async init(): Promise<void> {
+        this.databaseService = new DatabaseService();
         this.application.app.set('port', Server.appPort);
+        await this.databaseService.start();
 
         this.server = http.createServer(this.application.app);
         this.roomManagerService = new RoomManagerService();
