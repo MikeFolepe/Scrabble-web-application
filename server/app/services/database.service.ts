@@ -1,5 +1,6 @@
-import { DATABASE_URL } from '@app/classes/constants';
-import { BEGINNER_NAME_MODEL } from '@app/classes/database.schema';
+/* eslint-disable no-underscore-dangle */
+import { AI_BEGINNERS, AI_EXPERTS, DATABASE_URL } from '@app/classes/constants';
+import { BEGINNER_NAME_MODEL, EXPERT_NAME_MODEL } from '@app/classes/database.schema';
 import * as mongoose from 'mongoose';
 import { Service } from 'typedi';
 
@@ -22,14 +23,30 @@ export class DatabaseService {
                 throw new Error('Distant database connection error');
             });
 
-        const beginnerName = new BEGINNER_NAME_MODEL({
-            aiName: 'Mikeaha',
-        });
-        beginnerName.remove();
-        beginnerName.save();
+        this.setDefaultData();
     }
 
     async closeConnection(): Promise<void> {
         await mongoose.connection.close();
+    }
+
+    async setDefaultData(): Promise<void> {
+        await BEGINNER_NAME_MODEL.deleteMany({}).exec();
+        await EXPERT_NAME_MODEL.deleteMany({}).exec();
+        for (const aiBeginner of AI_BEGINNERS) {
+            const beginner = new BEGINNER_NAME_MODEL({
+                aiName: aiBeginner.aiName,
+                isDefault: aiBeginner.isDefault,
+            });
+            beginner.save();
+        }
+
+        for (const aiExpert of AI_EXPERTS) {
+            const expert = new EXPERT_NAME_MODEL({
+                aiName: aiExpert.aiName,
+                isDefault: aiExpert.isDefault,
+            });
+            expert.save();
+        }
     }
 }

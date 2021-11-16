@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { MatAccordion } from '@angular/material/expansion';
-
+import { AiNameDB } from '@common/ai-name';
 interface Dictionnary {
     name: string;
     description: string;
@@ -21,6 +21,7 @@ export class AdminPageComponent {
         { name: 'Dico #3', description: 'blabla blablabla #3', isDefault: false },
         { name: 'Dico #4', description: 'blabla blablabla #4', isDefault: false },
     ];
-    beginnerNames = ['Name #1', 'Name #2', 'Name #3', 'Name #4'];
-    expertNames = ['Name #1', 'Name #2', 'Name #3'];
+
+    beginnerNames: AiNameDB[];
+    expertNames: AiNameDB[];
 }
