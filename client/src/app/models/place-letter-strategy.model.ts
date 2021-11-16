@@ -7,8 +7,9 @@ import { PlayerAI } from './player-ai.model';
 
 export class PlaceLetterStrategy {
     dictionary: string[];
+    allPoosibleWords: PossibleWords[];
     private board: string[][][];
-    //TODO: supprimer le parametre oubien faire les ifs
+    // TODO: supprimer le parametre oubien faire les ifs
     constructor(public pointingRange: Range) {
         this.dictionary = JSON.parse(JSON.stringify(dictionaryData)).words;
         this.pointingRange = { min: 1, max: 18 };
@@ -34,9 +35,12 @@ export class PlaceLetterStrategy {
         } else {
             allPossibleWords = this.removeIfNotDisposable(allPossibleWords);
         }
-        await playerAiService.calculatePoints(allPossibleWords);
+        allPossibleWords = await playerAiService.calculatePoints(allPossibleWords);
+        console.log(allPossibleWords);
+        // this.validateAllWord(allPossibleWords, playerAiService);
         playerAiService.sortDecreasingPoints(allPossibleWords);
         matchingPointingRangeWords = playerAiService.filterByRange(allPossibleWords, this.pointingRange);
+        this.allPoosibleWords = allPossibleWords;
 
         if (level === 'Difficile') await this.computeResults(allPossibleWords, playerAiService);
         if (level === 'Facile') await this.computeResults(matchingPointingRangeWords, playerAiService, false);
@@ -252,4 +256,59 @@ export class PlaceLetterStrategy {
 
         return patternArray;
     }
+
+    // private validateAllWord(allPossibleWords: PossibleWords[], playerAiService: PlayerAIService): void {
+    //     const updatedArray: PossibleWords[] = [];
+    //     for (const word of allPossibleWords) {
+    //         const start: Vec2 = word.orientation ? { x: word.startIndex, y: word.line } : { x: word.line, y: word.startIndex };
+    //         const orientation: Orientation = word.orientation;
+    //         const currentBoard = JSON.parse(JSON.stringify(playerAiService.placeLetterService.scrabbleBoard));
+    //         const updatedBoard = playerAiService.placeWordOnBoard(currentBoard, word.word, start, orientation);
+    //         if (this.validateWord(updatedBoard)) updatedArray.push(word);
+    //         // if (this.validateWord(updatedBoard) === false) debugger;
+    //     }
+    //     allPossibleWords = updatedArray;
+    // }
+
+    // private validateWord(scrabbleBoard: string[][]): boolean {
+    //     const save = JSON.parse(JSON.stringify(this.board));
+
+    //     // Place the word on the scrabble board to check the situation it would cause
+    //     this.initializeArray(scrabbleBoard);
+    //     const wordsOnBoard: string[] = [];
+
+    //     const regex1 = new RegExp('[,]', 'g');
+    //     const regex2 = new RegExp('[ ]{1}', 'g');
+
+    //     // Capture all groups of 2 letters or more
+    //     const maxDimensions = Object.keys(Orientation).length / 2;
+
+    //     for (let dimension = 0; dimension < maxDimensions; dimension++) {
+    //         for (let i = 0; i < BOARD_COLUMNS; i++) {
+    //             this.board[dimension][i]
+    //                 .map((element: string) => {
+    //                     return element === '' ? ' ' : element;
+    //                 })
+    //                 .toString()
+    //                 .replace(regex1, '')
+    //                 .split(regex2)
+    //                 .forEach((word) => {
+    //                     if (word.length > 1 && word !== '') wordsOnBoard.push(word);
+    //                 });
+    //         }
+    //     }
+
+    //     // Check if all groups of at least 2 letters are in the dictionary
+    //     for (const word of wordsOnBoard) {
+    //         const found = this.dictionary.find((element) => element === word);
+    //         if (found === undefined) {
+    //             this.board = save;
+    //             return false;
+    //         }
+    //     }
+
+    //     // Restore the board
+    //     this.board = save;
+    //     return true;
+    // }
 }

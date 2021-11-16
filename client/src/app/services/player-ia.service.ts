@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { DELAY_TO_PASS_TURN, EASEL_SIZE, INDEX_PLAYER_AI, MIN_RESERVE_SIZE_TO_SWAP } from '@app/classes/constants';
+import { DELAY_TO_PASS_TURN, EASEL_SIZE, INDEX_PLAYER_AI, MIN_RESERVE_SIZE_TO_SWAP, ONE_SECOND_DELAY } from '@app/classes/constants';
 import { TypeMessage } from '@app/classes/enum';
 import { Range } from '@app/classes/range';
 import { Orientation, PossibleWords } from '@app/classes/scrabble-board-pattern';
@@ -95,16 +95,22 @@ export class PlayerAIService {
     }
 
     async place(word: PossibleWords): Promise<void> {
+        const playerAi = this.playerService.players[1] as PlayerAI;
+        console.log(playerAi.getHand());
         const startPos = word.orientation ? { x: word.line, y: word.startIndex } : { x: word.startIndex, y: word.line };
         const isValid = await this.placeLetterService.placeCommand(startPos, word.orientation, word.word);
         if (isValid) {
             const column = (startPos.x + 1).toString();
             const row: string = String.fromCharCode(startPos.y + 'a'.charCodeAt(0));
             const charOrientation = word.orientation === Orientation.Horizontal ? 'h' : 'v';
-            this.sendMessageService.displayMessageByType(
-                this.playerService.players[INDEX_PLAYER_AI].name + ' : ' + '!placer ' + row + column + charOrientation + ' ' + word.word,
-                TypeMessage.Opponent,
-            );
+            setTimeout(() => {
+                this.sendMessageService.displayMessageByType(
+                    this.playerService.players[INDEX_PLAYER_AI].name + ' : ' + '!placer ' + row + column + charOrientation + ' ' + word.word,
+                    TypeMessage.Opponent,
+                );
+            }, ONE_SECOND_DELAY);
+            console.log(playerAi.getHand());
+
             return;
         }
     }
@@ -130,7 +136,8 @@ export class PlayerAIService {
         return word1.point < word2.point ? BIGGER_SORT_NUMBER : SMALLER_SORT_NUMBER;
     };
 
-    async calculatePoints(allPossibleWords: PossibleWords[]): Promise<void> {
+    async calculatePoints(allPossibleWords: PossibleWords[]): Promise<PossibleWords[]> {
+        console.log(allPossibleWords);
         for (const word of allPossibleWords) {
             const start: Vec2 = word.orientation ? { x: word.startIndex, y: word.line } : { x: word.line, y: word.startIndex };
             const orientation: Orientation = word.orientation;
@@ -142,9 +149,11 @@ export class PlayerAIService {
                 word.orientation === Orientation.Horizontal,
                 false,
             );
-            word.point = (await scoreValidation).validation ? (await scoreValidation).score : 0;
+            word.point = scoreValidation.validation ? scoreValidation.score : 0;
+            if (word.point === 0) console.log(word);
         }
         allPossibleWords = allPossibleWords.filter((word) => word.point > 0);
+        return allPossibleWords;
     }
 
     sortDecreasingPoints(allPossibleWords: PossibleWords[]): void {
