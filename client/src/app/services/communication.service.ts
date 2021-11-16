@@ -12,7 +12,7 @@ export class CommunicationService {
     private wordsToValidate: string[];
 
     constructor(private readonly http: HttpClient) {
-        this.baseUrl = environment.serverUrl;
+        this.baseUrl = environment.serverUrl + '/api';
         this.wordsToValidate = [];
     }
 

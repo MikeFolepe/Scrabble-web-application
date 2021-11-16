@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
     selector: 'app-background',
@@ -6,7 +6,7 @@ import { Component } from '@angular/core';
     styleUrls: ['./background.component.scss'],
 })
 export class BackgroundComponent {
-    isDark: boolean;
+    @Input() isDark: boolean;
     constructor() {
         this.isDark = false;
     }
