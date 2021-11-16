@@ -1,5 +1,4 @@
 import { DATABASE_URL } from '@app/classes/constants';
-import { BEGINNER_NAME_MODEL } from '@app/classes/database.schema';
 import * as mongoose from 'mongoose';
 import { Service } from 'typedi';
 
@@ -21,12 +20,6 @@ export class DatabaseService {
             .catch(() => {
                 throw new Error('Distant database connection error');
             });
-
-        const beginnerName = new BEGINNER_NAME_MODEL({
-            aiName: 'Mikeaha',
-        });
-        beginnerName.remove();
-        beginnerName.save();
     }
 
     async closeConnection(): Promise<void> {
