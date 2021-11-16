@@ -16,6 +16,7 @@ export class DatabaseService {
         await this.database
             .connect(url, this.options)
             .then(() => {
+                // JUSTIFICATION : required in order to display the DB connection status
                 // eslint-disable-next-line no-console
                 console.log('Connected successfully to Mongodb Atlas');
             })
