@@ -193,6 +193,7 @@ export class WordValidationService {
             scoreTotal += ALL_EASEL_BONUS;
         }
 
+        // TODO: valider avec Mike
         if (!isPermanent) {
             this.newPlayedWords.clear();
             return { validation: this.validationState, score: scoreTotal };

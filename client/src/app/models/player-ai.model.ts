@@ -1,10 +1,11 @@
 import { placingBallotBox, PlacingStrategy } from '@app/classes/constants';
-import { Letter } from '@common/letter';
 import { Range } from '@app/classes/range';
 import { PlayerAIService } from '@app/services/player-ia.service';
+import { Letter } from '@common/letter';
 import { PlaceLetterStrategy } from './place-letter-strategy.model';
 import { Player } from './player.model';
 
+// TODO: ramener le concept de strategie
 export class PlayerAI extends Player {
     private strategy: PlaceLetterStrategy;
     constructor(id: number, name: string, letterTable: Letter[], public playerAiService: PlayerAIService) {

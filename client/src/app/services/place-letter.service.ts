@@ -143,6 +143,13 @@ export class PlaceLetterService {
             this.isEaselSize,
             this.isRow,
         );
+        // TODO: valider avec Etienne
+        if (finalResult.validation === false && indexPlayer === INDEX_PLAYER_AI) {
+            debugger;
+            this.handleInvalidPlacement(position, orientation, word, indexPlayer);
+            this.skipTurnService.switchTurn();
+            return false;
+        }
         if (finalResult.validation) {
             this.handleValidPlacement(finalResult, indexPlayer);
             this.skipTurnService.switchTurn();

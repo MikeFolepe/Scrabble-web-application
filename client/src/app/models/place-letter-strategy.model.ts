@@ -8,9 +8,10 @@ import { PlayerAI } from './player-ai.model';
 export class PlaceLetterStrategy {
     dictionary: string[];
     private board: string[][][];
-
+    //TODO: supprimer le parametre oubien faire les ifs
     constructor(public pointingRange: Range) {
         this.dictionary = JSON.parse(JSON.stringify(dictionaryData)).words;
+        this.pointingRange = { min: 1, max: 18 };
         this.board = [];
     }
 
@@ -36,12 +37,9 @@ export class PlaceLetterStrategy {
         await playerAiService.calculatePoints(allPossibleWords);
         playerAiService.sortDecreasingPoints(allPossibleWords);
         matchingPointingRangeWords = playerAiService.filterByRange(allPossibleWords, this.pointingRange);
-        allPossibleWords.forEach((word) => {
-            if (word.point === 0) debugger;
-        });
-        debugger;
-        if (level === 'Facile') await this.computeResults(matchingPointingRangeWords, playerAiService, false);
+
         if (level === 'Difficile') await this.computeResults(allPossibleWords, playerAiService);
+        if (level === 'Facile') await this.computeResults(matchingPointingRangeWords, playerAiService, false);
 
         playerAiService.debugService.receiveAIDebugPossibilities(allPossibleWords.concat(matchingPointingRangeWords));
         playerAiService.endGameService.actionsLog.push('placer');
