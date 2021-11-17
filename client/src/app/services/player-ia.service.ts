@@ -56,7 +56,7 @@ export class PlayerAIService {
     }
 
     swap(isDifficultMode: boolean): boolean {
-        const playerAi = this.playerService.players[1] as PlayerAI;
+        const playerAi = this.playerService.players[INDEX_PLAYER_AI] as PlayerAI;
         const lettersToSwap: string[] = [];
 
         // No swap possible
@@ -73,7 +73,7 @@ export class PlayerAIService {
         // Set the number of letter to be changed
         let numberOfLetterToChange: number;
         do {
-            numberOfLetterToChange = this.generateRandomNumber(Math.min(playerAi.letterTable.length, this.letterService.reserveSize));
+            numberOfLetterToChange = this.generateRandomNumber(Math.min(playerAi.letterTable.length + 1, this.letterService.reserveSize + 1));
         } while (numberOfLetterToChange === 0);
 
         if (isDifficultMode) numberOfLetterToChange = Math.min(playerAi.letterTable.length, this.letterService.reserveSize);
