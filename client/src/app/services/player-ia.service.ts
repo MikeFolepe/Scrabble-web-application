@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { DELAY_TO_PASS_TURN, EASEL_SIZE, INDEX_PLAYER_AI, MIN_RESERVE_SIZE_TO_SWAP, ONE_SECOND_DELAY } from '@app/classes/constants';
+import { DELAY_TO_PASS_TURN, EASEL_SIZE, INDEX_PLAYER_AI, INVALID, MIN_RESERVE_SIZE_TO_SWAP, ONE_SECOND_DELAY } from '@app/classes/constants';
 import { TypeMessage } from '@app/classes/enum';
 import { Range } from '@app/classes/range';
 import { Orientation, PossibleWords } from '@app/classes/scrabble-board-pattern';
@@ -37,14 +37,21 @@ export class PlayerAIService {
         public gameSettingsService: GameSettingsService,
     ) {}
 
-    skip(): void {
+    skip(shouldDisplayMessage: boolean = true): void {
         setTimeout(() => {
             this.skipTurnService.switchTurn();
-            this.sendMessageService.displayMessageByType(this.playerService.players[INDEX_PLAYER_AI].name + ' : ' + '!passer ', TypeMessage.Opponent);
+            if (shouldDisplayMessage)
+                this.sendMessageService.displayMessageByType(
+                    this.playerService.players[INDEX_PLAYER_AI].name + ' : ' + '!passer ',
+                    TypeMessage.Opponent,
+                );
+
+            this.endGameService.actionsLog.push('passer');
         }, DELAY_TO_PASS_TURN);
     }
 
     generateRandomNumber(maxValue: number): number {
+        // Number [0, maxValue[
         return Math.floor(Number(Math.random()) * maxValue);
     }
 
@@ -52,24 +59,31 @@ export class PlayerAIService {
         const playerAi = this.playerService.players[1] as PlayerAI;
         const lettersToSwap: string[] = [];
 
-        if (this.letterService.reserveSize < MIN_RESERVE_SIZE_TO_SWAP) {
+        // No swap possible
+        if (this.letterService.reserveSize === 0) {
+            this.skip(true);
+            return false;
+        }
+        // According to game mode some cases might not be possible according to rules
+        if (!isDifficultMode && this.letterService.reserveSize < MIN_RESERVE_SIZE_TO_SWAP) {
+            this.skip(true);
             return false;
         }
 
+        // Set the number of letter to be changed
         let numberOfLetterToChange: number;
         do {
-            numberOfLetterToChange = this.generateRandomNumber(EASEL_SIZE);
+            numberOfLetterToChange = this.generateRandomNumber(playerAi.letterTable.length);
         } while (numberOfLetterToChange === 0);
 
-        if (isDifficultMode) numberOfLetterToChange = EASEL_SIZE;
+        if (isDifficultMode) numberOfLetterToChange = playerAi.letterTable.length;
 
         // Choose the index of letters to be changed
         const indexOfLetterToBeChanged: number[] = [];
         while (indexOfLetterToBeChanged.length < numberOfLetterToChange) {
-            const candidateInt = this.generateRandomNumber(EASEL_SIZE);
-            // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-            if (indexOfLetterToBeChanged.indexOf(candidateInt) === -1) {
-                indexOfLetterToBeChanged.push(candidateInt);
+            const candidate = this.generateRandomNumber(playerAi.letterTable.length);
+            if (indexOfLetterToBeChanged.indexOf(candidate) === INVALID) {
+                indexOfLetterToBeChanged.push(candidate);
             }
         }
 
@@ -83,20 +97,20 @@ export class PlayerAIService {
             playerAi.letterTable[index] = this.letterService.getRandomLetter();
         }
 
+        // Alert the context about the operation performed
         this.sendMessageService.displayMessageByType(
             this.playerService.players[INDEX_PLAYER_AI].name + ' : ' + '!échanger ' + lettersToSwap,
             TypeMessage.Opponent,
         );
 
-        setTimeout(() => {
-            this.skipTurnService.switchTurn();
-        }, DELAY_TO_PASS_TURN);
+        // Switch turn
+        this.endGameService.actionsLog.push('echanger');
+        this.skip(false);
         return true;
     }
 
     async place(word: PossibleWords): Promise<void> {
-        const playerAi = this.playerService.players[1] as PlayerAI;
-        console.log(playerAi.getHand());
+        // const playerAi = this.playerService.players[INDEX_PLAYER_AI] as PlayerAI;
         const startPos = word.orientation ? { x: word.line, y: word.startIndex } : { x: word.startIndex, y: word.line };
         const isValid = await this.placeLetterService.placeCommand(startPos, word.orientation, word.word);
         if (isValid) {
@@ -109,10 +123,9 @@ export class PlayerAIService {
                     TypeMessage.Opponent,
                 );
             }, ONE_SECOND_DELAY);
-            console.log(playerAi.getHand());
-
-            return;
         }
+
+        this.skip(false);
     }
 
     placeWordOnBoard(scrabbleBoard: string[][], word: string, start: Vec2, orientation: Orientation): string[][] {
@@ -137,7 +150,6 @@ export class PlayerAIService {
     };
 
     async calculatePoints(allPossibleWords: PossibleWords[]): Promise<PossibleWords[]> {
-        console.log(allPossibleWords);
         for (const word of allPossibleWords) {
             const start: Vec2 = word.orientation ? { x: word.startIndex, y: word.line } : { x: word.line, y: word.startIndex };
             const orientation: Orientation = word.orientation;
@@ -150,7 +162,6 @@ export class PlayerAIService {
                 false,
             );
             word.point = scoreValidation.validation ? scoreValidation.score : 0;
-            if (word.point === 0) console.log(word);
         }
         allPossibleWords = allPossibleWords.filter((word) => word.point > 0);
         return allPossibleWords;
