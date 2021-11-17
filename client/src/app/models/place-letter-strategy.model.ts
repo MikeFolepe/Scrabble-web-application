@@ -41,7 +41,6 @@ export class PlaceLetterStrategy {
         if (level === 'Facile') await this.computeResults(matchingPointingRangeWords, playerAiService, false);
 
         playerAiService.debugService.receiveAIDebugPossibilities(allPossibleWords.concat(matchingPointingRangeWords));
-        playerAiService.endGameService.actionsLog.push('placer');
     }
 
     private async computeResults(possibilities: PossibleWords[], playerAiService: PlayerAIService, isDifficultMode = true): Promise<void> {

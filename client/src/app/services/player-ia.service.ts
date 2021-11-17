@@ -73,10 +73,10 @@ export class PlayerAIService {
         // Set the number of letter to be changed
         let numberOfLetterToChange: number;
         do {
-            numberOfLetterToChange = this.generateRandomNumber(playerAi.letterTable.length);
+            numberOfLetterToChange = this.generateRandomNumber(Math.min(playerAi.letterTable.length, this.letterService.reserveSize));
         } while (numberOfLetterToChange === 0);
 
-        if (isDifficultMode) numberOfLetterToChange = playerAi.letterTable.length;
+        if (isDifficultMode) numberOfLetterToChange = Math.min(playerAi.letterTable.length, this.letterService.reserveSize);
 
         // Choose the index of letters to be changed
         const indexOfLetterToBeChanged: number[] = [];
@@ -123,6 +123,7 @@ export class PlayerAIService {
                     TypeMessage.Opponent,
                 );
             }, ONE_SECOND_DELAY);
+            return;
         }
 
         this.skip(false);
