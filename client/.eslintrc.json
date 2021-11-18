@@ -26,7 +26,7 @@
                         "style": "kebab-case"
                     }
                 ],
-                "@angular-eslint/use-lifecycle-interface": "error" // Warn in @angular-eslint/recommended
+                "@angular-eslint/use-lifecycle-interface": "error"
             }
         },
         {
