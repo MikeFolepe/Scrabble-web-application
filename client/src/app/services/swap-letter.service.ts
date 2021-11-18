@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { INDEX_INVALID, MIN_RESERVE_SIZE_TO_SWAP } from '@app/classes/constants';
+import { INVALID_INDEX, MIN_RESERVE_SIZE_TO_SWAP } from '@app/classes/constants';
 import { TypeMessage } from '@app/classes/enum';
 import { LetterService } from '@app/services/letter.service';
 import { PlayerService } from '@app/services/player.service';
@@ -44,7 +44,7 @@ export class SwapLetterService {
             indexCurrentLetter = this.playerService.indexLetterInEasel(letterToSwap, 0, indexPlayer);
             // If we swap multiple times the same letter, we verify that we're not using the same index in the easel
             for (const index of usedLetterIndexes) {
-                while (indexCurrentLetter === index && indexCurrentLetter !== INDEX_INVALID) {
+                while (indexCurrentLetter === index && indexCurrentLetter !== INVALID_INDEX) {
                     indexCurrentLetter = this.playerService.indexLetterInEasel(letterToSwap, indexCurrentLetter + 1, indexPlayer);
                 }
             }
@@ -60,7 +60,7 @@ export class SwapLetterService {
     areLettersInEasel(lettersToSwap: string, indexPlayer: number): boolean {
         const lettersToSwapIndexes: number[] = this.lettersToSwapIntoIndexes(lettersToSwap, indexPlayer);
         for (const indexLetter of lettersToSwapIndexes) {
-            if (indexLetter === INDEX_INVALID) {
+            if (indexLetter === INVALID_INDEX) {
                 return false;
             }
         }

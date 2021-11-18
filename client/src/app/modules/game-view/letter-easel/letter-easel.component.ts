@@ -1,5 +1,5 @@
 import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
-import { EASEL_SIZE, INDEX_PLAYER_ONE } from '@app/classes/constants';
+import { EASEL_SIZE, PLAYER_ONE_INDEX } from '@app/classes/constants';
 import { TypeMessage } from '@app/classes/enum';
 import { BoardHandlerService } from '@app/services/board-handler.service';
 import { EndGameService } from '@app/services/end-game.service';
@@ -85,11 +85,11 @@ export class LetterEaselComponent implements OnInit {
         for (let i = 0; i < this.letterEaselTab.length; i++) {
             if (this.letterEaselTab[i].isSelectedForSwap) {
                 lettersToSwap += this.letterEaselTab[i].value.toLowerCase();
-                this.swapLetterService.swap(i, INDEX_PLAYER_ONE);
+                this.swapLetterService.swap(i, PLAYER_ONE_INDEX);
             }
         }
         // Display the respective message into the chatBox and pass the turn
-        const message = this.playerService.players[INDEX_PLAYER_ONE].name + ' : !échanger ' + lettersToSwap;
+        const message = this.playerService.players[PLAYER_ONE_INDEX].name + ' : !échanger ' + lettersToSwap;
         this.sendMessageService.displayMessageByType(message, TypeMessage.Player);
         this.endGameService.addActionsLog('echanger');
         this.skipTurnService.switchTurn();
@@ -130,7 +130,7 @@ export class LetterEaselComponent implements OnInit {
     }
 
     private update(): void {
-        this.letterEaselTab = this.playerService.getEasel(INDEX_PLAYER_ONE);
+        this.letterEaselTab = this.playerService.getEasel(PLAYER_ONE_INDEX);
     }
 
     private handleSwapSelection(indexLetter: number): void {

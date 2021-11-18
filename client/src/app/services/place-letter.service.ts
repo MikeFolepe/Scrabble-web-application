@@ -4,9 +4,9 @@ import {
     BOARD_ROWS,
     CENTRAL_CASE_POSITION,
     EASEL_SIZE,
-    INDEX_INVALID,
-    INDEX_PLAYER_AI,
-    INDEX_PLAYER_ONE,
+    INVALID_INDEX,
+    PLAYER_AI_INDEX,
+    PLAYER_ONE_INDEX,
     THREE_SECONDS_DELAY,
 } from '@app/classes/constants';
 import { TypeMessage } from '@app/classes/enum';
@@ -61,7 +61,7 @@ export class PlaceLetterService {
         this.receivePlacement();
     }
 
-    async placeCommand(position: Vec2, orientation: Orientation, word: string, indexPlayer = INDEX_PLAYER_AI): Promise<boolean> {
+    async placeCommand(position: Vec2, orientation: Orientation, word: string, indexPlayer = PLAYER_AI_INDEX): Promise<boolean> {
         const currentPosition: Vec2 = { x: position.x, y: position.y };
         this.startPosition = position;
         this.orientation = orientation;
@@ -107,7 +107,7 @@ export class PlaceLetterService {
             this.validLetters = [];
         }
         // If the letter isn't fitting or isn't in the easel, the placement is invalid
-        if (this.playerService.indexLetterInEasel(letter, 0, indexPlayer) === INDEX_INVALID || !this.isWordFitting(position, orientation, letter)) {
+        if (this.playerService.indexLetterInEasel(letter, 0, indexPlayer) === INVALID_INDEX || !this.isWordFitting(position, orientation, letter)) {
             return false;
         }
         return this.placeLetter(position, letter, orientation, indexLetterInWord, indexPlayer);
@@ -151,7 +151,7 @@ export class PlaceLetterService {
         this.handleInvalidPlacement(position, orientation, word, indexPlayer);
         this.sendMessageService.displayMessageByType('ERREUR : Un ou des mots formés sont invalides', TypeMessage.Error);
         setTimeout(() => {
-            if (this.gameSettingsService.isSoloMode && indexPlayer === INDEX_PLAYER_ONE) this.skipTurnService.switchTurn();
+            if (this.gameSettingsService.isSoloMode && indexPlayer === PLAYER_ONE_INDEX) this.skipTurnService.switchTurn();
             else if (!this.gameSettingsService.isSoloMode) this.skipTurnService.switchTurn();
         }, THREE_SECONDS_DELAY);
         return false;
@@ -266,11 +266,11 @@ export class PlaceLetterService {
         let isLetterExisting = false;
         let currentLetterIndex = this.playerService.indexLetterInEasel(letter, 0, indexPlayer);
 
-        if (currentLetterIndex !== INDEX_INVALID) isLetterExisting = true;
+        if (currentLetterIndex !== INVALID_INDEX) isLetterExisting = true;
         for (const index of indexLetters) {
             while (currentLetterIndex === index) {
                 currentLetterIndex = this.playerService.indexLetterInEasel(letter, currentLetterIndex + 1, indexPlayer);
-                if (currentLetterIndex === INDEX_INVALID) isLetterExisting = false;
+                if (currentLetterIndex === INVALID_INDEX) isLetterExisting = false;
             }
         }
         if (isLetterExisting) {

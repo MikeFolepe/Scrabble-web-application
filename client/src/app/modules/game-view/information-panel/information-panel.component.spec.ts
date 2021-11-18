@@ -3,7 +3,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { INDEX_PLAYER_AI, INDEX_PLAYER_TWO, RESERVE } from '@app/classes/constants';
+import { PLAYER_AI_INDEX, PLAYER_TWO_INDEX, RESERVE } from '@app/classes/constants';
 import { Letter } from '@common/letter';
 import { SkipTurnService } from '@app/services/skip-turn.service';
 import { GameSettings } from '@common/game-settings';
@@ -72,7 +72,7 @@ describe('InformationPanelComponent', () => {
         } as unknown as Socket;
         spyOn(component['letterService'], 'removeLettersFromReserve');
         component.receivePlayerTwo();
-        expect(component['playerService'].players[INDEX_PLAYER_TWO].letterTable).toEqual(lettersReceived);
+        expect(component['playerService'].players[PLAYER_TWO_INDEX].letterTable).toEqual(lettersReceived);
         expect(component['letterService'].removeLettersFromReserve).toHaveBeenCalled();
     });
 
@@ -80,6 +80,6 @@ describe('InformationPanelComponent', () => {
         component['gameSettingsService'].isSoloMode = true;
         component['playerService'].players = [];
         component.initializePlayers();
-        expect(component['playerService'].players[INDEX_PLAYER_AI].name).toEqual('Mike');
+        expect(component['playerService'].players[PLAYER_AI_INDEX].name).toEqual('Mike');
     });
 });

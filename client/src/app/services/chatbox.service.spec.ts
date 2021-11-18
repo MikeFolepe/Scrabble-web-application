@@ -3,7 +3,7 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { INDEX_PLAYER_ONE, RESERVE } from '@app/classes/constants';
+import { PLAYER_ONE_INDEX, RESERVE } from '@app/classes/constants';
 import { TypeMessage } from '@app/classes/enum';
 import { Orientation, PossibleWords } from '@app/classes/scrabble-board-pattern';
 import { Player } from '@app/models/player.model';
@@ -193,7 +193,7 @@ describe('ChatboxService', () => {
 
     it('calling displayFinalMessage should send the respective message to the chatbox', () => {
         service['endGameService'].isEndGame = true;
-        service.displayFinalMessage(INDEX_PLAYER_ONE);
+        service.displayFinalMessage(PLAYER_ONE_INDEX);
         expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('Player 1 : AABBCCA', TypeMessage.System);
     });
 

@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
-import { Range } from '@app/classes/range';
+import { NAME_SIZE, SPECIAL_CHAR, VALIDATION_PATTERN } from '@app/classes/constants';
+import { CustomRange } from '@app/classes/range';
 
 @Component({
     selector: 'app-dialog',
@@ -10,28 +11,20 @@ import { Range } from '@app/classes/range';
 })
 export class JoinDialogComponent implements OnInit {
     form: FormControl;
-    // Number of character range validity
-    charRange: Range;
-    // Special character that are allowed
+    nameSize: CustomRange;
     specialChar: string;
-    validationPattern: string;
     constructor(public dialogRef: MatDialogRef<JoinDialogComponent>) {
         this.form = new FormControl();
-        this.charRange = {
-            min: 4,
-            max: 12,
-        };
-        // TODO mettre specialChar dans fichier constantes
-        this.specialChar = '@#$%^&*_';
-        this.validationPattern = '^([A-Za-z][A-Za-z][A-Za-z][A-Za-z])[A-Za-z0-9' + this.specialChar + ']*';
+        this.nameSize = NAME_SIZE;
+        this.specialChar = SPECIAL_CHAR;
     }
 
     ngOnInit(): void {
         this.form.setValidators([
             Validators.required,
-            Validators.pattern(this.validationPattern),
-            Validators.minLength(this.charRange.min),
-            Validators.maxLength(this.charRange.max),
+            Validators.pattern(VALIDATION_PATTERN),
+            Validators.minLength(NAME_SIZE.min),
+            Validators.maxLength(NAME_SIZE.max),
         ]);
     }
 }

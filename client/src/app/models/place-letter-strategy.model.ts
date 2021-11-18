@@ -1,5 +1,5 @@
-import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSITION_X, INDEX_INVALID, INDEX_PLAYER_AI } from '@app/classes/constants';
-import { Range } from '@app/classes/range';
+import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSITION, INVALID_INDEX, PLAYER_AI_INDEX } from '@app/classes/constants';
+import { CustomRange } from '@app/classes/range';
 import { BoardPattern, Orientation, PatternInfo, PossibleWords } from '@app/classes/scrabble-board-pattern';
 import { PlayerAIService } from '@app/services/player-ia.service';
 import * as dictionaryData from '@common/dictionary.json';
@@ -10,13 +10,13 @@ export class PlaceLetterStrategy {
     dictionary: string[];
     private board: string[][][];
 
-    constructor(public pointingRange: Range) {
+    constructor(public pointingRange: CustomRange) {
         this.dictionary = JSON.parse(JSON.stringify(dictionaryData)).words;
         this.board = [];
     }
 
     async execute(playerAiService: PlayerAIService): Promise<void> {
-        const playerAi = playerAiService.playerService.players[INDEX_PLAYER_AI] as PlayerAI;
+        const playerAi = playerAiService.playerService.players[PLAYER_AI_INDEX] as PlayerAI;
         const isFirstRound = playerAiService.placeLetterService.isFirstRound;
         const scrabbleBoard = playerAiService.placeLetterService.scrabbleBoard;
         let allPossibleWords: PossibleWords[];
@@ -29,7 +29,7 @@ export class PlaceLetterStrategy {
         allPossibleWords = this.removeIfNotEnoughLetter(allPossibleWords, playerAi);
 
         if (isFirstRound) {
-            allPossibleWords.forEach((word) => (word.startIndex = CENTRAL_CASE_POSITION_X));
+            allPossibleWords.forEach((word) => (word.startIndex = CENTRAL_CASE_POSITION.x));
         } else {
             allPossibleWords = this.removeIfNotDisposable(allPossibleWords);
         }
@@ -76,7 +76,7 @@ export class PlaceLetterStrategy {
             const word = possibilities[i];
             const start: Vec2 = word.orientation ? { x: word.startIndex, y: word.line } : { x: word.line, y: word.startIndex };
             const orientation: Orientation = word.orientation;
-            // Deep copy of the game scrabble board because of hypotetical placement
+            // Deep copy of the game scrabble board because of hypothetical placement
             let scrabbleBoard: string[][] = JSON.parse(JSON.stringify(playerAiService.placeLetterService.scrabbleBoard));
             // Place the hypotetic word on the copy of scrabble board
             scrabbleBoard = playerAiService.placeWordOnBoard(scrabbleBoard, word.word, start, orientation);
@@ -153,7 +153,7 @@ export class PlaceLetterStrategy {
         const start = line.search(pattern);
         const end = start + wordToPlace.word.length - 1;
 
-        if (start === INDEX_INVALID) {
+        if (start === INVALID_INDEX) {
             return false;
         }
 
@@ -248,8 +248,8 @@ export class PlaceLetterStrategy {
 
         if (isFirstRound) {
             // At first round the only pattern is the letter in the player's easel
-            horizontal.push({ line: CENTRAL_CASE_POSITION_X, pattern: '^' + playerHand.toLowerCase() + '*$' });
-            vertical.push({ line: CENTRAL_CASE_POSITION_X, pattern: '^' + playerHand.toLowerCase() + '*$' });
+            horizontal.push({ line: CENTRAL_CASE_POSITION.x, pattern: '^' + playerHand.toLowerCase() + '*$' });
+            vertical.push({ line: CENTRAL_CASE_POSITION.y, pattern: '^' + playerHand.toLowerCase() + '*$' });
             return { horizontal, vertical };
         }
 

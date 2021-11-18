@@ -4,7 +4,7 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { BOARD_COLUMNS, BOARD_ROWS, FONT_SIZE_MAX, FONT_SIZE_MIN, INDEX_INVALID, RESERVE } from '@app/classes/constants';
+import { BOARD_COLUMNS, BOARD_ROWS, FONT_SIZE_MAX, FONT_SIZE_MIN, INVALID_INDEX, RESERVE } from '@app/classes/constants';
 import { PlayerAI } from '@app/models/player-ai.model';
 import { Player } from '@app/models/player.model';
 import { Letter } from '@common/letter';
@@ -279,10 +279,10 @@ describe('PlayerService', () => {
         playerAI.letterTable = [];
         service['players'].push(playerAI);
 
-        expect(service.indexLetterInEasel('a', 0, 0)).not.toEqual(INDEX_INVALID);
-        expect(service.indexLetterInEasel('b', 0, 0)).not.toEqual(INDEX_INVALID);
-        expect(service.indexLetterInEasel('c', 0, 0)).toEqual(INDEX_INVALID);
-        expect(service.indexLetterInEasel('a', 0, 1)).toEqual(INDEX_INVALID);
+        expect(service.indexLetterInEasel('a', 0, 0)).not.toEqual(INVALID_INDEX);
+        expect(service.indexLetterInEasel('b', 0, 0)).not.toEqual(INVALID_INDEX);
+        expect(service.indexLetterInEasel('c', 0, 0)).toEqual(INVALID_INDEX);
+        expect(service.indexLetterInEasel('a', 0, 1)).toEqual(INVALID_INDEX);
     });
 
     it("should know letter's index in easel", () => {
@@ -295,7 +295,7 @@ describe('PlayerService', () => {
         expect(service.indexLetterInEasel('b', 1, 0)).toEqual(1);
         expect(service.indexLetterInEasel('b', 0, 0)).toEqual(1);
         expect(service.indexLetterInEasel('c', 0, 1)).toEqual(0);
-        expect(service.indexLetterInEasel('d', 0, 0)).toEqual(INDEX_INVALID);
+        expect(service.indexLetterInEasel('d', 0, 0)).toEqual(INVALID_INDEX);
     });
 
     it('should add score when addScore() is called', () => {
