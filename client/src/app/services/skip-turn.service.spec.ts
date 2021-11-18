@@ -6,7 +6,7 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { DELAY_BEFORE_PLAY, ONE_SECOND_DELAY, THREE_SECONDS_DELAY } from '@app/classes/constants';
+import { DELAY_BEFORE_PLAYING, ONE_SECOND_DELAY, THREE_SECONDS_DELAY } from '@app/classes/constants';
 import { PlayerAI } from '@app/models/player-ai.model';
 import { Player } from '@app/models/player.model';
 import { Letter } from '@common/letter';
@@ -175,7 +175,7 @@ describe('SkipTurnService', () => {
         const spyStart = spyOn(service, 'startTimer');
         service.switchTurn();
         jasmine.clock().tick(THREE_SECONDS_DELAY + 1);
-        jasmine.clock().tick(DELAY_BEFORE_PLAY + 1);
+        jasmine.clock().tick(DELAY_BEFORE_PLAYING + 1);
         expect(service.isTurn).toEqual(newTurn);
         expect(spyStart).toHaveBeenCalled();
         expect(spyPlay).toHaveBeenCalledTimes(1);

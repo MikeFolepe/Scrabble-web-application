@@ -24,7 +24,7 @@ export class SendMessageService {
         this.message = message;
         this.typeMessage = typeMessage;
         if (this.typeMessage === TypeMessage.Player) {
-            this.sendMessageToOpponent(this.message, this.gameSettingsService.gameSettings.playersName[0]);
+            this.sendMessageToOpponent(this.message, this.gameSettingsService.gameSettings.playersNames[0]);
         }
         this.displayMessage();
     }

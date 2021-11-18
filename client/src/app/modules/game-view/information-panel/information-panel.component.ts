@@ -1,6 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { DELAY_BEFORE_PLAY, PLAYER_AI_INDEX, PLAYER_ONE_INDEX, PLAYER_TWO_INDEX } from '@app/classes/constants';
-import { Letter } from '@common/letter';
+import { DELAY_BEFORE_PLAYING, PLAYER_AI_INDEX, PLAYER_ONE_INDEX, PLAYER_TWO_INDEX } from '@app/classes/constants';
 import { PlayerAI } from '@app/models/player-ai.model';
 import { Player } from '@app/models/player.model';
 import { ClientSocketService } from '@app/services/client-socket.service';
@@ -11,6 +10,7 @@ import { PlayerAIService } from '@app/services/player-ia.service';
 import { PlayerService } from '@app/services/player.service';
 import { SkipTurnService } from '@app/services/skip-turn.service';
 import { GameSettings } from '@common/game-settings';
+import { Letter } from '@common/letter';
 
 @Component({
     selector: 'app-information-panel',
@@ -41,7 +41,7 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
 
     receivePlayerTwo(): void {
         this.clientSocketService.socket.on('receivePlayerTwo', (letterTable: Letter[]) => {
-            const player = new Player(2, this.gameSettings.playersName[PLAYER_TWO_INDEX], letterTable);
+            const player = new Player(2, this.gameSettings.playersNames[PLAYER_TWO_INDEX], letterTable);
             this.playerService.addPlayer(player);
             this.letterService.removeLettersFromReserve(this.playerService.players[PLAYER_ONE_INDEX].letterTable);
         });
@@ -52,15 +52,15 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
             const playerAi = this.playerService.players[PLAYER_AI_INDEX] as PlayerAI;
             setTimeout(() => {
                 playerAi.play();
-            }, DELAY_BEFORE_PLAY);
+            }, DELAY_BEFORE_PLAYING);
         }
     }
 
     initializePlayers(): void {
-        let player = new Player(1, this.gameSettings.playersName[PLAYER_ONE_INDEX], this.letterService.getRandomLetters());
+        let player = new Player(1, this.gameSettings.playersNames[PLAYER_ONE_INDEX], this.letterService.getRandomLetters());
         this.playerService.addPlayer(player);
         if (this.gameSettingsService.isSoloMode) {
-            player = new PlayerAI(2, this.gameSettings.playersName[PLAYER_TWO_INDEX], this.letterService.getRandomLetters(), this.playerAiService);
+            player = new PlayerAI(2, this.gameSettings.playersNames[PLAYER_TWO_INDEX], this.letterService.getRandomLetters(), this.playerAiService);
             this.playerService.addPlayer(player);
             return;
         }
