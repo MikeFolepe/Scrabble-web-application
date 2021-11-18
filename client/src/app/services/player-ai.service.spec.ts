@@ -57,12 +57,12 @@ describe('PlayerAIService', () => {
         jasmine.clock().uninstall();
     });
 
-    it('skip should call switchTurn', () => {
+    it('skip should call switchTurn', async () => {
         jasmine.clock().install();
         const spyOnSwitchTurn = spyOn(service.skipTurnService, 'switchTurn');
         const spyOnDisplayMessage = spyOn(service.sendMessageService, 'displayMessageByType');
-        service.skip(false);
-        jasmine.clock().tick(DELAY_TO_PASS_TURN + 1000);
+        await service.skip(false);
+        jasmine.clock().tick(DELAY_TO_PASS_TURN + 500);
         expect(spyOnSwitchTurn).toHaveBeenCalled();
         expect(spyOnDisplayMessage).toHaveBeenCalledTimes(0);
         jasmine.clock().uninstall();
@@ -187,7 +187,7 @@ describe('PlayerAIService', () => {
         expect(spyOnSwap).toHaveBeenCalledTimes(2);
     });
 
-    it('swap should not perform a swap when reserve is empty', () => {
+    it('swap should not perform a swap when reserve is empty', async () => {
         const letterTable = [
             { value: 'A', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
             { value: 'B', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
@@ -203,12 +203,12 @@ describe('PlayerAIService', () => {
         // No matter
         const isDifficultMode = false;
 
-        service.swap(isDifficultMode);
+        await service.swap(isDifficultMode);
 
         expect(service.swap(isDifficultMode)).toBeFalsy();
     });
 
-    it('swap should perform a swap when easy && reserveSize>=7', () => {
+    it('swap should perform a swap when easy && reserveSize>=7', async () => {
         const letterTable = [
             { value: 'A', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
             { value: 'B', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
