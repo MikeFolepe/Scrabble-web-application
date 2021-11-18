@@ -1,48 +1,60 @@
+/* eslint-disable no-underscore-dangle */
 import { BEGINNER_NAME_MODEL, EXPERT_NAME_MODEL } from '@app/classes/database.schema';
-import { AiNameDB } from '@common/ai-name';
+import { AiPlayer, AiPlayerDB } from '@common/ai-name';
 import { Service } from 'typedi';
 
 @Service()
 export class AdministratorService {
-    getAllAiBeginnerPlayers(): AiNameDB[] {
-        const aiPlayers: AiNameDB[] = [];
-        BEGINNER_NAME_MODEL.find({}).then((beginners) => {
-            for (const beginner of beginners) {
-                const aiPlayer: AiNameDB = {
-                    aiName: '',
-                    isDefault: false,
-                    id: '',
-                };
-
-                aiPlayer.aiName = beginner.aiName;
-                aiPlayer.isDefault = beginner.isDefault;
-                // eslint-disable-next-line no-underscore-dangle
-                aiPlayer.id = beginner._id.toString();
-                aiPlayers.push(aiPlayer);
-            }
-        });
-
-        return aiPlayers;
+    private newAiPlayer: AiPlayerDB;
+    async getAllAiBeginnerPlayers(): Promise<AiPlayerDB[]> {
+        const aiNames = await BEGINNER_NAME_MODEL.find({}).exec();
+        return aiNames;
     }
 
-    getAllAiExpertPlayers(): AiNameDB[] {
-        const aiPlayers: AiNameDB[] = [];
-        EXPERT_NAME_MODEL.find({}).then((experts) => {
-            for (const expert of experts) {
-                const aiPlayer: AiNameDB = {
-                    aiName: '',
-                    isDefault: false,
-                    id: '',
-                };
+    async getAllAiExpertPlayers(): Promise<AiPlayerDB[]> {
+        const aiNames = await EXPERT_NAME_MODEL.find({}).exec();
+        return aiNames;
+    }
 
-                aiPlayer.aiName = expert.aiName;
-                aiPlayer.isDefault = expert.isDefault;
-                // eslint-disable-next-line no-underscore-dangle
-                aiPlayer.id = expert._id.toString();
-                aiPlayers.push(aiPlayer);
-            }
+    async addBeginnerAi(aiBeginner: AiPlayer): Promise<AiPlayerDB> {
+        const aiBeginnerPlayer = new BEGINNER_NAME_MODEL({
+            aiName: aiBeginner.aiName,
+            isDefault: aiBeginner.isDefault,
         });
+        await aiBeginnerPlayer.save().then((aiBeginnerDB: AiPlayerDB) => {
+            this.newAiPlayer = aiBeginnerDB;
+        });
+        return this.newAiPlayer;
+    }
 
-        return aiPlayers;
+    async addExpertAi(aiExpert: AiPlayer): Promise<AiPlayerDB> {
+        const aiExpertPlayer = new EXPERT_NAME_MODEL({
+            aiName: aiExpert.aiName,
+            isDefault: aiExpert.isDefault,
+        });
+        await aiExpertPlayer.save().then((aiExpertDB: AiPlayerDB) => {
+            this.newAiPlayer = aiExpertDB;
+        });
+        return this.newAiPlayer;
+    }
+
+    async deleteBeginnerAi(id: string): Promise<AiPlayerDB[]> {
+        await BEGINNER_NAME_MODEL.findByIdAndDelete(id).exec();
+        return await this.getAllAiBeginnerPlayers();
+    }
+
+    async deleteAiExpert(id: string): Promise<AiPlayerDB[]> {
+        await EXPERT_NAME_MODEL.findByIdAndDelete(id).exec();
+        return await this.getAllAiExpertPlayers();
+    }
+
+    async updateAiBeginner(id: string, aiName: string): Promise<AiPlayerDB[]> {
+        await BEGINNER_NAME_MODEL.findByIdAndUpdate(id, { aiName }).exec();
+        return await this.getAllAiBeginnerPlayers();
+    }
+
+    async updateAiExpert(id: string, aiName: string): Promise<AiPlayerDB[]> {
+        await EXPERT_NAME_MODEL.findByIdAndUpdate(id, { aiName }).exec();
+        return await this.getAllAiExpertPlayers();
     }
 }

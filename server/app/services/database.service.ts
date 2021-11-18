@@ -25,6 +25,7 @@ export class DatabaseService {
             });
 
         this.setDefaultData();
+        mongoose.set('debug', true);
     }
 
     async closeConnection(): Promise<void> {
@@ -32,14 +33,14 @@ export class DatabaseService {
     }
 
     async setDefaultData(): Promise<void> {
-        await BEGINNER_NAME_MODEL.deleteMany({}).exec();
-        await EXPERT_NAME_MODEL.deleteMany({}).exec();
+        await BEGINNER_NAME_MODEL.deleteMany({ isDefault: true }).exec();
+        await EXPERT_NAME_MODEL.deleteMany({ isDefault: true }).exec();
         for (const aiBeginner of AI_BEGINNERS) {
             const beginner = new BEGINNER_NAME_MODEL({
                 aiName: aiBeginner.aiName,
                 isDefault: aiBeginner.isDefault,
             });
-            beginner.save();
+            await beginner.save();
         }
 
         for (const aiExpert of AI_EXPERTS) {
@@ -47,7 +48,7 @@ export class DatabaseService {
                 aiName: aiExpert.aiName,
                 isDefault: aiExpert.isDefault,
             });
-            expert.save();
+            await expert.save();
         }
     }
 }

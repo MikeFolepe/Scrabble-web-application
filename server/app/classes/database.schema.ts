@@ -4,15 +4,10 @@ const scoreSchema = new mongoose.Schema({
     playerName: { type: String, required: true },
 });
 
-export type AiNameDoc = mongoose.Document & {
-    aiName: string;
-    isDefault: boolean;
-};
-
 const aiNameSchema = new mongoose.Schema({
     aiName: { type: String, required: true },
     isDefault: { type: Boolean, required: true },
 });
 export const SCORE_MODEL = mongoose.model('Score', scoreSchema);
-export const BEGINNER_NAME_MODEL = mongoose.model<AiNameDoc>('AiBeginnerName', aiNameSchema);
-export const EXPERT_NAME_MODEL = mongoose.model<AiNameDoc>('AiExpertName', aiNameSchema);
+export const BEGINNER_NAME_MODEL = mongoose.model('AiBeginnerName', aiNameSchema);
+export const EXPERT_NAME_MODEL = mongoose.model('AiExpertName', aiNameSchema);

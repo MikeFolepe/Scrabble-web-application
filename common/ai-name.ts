@@ -1,11 +1,10 @@
-
-export type AiName =  {
+export type AiPlayer = {
     aiName: string;
     isDefault: boolean;
 };
 
-export type AiNameDB = {
-    id: string;
+export type AiPlayerDB = {
+    _id: string;
     aiName: string;
     isDefault: boolean;
-}
+};
