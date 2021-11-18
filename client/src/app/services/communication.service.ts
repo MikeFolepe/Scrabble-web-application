@@ -71,6 +71,7 @@ export class CommunicationService {
             .pipe(catchError(this.handleError<AiPlayerDB[]>('deleteAiExpert')));
     }
 
+    // TODO paramètre non utilise
     private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {
         return () => of(result as T);
     }
