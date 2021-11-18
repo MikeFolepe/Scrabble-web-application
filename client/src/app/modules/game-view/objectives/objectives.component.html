@@ -1,0 +1,14 @@
+<div id="objectives-container">
+    <h2>PRIVÉES</h2>
+    <div class="objective">
+        <p>[{{ privateObjectives[0].score }}] {{ privateObjectives[0].name }}</p>
+    </div>
+    <div class="objective" [ngClass]="{fade: privateObjectives[1].isCompleted}">
+        <p>[{{ privateObjectives[1].score }}] {{ privateObjectives[1].name }}</p>
+    </div>
+
+    <h2>PUBLICS</h2>
+    <div class="objective" *ngFor="let objective of publicObjectives">
+        <p>[{{ objective.score }}] {{ objective.name }} </p>
+    </div>
+</div>
