@@ -46,11 +46,11 @@ describe('PlayerAIService', () => {
         expect(service).toBeTruthy();
     });
 
-    it('skip should call switchTurn and display message', () => {
+    it('skip should call switchTurn and display message', async () => {
         jasmine.clock().install();
         const spyOnSwitchTurn = spyOn(service.skipTurnService, 'switchTurn');
         const spyOnDisplayMessage = spyOn(service.sendMessageService, 'displayMessageByType');
-        service.skip();
+        await service.skip();
         jasmine.clock().tick(DELAY_TO_PASS_TURN);
         expect(spyOnSwitchTurn).toHaveBeenCalled();
         expect(spyOnDisplayMessage).toHaveBeenCalled();
