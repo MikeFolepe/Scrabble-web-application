@@ -7,14 +7,14 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { BOARD_COLUMNS, BOARD_ROWS } from '@app/classes/constants';
 import { BoardPattern, Orientation, PatternInfo, PossibleWords } from '@app/classes/scrabble-board-pattern';
 import { PlayerAI } from '@app/models/player-ai.model';
-import { PlayerAIService } from '@app/services/player-ia.service';
+import { PlayerAIService } from '@app/services/player-ai.service';
 import { Letter } from '@common/letter';
 import { PlaceLetterStrategy } from './place-letter-strategy.model';
 
 describe('Place Letter strategy', () => {
     let playerAi: PlayerAI;
     let placeStrategy: PlaceLetterStrategy;
-    placeStrategy = new PlaceLetterStrategy({ min: 7, max: 12 });
+    placeStrategy = new PlaceLetterStrategy();
     let playerAiService: PlayerAIService;
     const scrabbleBoard: string[][] = [];
     let letterTable: Letter[] = [];
@@ -84,7 +84,7 @@ describe('Place Letter strategy', () => {
         vertical.push({ line: 5, pattern: '^[abcdefg]*o[abcdefg]*$' });
         vertical.push({ line: 6, pattern: '^[abcdefg]*ours[abcdefg]*$' });
         const expected: BoardPattern = { horizontal, vertical };
-        placeStrategy = new PlaceLetterStrategy({ min: 0, max: 100 });
+        placeStrategy = new PlaceLetterStrategy();
         placeStrategy['initializeArray'](scrabbleBoard);
         expect(placeStrategy['generateAllPatterns']('[ABCDEFG]', isFirstRound)).toEqual(expected);
     });
@@ -94,7 +94,7 @@ describe('Place Letter strategy', () => {
         const horizontal: PatternInfo[] = [{ line: 7, pattern: '^[abcdefg]*$' }];
         const vertical: PatternInfo[] = [{ line: 7, pattern: '^[abcdefg]*$' }];
         const expected: BoardPattern = { horizontal, vertical };
-        placeStrategy = new PlaceLetterStrategy({ min: 0, max: 100 });
+        placeStrategy = new PlaceLetterStrategy();
         placeStrategy['initializeArray'](scrabbleBoard);
         expect(placeStrategy['generateAllPatterns']('[ABCDEFG]', isFirstRound)).toEqual(expected);
     });
@@ -110,7 +110,7 @@ describe('Place Letter strategy', () => {
         expected.push({ word: 'canada', orientation: Orientation.Horizontal, line: 0, startIndex: 0, point: 0 });
         expected.push({ word: 'moi', orientation: Orientation.Vertical, line: 0, startIndex: 0, point: 0 });
         expected.push({ word: 'moins', orientation: Orientation.Vertical, line: 0, startIndex: 0, point: 0 });
-        placeStrategy = new PlaceLetterStrategy({ min: 0, max: 100 });
+        placeStrategy = new PlaceLetterStrategy();
         expect(placeStrategy['generateAllWords'](randomDictionary, patterns)).toEqual(expected);
     });
 
@@ -126,7 +126,7 @@ describe('Place Letter strategy', () => {
         expected.push(word1);
         expected.push(word3);
         scrabbleBoard[4][0] = 'z';
-        placeStrategy = new PlaceLetterStrategy({ min: 0, max: 100 });
+        placeStrategy = new PlaceLetterStrategy();
         placeStrategy['initializeArray'](scrabbleBoard);
         expect(placeStrategy['removeIfNotEnoughLetter'](possibleWords, playerAi)).toEqual(expected);
     });
@@ -159,7 +159,7 @@ describe('Place Letter strategy', () => {
         expected.push(word4);
         expected.push(word7);
         expected.push(word8);
-        placeStrategy = new PlaceLetterStrategy({ min: 0, max: 100 });
+        placeStrategy = new PlaceLetterStrategy();
         placeStrategy['initializeArray'](scrabbleBoard);
         expect(placeStrategy['removeIfNotDisposable'](possibleWord)).toEqual(expected);
     });

@@ -1,16 +1,16 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DELAY_BEFORE_PLAY, INDEX_PLAYER_AI, INDEX_PLAYER_ONE, INDEX_PLAYER_TWO } from '@app/classes/constants';
-import { Letter } from '@common/letter';
 import { PlayerAI } from '@app/models/player-ai.model';
 import { Player } from '@app/models/player.model';
 import { ClientSocketService } from '@app/services/client-socket.service';
 import { EndGameService } from '@app/services/end-game.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { LetterService } from '@app/services/letter.service';
-import { PlayerAIService } from '@app/services/player-ia.service';
+import { PlayerAIService } from '@app/services/player-ai.service';
 import { PlayerService } from '@app/services/player.service';
 import { SkipTurnService } from '@app/services/skip-turn.service';
 import { GameSettings } from '@common/game-settings';
+import { Letter } from '@common/letter';
 
 @Component({
     selector: 'app-information-panel',

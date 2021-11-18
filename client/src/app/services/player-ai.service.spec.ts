@@ -11,7 +11,7 @@ import { BOARD_COLUMNS, BOARD_ROWS, DELAY_TO_PASS_TURN, RESERVE } from '@app/cla
 import { Orientation, PossibleWords } from '@app/classes/scrabble-board-pattern';
 import { PlayerAI } from '@app/models/player-ai.model';
 import { Player } from '@app/models/player.model';
-import { PlayerAIService } from '@app/services/player-ia.service';
+import { PlayerAIService } from '@app/services/player-ai.service';
 
 describe('PlayerAIService', () => {
     let service: PlayerAIService;

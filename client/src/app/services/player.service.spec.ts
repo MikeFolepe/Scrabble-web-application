@@ -9,7 +9,7 @@ import { PlayerAI } from '@app/models/player-ai.model';
 import { Player } from '@app/models/player.model';
 import { Letter } from '@common/letter';
 import { Socket } from 'socket.io-client';
-import { PlayerAIService } from './player-ia.service';
+import { PlayerAIService } from './player-ai.service';
 import { PlayerService } from './player.service';
 
 describe('PlayerService', () => {
