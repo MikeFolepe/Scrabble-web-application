@@ -163,13 +163,17 @@ describe('PlayerAIService', () => {
     });
 
     it('place should ask placeLetterService to place some word on the board', async () => {
-        // jasmine.clock().install();
         const word = { word: 'MAJID', orientation: Orientation.Vertical, line: 5, startIndex: 0, point: 0 };
         const spyOnPlace = spyOn<any>(service.placeLetterService, 'placeCommand').and.returnValue(Promise.resolve(true));
         await service.place(word);
-        // jasmine.clock().tick(TWO_SECOND_DELAY);
         expect(spyOnPlace).toHaveBeenCalledOnceWith({ x: word.line, y: word.startIndex }, word.orientation, word.word);
-        // jasmine.clock().uninstall();
+    });
+
+    it('place should ask placeLetterService to place some word on the board', async () => {
+        const word = { word: 'MAJID', orientation: Orientation.Horizontal, line: 5, startIndex: 0, point: 0 };
+        const spyOnPlace = spyOn<any>(service.placeLetterService, 'placeCommand').and.returnValue(Promise.resolve(true));
+        await service.place(word);
+        expect(spyOnPlace).toHaveBeenCalledOnceWith({ x: word.startIndex, y: word.line }, word.orientation, word.word);
     });
 
     it('should swap if placement fails (placement should never fails from the AI placement)', async () => {

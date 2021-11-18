@@ -131,7 +131,7 @@ export class PlaceLetterStrategy {
         // If found set the starting positing for later placing
         wordToPlace.startIndex = start;
         // If found the word must not touch the adjacent words
-        return this.isWordOverWriting(line, start, end, wordToPlace.word.length) === false;
+        return this.isWordOverWriting(line, start, end, wordToPlace.word.length) ? false : true;
     }
 
     private isWordOverWriting(line: string, startIndex: number, endIdx: number, wordLength: number): boolean {
@@ -151,14 +151,15 @@ export class PlaceLetterStrategy {
     private removeIfNotEnoughLetter(allPossibleWords: PossibleWords[], player: PlayerAI): PossibleWords[] {
         const filteredWords: PossibleWords[] = [];
 
-        for (const word of allPossibleWords) {
+        for (const wordObject of allPossibleWords) {
             let isWordValid = true;
-            for (const letter of word.word) {
+            for (const letter of wordObject.word) {
                 const regex1 = new RegExp(letter, 'g');
                 const regex2 = new RegExp('[,]{1,}', 'g');
-                const amountOfLetterNeeded: number = (word.word.match(regex1) || []).length;
-                const amountOfLetterPresent: number = (this.board[word.orientation][word.line].toString().replace(regex2, '').match(regex1) || [])
-                    .length;
+                const amountOfLetterNeeded: number = (wordObject.word.match(regex1) as string[]).length;
+                const amountOfLetterPresent: number = (
+                    this.board[wordObject.orientation][wordObject.line].toString().replace(regex2, '').match(regex1) || []
+                ).length;
                 const playerAmount: number = player.playerQuantityOf(letter);
 
                 if (amountOfLetterNeeded > playerAmount + amountOfLetterPresent) {
@@ -169,7 +170,7 @@ export class PlaceLetterStrategy {
             }
 
             if (isWordValid) {
-                filteredWords.push(word);
+                filteredWords.push(wordObject);
             }
         }
 

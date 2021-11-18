@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable max-lines */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
@@ -221,6 +222,21 @@ describe('Place Letter strategy', () => {
 
         await placeStrategy['computeResults'](words, playerAiService, false);
         expect(spyOnPlace).toHaveBeenCalledTimes(1);
+    });
+
+    it('isWordOverwriting test sample', () => {
+        const line1 = 'moi       majid';
+        const line2 = 'moi      majida';
+
+        expect(placeStrategy['isWordOverWriting'](line1, 11, 15, 5)).toBeTrue();
+        expect(placeStrategy['isWordOverWriting'](line2, 10, 14, 5)).toBeTrue();
+    });
+
+    it('removeIfNotEnoughLetter test sample', () => {
+        const allPossibleWords: PossibleWords[] = [{ word: '', orientation: Orientation.Horizontal, line: 0, startIndex: 0, point: 0 }];
+        expect(placeStrategy['removeIfNotEnoughLetter'](allPossibleWords, playerAi)).toEqual([
+            { word: '', orientation: Orientation.Horizontal, line: 0, startIndex: 0, point: 0 },
+        ]);
     });
 
     it('regression test sample1', async () => {
