@@ -46,7 +46,7 @@ export class WaitingRoomComponent implements OnInit {
     }
 
     handleReloadErrors(): void {
-        if (this.gameSettingsService.gameSettings.playersName[PlayerIndex.OWNER] === '') {
+        if (this.gameSettingsService.gameSettings.playersNames[PlayerIndex.OWNER] === '') {
             const errorMessage = 'Une erreur est survenue';
             this.waitBeforeChangeStatus(ONE_SECOND_DELAY, errorMessage);
             this.router.navigate(['home']);

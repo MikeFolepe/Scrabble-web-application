@@ -1,6 +1,6 @@
-import { Letter } from '@common/letter';
-import { AIStrategy, PlacingStrategy } from '@app/classes/enum';
+import { PlacingStrategy } from '@app/classes/enum';
 import dictionaryData from '@common/dictionary.json';
+import { Letter } from '@common/letter';
 import { Vec2 } from '@common/vec2';
 import { CustomRange } from './range';
 
@@ -21,7 +21,7 @@ export const NUMBER_OF_SKIP = 6;
 export const ONE_SECOND_DELAY = 1000;
 export const TWO_SECOND_DELAY = 2000;
 export const THREE_SECONDS_DELAY = 3000;
-export const DELAY_BEFORE_PLAY = 3000;
+export const DELAY_BEFORE_PLAYING = 3000;
 export const ERROR_MESSAGE_DELAY = 4000;
 export const DELAY_TO_PASS_TURN = 5000;
 
@@ -48,19 +48,6 @@ export const SPECIAL_CHAR = '@#$%^&*_';
 export const VALIDATION_PATTERN = '^([A-Za-z][A-Za-z][A-Za-z][A-Za-z])[A-Za-z0-9' + SPECIAL_CHAR + ']*';
 
 export const DICTIONARY: string[] = JSON.parse(JSON.stringify(dictionaryData)).words;
-
-export const STRATEGY_BALLOT_BOX: AIStrategy[] = [
-    AIStrategy.Place,
-    AIStrategy.Place,
-    AIStrategy.Place,
-    AIStrategy.Skip,
-    AIStrategy.Place,
-    AIStrategy.Swap,
-    AIStrategy.Place,
-    AIStrategy.Place,
-    AIStrategy.Place,
-    AIStrategy.Place,
-];
 
 export const PLACING_BALLOT_BOX: PlacingStrategy[] = [
     PlacingStrategy.LessSix,

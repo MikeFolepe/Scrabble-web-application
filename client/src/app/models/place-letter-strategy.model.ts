@@ -10,6 +10,7 @@ export class PlaceLetterStrategy {
     dictionary: string[];
     private board: string[][][];
 
+    // TODO Majid : check si possible de mettre pointingRange hors du constructeur
     constructor(public pointingRange: CustomRange) {
         this.dictionary = JSON.parse(JSON.stringify(dictionaryData)).words;
         this.board = [];
@@ -78,14 +79,12 @@ export class PlaceLetterStrategy {
             const orientation: Orientation = word.orientation;
             // Deep copy of the game scrabble board because of hypothetical placement
             let scrabbleBoard: string[][] = JSON.parse(JSON.stringify(playerAiService.placeLetterService.scrabbleBoard));
-            // Place the hypotetic word on the copy of scrabble board
+            // Place the hypothetic word on the copy of scrabble board
             scrabbleBoard = playerAiService.placeWordOnBoard(scrabbleBoard, word.word, start, orientation);
             // Pass the scrabble board for the validation
             const isValid = this.validateWord(scrabbleBoard);
 
-            if (isValid) {
-                return i;
-            }
+            if (isValid) return i;
         }
         return noPlayableWord;
     }

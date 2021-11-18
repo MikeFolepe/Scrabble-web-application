@@ -16,7 +16,7 @@ export class FormComponent implements OnDestroy {
 
     constructor(public gameSettingsService: GameSettingsService, private router: Router, private randomBonusService: RandomBonusesService) {
         this.form = new FormGroup({
-            playerName: new FormControl(this.gameSettingsService.gameSettings.playersName[PLAYER_ONE_INDEX]),
+            playerName: new FormControl(this.gameSettingsService.gameSettings.playersNames[PLAYER_ONE_INDEX]),
             minuteInput: new FormControl(this.gameSettingsService.gameSettings.timeMinute),
             secondInput: new FormControl(this.gameSettingsService.gameSettings.timeSecond),
             levelInput: new FormControl(this.gameSettingsService.gameSettings.level),
@@ -59,9 +59,9 @@ export class FormComponent implements OnDestroy {
     }
 
     snapshotSettings(): void {
-        const playersName: string[] = [this.form.controls.playerName.value, this.chooseRandomAIName()];
+        const playersNames: string[] = [this.form.controls.playerName.value, this.chooseRandomAIName()];
         this.gameSettingsService.gameSettings = new GameSettings(
-            playersName,
+            playersNames,
             this.chooseStartingPlayer(),
             this.form.controls.minuteInput.value,
             this.form.controls.secondInput.value,

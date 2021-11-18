@@ -30,10 +30,8 @@ export class RoomManagerService {
 
     addCustomer(customerName: string, roomId: string): boolean {
         const room = this.find(roomId);
-        if (room === undefined) {
-            return false;
-        }
-        room.gameSettings.playersName[PlayerIndex.CUSTOMER] = customerName;
+        if (room === undefined) return false;
+        room.gameSettings.playersNames[PlayerIndex.CUSTOMER] = customerName;
 
         return true;
     }
@@ -55,7 +53,7 @@ export class RoomManagerService {
     formatGameSettingsForCustomerIn(roomId: string): GameSettings {
         const room = this.find(roomId) as Room;
         const gameSettings = room.gameSettings;
-        const playerNames: string[] = [gameSettings.playersName[PlayerIndex.CUSTOMER], gameSettings.playersName[PlayerIndex.OWNER]];
+        const playerNames: string[] = [gameSettings.playersNames[PlayerIndex.CUSTOMER], gameSettings.playersNames[PlayerIndex.OWNER]];
         const startingPlayer = gameSettings.startingPlayer ? StartingPlayer.Player1 : StartingPlayer.Player2;
         const formattedGameSettings = new GameSettings(
             playerNames,
@@ -85,10 +83,7 @@ export class RoomManagerService {
             return false;
         });
 
-        if (room !== undefined) {
-            return room.id;
-        }
-        return '';
+        return room !== undefined ? room.id : '';
     }
 
     findLoserIndex(socketId: string): number {
@@ -102,18 +97,12 @@ export class RoomManagerService {
 
     getWinnerName(roomId: string, indexOfLoser: number): string {
         const room = this.find(roomId) as Room;
-        if (indexOfLoser === 0) return room.gameSettings.playersName[1];
-        else return room.gameSettings.playersName[0];
+        return indexOfLoser === 0 ? room.gameSettings.playersNames[1] : room.gameSettings.playersNames[0];
     }
 
     isNotAvailable(roomId: string): boolean {
         const room = this.find(roomId);
-
-        if (room === undefined) {
-            return false;
-        }
-
-        return room.state === State.Playing;
+        return room === undefined ? false : room.state === State.Playing;
     }
 
     find(roomId: string): Room | undefined {
