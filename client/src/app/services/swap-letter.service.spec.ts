@@ -38,7 +38,7 @@ describe('SwapLetterService', () => {
     });
 
     it('reserve should have enough letters to swap', () => {
-        expect(service.reserveHasEnoughLetters()).toBeTrue();
+        expect(service['reserveHasEnoughLetters']()).toBeTrue();
     });
 
     it('an empty reserve should not have enough letters to swap', () => {
@@ -47,7 +47,7 @@ describe('SwapLetterService', () => {
         for (let i = 0; i < initReserveSize; i++) {
             service['letterService'].getRandomLetter();
         }
-        expect(service.reserveHasEnoughLetters()).toBeFalse();
+        expect(service['reserveHasEnoughLetters']()).toBeFalse();
     });
 
     it('swapping letters present in the easel should be valid', () => {

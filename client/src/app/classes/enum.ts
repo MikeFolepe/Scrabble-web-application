@@ -6,12 +6,6 @@ export enum MouseButton {
     Forward = 4,
 }
 
-export enum AIStrategy {
-    Skip,
-    Swap,
-    Place,
-}
-
 export enum PlacingStrategy {
     LessSix,
     SevenToTwelve,

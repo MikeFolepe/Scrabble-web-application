@@ -26,6 +26,7 @@ export class PlayerAI extends Player {
         return hand + ']';
     }
 
+    // TODO rename function
     playerQuantityOf(character: string): number {
         let quantity = 0;
 

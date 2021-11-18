@@ -1,6 +1,6 @@
 <h1 mat-dialog-title style="color: black">Paramètres</h1>
-<div mat-dialog-content>
-    <mat-form-field appearance="fill" style="width: 500px">
+<div mat-dialog-content id="form-name">
+    <mat-form-field appearance="fill">
         <mat-label>Nom du joueur</mat-label>
         <input matInput [formControl]="form" />
         <mat-hint>
@@ -12,9 +12,6 @@
         </mat-hint>
     </mat-form-field>
 </div>
-<br />
-<br />
-<br />
 <div mat-dialog-actions>
     <button mat-button mat-dialog-close (click)="this.dialogRef.close(null)">Fermer</button>
     <button mat-raised-button mat-dialog-close (click)="this.dialogRef.close(this.form.value)" color="warn" [disabled]="!form.valid">

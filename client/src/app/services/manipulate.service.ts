@@ -16,6 +16,7 @@ export class ManipulateService {
         this.usedLetters.fill(false, 0, EASEL_SIZE);
     }
 
+    // TODO changer le nom de la fonction
     onKeyPress(event: KeyboardEvent): void {
         switch (event.key) {
             case 'ArrowLeft': {
@@ -29,8 +30,10 @@ export class ManipulateService {
                 break;
             }
             default: {
+                // TODO mettre le code de default dans une fonction privée
                 if (event.key === 'Shift') return; // Pressing Shift doesn't unselect all so we can press Shift + 8 to select a '*'
                 if (/([a-zA-Z]|[*])+/g.test(event.key) && event.key.length === 1) {
+                    // TODO letterPressed n'est pas le nom adéquat pour exprimer un index. Peut-être mieux letterPressedIndex
                     const letterPressed = this.indexToSelect(event.key, PLAYER_ONE_INDEX);
                     if (letterPressed === INVALID_INDEX) {
                         this.usedLetters.fill(false, 0, this.usedLetters.length);

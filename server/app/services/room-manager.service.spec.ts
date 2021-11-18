@@ -37,7 +37,7 @@ describe('RoomManagerService', () => {
 
     it('should add customer at the Room if ht name are same', () => {
         roomManagerService.createRoom(socketId1, id, settings);
-        settings.playersName[1] = '';
+        settings.playersNames[1] = '';
         expect(roomManagerService.addCustomer('Paul', id)).to.equal(true);
     });
 
