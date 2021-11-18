@@ -7,6 +7,7 @@ import { ERROR_MESSAGE_DELAY } from '@app/classes/constants';
 import { JoinDialogComponent } from '@app/modules/initialize-solo-game/join-dialog/join-dialog.component';
 import { CommunicationService } from '@app/services/communication.service';
 import { AiPlayer, AiPlayerDB } from '@common/ai-name';
+
 interface Dictionnary {
     name: string;
     description: string;
@@ -45,7 +46,7 @@ export class AdminPageComponent implements OnInit {
 
     deleteAiPlayer(id: string, isBeginner: boolean, isDefault: boolean): void {
         if (isDefault) {
-            this.displayMessage('Vous ne pouvez pas modifier un paramètre par défaut');
+            this.displayMessage('Vous ne pouvez pas supprimer un joueur par défaut!');
             return;
         }
         if (isBeginner) {
@@ -74,9 +75,10 @@ export class AdminPageComponent implements OnInit {
         }
     }
 
+    // TODO n'affiche pas forcement les joueurs ajoutes dans le bon ordre
     addAiToDatabase(isBeginner: boolean, isNewAi: boolean, id: string = '', isDefault = false): void {
         if (isDefault) {
-            this.displayMessage('Vous ne pouvez pas modifier un paramètre par défaut');
+            this.displayMessage('Vous ne pouvez pas modifier un joueur par défaut!');
             return;
         }
         const nameDialog = this.dialog.open(JoinDialogComponent, { disableClose: true });
@@ -84,7 +86,7 @@ export class AdminPageComponent implements OnInit {
             if (playerName == null) return;
 
             if (this.checkIfAlreadyExists(playerName)) {
-                this.displayMessage(' Ce nom de joueur virtuel est déjà dans la base de données. Veuillez rééssayer ');
+                this.displayMessage('Ce nom de joueur virtuel est déjà dans la base de données. Veuillez réessayer.');
                 return;
             }
             const aiPlayer: AiPlayer = {
@@ -95,12 +97,12 @@ export class AdminPageComponent implements OnInit {
             if (isNewAi) {
                 this.addAiPlayer(aiPlayer, isBeginner);
             } else {
-                this.upDateAiPlayer(id, playerName, isBeginner);
+                this.updateAiPlayer(id, playerName, isBeginner);
             }
         });
     }
 
-    addAiPlayer(aiPlayer: AiPlayer, isBeginner: boolean): void {
+    private addAiPlayer(aiPlayer: AiPlayer, isBeginner: boolean): void {
         if (isBeginner) {
             this.communicationService.addAiBeginner(aiPlayer).subscribe(
                 (aiBeginner) => {
@@ -124,7 +126,7 @@ export class AdminPageComponent implements OnInit {
         }
     }
 
-    upDateAiPlayer(id: string, playerName: string, isBeginner: boolean): void {
+    private updateAiPlayer(id: string, playerName: string, isBeginner: boolean): void {
         if (isBeginner) {
             this.communicationService.updateAiBeginner(id, playerName).subscribe(
                 (aiBeginners) => {
@@ -148,18 +150,15 @@ export class AdminPageComponent implements OnInit {
         }
     }
 
-    checkIfAlreadyExists(aiPlayerName: string): boolean {
+    private checkIfAlreadyExists(aiPlayerName: string): boolean {
         const aiBeginner = this.beginnerNames.find((aiBeginnerPlayer) => aiBeginnerPlayer.aiName === aiPlayerName);
         const aiExpert = this.expertNames.find((aiExpertPlayer) => aiExpertPlayer.aiName === aiPlayerName);
 
-        if (aiBeginner === undefined && aiExpert === undefined) {
-            return false;
-        }
-        return true;
+        return aiBeginner !== undefined || aiExpert !== undefined;
     }
 
-    displayMessage(message: string): void {
-        this.snackBar.open(message, 'Ok', {
+    private displayMessage(message: string): void {
+        this.snackBar.open(message, 'OK', {
             duration: ERROR_MESSAGE_DELAY,
             horizontalPosition: 'center',
             verticalPosition: 'top',

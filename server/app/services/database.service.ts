@@ -50,4 +50,11 @@ export class DatabaseService {
             await expert.save();
         }
     }
+
+    async resetData(): Promise<void> {
+        await BEGINNER_NAME_MODEL.deleteMany({ isDefault: false }).exec();
+        await EXPERT_NAME_MODEL.deleteMany({ isDefault: false }).exec();
+        // TODO supprimer meilleurs scores
+        // TODO supprimer dictionnaires
+    }
 }
