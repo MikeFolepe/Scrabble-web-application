@@ -164,6 +164,9 @@ h2 {
 
 #add {
     color: green;
+    font-size: 18px;
+    height: 3.8em;
+    width: 3.8em;
 }
 
 .item {
@@ -205,4 +208,81 @@ h2 {
 .name-title {
     text-align: center;
     font-weight: bold;
+}
+
+.alert {
+    width: 23em;
+    margin: 0 auto;
+    margin-top: 1em;
+    text-align: center;
+    padding-top: 1em;
+    border: 3px solid red;
+    border-radius: 1rem;
+    background-color: white;
+    padding: 0.25em;
+    font-size: 16px;
+    color: #bb0909fd;
+    box-shadow: 0 5px 10px -5px rgba(0, 0, 0, 0.5);
+    opacity: 0;
+}
+
+.visible {
+    opacity: 1;
+}
+
+.invisible {
+    opacity: 0;
+}
+
+.fill {
+    margin-right: 2em;
+    border-radius: 4em;
+    border-style: solid;
+    border-width: 0.1em;
+    height: 3.8em;
+    width: 15em;
+    font-size: 18px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.fill:hover,
+.fill:focus {
+    box-shadow: inset 0 0 0 5em var(--hover);
+}
+
+$colors: (
+    fill: green,
+);
+
+@each $button, $color in $colors {
+    .#{$button} {
+        --color: #{$color};
+        --hover: #{adjust-hue($color, 45deg)};
+    }
+}
+
+button {
+    color: var(--color);
+    transition: 0.25s;
+
+    &:hover,
+    &:focus {
+        border-width: 0.1em;
+        border-color: white;
+        color: #fff;
+    }
+}
+
+.success {
+    color: green;
+    border: 3px solid green;
+}
+
+.accepted-file {
+    font-size: 14px;
+    position: absolute;
+    top: 2.4em;
+    left: 5.8em;
 }
