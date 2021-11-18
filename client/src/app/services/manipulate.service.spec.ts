@@ -3,7 +3,7 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { EASEL_SIZE, INDEX_INVALID } from '@app/classes/constants';
+import { EASEL_SIZE, INVALID_INDEX } from '@app/classes/constants';
 import { Player } from '@app/models/player.model';
 import { Letter } from '@common/letter';
 import { ManipulateService } from './manipulate.service';
@@ -143,8 +143,8 @@ describe('ManipulateService', () => {
         expect(service.usedLetters[0]).toBeTrue();
     });
 
-    it('calling findIndexSelected while there is no selection made should return INDEX_INVALID', () => {
-        expect(service.findIndexSelected()).toEqual(INDEX_INVALID);
+    it('calling findIndexSelected while there is no selection made should return INVALID_INDEX', () => {
+        expect(service.findIndexSelected()).toEqual(INVALID_INDEX);
     });
 
     it('shifting up or down while no letter is selected should not call swapPositions', () => {

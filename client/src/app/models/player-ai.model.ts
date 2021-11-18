@@ -1,6 +1,7 @@
-import { placingBallotBox, PlacingStrategy } from '@app/classes/constants';
 import { Letter } from '@common/letter';
-import { Range } from '@app/classes/range';
+import { PLACING_BALLOT_BOX } from '@app/classes/constants';
+import { PlacingStrategy } from '@app/classes/enum';
+import { CustomRange } from '@app/classes/range';
 import { PlayerAIService } from '@app/services/player-ia.service';
 import { PlaceLetterStrategy } from './place-letter-strategy.model';
 import { Player } from './player.model';
@@ -37,12 +38,12 @@ export class PlayerAI extends Player {
         return quantity;
     }
 
-    private pointingRange(): Range {
-        let pointingRange: Range;
+    private pointingRange(): CustomRange {
+        let pointingRange: CustomRange;
 
-        const randomNumber = this.generateRandomNumber(placingBallotBox.length);
+        const randomNumber = this.generateRandomNumber(PLACING_BALLOT_BOX.length);
 
-        switch (placingBallotBox[randomNumber]) {
+        switch (PLACING_BALLOT_BOX[randomNumber]) {
             case PlacingStrategy.LessSix:
                 pointingRange = { min: 1, max: 6 };
                 break;
