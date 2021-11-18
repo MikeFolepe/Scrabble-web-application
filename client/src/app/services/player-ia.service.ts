@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { DELAY_TO_PASS_TURN, EASEL_SIZE, INDEX_PLAYER_AI, MIN_RESERVE_SIZE_TO_SWAP, RESERVE } from '@app/classes/constants';
+import { DELAY_TO_PASS_TURN, EASEL_SIZE, MIN_RESERVE_SIZE_TO_SWAP, PLAYER_AI_INDEX, RESERVE } from '@app/classes/constants';
 import { TypeMessage } from '@app/classes/enum';
-import { Range } from '@app/classes/range';
+import { CustomRange } from '@app/classes/range';
 import { Earning } from '@app/classes/earning';
 import { Orientation, PossibleWords } from '@app/classes/scrabble-board-pattern';
 import { Vec2 } from '@common/vec2';
@@ -38,7 +38,7 @@ export class PlayerAIService {
     skip(): void {
         setTimeout(() => {
             this.skipTurnService.switchTurn();
-            this.sendMessageService.displayMessageByType(this.playerService.players[INDEX_PLAYER_AI].name + ' : ' + '!passer ', TypeMessage.Opponent);
+            this.sendMessageService.displayMessageByType(this.playerService.players[PLAYER_AI_INDEX].name + ' : ' + '!passer ', TypeMessage.Opponent);
         }, DELAY_TO_PASS_TURN);
     }
 
@@ -73,7 +73,7 @@ export class PlayerAIService {
         }
 
         this.sendMessageService.displayMessageByType(
-            this.playerService.players[INDEX_PLAYER_AI].name + ' : ' + '!échanger ' + lettersToSwap,
+            this.playerService.players[PLAYER_AI_INDEX].name + ' : ' + '!échanger ' + lettersToSwap,
             TypeMessage.Opponent,
         );
         setTimeout(() => {
@@ -91,7 +91,7 @@ export class PlayerAIService {
             const row: string = String.fromCharCode(startPos.y + 'a'.charCodeAt(0));
             const charOrientation = word.orientation === Orientation.Horizontal ? 'h' : 'v';
             this.sendMessageService.displayMessageByType(
-                this.playerService.players[INDEX_PLAYER_AI].name + ' : ' + '!placer ' + row + column + charOrientation + ' ' + word.word,
+                this.playerService.players[PLAYER_AI_INDEX].name + ' : ' + '!placer ' + row + column + charOrientation + ' ' + word.word,
                 TypeMessage.Opponent,
             );
             return;
@@ -152,7 +152,7 @@ export class PlayerAIService {
         allPossibleWords.sort(this.sortDecreasing);
     }
 
-    filterByRange(allPossibleWords: PossibleWords[], pointingRange: Range): PossibleWords[] {
+    filterByRange(allPossibleWords: PossibleWords[], pointingRange: CustomRange): PossibleWords[] {
         return allPossibleWords.filter((word) => word.point >= pointingRange.min && word.point <= pointingRange.max);
     }
 

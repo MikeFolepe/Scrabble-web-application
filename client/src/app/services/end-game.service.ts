@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { INDEX_PLAYER_AI, INDEX_PLAYER_ONE, INDEX_PLAYER_TWO, NUMBER_OF_SKIP, RESERVE } from '@app/classes/constants';
+import { NUMBER_OF_SKIP, PLAYER_AI_INDEX, PLAYER_ONE_INDEX, PLAYER_TWO_INDEX, RESERVE } from '@app/classes/constants';
 import { DebugService } from '@app/services/debug.service';
 import { ClientSocketService } from './client-socket.service';
 import { GameSettingsService } from './game-settings.service';
@@ -50,13 +50,13 @@ export class EndGameService {
     }
 
     getWinnerName(): string {
-        if (this.playerService.players[INDEX_PLAYER_ONE].score > this.playerService.players[INDEX_PLAYER_TWO].score) {
-            return this.playerService.players[INDEX_PLAYER_ONE].name;
+        if (this.playerService.players[PLAYER_ONE_INDEX].score > this.playerService.players[PLAYER_TWO_INDEX].score) {
+            return this.playerService.players[PLAYER_ONE_INDEX].name;
         }
-        if (this.playerService.players[INDEX_PLAYER_ONE].score < this.playerService.players[INDEX_PLAYER_TWO].score) {
-            return this.playerService.players[INDEX_PLAYER_TWO].name;
+        if (this.playerService.players[PLAYER_ONE_INDEX].score < this.playerService.players[PLAYER_TWO_INDEX].score) {
+            return this.playerService.players[PLAYER_TWO_INDEX].name;
         }
-        return this.playerService.players[INDEX_PLAYER_ONE].name + '  ' + this.playerService.players[INDEX_PLAYER_TWO].name;
+        return this.playerService.players[PLAYER_ONE_INDEX].name + '  ' + this.playerService.players[PLAYER_TWO_INDEX].name;
     }
 
     addActionsLog(actionLog: string): void {
@@ -112,7 +112,7 @@ export class EndGameService {
     isEndGameByEasel(): boolean {
         return (
             this.letterService.reserveSize === 0 &&
-            (this.playerService.isEaselEmpty(INDEX_PLAYER_ONE) || this.playerService.isEaselEmpty(INDEX_PLAYER_AI))
+            (this.playerService.isEaselEmpty(PLAYER_ONE_INDEX) || this.playerService.isEaselEmpty(PLAYER_AI_INDEX))
         );
     }
 }

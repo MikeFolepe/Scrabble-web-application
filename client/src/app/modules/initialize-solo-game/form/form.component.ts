@@ -1,7 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AI_NAME_DATABASE, BONUS_POSITIONS, INDEX_PLAYER_ONE } from '@app/classes/constants';
+import { AI_NAME_DATABASE, BONUS_POSITIONS, PLAYER_ONE_INDEX } from '@app/classes/constants';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { RandomBonusesService } from '@app/services/random-bonuses.service';
 import { GameSettings, StartingPlayer } from '@common/game-settings';
@@ -16,7 +16,7 @@ export class FormComponent implements OnDestroy {
 
     constructor(public gameSettingsService: GameSettingsService, private router: Router, private randomBonusService: RandomBonusesService) {
         this.form = new FormGroup({
-            playerName: new FormControl(this.gameSettingsService.gameSettings.playersName[INDEX_PLAYER_ONE]),
+            playerName: new FormControl(this.gameSettingsService.gameSettings.playersName[PLAYER_ONE_INDEX]),
             minuteInput: new FormControl(this.gameSettingsService.gameSettings.timeMinute),
             secondInput: new FormControl(this.gameSettingsService.gameSettings.timeSecond),
             levelInput: new FormControl(this.gameSettingsService.gameSettings.level),

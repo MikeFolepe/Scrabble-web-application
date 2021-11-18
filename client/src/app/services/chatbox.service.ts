@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { INDEX_PLAYER_ONE, MAX_NUMBER_OF_POSSIBILITY } from '@app/classes/constants';
+import { MAX_NUMBER_OF_POSSIBILITY, PLAYER_ONE_INDEX } from '@app/classes/constants';
 import { TypeMessage } from '@app/classes/enum';
 import { Orientation } from '@app/classes/scrabble-board-pattern';
 import { DebugService } from '@app/services/debug.service';
@@ -102,8 +102,8 @@ export class ChatboxService {
         if (this.skipTurnService.isTurn) {
             const messageSplitted = this.message.split(/\s/);
 
-            if (this.swapLetterService.swapCommand(messageSplitted[1], INDEX_PLAYER_ONE)) {
-                this.message = this.playerService.players[INDEX_PLAYER_ONE].name + ' : ' + this.message;
+            if (this.swapLetterService.swapCommand(messageSplitted[1], PLAYER_ONE_INDEX)) {
+                this.message = this.playerService.players[PLAYER_ONE_INDEX].name + ' : ' + this.message;
                 this.sendMessageService.displayMessageByType(this.message, this.typeMessage);
                 this.skipTurnService.switchTurn();
             }
@@ -134,7 +134,7 @@ export class ChatboxService {
             };
             const orientation = positionSplitted[2] === 'h' ? Orientation.Horizontal : Orientation.Vertical;
 
-            if (await this.placeLetterService.placeCommand(position, orientation, messageSplitted[2], INDEX_PLAYER_ONE)) {
+            if (await this.placeLetterService.placeCommand(position, orientation, messageSplitted[2], PLAYER_ONE_INDEX)) {
                 this.sendMessageService.displayMessageByType(this.message, this.typeMessage);
             }
         } else {

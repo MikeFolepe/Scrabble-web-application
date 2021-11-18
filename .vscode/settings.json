@@ -12,6 +12,7 @@
     "eslint.validate": ["javascript", "typescript", "html", "vue", "markdown"],
     "cSpell.words": [
         "affichages",
+        "Bucky",
         "Chatbox",
         "débogage",
         "debugMessage",
