@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
@@ -50,6 +49,8 @@ export class AdminPageComponent implements OnInit {
             return;
         }
         if (isBeginner) {
+            // JUSTIFICATION :
+            // eslint-disable-next-line no-underscore-dangle
             this.beginnerNames.find((aiPlayer) => aiPlayer._id === id);
             this.communicationService.deleteAiBeginner(id).subscribe(
                 (aiBeginners) => {

@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 import { AI_BEGINNERS, AI_EXPERTS, DATABASE_URL } from '@app/classes/constants';
 import { BEGINNER_NAME_MODEL, EXPERT_NAME_MODEL } from '@app/classes/database.schema';
 import * as mongoose from 'mongoose';

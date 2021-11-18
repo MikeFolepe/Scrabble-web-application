@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 import { BEGINNER_NAME_MODEL, EXPERT_NAME_MODEL } from '@app/classes/database.schema';
 import { AiPlayer, AiPlayerDB } from '@common/ai-name';
 import { Service } from 'typedi';
