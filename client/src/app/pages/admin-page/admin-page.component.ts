@@ -11,13 +11,6 @@ import dictionarySchema from '@common/dictionarySchema.json';
 import { Dictionary } from '@app/classes/dictionary';
 import Ajv from 'ajv';
 
-
-
-interface Dictionnary {
-    name: string;
-    description: string;
-    isDefault: boolean;
-}
 @Component({
     selector: 'app-admin-page',
     templateUrl: './admin-page.component.html',
