@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Objective, OBJECTIVES, DEFAULT_OBJECTIVE, NUMBER_OF_OBJECTIVES } from '@app/classes/objectives';
+import { WordValidationService } from './word-validation.service';
+import { PlayerService } from './player.service';
+import { PLAYER_ONE_INDEX } from '@app/classes/constants';
 
 @Injectable({
     providedIn: 'root',
@@ -8,7 +11,7 @@ export class ObjectivesService {
     privateObjectives: Objective[];
     publicObjectives: Objective[];
 
-    constructor() {
+    constructor(private wordValidationService: WordValidationService, private playerService: PlayerService) {
         this.privateObjectives = [DEFAULT_OBJECTIVE, DEFAULT_OBJECTIVE];
         this.publicObjectives = [DEFAULT_OBJECTIVE, DEFAULT_OBJECTIVE];
     }
@@ -56,6 +59,7 @@ export class ObjectivesService {
                 break;
             }
             case 7: {
+                this.validateObjectiveSeven();
                 break;
             }
             case 8: {
@@ -69,5 +73,13 @@ export class ObjectivesService {
 
     validateObjectiveOne() {
         return;
+    }
+
+    validateObjectiveSeven() {
+        console.log(this.wordValidationService.lastPlayedWords.keys());
+        for (const word of this.wordValidationService.lastPlayedWords.keys()) {
+            console.log(word);
+            if (word.length > 7) this.playerService.addScore(OBJECTIVES[6].score, PLAYER_ONE_INDEX);
+        }
     }
 }
