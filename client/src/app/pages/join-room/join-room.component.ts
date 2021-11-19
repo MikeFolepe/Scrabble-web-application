@@ -18,21 +18,31 @@ export class JoinRoomComponent implements OnInit {
     roomItemIndex: number;
     shouldDisplayNameError: boolean;
     shouldDisplayJoinError: boolean;
+    isRoomAvailable: boolean;
+    isRandomButtonAvailable: boolean;
 
     constructor(private clientSocketService: ClientSocketService, public dialog: MatDialog) {
         this.rooms = [];
+        this.isRandomButtonAvailable = false;
+        this.isRoomAvailable = false;
         this.shouldDisplayNameError = false;
         this.shouldDisplayJoinError = false;
         this.roomItemIndex = 0;
         this.pageSize = 2; // 2 rooms per page
         this.clientSocketService.socket.connect();
         this.clientSocketService.socket.emit('getRoomsConfiguration');
+        this.clientSocketService.socket.emit('getRoomAvailable');
+        // Method for button and others
+        this.receiveRoomAvailable();
+        this.receiveRandomPlacement();
         this.clientSocketService.routeToGameView();
     }
 
     ngOnInit(): void {
         this.configureRooms();
+        this.receiveRoomAvailable();
         this.handleRoomUnavailability();
+        this.receiveRandomPlacement();
     }
 
     onPageChange(event: PageEvent): void {
@@ -45,20 +55,52 @@ export class JoinRoomComponent implements OnInit {
     }
 
     join(room: Room): void {
-        const ref = this.dialog.open(JoinDialogComponent, { disableClose: true });
+        this.dialog
+            .open(JoinDialogComponent, { disableClose: true })
+            .afterClosed()
+            .subscribe((playerName: string) => {
+                // if user closes the dialog box without input nothing
+                if (playerName === null) return;
+                // if names are equals
+                if (room.gameSettings.playersNames[PlayerIndex.OWNER] === playerName) {
+                    this.shouldDisplayNameError = true;
+                    setTimeout(() => {
+                        this.shouldDisplayNameError = false;
+                    }, ERROR_MESSAGE_DELAY);
+                    return;
+                }
+                // console.log('jespere tu viens pas ici!!!');
+                this.clientSocketService.socket.emit('newRoomCustomer', playerName, room.id);
+            });
+    }
+    placeRandomly(): void {
+        this.dialog
+            .open(JoinDialogComponent, { disableClose: true })
+            .afterClosed()
+            .subscribe((playerName: string) => {
+                // if user closes the dialog box without input nothing
+                if (playerName === null) return;
+                this.clientSocketService.socket.emit('newRoomCustomerOfRandomPlacement', playerName);
+            });
+    }
+    receiveRandomPlacement(): void {
+        this.clientSocketService.socket.on('receiveCustomerOfRandomPlacement', (customerName: string, roomId: string) => {
+            this.clientSocketService.socket.emit('newRoomCustomer', customerName, roomId);
+        });
+    }
 
-        ref.afterClosed().subscribe((playerName: string) => {
-            // If user closes the dialog box without input nothing
-            if (playerName === null) return;
-            // If names are identical
-            if (room.gameSettings.playersNames[PlayerIndex.OWNER] === playerName) {
-                this.shouldDisplayNameError = true;
-                setTimeout(() => {
-                    this.shouldDisplayNameError = false;
-                }, ERROR_MESSAGE_DELAY);
+    receiveRoomAvailable(): void {
+        this.clientSocketService.socket.on('roomAvailable', (numberOfRooms: number) => {
+            if (numberOfRooms === 0) {
+                this.isRoomAvailable = false;
                 return;
+            } else if (numberOfRooms === 1) {
+                this.isRoomAvailable = true;
+                this.isRandomButtonAvailable = false;
+            } else {
+                this.isRoomAvailable = true;
+                this.isRandomButtonAvailable = true;
             }
-            this.clientSocketService.socket.emit('newRoomCustomer', playerName, room.id);
         });
     }
 
@@ -71,7 +113,6 @@ export class JoinRoomComponent implements OnInit {
             return;
         });
     }
-
     private configureRooms(): void {
         this.clientSocketService.socket.on('roomConfiguration', (rooms: Room[]) => {
             this.rooms = rooms;

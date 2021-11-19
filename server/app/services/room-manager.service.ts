@@ -7,9 +7,11 @@ import { Service } from 'typedi';
 @Service()
 export class RoomManagerService {
     rooms: Room[];
+    // roomWaiting: Room[];
 
     constructor() {
         this.rooms = [];
+        // this.roomWaiting = [];
     }
 
     createRoom(socketId: string, roomId: string, gameSettings: GameSettings) {
@@ -107,5 +109,25 @@ export class RoomManagerService {
 
     find(roomId: string): Room | undefined {
         return this.rooms.find((room) => room.id === roomId);
+    }
+
+    findRoomInWaitingState(customerName: string): Room | undefined {
+        const roomWaiting: Room[] = [];
+        for (const room of this.rooms) {
+            if (room.state === State.Waiting && room.gameSettings.playersNames[PlayerIndex.OWNER] !== customerName) {
+                roomWaiting.push(room);
+            }
+        }
+        if (roomWaiting.length === 0) return;
+        const roomIndex = Math.floor(Math.random() * roomWaiting.length);
+        return roomWaiting[roomIndex] as Room;
+    }
+
+    getNumberofRoomInWaitingState(): number {
+        let numberOfRoom = 0;
+        for (const room of this.rooms) {
+            if (room.state === State.Waiting) numberOfRoom++;
+        }
+        return numberOfRoom;
     }
 }
