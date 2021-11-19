@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { INDEX_PLAYER_ONE } from '@app/classes/constants';
+import { PLAYER_ONE_INDEX } from '@app/classes/constants';
 import { TypeMessage } from '@app/classes/enum';
 import { ClientSocketService } from './client-socket.service';
 import { GameSettingsService } from './game-settings.service';
@@ -25,7 +25,7 @@ export class SendMessageService {
         this.message = message;
         this.typeMessage = typeMessage;
         if (this.typeMessage === TypeMessage.Player) {
-            this.sendMessageToOpponent(this.message, this.gameSettingsService.gameSettings.playersName[INDEX_PLAYER_ONE]);
+            this.sendMessageToOpponent(this.message, this.gameSettingsService.gameSettings.playersNames[PLAYER_ONE_INDEX]);
         }
         this.displayMessage();
     }

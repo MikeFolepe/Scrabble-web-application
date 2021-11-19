@@ -1,5 +1,5 @@
-import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSITION_X, INDEX_INVALID, INDEX_PLAYER_AI } from '@app/classes/constants';
-import { Range } from '@app/classes/range';
+import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSITION, INVALID_INDEX, PLAYER_AI_INDEX } from '@app/classes/constants';
+import { CustomRange } from '@app/classes/range';
 import { BoardPattern, Orientation, PatternInfo, PossibleWords } from '@app/classes/scrabble-board-pattern';
 import { PlayerAIService } from '@app/services/player-ai.service';
 import * as dictionaryData from '@common/dictionary.json';
@@ -7,7 +7,7 @@ import { PlayerAI } from './player-ai.model';
 
 export class PlaceLetterStrategy {
     dictionary: string[];
-    pointingRange: Range;
+    pointingRange: CustomRange;
     private board: string[][][];
     constructor() {
         this.dictionary = JSON.parse(JSON.stringify(dictionaryData)).words;
@@ -16,7 +16,7 @@ export class PlaceLetterStrategy {
     }
 
     async execute(playerAiService: PlayerAIService): Promise<void> {
-        const playerAi = playerAiService.playerService.players[INDEX_PLAYER_AI] as PlayerAI;
+        const playerAi = playerAiService.playerService.players[PLAYER_AI_INDEX] as PlayerAI;
         const level = playerAiService.gameSettingsService.gameSettings.level;
         const isFirstRound = playerAiService.placeLetterService.isFirstRound;
         const scrabbleBoard = playerAiService.placeLetterService.scrabbleBoard;
@@ -30,7 +30,7 @@ export class PlaceLetterStrategy {
         allPossibleWords = this.removeIfNotEnoughLetter(allPossibleWords, playerAi);
 
         if (isFirstRound) {
-            allPossibleWords.forEach((word) => (word.startIndex = CENTRAL_CASE_POSITION_X));
+            allPossibleWords.forEach((word) => (word.startIndex = CENTRAL_CASE_POSITION.x));
         } else {
             allPossibleWords = this.removeIfNotDisposable(allPossibleWords);
         }
@@ -124,7 +124,7 @@ export class PlaceLetterStrategy {
         const start = line.search(pattern);
         const end = start + wordToPlace.word.length - 1;
 
-        if (start === INDEX_INVALID) {
+        if (start === INVALID_INDEX) {
             return false;
         }
 
@@ -220,8 +220,8 @@ export class PlaceLetterStrategy {
 
         if (isFirstRound) {
             // At first round the only pattern is the letter in the player's easel
-            horizontal.push({ line: CENTRAL_CASE_POSITION_X, pattern: '^' + playerHand.toLowerCase() + '*$' });
-            vertical.push({ line: CENTRAL_CASE_POSITION_X, pattern: '^' + playerHand.toLowerCase() + '*$' });
+            horizontal.push({ line: CENTRAL_CASE_POSITION.x, pattern: '^' + playerHand.toLowerCase() + '*$' });
+            vertical.push({ line: CENTRAL_CASE_POSITION.y, pattern: '^' + playerHand.toLowerCase() + '*$' });
             return { horizontal, vertical };
         }
 

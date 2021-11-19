@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { DELAY_TO_PASS_TURN, EASEL_SIZE, INDEX_PLAYER_AI, INVALID, MIN_RESERVE_SIZE_TO_SWAP, ONE_SECOND_DELAY } from '@app/classes/constants';
+import { DELAY_TO_PASS_TURN, EASEL_SIZE, INVALID_INDEX, MIN_RESERVE_SIZE_TO_SWAP, ONE_SECOND_DELAY, PLAYER_AI_INDEX } from '@app/classes/constants';
 import { TypeMessage } from '@app/classes/enum';
-import { Range } from '@app/classes/range';
+import { CustomRange } from '@app/classes/range';
 import { Orientation, PossibleWords } from '@app/classes/scrabble-board-pattern';
 import { PlayerAI } from '@app/models/player-ai.model';
 import { Vec2 } from '@common/vec2';
@@ -42,7 +42,7 @@ export class PlayerAIService {
             this.skipTurnService.switchTurn();
             if (shouldDisplayMessage)
                 this.sendMessageService.displayMessageByType(
-                    this.playerService.players[INDEX_PLAYER_AI].name + ' : ' + '!passer ',
+                    this.playerService.players[PLAYER_AI_INDEX].name + ' : ' + '!passer ',
                     TypeMessage.Opponent,
                 );
 
@@ -56,7 +56,7 @@ export class PlayerAIService {
     }
 
     swap(isDifficultMode: boolean): boolean {
-        const playerAi = this.playerService.players[INDEX_PLAYER_AI] as PlayerAI;
+        const playerAi = this.playerService.players[PLAYER_AI_INDEX] as PlayerAI;
         const lettersToSwap: string[] = [];
 
         // No swap possible
@@ -82,7 +82,7 @@ export class PlayerAIService {
         const indexOfLetterToBeChanged: number[] = [];
         while (indexOfLetterToBeChanged.length < numberOfLetterToChange) {
             const candidate = this.generateRandomNumber(playerAi.letterTable.length);
-            if (indexOfLetterToBeChanged.indexOf(candidate) === INVALID) {
+            if (indexOfLetterToBeChanged.indexOf(candidate) === INVALID_INDEX) {
                 indexOfLetterToBeChanged.push(candidate);
             }
         }
@@ -99,7 +99,7 @@ export class PlayerAIService {
 
         // Alert the context about the operation performed
         this.sendMessageService.displayMessageByType(
-            this.playerService.players[INDEX_PLAYER_AI].name + ' : ' + '!échanger ' + lettersToSwap,
+            this.playerService.players[PLAYER_AI_INDEX].name + ' : ' + '!échanger ' + lettersToSwap,
             TypeMessage.Opponent,
         );
 
@@ -110,7 +110,6 @@ export class PlayerAIService {
     }
 
     async place(word: PossibleWords): Promise<void> {
-        // const playerAi = this.playerService.players[INDEX_PLAYER_AI] as PlayerAI;
         const startPos = word.orientation ? { x: word.line, y: word.startIndex } : { x: word.startIndex, y: word.line };
         const isValid = await this.placeLetterService.placeCommand(startPos, word.orientation, word.word);
         if (isValid) {
@@ -119,7 +118,7 @@ export class PlayerAIService {
             const charOrientation = word.orientation === Orientation.Horizontal ? 'h' : 'v';
             setTimeout(() => {
                 this.sendMessageService.displayMessageByType(
-                    this.playerService.players[INDEX_PLAYER_AI].name + ' : ' + '!placer ' + row + column + charOrientation + ' ' + word.word,
+                    this.playerService.players[PLAYER_AI_INDEX].name + ' : ' + '!placer ' + row + column + charOrientation + ' ' + word.word,
                     TypeMessage.Opponent,
                 );
             }, ONE_SECOND_DELAY);
@@ -172,7 +171,7 @@ export class PlayerAIService {
         allPossibleWords.sort(this.sortDecreasing);
     }
 
-    filterByRange(allPossibleWords: PossibleWords[], pointingRange: Range): PossibleWords[] {
+    filterByRange(allPossibleWords: PossibleWords[], pointingRange: CustomRange): PossibleWords[] {
         return allPossibleWords.filter((word) => word.point >= pointingRange.min && word.point <= pointingRange.max);
     }
 }

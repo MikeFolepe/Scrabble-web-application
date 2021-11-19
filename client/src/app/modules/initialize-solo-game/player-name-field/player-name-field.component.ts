@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
-import { Range } from '@app/classes/range';
+import { NAME_SIZE, SPECIAL_CHAR, VALIDATION_PATTERN } from '@app/classes/constants';
+import { CustomRange } from '@app/classes/range';
 
 @Component({
     selector: 'app-player-name-field',
@@ -9,28 +10,21 @@ import { Range } from '@app/classes/range';
 })
 export class PlayerNameFieldComponent implements OnInit {
     @Input() parentForm: FormGroup;
-    // Number of character range validity
-    charRange: Range;
-    // Special character that are allowed
+    nameSize: CustomRange;
     specialChar: string;
-    validationPattern: string;
 
     constructor() {
-        this.charRange = {
-            min: 4,
-            max: 12,
-        };
-        this.specialChar = '@#$%^&*_';
-        this.validationPattern = '^([A-Za-z][A-Za-z][A-Za-z][A-Za-z])[A-Za-z0-9' + this.specialChar + ']*';
+        this.nameSize = NAME_SIZE;
+        this.specialChar = SPECIAL_CHAR;
     }
 
     ngOnInit(): void {
         // The playerName field is required for form submit
         this.parentForm.controls.playerName.setValidators([
             Validators.required,
-            Validators.pattern(this.validationPattern),
-            Validators.minLength(this.charRange.min),
-            Validators.maxLength(this.charRange.max),
+            Validators.pattern(VALIDATION_PATTERN),
+            Validators.minLength(NAME_SIZE.min),
+            Validators.maxLength(NAME_SIZE.max),
         ]);
     }
 }
