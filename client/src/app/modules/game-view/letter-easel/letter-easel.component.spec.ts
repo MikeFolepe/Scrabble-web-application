@@ -3,7 +3,7 @@
 /* eslint-disable dot-notation */
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { INDEX_PLAYER_ONE } from '@app/classes/constants';
+import { PLAYER_ONE_INDEX } from '@app/classes/constants';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { Letter } from '@common/letter';
 import { LetterEaselComponent } from './letter-easel.component';
@@ -102,7 +102,7 @@ describe('LetterEaselComponent', () => {
 
         component.letterEaselTab[0].isSelectedForSwap = true;
         component.swap();
-        expect(swapSpy).toHaveBeenCalledOnceWith(0, INDEX_PLAYER_ONE);
+        expect(swapSpy).toHaveBeenCalledOnceWith(0, PLAYER_ONE_INDEX);
     });
 
     it('cancelling selection should unselect all letters and disable cancel button', () => {

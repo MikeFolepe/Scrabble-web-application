@@ -6,14 +6,14 @@ import {
     EASEL_SIZE,
     FONT_SIZE_MAX,
     FONT_SIZE_MIN,
-    INDEX_INVALID,
+    INVALID_INDEX,
     RESERVE,
-    WHITE_LETTER_POSITION,
+    WHITE_LETTER_INDEX,
 } from '@app/classes/constants';
-import { Letter } from '@common/letter';
 import { Player } from '@app/models/player.model';
 import { GridService } from '@app/services/grid.service';
 import { LetterService } from '@app/services/letter.service';
+import { Letter } from '@common/letter';
 import { ClientSocketService } from './client-socket.service';
 
 @Injectable({
@@ -104,11 +104,11 @@ export class PlayerService {
         // If it is a white letter
         if (letterToAdd === letterToAdd.toUpperCase()) {
             this.players[indexPlayer].letterTable.push({
-                value: RESERVE[WHITE_LETTER_POSITION].value,
-                quantity: RESERVE[WHITE_LETTER_POSITION].quantity,
-                points: RESERVE[WHITE_LETTER_POSITION].points,
-                isSelectedForSwap: RESERVE[WHITE_LETTER_POSITION].isSelectedForSwap,
-                isSelectedForManipulation: RESERVE[WHITE_LETTER_POSITION].isSelectedForManipulation,
+                value: RESERVE[WHITE_LETTER_INDEX].value,
+                quantity: RESERVE[WHITE_LETTER_INDEX].quantity,
+                points: RESERVE[WHITE_LETTER_INDEX].points,
+                isSelectedForSwap: RESERVE[WHITE_LETTER_INDEX].isSelectedForSwap,
+                isSelectedForManipulation: RESERVE[WHITE_LETTER_INDEX].isSelectedForManipulation,
             });
             return;
         }
@@ -160,7 +160,7 @@ export class PlayerService {
                 }
             }
         }
-        return INDEX_INVALID;
+        return INVALID_INDEX;
     }
 
     addScore(score: number, indexPlayer: number): void {

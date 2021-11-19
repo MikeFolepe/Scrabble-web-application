@@ -38,7 +38,7 @@ describe('FormComponent', () => {
             randomBonus: new FormControl('Désactiver'),
         });
 
-        component.gameSettingsService.gameSettings.playersName[0] = 'player 1';
+        component.gameSettingsService.gameSettings.playersNames[0] = 'player 1';
         component.gameSettingsService.isSoloMode = true;
     });
 

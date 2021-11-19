@@ -3,7 +3,7 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { GRID_CASE_SIZE, INDEX_INVALID } from '@app/classes/constants';
+import { GRID_CASE_SIZE, INVALID_INDEX } from '@app/classes/constants';
 import { TypeMessage } from '@app/classes/enum';
 import { Orientation } from '@app/classes/scrabble-board-pattern';
 import { Vec2 } from '@common/vec2';
@@ -133,7 +133,7 @@ describe('BoardHandlerService', () => {
         service.buttonDetect(keyboardEvent);
 
         expect(service.word).toEqual('');
-        expect(service['currentCase']).toEqual({ x: INDEX_INVALID, y: INDEX_INVALID });
+        expect(service['currentCase']).toEqual({ x: INVALID_INDEX, y: INVALID_INDEX });
         expect(service['isFirstCaseLocked']).toBeFalse();
         expect(service['isFirstCasePicked']).toBeFalse();
     });
