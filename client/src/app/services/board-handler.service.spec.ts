@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 import { HttpClientTestingModule } from '@angular/common/http/testing';
@@ -71,7 +72,7 @@ describe('BoardHandlerService', () => {
         service['isFirstCasePicked'] = true;
         const wordToPlace = 'Frite';
         for (const letterToPlace of wordToPlace) {
-            await service.placeLetter(letterToPlace);
+            await service['placeLetter'](letterToPlace);
         }
 
         expect(service.word).toEqual('Frite');
@@ -85,12 +86,12 @@ describe('BoardHandlerService', () => {
         service.buttonDetect(keyboardEvent);
 
         service['placeLetterService'].placeWithKeyboard = jasmine.createSpy().and.returnValue(Promise.resolve(false));
-        await service.placeLetter('z');
+        await service['placeLetter']('z');
         expect(service.word).toEqual('a');
     });
 
     it('pressing Backspace should remove the last letter placed', () => {
-        const spy = spyOn(service, 'removePlacedLetter').and.callThrough();
+        const spy = spyOn<any>(service, 'removePlacedLetter').and.callThrough();
         service['firstCase'] = { x: 7, y: 7 };
         service['currentCase'] = { x: 12, y: 7 };
         service['isFirstCasePicked'] = true;
@@ -154,7 +155,7 @@ describe('BoardHandlerService', () => {
         expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('!placer h8h Frite', TypeMessage.Player);
     });
 
-    it('pressing Enter with an unvalid word placed should cancel the placement', async () => {
+    it('pressing Enter with an invalid word placed should cancel the placement', async () => {
         service['placeLetterService'].validateKeyboardPlacement = jasmine.createSpy().and.returnValue(Promise.resolve(false));
         service['currentCase'] = { x: 7, y: 7 };
         service['isFirstCasePicked'] = true;
@@ -182,7 +183,7 @@ describe('BoardHandlerService', () => {
 
         const wordToPlace = 'ee';
         for (const letterToPlace of wordToPlace) {
-            await service.placeLetter(letterToPlace);
+            await service['placeLetter'](letterToPlace);
         }
         await service.confirmPlacement();
         expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('!placer h7h elite', TypeMessage.Player);
@@ -201,10 +202,10 @@ describe('BoardHandlerService', () => {
         service['isFirstCasePicked'] = true;
         const wordToPlace = 'ees';
 
-        await service.placeLetter(wordToPlace[0]);
+        await service['placeLetter'](wordToPlace[0]);
         service['placeLetterService'].placeWithKeyboard = jasmine.createSpy().and.returnValue(Promise.resolve(false));
-        await service.placeLetter(wordToPlace[1]);
-        await service.placeLetter(wordToPlace[2]);
+        await service['placeLetter'](wordToPlace[1]);
+        await service['placeLetter'](wordToPlace[2]);
 
         await service.confirmPlacement();
         expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('!placer h11h e', TypeMessage.Player);
@@ -224,10 +225,10 @@ describe('BoardHandlerService', () => {
         service['orientation'] = Orientation.Vertical;
         const wordToPlace = 'ees';
 
-        await service.placeLetter(wordToPlace[0]);
+        await service['placeLetter'](wordToPlace[0]);
         service['placeLetterService'].placeWithKeyboard = jasmine.createSpy().and.returnValue(Promise.resolve(false));
-        await service.placeLetter(wordToPlace[1]);
-        await service.placeLetter(wordToPlace[2]);
+        await service['placeLetter'](wordToPlace[1]);
+        await service['placeLetter'](wordToPlace[2]);
 
         await service.confirmPlacement();
         expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('!placer k8v e', TypeMessage.Player);

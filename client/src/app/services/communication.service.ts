@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { AiPlayer, AiPlayerDB } from '@common/ai-name';
 import { PlayerScore } from '@common/player';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -37,6 +38,51 @@ export class CommunicationService {
             .pipe(catchError(this.handleError<PlayerScore[]>('getbestPlayers')));
     }
 
+    getAiBeginners(): Observable<AiPlayerDB[]> {
+        return this.http.get<AiPlayerDB[]>(`${this.baseUrl}/admin/aiBeginners`).pipe(catchError(this.handleError<AiPlayerDB[]>('getAiBeginners')));
+    }
+
+    getAiExperts(): Observable<AiPlayerDB[]> {
+        return this.http.get<AiPlayerDB[]>(`${this.baseUrl}/admin/aiExperts`).pipe(catchError(this.handleError<AiPlayerDB[]>('getAiExperts')));
+    }
+
+    addAiBeginner(aiBeginner: AiPlayer): Observable<AiPlayerDB> {
+        return this.http
+            .post<AiPlayerDB>(`${this.baseUrl}/admin/aiBeginners`, aiBeginner)
+            .pipe(catchError(this.handleError<AiPlayerDB>('postAiBeginners')));
+    }
+
+    addAiExpert(aiExpert: AiPlayer): Observable<AiPlayerDB> {
+        return this.http
+            .post<AiPlayerDB>(`${this.baseUrl}/admin/aiExperts`, aiExpert)
+            .pipe(catchError(this.handleError<AiPlayerDB>('postAiExperts')));
+    }
+
+    deleteAiBeginner(id: string): Observable<AiPlayerDB[]> {
+        return this.http
+            .delete<AiPlayerDB[]>(`${this.baseUrl}/admin/aiBeginners/${id}`)
+            .pipe(catchError(this.handleError<AiPlayerDB[]>('deleteAiBeginner')));
+    }
+
+    deleteAiExpert(id: string): Observable<AiPlayerDB[]> {
+        return this.http
+            .delete<AiPlayerDB[]>(`${this.baseUrl}/admin/aiExperts/${id}`)
+            .pipe(catchError(this.handleError<AiPlayerDB[]>('deleteAiExpert')));
+    }
+
+    updateAiBeginner(id: string, aiBeginner: AiPlayer): Observable<AiPlayerDB[]> {
+        return this.http
+            .put<AiPlayerDB[]>(`${this.baseUrl}/admin/aiBeginners/${id}`, aiBeginner)
+            .pipe(catchError(this.handleError<AiPlayerDB[]>('deleteAiBeginner')));
+    }
+
+    updateAiExpert(id: string, aiExpert: AiPlayer): Observable<AiPlayerDB[]> {
+        return this.http
+            .put<AiPlayerDB[]>(`${this.baseUrl}/admin/aiExperts/${id}`, aiExpert)
+            .pipe(catchError(this.handleError<AiPlayerDB[]>('deleteAiExpert')));
+    }
+
+    // TODO paramètre non utilisé
     uploadFile(file: File): Observable<string> {
         const formData: FormData = new FormData();
         formData.append('file', file);

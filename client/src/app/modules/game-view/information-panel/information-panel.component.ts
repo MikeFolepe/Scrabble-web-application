@@ -32,6 +32,7 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
+        this.endGameService.clearAllData();
         this.initializePlayers();
         this.receivePlayerTwo();
         this.initializeFirstTurn();
@@ -42,7 +43,7 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
     receivePlayerTwo(): void {
         this.clientSocketService.socket.on('receivePlayerTwo', (letterTable: Letter[]) => {
             const player = new Player(2, this.gameSettings.playersNames[PLAYER_TWO_INDEX], letterTable);
-            this.playerService.addPlayer(player);
+            if (this.playerService.players.length < 2) this.playerService.addPlayer(player);
             this.letterService.removeLettersFromReserve(this.playerService.players[PLAYER_ONE_INDEX].letterTable);
         });
     }
@@ -58,7 +59,7 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
 
     initializePlayers(): void {
         let player = new Player(1, this.gameSettings.playersNames[PLAYER_ONE_INDEX], this.letterService.getRandomLetters());
-        this.playerService.addPlayer(player);
+        if (this.playerService.players.length < 2) this.playerService.addPlayer(player);
         if (this.gameSettingsService.isSoloMode) {
             player = new PlayerAI(2, this.gameSettings.playersNames[PLAYER_TWO_INDEX], this.letterService.getRandomLetters(), this.playerAiService);
             this.playerService.addPlayer(player);

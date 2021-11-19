@@ -31,7 +31,7 @@ export class EndGameService {
 
         this.receiveEndGameFromServer();
         this.receiveActionsFromServer();
-        this.receiveEndGameByGiveUp();
+        // this.receiveEndGameByGiveUp();
     }
 
     receiveEndGameFromServer(): void {
@@ -39,12 +39,18 @@ export class EndGameService {
             this.isEndGame = isEndGame;
         });
     }
-    receiveEndGameByGiveUp(): void {
-        this.clientSocketService.socket.on('receiveEndGameByGiveUp', (isEndGameByGiveUp: boolean, winnerName: string) => {
-            this.isEndGameByGiveUp = isEndGameByGiveUp;
-            this.winnerNameByGiveUp = winnerName;
-        });
-    }
+    // receiveEndGameByGiveUp(): void {
+    //     this.clientSocketService.socket.on('receiveEndGameByGiveUp', (isEndGameByGiveUp: boolean, winnerName: string) => {
+    //         console.log('winner' + winnerName);
+    //         console.log('Myclientname' + this.gameSettingsService.gameSettings.playersName[0]);
+    //         // this.isEndGameByGiveUp = isEndGameByGiveUp;
+    //         // this.winnerNameByGiveUp = winnerName;
+    //         if (winnerName === this.gameSettingsService.gameSettings.playersName[0]) {
+    //             console.log('On traduit la forme');
+    //             this.gameSettingsService.isSoloMode = isEndGameByGiveUp;
+    //         }
+    //     });
+    // }
 
     receiveActionsFromServer(): void {
         this.clientSocketService.socket.on('receiveActions', (actionsLog: string[]) => {
@@ -109,6 +115,7 @@ export class EndGameService {
 
     clearAllData(): void {
         this.playerService.players = [];
+        // console.log('Voici la taille du tableau de players' + this.playerService.players.length);
         this.letterService.reserve = JSON.parse(JSON.stringify(RESERVE));
         this.isEndGameByGiveUp = false;
         this.winnerNameByGiveUp = '';

@@ -317,9 +317,8 @@ export class PlaceLetterService {
     }
 
     private isPositionFilled(position: Vec2): boolean {
-        if (position.x >= 0 && position.y >= 0 && position.x < BOARD_ROWS && position.y < BOARD_COLUMNS)
-            return this.scrabbleBoard[position.y][position.x] !== '';
-        return false;
+        const isInBounds = position.x >= 0 && position.y >= 0 && position.x < BOARD_ROWS && position.y < BOARD_COLUMNS;
+        return isInBounds ? this.scrabbleBoard[position.y][position.x] !== '' : false;
     }
 
     private receivePlacement(): void {

@@ -141,12 +141,12 @@ export class PlayerAIService {
     }
 
     sortDecreasing = (word1: PossibleWords, word2: PossibleWords) => {
-        const EQUAL_SORT_NUMBER = 0;
-        const BIGGER_SORT_NUMBER = 1;
-        const SMALLER_SORT_NUMBER = -1;
+        const equalSortNumbers = 0;
+        const greaterSortNumber = 1;
+        const lowerSortNumber = -1;
 
-        if (word1.point === word2.point) return EQUAL_SORT_NUMBER;
-        return word1.point < word2.point ? BIGGER_SORT_NUMBER : SMALLER_SORT_NUMBER;
+        if (word1.point === word2.point) return equalSortNumbers;
+        return word1.point < word2.point ? greaterSortNumber : lowerSortNumber;
     };
 
     async calculatePoints(allPossibleWords: PossibleWords[]): Promise<PossibleWords[]> {

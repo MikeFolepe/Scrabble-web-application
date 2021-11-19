@@ -1,12 +1,12 @@
 /* eslint-disable dot-notation */
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { GameViewComponent } from './game-view.component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Player } from '@app/models/player.model';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { of } from 'rxjs';
-import { MatDialog } from '@angular/material/dialog';
+import { GameViewComponent } from './game-view.component';
 
 describe('GameViewComponent', () => {
     let component: GameViewComponent;
@@ -57,7 +57,9 @@ describe('GameViewComponent', () => {
         });
         component.dialog = matDialogMock;
         const spyEmit = spyOn(component['clientSocketService'].socket, 'emit');
+        const spyMessage = spyOn(component.sendMessageService, 'sendConversionMessage');
         component.giveUpGame();
+        expect(spyMessage).toHaveBeenCalled();
         expect(spyEmit).toHaveBeenCalled();
     });
 
@@ -72,7 +74,9 @@ describe('GameViewComponent', () => {
         });
         component.dialog = matDialogMock;
         const spyEmit = spyOn(component['clientSocketService'].socket, 'emit');
+        const spyMessage = spyOn(component.sendMessageService, 'sendConversionMessage');
         component.giveUpGame();
         expect(spyEmit).not.toHaveBeenCalled();
+        expect(spyMessage).not.toHaveBeenCalled();
     });
 });
