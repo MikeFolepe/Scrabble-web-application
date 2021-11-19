@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
-import { DELAY_TO_PASS_TURN, EASEL_SIZE, MIN_RESERVE_SIZE_TO_SWAP, PLAYER_AI_INDEX, RESERVE } from '@app/classes/constants';
+import { DELAY_TO_PASS_TURN, EASEL_SIZE, INVALID_INDEX, MIN_RESERVE_SIZE_TO_SWAP, ONE_SECOND_DELAY, PLAYER_AI_INDEX } from '@app/classes/constants';
 import { TypeMessage } from '@app/classes/enum';
 import { CustomRange } from '@app/classes/range';
-import { Earning } from '@app/classes/earning';
 import { Orientation, PossibleWords } from '@app/classes/scrabble-board-pattern';
-import { Vec2 } from '@common/vec2';
 import { PlayerAI } from '@app/models/player-ai.model';
+import { Vec2 } from '@common/vec2';
 import { ChatboxService } from './chatbox.service';
 import { DebugService } from './debug.service';
 import { EndGameService } from './end-game.service';
+import { GameSettingsService } from './game-settings.service';
 import { LetterService } from './letter.service';
 import { PlaceLetterService } from './place-letter.service';
 import { PlayerService } from './player.service';
@@ -33,37 +33,62 @@ export class PlayerAIService {
         public debugService: DebugService,
         public sendMessageService: SendMessageService,
         public randomBonusService: RandomBonusesService,
+        public wordValidationService: WordValidationService,
+        public gameSettingsService: GameSettingsService,
     ) {}
 
-    skip(): void {
+    skip(shouldDisplayMessage: boolean = true): void {
         setTimeout(() => {
             this.skipTurnService.switchTurn();
-            this.sendMessageService.displayMessageByType(this.playerService.players[PLAYER_AI_INDEX].name + ' : ' + '!passer ', TypeMessage.Opponent);
+            if (shouldDisplayMessage)
+                this.sendMessageService.displayMessageByType(
+                    this.playerService.players[PLAYER_AI_INDEX].name + ' : ' + '!passer ',
+                    TypeMessage.Opponent,
+                );
+
+            this.endGameService.actionsLog.push('passer');
         }, DELAY_TO_PASS_TURN);
     }
 
     generateRandomNumber(maxValue: number): number {
+        // Number [0, maxValue[
         return Math.floor(Number(Math.random()) * maxValue);
     }
 
-    swap(): boolean {
-        const playerAi = this.playerService.players[1] as PlayerAI;
+    swap(isDifficultMode: boolean): boolean {
+        const playerAi = this.playerService.players[PLAYER_AI_INDEX] as PlayerAI;
         const lettersToSwap: string[] = [];
 
-        if (this.letterService.reserveSize < MIN_RESERVE_SIZE_TO_SWAP) {
+        // No swap possible
+        if (this.letterService.reserveSize === 0) {
+            this.skip(true);
+            return false;
+        }
+        // According to game mode some cases might not be possible according to rules
+        if (!isDifficultMode && this.letterService.reserveSize < MIN_RESERVE_SIZE_TO_SWAP) {
+            this.skip(true);
             return false;
         }
 
+        // Set the number of letter to be changed
         let numberOfLetterToChange: number;
         do {
-            numberOfLetterToChange = this.generateRandomNumber(EASEL_SIZE);
+            numberOfLetterToChange = this.generateRandomNumber(Math.min(playerAi.letterTable.length + 1, this.letterService.reserveSize + 1));
         } while (numberOfLetterToChange === 0);
+
+        if (isDifficultMode) numberOfLetterToChange = Math.min(playerAi.letterTable.length, this.letterService.reserveSize);
 
         // Choose the index of letters to be changed
         const indexOfLetterToBeChanged: number[] = [];
-        for (let i = 0; i < numberOfLetterToChange; i++) {
-            indexOfLetterToBeChanged.push(this.generateRandomNumber(EASEL_SIZE));
-            lettersToSwap.push(playerAi.letterTable[indexOfLetterToBeChanged[i]].value.toLowerCase());
+        while (indexOfLetterToBeChanged.length < numberOfLetterToChange) {
+            const candidate = this.generateRandomNumber(playerAi.letterTable.length);
+            if (indexOfLetterToBeChanged.indexOf(candidate) === INVALID_INDEX) {
+                indexOfLetterToBeChanged.push(candidate);
+            }
+        }
+
+        for (const index of indexOfLetterToBeChanged) {
+            lettersToSwap.push(playerAi.letterTable[index].value.toLowerCase());
         }
 
         // For each letter chosen to be changed : 1. add it to reserve ; 2.get new letter
@@ -72,31 +97,35 @@ export class PlayerAIService {
             playerAi.letterTable[index] = this.letterService.getRandomLetter();
         }
 
+        // Alert the context about the operation performed
         this.sendMessageService.displayMessageByType(
             this.playerService.players[PLAYER_AI_INDEX].name + ' : ' + '!échanger ' + lettersToSwap,
             TypeMessage.Opponent,
         );
-        setTimeout(() => {
-            this.skipTurnService.switchTurn();
-        }, DELAY_TO_PASS_TURN);
+
+        // Switch turn
+        this.endGameService.actionsLog.push('echanger');
+        this.skip(false);
         return true;
     }
 
     async place(word: PossibleWords): Promise<void> {
         const startPos = word.orientation ? { x: word.line, y: word.startIndex } : { x: word.startIndex, y: word.line };
         const isValid = await this.placeLetterService.placeCommand(startPos, word.orientation, word.word);
-
         if (isValid) {
             const column = (startPos.x + 1).toString();
             const row: string = String.fromCharCode(startPos.y + 'a'.charCodeAt(0));
             const charOrientation = word.orientation === Orientation.Horizontal ? 'h' : 'v';
-            this.sendMessageService.displayMessageByType(
-                this.playerService.players[PLAYER_AI_INDEX].name + ' : ' + '!placer ' + row + column + charOrientation + ' ' + word.word,
-                TypeMessage.Opponent,
-            );
+            setTimeout(() => {
+                this.sendMessageService.displayMessageByType(
+                    this.playerService.players[PLAYER_AI_INDEX].name + ' : ' + '!placer ' + row + column + charOrientation + ' ' + word.word,
+                    TypeMessage.Opponent,
+                );
+            }, ONE_SECOND_DELAY);
             return;
         }
-        this.swap();
+
+        this.skip(false);
     }
 
     placeWordOnBoard(scrabbleBoard: string[][], word: string, start: Vec2, orientation: Orientation): string[][] {
@@ -120,32 +149,22 @@ export class PlayerAIService {
         return word1.point < word2.point ? BIGGER_SORT_NUMBER : SMALLER_SORT_NUMBER;
     };
 
-    calculatePoints(allPossibleWords: PossibleWords[], scrabbleBoard: string[][]): void {
-        const rowOffset = 65;
-        const columnOffset = 1;
+    async calculatePoints(allPossibleWords: PossibleWords[]): Promise<PossibleWords[]> {
         for (const word of allPossibleWords) {
-            let totalPoint = 0;
-            let wordFactor = 1;
-            for (let i = 0; i < word.word.length; i++) {
-                let key: string;
-                let matrixPos: Vec2;
-
-                if (word.orientation === Orientation.Horizontal) {
-                    key = String.fromCharCode(word.line + rowOffset) + (word.startIndex + columnOffset + i).toString();
-                    matrixPos = { x: word.line, y: word.startIndex + i };
-                } else {
-                    key = String.fromCharCode(word.startIndex + rowOffset + i) + (word.line + columnOffset).toString();
-                    matrixPos = { x: word.startIndex + i, y: word.line };
-                }
-                // Letter value : A = 1, B = 3, C = 3 ...etc
-                const letterContribution: number = RESERVE[word.word[i].toUpperCase().charCodeAt(0) - rowOffset].points;
-                // Total earning for the letter (word[i]) at position (x, y)
-                const earning: Earning = this.computeCell(key, letterContribution, matrixPos, scrabbleBoard);
-                totalPoint += earning.letterPoint;
-                wordFactor *= earning.wordFactor;
-            }
-            word.point = totalPoint * wordFactor;
+            const start: Vec2 = word.orientation ? { x: word.startIndex, y: word.line } : { x: word.line, y: word.startIndex };
+            const orientation: Orientation = word.orientation;
+            const currentBoard = JSON.parse(JSON.stringify(this.placeLetterService.scrabbleBoard));
+            const updatedBoard = this.placeWordOnBoard(currentBoard, word.word, start, orientation);
+            const scoreValidation = await this.wordValidation.validateAllWordsOnBoard(
+                updatedBoard,
+                word.word.length === EASEL_SIZE + 1,
+                word.orientation === Orientation.Horizontal,
+                false,
+            );
+            word.point = scoreValidation.validation ? scoreValidation.score : 0;
         }
+        allPossibleWords = allPossibleWords.filter((word) => word.point > 0);
+        return allPossibleWords;
     }
 
     sortDecreasingPoints(allPossibleWords: PossibleWords[]): void {
@@ -154,38 +173,5 @@ export class PlayerAIService {
 
     filterByRange(allPossibleWords: PossibleWords[], pointingRange: CustomRange): PossibleWords[] {
         return allPossibleWords.filter((word) => word.point >= pointingRange.min && word.point <= pointingRange.max);
-    }
-
-    private bonusFactor(bonusFactor: number, matrixPos: Vec2, scrabbleBoard: string[][]): number {
-        const MULTIPLICATION_NEUTRAL = 1;
-        // Check if there is a word on the matrixPos
-        return scrabbleBoard[matrixPos.x][matrixPos.y] === '' ? bonusFactor : MULTIPLICATION_NEUTRAL;
-    }
-
-    private computeCell(keyCell: string, letterValue: number, matrixPos: Vec2, scrabbleBoard: string[][]): Earning {
-        // compute the earning (in letterFactor and wordFactor) of the cell at matrixPox
-        let letterPoint = 0;
-        let wordFactor = 1;
-        switch (this.randomBonusService.bonusPositions.get(keyCell)) {
-            case 'doubleLetter':
-                letterPoint = letterValue * this.bonusFactor(2, matrixPos, scrabbleBoard);
-                break;
-            case 'tripleLetter':
-                letterPoint = letterValue * this.bonusFactor(3, matrixPos, scrabbleBoard);
-                break;
-            case 'doubleWord':
-                letterPoint = letterValue;
-                wordFactor *= this.bonusFactor(2, matrixPos, scrabbleBoard);
-                break;
-            case 'tripleWord':
-                letterPoint = letterValue;
-                wordFactor *= this.bonusFactor(3, matrixPos, scrabbleBoard);
-                break;
-            default:
-                letterPoint += letterValue;
-                break;
-        }
-
-        return { letterPoint, wordFactor };
     }
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { EASEL_SIZE, RESERVE } from '@app/classes/constants';
-import { Letter } from '@common/letter';
 import { ClientSocketService } from '@app/services/client-socket.service';
+import { Letter } from '@common/letter';
 @Injectable({
     providedIn: 'root',
 })

@@ -13,7 +13,7 @@ import { Letter } from '@common/letter';
 import { Socket } from 'socket.io-client';
 import { EndGameService } from './end-game.service';
 import { GameSettingsService } from './game-settings.service';
-import { PlayerAIService } from './player-ia.service';
+import { PlayerAIService } from './player-ai.service';
 import { SkipTurnService } from './skip-turn.service';
 
 describe('SkipTurnService', () => {
