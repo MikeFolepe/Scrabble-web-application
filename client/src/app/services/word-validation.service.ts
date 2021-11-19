@@ -179,7 +179,7 @@ export class WordValidationService {
         return score;
     }
 
-    async validateAllWordsOnBoard(scrabbleBoard: string[][], isEaselSize: boolean, isRow: boolean): Promise<ScoreValidation> {
+    async validateAllWordsOnBoard(scrabbleBoard: string[][], isEaselSize: boolean, isRow: boolean, isPermanent = true): Promise<ScoreValidation> {
         let scoreTotal = 0;
         this.passThroughAllRowsOrColumns(scrabbleBoard, isRow);
         this.passThroughAllRowsOrColumns(scrabbleBoard, !isRow);
@@ -188,11 +188,16 @@ export class WordValidationService {
             this.newPlayedWords.clear();
             return { validation: this.validationState, score: scoreTotal };
         }
-
         scoreTotal += this.calculateTotalScore(scoreTotal, this.newPlayedWords);
 
         if (isEaselSize) {
             scoreTotal += ALL_EASEL_BONUS;
+        }
+
+        // TODO: Valider avec Mike
+        if (!isPermanent) {
+            this.newPlayedWords.clear();
+            return { validation: this.validationState, score: scoreTotal };
         }
 
         this.removeBonuses(this.newPlayedWords);

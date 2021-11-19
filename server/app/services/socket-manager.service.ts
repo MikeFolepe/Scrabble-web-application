@@ -105,7 +105,7 @@ export class SocketManagerService {
 
     onCreateRoom(socket: io.Socket): void {
         socket.on('createRoom', (gameSettings: GameSettings) => {
-            const roomId = this.roomManagerService.createRoomId(gameSettings.playersName[PlayerIndex.OWNER]);
+            const roomId = this.roomManagerService.createRoomId(gameSettings.playersNames[PlayerIndex.OWNER]);
             this.roomManagerService.createRoom(socket.id, roomId, gameSettings);
             socket.join(roomId);
             // give the client his roomId to communicate later with server

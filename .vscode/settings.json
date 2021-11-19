@@ -12,6 +12,7 @@
     "eslint.validate": ["javascript", "typescript", "html", "vue", "markdown"],
     "cSpell.words": [
         "affichages",
+        "Bucky",
         "Chatbox",
         "débogage",
         "debugMessage",
@@ -20,6 +21,7 @@
         "displaymessage",
         "échanger",
         "ERREUR",
+        "fileupload",
         "invalide",
         "Joindre",
         "lightyellow",
@@ -37,7 +39,7 @@
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
     "[html]": {
-        "editor.defaultFormatter": "vscode.html-language-features"
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
     "[scss]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"

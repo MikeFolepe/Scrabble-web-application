@@ -6,6 +6,7 @@ import { JoinDialogComponent } from '@app/modules/initialize-solo-game/join-dial
 import { ClientSocketService } from '@app/services/client-socket.service';
 import { PlayerIndex } from '@common/playerIndex';
 import { Room, State } from '@common/room';
+
 @Component({
     selector: 'app-join-room',
     templateUrl: './join-room.component.html',
@@ -35,25 +36,22 @@ export class JoinRoomComponent implements OnInit {
     }
 
     onPageChange(event: PageEvent): void {
-        // set the offset for the view
+        // Set the offset for the view
         this.roomItemIndex = event.pageSize * event.pageIndex;
     }
 
     computeRoomState(state: State): string {
-        if (state === State.Waiting) {
-            return 'En attente';
-        }
-        return 'Indisponible';
+        return state === State.Waiting ? 'En attente' : 'Indisponible';
     }
 
     join(room: Room): void {
         const ref = this.dialog.open(JoinDialogComponent, { disableClose: true });
 
         ref.afterClosed().subscribe((playerName: string) => {
-            // if user closes the dialog box without input nothing
+            // If user closes the dialog box without input nothing
             if (playerName === null) return;
-            // if names are equals
-            if (room.gameSettings.playersName[PlayerIndex.OWNER] === playerName) {
+            // If names are identical
+            if (room.gameSettings.playersNames[PlayerIndex.OWNER] === playerName) {
                 this.shouldDisplayNameError = true;
                 setTimeout(() => {
                     this.shouldDisplayNameError = false;
@@ -64,7 +62,7 @@ export class JoinRoomComponent implements OnInit {
         });
     }
 
-    handleRoomUnavailability(): void {
+    private handleRoomUnavailability(): void {
         this.clientSocketService.socket.on('roomAlreadyToken', () => {
             this.shouldDisplayJoinError = true;
             setTimeout(() => {
@@ -74,7 +72,7 @@ export class JoinRoomComponent implements OnInit {
         });
     }
 
-    configureRooms(): void {
+    private configureRooms(): void {
         this.clientSocketService.socket.on('roomConfiguration', (rooms: Room[]) => {
             this.rooms = rooms;
         });

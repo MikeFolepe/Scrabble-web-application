@@ -42,7 +42,7 @@ export class Server {
         this.server.on('error', (error: NodeJS.ErrnoException) => this.onError(error));
         this.server.on('listening', () => this.onListening());
         await this.databaseService.start().catch((error) => {
-            console.log('FAILED TO CONNECT DATASE: ' + error);
+            console.log('FAILED TO CONNECT DATABASE: ' + error);
             process.exit(1);
         });
     }

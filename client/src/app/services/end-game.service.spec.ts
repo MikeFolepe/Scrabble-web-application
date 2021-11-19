@@ -4,13 +4,13 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { RESERVE } from '@app/classes/constants';
-import { Letter } from '@common/letter';
 import { Orientation } from '@app/classes/scrabble-board-pattern';
+import { PlayerAI } from '@app/models/player-ai.model';
 import { Player } from '@app/models/player.model';
 import { EndGameService } from '@app/services/end-game.service';
+import { Letter } from '@common/letter';
 import { Socket } from 'socket.io-client';
-import { PlayerAI } from '@app/models/player-ai.model';
-import { PlayerAIService } from './player-ia.service';
+import { PlayerAIService } from './player-ai.service';
 
 describe('EndGameService', () => {
     let service: EndGameService;

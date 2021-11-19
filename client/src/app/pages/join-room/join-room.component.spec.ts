@@ -1,9 +1,6 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
-/* eslint-disable @typescript-eslint/no-magic-numbers */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable dot-notation */
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
@@ -38,7 +35,6 @@ describe('JoinRoomComponent', () => {
         fixture = TestBed.createComponent(JoinRoomComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
-        // clientSocketServiceSpy = jasmine.createSpyObj('ClientSocketService', ['route']);
     });
 
     it('should return the state of room is the state is waiting', () => {
@@ -53,28 +49,26 @@ describe('JoinRoomComponent', () => {
         const settings: GameSettings = new GameSettings(['mi', 'ma'], 1, '01', '00', 'Facile', 'Activer', 'francais', '00');
         const expectedRooms = [new Room('room', 'socket', settings, State.Waiting)];
         component['clientSocketService'].socket = {
-            // eslint-disable-next-line no-unused-vars
             on: (eventName: string, callback: (room: Room[]) => void) => {
                 if (eventName === 'roomConfiguration') {
                     callback(expectedRooms);
                 }
             },
         } as unknown as Socket;
-        component.configureRooms();
+        component['configureRooms']();
         expect(component.rooms).toEqual(expectedRooms);
     });
 
     it('should correctly handle room unavailability', () => {
         jasmine.clock().install();
         component['clientSocketService'].socket = {
-            // eslint-disable-next-line no-unused-vars
             on: (eventName: string, callback: () => void) => {
                 if (eventName === 'roomAlreadyToken') {
                     callback();
                 }
             },
         } as unknown as Socket;
-        component.handleRoomUnavailability();
+        component['handleRoomUnavailability']();
         expect(component.shouldDisplayJoinError).toEqual(true);
         jasmine.clock().tick(ERROR_MESSAGE_DELAY);
         expect(component.shouldDisplayJoinError).toEqual(false);
@@ -85,9 +79,9 @@ describe('JoinRoomComponent', () => {
         const event: PageEvent = new PageEvent();
         event.pageIndex = 2;
         event.pageSize = 1;
-        const expectedRoomItemindex = event.pageIndex * event.pageSize;
+        const expectedRoomItemIndex = event.pageIndex * event.pageSize;
         component.onPageChange(event);
-        expect(component.roomItemIndex).toEqual(expectedRoomItemindex);
+        expect(component.roomItemIndex).toEqual(expectedRoomItemIndex);
     });
 
     it('should return if the name', () => {
@@ -103,7 +97,7 @@ describe('JoinRoomComponent', () => {
         });
         component.dialog = matDialogMock;
         component.join(expectedRooms[0]);
-        expect(expectedRooms[0].gameSettings.playersName[1]).toEqual('');
+        expect(expectedRooms[0].gameSettings.playersNames[1]).toEqual('');
     });
 
     it('should set display error message return if the customer name is equal OwnerName', () => {
@@ -121,7 +115,7 @@ describe('JoinRoomComponent', () => {
         component.dialog = matDialogMock;
         component.join(expectedRooms[0]);
         jasmine.clock().tick(5000);
-        expect(expectedRooms[0].gameSettings.playersName[1]).toEqual('');
+        expect(expectedRooms[0].gameSettings.playersNames[1]).toEqual('');
         expect(component.shouldDisplayJoinError).toEqual(false);
         jasmine.clock().uninstall();
     });
@@ -139,7 +133,7 @@ describe('JoinRoomComponent', () => {
         });
         component.dialog = matDialogMock;
         component.join(expectedRooms[0]);
-        expect(expectedRooms[0].gameSettings.playersName[1]).toEqual('');
+        expect(expectedRooms[0].gameSettings.playersNames[1]).toEqual('');
         expect(expectedRooms[0].id).toEqual('room');
     });
 });

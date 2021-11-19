@@ -93,8 +93,8 @@ describe('SocketManagerService', () => {
         roomManagerService.createRoomId.returns('mike1234');
         service.handleSockets();
         expect(spyOnEmit.calledWith('yourRoomId', 'mike1234')).to.equal(true);
-        expect(roomManagerService.createRoomId.calledWith(settings.playersName[0])).to.equal(true);
-        expect(roomManagerService.createRoom.calledWith(fakeSocket.id, roomManagerService.createRoomId(settings.playersName[0]), settings)).to.equal(
+        expect(roomManagerService.createRoomId.calledWith(settings.playersNames[0])).to.equal(true);
+        expect(roomManagerService.createRoom.calledWith(fakeSocket.id, roomManagerService.createRoomId(settings.playersNames[0]), settings)).to.equal(
             true,
         );
         expect(spyOnJoin.calledWith('mike1234')).to.equal(true);
