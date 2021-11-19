@@ -50,6 +50,7 @@ export class AdministratorController {
         });
 
         this.router.post('/aiBeginners', async (req: Request, res: Response) => {
+            console.log(req.body);
             await this.administratorService
                 .addBeginnerAi(req.body)
                 .then((aiBeginner) => {
@@ -94,6 +95,7 @@ export class AdministratorController {
         });
 
         this.router.put('/aiBeginners/:id', async (req: Request, res: Response) => {
+            console.log(req.body);
             await this.administratorService
                 .updateAiBeginner(req.params.id, req.body)
                 .then((aiBeginners) => {

@@ -176,7 +176,7 @@ export class AdminPageComponent implements OnInit {
             if (isNewAi) {
                 this.addAiPlayer(aiPlayer, isBeginner);
             } else {
-                this.updateAiPlayer(id, playerName, isBeginner);
+                this.upDateAiPlayer(id, aiPlayer, isBeginner);
             }
         });
     }
@@ -205,9 +205,9 @@ export class AdminPageComponent implements OnInit {
         }
     }
 
-    private updateAiPlayer(id: string, playerName: string, isBeginner: boolean): void {
+    private upDateAiPlayer(id: string, aiPlayer: AiPlayer, isBeginner: boolean): void {
         if (isBeginner) {
-            this.communicationService.updateAiBeginner(id, playerName).subscribe(
+            this.communicationService.updateAiBeginner(id, aiPlayer).subscribe(
                 (aiBeginners) => {
                     this.beginnerNames = aiBeginners;
                     this.displayMessage('Joueur modifié');
@@ -217,7 +217,7 @@ export class AdminPageComponent implements OnInit {
                 },
             );
         } else {
-            this.communicationService.updateAiExpert(id, playerName).subscribe(
+            this.communicationService.updateAiExpert(id, aiPlayer).subscribe(
                 (aiExperts) => {
                     this.expertNames = aiExperts;
                     this.displayMessage('Joueur modifié');

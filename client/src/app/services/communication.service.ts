@@ -59,15 +59,15 @@ export class CommunicationService {
             .pipe(catchError(this.handleError<AiPlayerDB[]>('deleteAiExpert')));
     }
 
-    updateAiBeginner(id: string, aiName: string): Observable<AiPlayerDB[]> {
+    updateAiBeginner(id: string, aiBeginner: AiPlayer): Observable<AiPlayerDB[]> {
         return this.http
-            .put<AiPlayerDB[]>(`${this.baseUrl}/admin/aiBeginners/${id}`, aiName)
+            .put<AiPlayerDB[]>(`${this.baseUrl}/admin/aiBeginners/${id}`, aiBeginner)
             .pipe(catchError(this.handleError<AiPlayerDB[]>('deleteAiBeginner')));
     }
 
-    updateAiExpert(id: string, aiName: string): Observable<AiPlayerDB[]> {
+    updateAiExpert(id: string, aiExpert: AiPlayer): Observable<AiPlayerDB[]> {
         return this.http
-            .put<AiPlayerDB[]>(`${this.baseUrl}/admin/aiExperts/${id}`, aiName)
+            .put<AiPlayerDB[]>(`${this.baseUrl}/admin/aiExperts/${id}`, aiExpert)
             .pipe(catchError(this.handleError<AiPlayerDB[]>('deleteAiExpert')));
     }
 

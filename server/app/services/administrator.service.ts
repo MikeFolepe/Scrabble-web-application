@@ -47,13 +47,13 @@ export class AdministratorService {
         return await this.getAllAiExpertPlayers();
     }
 
-    async updateAiBeginner(id: string, aiName: string): Promise<AiPlayerDB[]> {
-        await BEGINNER_NAME_MODEL.findByIdAndUpdate(id, { aiName }).exec();
+    async updateAiBeginner(id: string, aiBeginner: AiPlayer): Promise<AiPlayerDB[]> {
+        await BEGINNER_NAME_MODEL.findByIdAndUpdate(id, { aiName: aiBeginner.aiName }).exec();
         return await this.getAllAiBeginnerPlayers();
     }
 
-    async updateAiExpert(id: string, aiName: string): Promise<AiPlayerDB[]> {
-        await EXPERT_NAME_MODEL.findByIdAndUpdate(id, { aiName }).exec();
+    async updateAiExpert(id: string, aiExpert: AiPlayer): Promise<AiPlayerDB[]> {
+        await EXPERT_NAME_MODEL.findByIdAndUpdate(id, { aiName: aiExpert.aiName }).exec();
         return await this.getAllAiExpertPlayers();
     }
 }
