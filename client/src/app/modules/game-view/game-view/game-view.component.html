@@ -23,12 +23,12 @@
                 </button>
 
                 <div *ngIf="!this.endGameService.isEndGame && gameSettingsService.isSoloMode">
-                    <button mat-raised-button color="primary" id="regular-button" (click)="this.endGameService.clearJoelleData()" routerLink="/home">
+                    <button mat-raised-button color="primary" id="regular-button" (click)="this.endGameService.clearAllData()" routerLink="/home">
                         Abandonner
                     </button>
                 </div>
                 <div *ngIf="this.endGameService.isEndGame && gameSettingsService.isSoloMode">
-                    <button mat-raised-button color="primary" id="regular-button" (click)="this.endGameService.clearJoelleData()" routerLink="/home">
+                    <button mat-raised-button color="primary" id="regular-button" (click)="this.endGameService.clearAllData()" routerLink="/home">
                         Quitter
                     </button>
                 </div>
@@ -37,7 +37,7 @@
                 </div>
 
                 <div *ngIf="endGameService.isEndGame && !gameSettingsService.isSoloMode">
-                    <button mat-raised-button color="primary" id="regular-button" (click)="this.endGameService.clearJoelleData()" routerLink="/home">
+                    <button mat-raised-button color="primary" id="regular-button" (click)="this.endGameService.clearAllData()" routerLink="/home">
                         Quitter
                     </button>
                 </div>

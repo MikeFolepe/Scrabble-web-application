@@ -96,12 +96,6 @@ export class EndGameService {
         });
     }
 
-    clearJoelleData(): void {
-        this.getFinalScore(0);
-        this.getFinalScore(1);
-        this.clearAllData();
-    }
-
     clearAllData(): void {
         this.playerService.players = [];
         this.letterService.reserve = JSON.parse(JSON.stringify(RESERVE));
