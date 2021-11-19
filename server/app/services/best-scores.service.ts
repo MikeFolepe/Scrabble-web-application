@@ -1,6 +1,6 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
-/* eslint-disable prettier/prettier */
 import { SCORES_MODEL_CLASSIC, SCORES_MODEL_LOG2990 } from '@app/classes/database.schema';
 import { GameTypes } from '@common/game-types';
 import { PlayerScore } from '@common/player';
