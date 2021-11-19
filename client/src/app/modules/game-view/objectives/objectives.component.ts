@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Objective } from '@app/classes/objectives';
+import { ObjectivesService } from '@app/services/objectives.service';
 
 @Component({
     selector: 'app-objectives',
@@ -10,12 +11,18 @@ export class ObjectivesComponent implements OnInit {
     privateObjectives: Objective[];
     publicObjectives: Objective[];
 
+    constructor(private objectivesService: ObjectivesService) {}
+
     ngOnInit() {
-        const objectif1: Objective = { name: 'test1', isCompleted: true, score: 20 };
-        const objectif2: Objective = { name: 'test2', isCompleted: false, score: 56 };
-        const objectif3: Objective = { name: 'test3', isCompleted: false, score: 99 };
-        this.privateObjectives = [objectif1, objectif1];
-        this.publicObjectives = [objectif2, objectif3];
-        console.log(this.publicObjectives);
+        this.privateObjectives = this.objectivesService.privateObjectives;
+        this.publicObjectives = this.objectivesService.publicObjectives;
+    }
+
+    onupdate() {
+        const indexes: number[] = [0, 1, 2, 3];
+        this.objectivesService.initializeObjectives(indexes);
+        this.publicObjectives[0].isCompleted = true;
+        this.publicObjectives[1].isCompleted = true;
+        this.privateObjectives[1].isCompleted = true;
     }
 }
