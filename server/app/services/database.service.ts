@@ -11,9 +11,9 @@ export class DatabaseService {
         useUnifiedTopology: true,
     } as mongoose.ConnectOptions;
 
-    async start(url: string = DATABASE_URL): Promise<void> {
+    async start(): Promise<void> {
         await this.database
-            .connect(url, this.options)
+            .connect(DATABASE_URL, this.options)
             .then(() => {
                 // JUSTIFICATION : required in order to display the DB connection status
                 // eslint-disable-next-line no-console

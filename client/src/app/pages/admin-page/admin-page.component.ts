@@ -55,7 +55,7 @@ export class AdminPageComponent implements OnInit {
             return;
         }
         if (isBeginner) {
-            // JUSTIFICATION :
+            // TODO: JUSTIFICATION :
             // eslint-disable-next-line no-underscore-dangle
             this.beginnerNames.find((aiPlayer) => aiPlayer._id === id);
             this.communicationService.deleteAiBeginner(id).subscribe(
