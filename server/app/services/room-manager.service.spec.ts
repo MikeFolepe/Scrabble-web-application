@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 import { OUT_BOUND_INDEX_OF_SOCKET } from '@app/classes/constants';
 import { RoomManagerService } from '@app/services/room-manager.service';
 import { GameSettings, StartingPlayer } from '@common/game-settings';
@@ -8,8 +9,15 @@ describe('RoomManagerService', () => {
     let roomManagerService: RoomManagerService;
     const id = 'LOG2990';
     const socketId1 = 'socket1';
-
     const settings: GameSettings = new GameSettings(['Paul', 'Mike'], StartingPlayer.Player1, '00', '30', 'facile', 'Désactiver', 'français', '00');
+
+    const id1 = 'LOG2991';
+    const socketId3 = 'socket3';
+    const mySettings: GameSettings = new GameSettings(['Etienne', ''], StartingPlayer.Player1, '00', '30', 'facile', 'Désactiver', 'français', '00');
+
+    const id4 = 'LOG2992';
+    const socketId4 = 'socket4';
+    const mySettings1: GameSettings = new GameSettings(['Johanna', ''], StartingPlayer.Player1, '00', '30', 'facile', 'Désactiver', 'français', '00');
 
     beforeEach(() => {
         roomManagerService = new RoomManagerService();
@@ -144,5 +152,50 @@ describe('RoomManagerService', () => {
         const socketId2 = 'socket2';
         roomManagerService.setSocket(roomManagerService.rooms[0], socketId2);
         expect(roomManagerService.getWinnerName(id, roomManagerService.findLoserIndex(socketId2))).to.equal('Paul');
+    });
+
+    it('should find the room with state in waiting and return it', () => {
+        settings.playersNames[1] = '';
+        roomManagerService.createRoom(socketId1, id, settings);
+        // roomManagerService.createRoom(socketId1, 'LOG2993', settings);
+        // roomManagerService.createRoom(socketId1, 'LOG2994', settings);
+        // roomManagerService.createRoom(socketId1, 'LOG2995', settings);
+        // Deuxieme room avec un joueur et etat waiting
+        roomManagerService.createRoom(socketId3, id1, mySettings);
+        roomManagerService.createRoom(socketId4, id4, mySettings1);
+        expect(roomManagerService.findRoomInWaitingState('Mike')).not.to.equal(undefined);
+        // console.log(roomManagerService.roomWaiting.length);
+    });
+    it('should not find the room with state in waiting and return it', () => {
+        // Premiere room en attente
+        settings.playersNames[1] = '';
+        roomManagerService.createRoom(socketId1, id, settings);
+        roomManagerService.setState(id, State.Playing);
+        // Deuxieme room avec un joueur et etat waiting
+        roomManagerService.createRoom(socketId3, id1, mySettings);
+        roomManagerService.setState(id1, State.Playing);
+        // 3eme room en attente
+        roomManagerService.createRoom(socketId4, id4, mySettings1);
+        roomManagerService.setState(id4, State.Playing);
+
+        expect(roomManagerService.findRoomInWaitingState('Mike')).to.equal(undefined);
+    });
+
+    it('should return the number of rooms in state Waiting', () => {
+        settings.playersNames[1] = '';
+        roomManagerService.createRoom(socketId1, id, settings);
+        roomManagerService.createRoom(socketId3, id1, mySettings);
+        roomManagerService.createRoom(socketId4, id4, mySettings1);
+        expect(roomManagerService.getNumberofRoomInWaitingState()).to.equal(3);
+    });
+    it('should return 0 if the number of rooms in state Waiting is 0', () => {
+        settings.playersNames[1] = '';
+        roomManagerService.createRoom(socketId1, id, settings);
+        roomManagerService.setState(id, State.Playing);
+
+        roomManagerService.createRoom(socketId3, id1, mySettings);
+        roomManagerService.setState(id1, State.Playing);
+
+        expect(roomManagerService.getNumberofRoomInWaitingState()).to.equal(0);
     });
 });

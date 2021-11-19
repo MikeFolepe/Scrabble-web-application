@@ -6,11 +6,11 @@
 <br />
 <br />
 <div mat-dialog-actions>
-    <button mat-button mat-dialog-close (click)="this.giveUpDialogref.close(null)" color="warn">Non</button>
+    <button mat-button mat-dialog-close (click)="this.giveUpDialogRef.close(null)" color="warn">Non</button>
     <button
         mat-raised-button
         mat-dialog-close
-        (click)="endGameService.clearAllData(); this.giveUpDialogref.close(true)"
+        (click)="endGameService.clearAllData(); this.giveUpDialogRef.close(true)"
         routerLink="/home"
         color="warn"
     >

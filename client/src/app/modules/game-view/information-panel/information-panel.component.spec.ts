@@ -1,15 +1,17 @@
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable dot-notation */
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { PLAYER_AI_INDEX, PLAYER_TWO_INDEX, RESERVE } from '@app/classes/constants';
-import { Letter } from '@common/letter';
+// import { PlayerAI } from '@app/models/player-ai.model';
+// import { Player } from '@app/models/player.model';
 import { SkipTurnService } from '@app/services/skip-turn.service';
 import { GameSettings } from '@common/game-settings';
+import { Letter } from '@common/letter';
 import { Socket } from 'socket.io-client';
 import { InformationPanelComponent } from './information-panel.component';
-
 describe('InformationPanelComponent', () => {
     let component: InformationPanelComponent;
     let fixture: ComponentFixture<InformationPanelComponent>;
@@ -82,4 +84,35 @@ describe('InformationPanelComponent', () => {
         component.initializePlayers();
         expect(component['playerService'].players[PLAYER_AI_INDEX].name).toEqual('Mike');
     });
+
+    // it('should not call the AI player if the turn is true', () => {
+    //     component.skipTurnService.isTurn = true;
+    //     // Création de joueurs
+    //     const letterA = RESERVE[0];
+    //     const letterB = RESERVE[1];
+    //     const player = new Player(1, 'Player 1', [letterA]);
+    //     const playerAI = new PlayerAI(2, 'Player AI', [letterB], component.playerAiService);
+    //     component['playerService'].players.push(player);
+    //     component['playerService'].players.push(playerAI);
+    //     // Debut du test
+    //     const myAiPlayer = component['playerService'].players[1] as PlayerAI;
+    //     component.callThePlayerAiOnItsTurn();
+    //     jasmine.clock().tick(4000);
+    //     expect(myAiPlayer.play()).not.toHaveBeenCalled();
+    // });
+    // it('should  call the AI player if the turn is false', () => {
+    //     component.skipTurnService.isTurn = false;
+    //     // Création de joueurs
+    //     const letterA = RESERVE[0];
+    //     const letterB = RESERVE[1];
+    //     const player = new Player(1, 'Player 1', [letterA]);
+    //     const playerAI = new PlayerAI(2, 'Player AI', [letterB], component.playerAiService);
+    //     component['playerService'].players.push(player);
+    //     component['playerService'].players.push(playerAI);
+    //     // Debut du test
+    //     const myAiPlayer = component['playerService'].players[1] as PlayerAI;
+    //     component.callThePlayerAiOnItsTurn();
+    //     jasmine.clock().tick(4000);
+    //     expect(myAiPlayer.play()).toHaveBeenCalled();
+    // });
 });

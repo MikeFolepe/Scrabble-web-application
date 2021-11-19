@@ -9,6 +9,5 @@ import { EndGameService } from '@app/services/end-game.service';
     styleUrls: ['./give-up-game-dialog.component.scss'],
 })
 export class GiveUpGameDialogComponent {
-    // TODO changer variable giveUpDialogref -> giveUpDialogRef
-    constructor(public giveUpDialogref: MatDialogRef<GiveUpGameDialogComponent>, public router: Router, public endGameService: EndGameService) {}
+    constructor(public giveUpDialogRef: MatDialogRef<GiveUpGameDialogComponent>, public router: Router, public endGameService: EndGameService) {}
 }
