@@ -24,7 +24,6 @@ export class DatabaseService {
             });
 
         this.setDefaultData();
-        mongoose.set('debug', true);
     }
 
     async closeConnection(): Promise<void> {
