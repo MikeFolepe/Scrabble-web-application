@@ -100,6 +100,7 @@ export class PlaceLetterStrategy {
         return filteredWords;
     }
 
+    // TODO vérifier cette fonction car perte de points au sprint 2 AQ
     private isWordFitting(line: string, wordToPlace: PossibleWords, radixes: string[]): boolean {
         const isEmptyCase = new Array<boolean>(wordToPlace.word.length);
         isEmptyCase.fill(true);
