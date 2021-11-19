@@ -3,6 +3,7 @@ import { BestScoresService } from '@app/services/best-scores.service';
 // JUSTIFICATION : Because the files are added in runtime with npm express-fileupload on the 'request' (req),
 //                 the Typescript compiler does not recognize them and it fails. So, they are referenced with dot notation
 import { WordValidationService } from '@app/services/word-validation.service';
+import { GameTypes } from '@common/game-types';
 import { Request, Response, Router } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { Service } from 'typedi';
@@ -44,14 +45,30 @@ export class MultiplayerController {
             res.status(StatusCodes.OK).send(validation);
         });
 
-        this.router.post('/best-scores', async (req: Request, res: Response) => {
-            await this.bestScoresService.addPlayers(req.body);
+        this.router.post('/best-scores-classic', async (req: Request, res: Response) => {
+            await this.bestScoresService.addPlayers(req.body, GameTypes.Classic);
             res.send(StatusCodes.OK);
         });
 
-        this.router.get('/best-scores', async (req: Request, res: Response) => {
+        this.router.post('/best-scores-log2990', async (req: Request, res: Response) => {
+            await this.bestScoresService.addPlayers(req.body, GameTypes.Log2990);
+            res.send(StatusCodes.OK);
+        });
+
+        this.router.get('/best-scores-classic', async (req: Request, res: Response) => {
             await this.bestScoresService
-                .getBestPlayers()
+                .getBestPlayers(GameTypes.Classic)
+                .then((players) => {
+                    res.status(StatusCodes.OK).send(players);
+                })
+                .catch((error: Error) => {
+                    res.status(StatusCodes.NOT_FOUND).send('An error occurred while trying to get players scores ' + error.message);
+                });
+        });
+
+        this.router.get('/best-scores-log2990', async (req: Request, res: Response) => {
+            await this.bestScoresService
+                .getBestPlayers(GameTypes.Log2990)
                 .then((players) => {
                     res.status(StatusCodes.OK).send(players);
                 })

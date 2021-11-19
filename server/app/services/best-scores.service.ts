@@ -1,29 +1,36 @@
+/* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable prettier/prettier */
-import { SCORE_MODEL } from '@app/classes/database.schema';
+import { SCORES_MODEL_CLASSIC, SCORES_MODEL_LOG2990 } from '@app/classes/database.schema';
+import { GameTypes } from '@common/game-types';
 import { PlayerScore } from '@common/player';
+import * as mongoose from 'mongoose';
 import { Service } from 'typedi';
 
 @Service()
 export class BestScoresService {
-    async addPlayers(player: PlayerScore[]): Promise<void> {
-        let score = new SCORE_MODEL({
-            score: player[0].score,
-            playerName: player[0].playerName,
-            isDefault: player[0].isDefault,
-        });
-        await score.save();
+    // TODO: revoir si nécessaire de mettre ceci dans une constante globale.
+    readonly numberOfBestPlayers = 5;
+    scoresModels = new Map<GameTypes, mongoose.Model<unknown, {}, {}, {}>>([
+        [GameTypes.Classic, SCORES_MODEL_CLASSIC],
+        [GameTypes.Log2990, SCORES_MODEL_LOG2990],
+    ]);
 
-        score = new SCORE_MODEL({
-            score: player[1].score,
-            playerName: player[1].playerName,
-            isDefault: player[1].isDefault,
-        });
-        await score.save();
+    async addPlayers(players: PlayerScore[], gameType: GameTypes): Promise<void> {
+        const scoreModel = this.scoresModels.get(gameType) as mongoose.Model<unknown, {}, {}, {}>;
+        for (const player of players) {
+            const scoreToAdd = new scoreModel({
+                score: player.score,
+                playerName: player.playerName,
+                isDefault: player.isDefault,
+            });
+            await scoreToAdd.save();
+        }
     }
 
-    async getBestPlayers(): Promise<PlayerScore[]> {
-        const players: PlayerScore[] = await SCORE_MODEL.find({}).sort({ score: -1 }).limit(5).exec();
-        return players;
+    async getBestPlayers(gameType: GameTypes): Promise<PlayerScore[]> {
+        const scoreModel = this.scoresModels.get(gameType) as mongoose.Model<PlayerScore, {}, {}, {}>;
+        const bestPlayers: PlayerScore[] = await scoreModel.find({}).sort({ score: -1 }).limit(this.numberOfBestPlayers).exec();
+        return bestPlayers;
     }
 }

@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { ClientSocketService } from '@app/services/client-socket.service';
 import { EndGameService } from '@app/services/end-game.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
+import { GameTypes } from '@common/game-types';
 
 @Component({
     selector: 'app-main-page',
@@ -11,6 +12,7 @@ import { GameSettingsService } from '@app/services/game-settings.service';
 })
 export class MainPageComponent implements OnInit {
     selectedGameTypeIndex: number;
+    selectedGameType: string | GameTypes;
     selectedGameMode?: string;
     readonly gameTypes: string[];
     readonly gameModes: string[];
@@ -22,7 +24,7 @@ export class MainPageComponent implements OnInit {
         private endGameService: EndGameService,
     ) {
         this.selectedGameTypeIndex = 0;
-        this.gameTypes = ['Scrabble classique', 'Scrabble LOG2990'];
+        this.gameTypes = [GameTypes.Classic, GameTypes.Log2990];
         this.gameModes = ['Jouer une partie en solo', 'Créer une partie multijoueur', 'Joindre une partie multijoueur'];
     }
 
@@ -32,6 +34,11 @@ export class MainPageComponent implements OnInit {
     }
 
     routeToGameMode(): void {
+        // update game type and game mode, then route
+        this.selectedGameType = this.gameTypes[this.selectedGameTypeIndex];
+        this.gameSettingsService.gameType = this.selectedGameType as GameTypes;
+        // eslint-disable-next-line no-console
+        console.log(this.selectedGameType);
         switch (this.selectedGameMode) {
             case this.gameModes[0]: {
                 this.gameSettingsService.isSoloMode = true;

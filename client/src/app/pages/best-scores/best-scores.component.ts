@@ -1,8 +1,6 @@
-// import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { CommunicationService } from '@app/services/communication.service';
-// import { MatSnackBar } from '@angular/material/snack-bar';
-// import { ERROR_MESSAGE_DELAY } from '@app/classes/constants';
+import { GameTypes } from '@common/game-types';
 import { PlayerScore } from '@common/player';
 
 @Component({
@@ -11,25 +9,12 @@ import { PlayerScore } from '@common/player';
     styleUrls: ['./best-scores.component.scss'],
 })
 export class BestScoresComponent implements OnInit {
-    players: PlayerScore[];
-    constructor(private communicationService: CommunicationService /* , public snackBar: MatSnackBar*/) {}
+    bestPlayersInClassicMode: PlayerScore[];
+    bestPlayersInLog2990Mode: PlayerScore[];
+    constructor(private communicationService: CommunicationService) {}
 
     ngOnInit(): void {
-        this.communicationService.getBestPlayers().subscribe(
-            (player: PlayerScore[]) => (this.players = player),
-            // (error: HttpErrorResponse) => this.handleRequestError(error),
-        );
+        this.communicationService.getBestPlayers(GameTypes.Classic).subscribe((players: PlayerScore[]) => (this.bestPlayersInClassicMode = players));
+        this.communicationService.getBestPlayers(GameTypes.Log2990).subscribe((players: PlayerScore[]) => (this.bestPlayersInLog2990Mode = players));
     }
-
-    // private displayMessage(message: string): void {
-    //     this.snackBar.open(message, 'OK', {
-    //         duration: ERROR_MESSAGE_DELAY,
-    //         horizontalPosition: 'center',
-    //         verticalPosition: 'top',
-    //     });
-    // }
-
-    // private handleRequestError(error: HttpErrorResponse): void {
-    //     this.displayMessage(`Nous n'avons pas pu accéder au serveur, erreur : ${error.message}`);
-    // }
 }

@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AiPlayer, AiPlayerDB } from '@common/ai-name';
+import { GameTypes } from '@common/game-types';
 import { PlayerScore } from '@common/player';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -28,13 +29,23 @@ export class CommunicationService {
             .pipe(catchError(this.handleError<boolean>('validationPost')));
     }
 
-    addPlayers(player: PlayerScore[]): Observable<void> {
-        return this.http.post<void>(`${this.baseUrl}/multiplayer/best-scores`, player).pipe(catchError(this.handleError<void>('addPlayers')));
+    addPlayersScores(players: PlayerScore[], gameType: GameTypes): Observable<void> {
+        if (gameType === GameTypes.Classic)
+            return this.http
+                .post<void>(`${this.baseUrl}/multiplayer/best-scores-classic`, players)
+                .pipe(catchError(this.handleError<void>('addPlayers')));
+        return this.http
+            .post<void>(`${this.baseUrl}/multiplayer/best-scores-log2990`, players)
+            .pipe(catchError(this.handleError<void>('addPlayers')));
     }
 
-    getBestPlayers(): Observable<PlayerScore[]> {
+    getBestPlayers(gameType: GameTypes): Observable<PlayerScore[]> {
+        if (gameType === GameTypes.Classic)
+            return this.http
+                .get<PlayerScore[]>(`${this.baseUrl}/multiplayer/best-scores-classic`)
+                .pipe(catchError(this.handleError<PlayerScore[]>('getbestPlayers')));
         return this.http
-            .get<PlayerScore[]>(`${this.baseUrl}/multiplayer/best-scores`)
+            .get<PlayerScore[]>(`${this.baseUrl}/multiplayer/best-scores-log2990`)
             .pipe(catchError(this.handleError<PlayerScore[]>('getbestPlayers')));
     }
 
