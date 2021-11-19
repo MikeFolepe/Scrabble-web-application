@@ -17,6 +17,7 @@ import { PageNotFoundComponent } from '@app/pages/page-not-found/page-not-found.
 import { SharedModule } from '@app/modules/shared/shared.module';
 import { WaitingRoomComponent } from '@app/pages/waiting-room/waiting-room.component';
 import { AdminPageComponent } from './pages/admin-page/admin-page.component';
+import { ClickOutsideModule } from 'ng-click-outside';
 
 /**
  * Main module that is used in main.ts.
@@ -39,6 +40,7 @@ import { AdminPageComponent } from './pages/admin-page/admin-page.component';
         MatProgressSpinnerModule,
         MatPaginatorModule,
         MatCardModule,
+        ClickOutsideModule,
     ],
     providers: [],
     bootstrap: [AppComponent],

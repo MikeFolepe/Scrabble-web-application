@@ -18,23 +18,24 @@
                 <button mat-button (click)="accordion.openAll()">Tout développer</button>
                 <button mat-button (click)="accordion.closeAll()">Tout réduire</button>
             </div>
-            <!-- TODO ajouter mat-paginator ?? -->
-            <mat-accordion multi>
-                <mat-expansion-panel *ngFor="let dictionary of this.dictionaries" [disabled]="dictionary.isDefault">
-                    <mat-expansion-panel-header>
-                        <mat-panel-title>
-                            {{ dictionary.title }}
-                        </mat-panel-title>
-                        <mat-panel-description>
-                            {{ dictionary.description }}
-                        </mat-panel-description>
-                        <mat-icon *ngIf="dictionary.isDefault">lock</mat-icon>
-                    </mat-expansion-panel-header>
-                    <mat-icon color="warn">delete_forever</mat-icon>
-                    <mat-icon>create</mat-icon>
-                    <mat-icon>get_app</mat-icon>
-                </mat-expansion-panel>
-            </mat-accordion>
+            <div class="scrollable" #scrollMe>
+                <mat-accordion multi>
+                    <mat-expansion-panel *ngFor="let dictionary of this.dictionaries" [disabled]="dictionary.isDefault">
+                        <mat-expansion-panel-header>
+                            <mat-panel-title>
+                                {{ dictionary.title }}
+                            </mat-panel-title>
+                            <mat-panel-description>
+                                {{ dictionary.description }}
+                            </mat-panel-description>
+                            <mat-icon *ngIf="dictionary.isDefault">lock</mat-icon>
+                        </mat-expansion-panel-header>
+                        <mat-icon color="warn">delete_forever</mat-icon>
+                        <mat-icon>create</mat-icon>
+                        <mat-icon>get_app</mat-icon>
+                    </mat-expansion-panel>
+                </mat-accordion>
+            </div>
             <div class="center">
                 <!-- TODO changer couleur (vert si possible) -->
                 <button mat-raised-button class="fill" (click)="fileInput.click()">
@@ -43,7 +44,7 @@
                 </button>
                 <input hidden type="file" accept=".json" #fileInput (change)="onFileInput(fileInput.files)" />
 
-                <button mat-fab id="add" color="" [disabled]="!file" type="submit" (click)="onSubmit()">
+                <button mat-fab color="" [disabled]="!file" [ngClass]="{ add: file, transparentAdd: !file }" type="submit" (click)="onSubmit()">
                     <mat-icon>cloud_upload</mat-icon>
                 </button>
             </div>
@@ -73,17 +74,18 @@
                         <div class="item" *ngFor="let aiBeginner of this.beginnerNames">
                             <p class="ai-name">{{ aiBeginner.aiName }}</p>
                             <span class="icons">
-                                <button (click)="deleteAiPlayer(aiBeginner._id, true, aiBeginner.isDefault)">
-                                    <mat-icon color="warn">delete_forever</mat-icon>
+                                <button mat-stroked-button (click)="deleteAiPlayer(aiBeginner._id, true, aiBeginner.isDefault)">
+                                    <mat-icon id="deleteIcon">delete_forever</mat-icon>
                                 </button>
-                                <button (click)="addAiToDatabase(true, false, aiBeginner._id, aiBeginner.isDefault)">
-                                    <mat-icon>create</mat-icon>
+                                <button mat-stroked-button (click)="addAiToDatabase(true, false, aiBeginner._id, aiBeginner.isDefault)">
+                                    <mat-icon id="editIcon">create</mat-icon>
                                 </button>
                             </span>
                         </div>
                         <div class="center">
                             <!-- TODO changer couleur (vert si possible) -->
-                            <button mat-mini-fab id="add" color="" (click)="addAiToDatabase(true, true)">
+                            <!-- TODO couleur disparaît on hover!! -->
+                            <button mat-mini-fab class="add" color="" (click)="addAiToDatabase(true, true)">
                                 <mat-icon>add</mat-icon>
                             </button>
                         </div>
@@ -105,21 +107,31 @@
                         </div>
                         <div class="center">
                             <!-- TODO changer couleur (vert si possible) -->
-                            <button mat-mini-fab id="add" color="" (click)="addAiToDatabase(false, true)">
+                            <button mat-mini-fab class="add" color="" (click)="addAiToDatabase(false, true)">
                                 <mat-icon>add</mat-icon>
                             </button>
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
 
         <div id="reset">
-            <button mat-raised-button color="warn">
-                <mat-icon>restore</mat-icon>
-                <span>Réinitialiser</span>
-            </button>
+            <div class="delete-confirm">
+                <button
+                    mat-raised-button
+                    color="warn"
+                    (click)="isResetConfirmation = true"
+                    (clickOutside)="cancelReset()"
+                    [disabled]="isResetConfirmation"
+                    [ngClass]="{ delete: true, confirm: isResetConfirmation }"
+                >
+                    <mat-icon>{{ isResetConfirmation ? 'warning' : 'restore' }}</mat-icon>
+                    <span>{{ isResetConfirmation ? 'Confirmer?' : 'Réinitialiser' }}</span>
+                </button>
+                <button mat-raised-button class="yes" (click)="resetData()"><span>Oui</span></button>
+                <button mat-raised-button class="no"><span>Annuler</span></button>
+            </div>
         </div>
     </div>
 </div>

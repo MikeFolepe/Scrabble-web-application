@@ -40,7 +40,7 @@ h2 {
     // Spécifie la hauteur et largeur pour que l'overflow fonctionne
     width: 100%;
     height: 460px;
-    overflow-y: scroll;
+    overflow-y: auto;
     white-space: normal;
     font-size: 16px;
     flex-grow: 1;

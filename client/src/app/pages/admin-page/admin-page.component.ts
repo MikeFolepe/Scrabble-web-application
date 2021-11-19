@@ -4,11 +4,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ERROR_MESSAGE_DELAY, THREE_SECONDS_DELAY } from '@app/classes/constants';
+import { Dictionary } from '@app/classes/dictionary';
 import { JoinDialogComponent } from '@app/modules/initialize-solo-game/join-dialog/join-dialog.component';
 import { CommunicationService } from '@app/services/communication.service';
 import { AiPlayer, AiPlayerDB } from '@common/ai-name';
 import dictionarySchema from '@common/dictionarySchema.json';
-import { Dictionary } from '@app/classes/dictionary';
 import Ajv from 'ajv';
 
 @Component({
@@ -24,6 +24,7 @@ export class AdminPageComponent implements OnInit {
     dictionary: Dictionary;
     uploadMessage: string;
     ajv = new Ajv();
+    isResetConfirmation: boolean;
 
     dictionaries: Dictionary[] = [
         { title: 'Dico #1', description: 'Dictionnaire par défaut', isDefault: true },
@@ -36,6 +37,7 @@ export class AdminPageComponent implements OnInit {
     constructor(private communicationService: CommunicationService, public dialog: MatDialog, public snackBar: MatSnackBar) {
         this.file = null;
         this.uploadMessage = '';
+        this.isResetConfirmation = false;
     }
 
     ngOnInit() {
@@ -55,7 +57,7 @@ export class AdminPageComponent implements OnInit {
             return;
         }
         if (isBeginner) {
-            // TODO: JUSTIFICATION :
+            // TODO JUSTIFICATION :
             // eslint-disable-next-line no-underscore-dangle
             this.beginnerNames.find((aiPlayer) => aiPlayer._id === id);
             this.communicationService.deleteAiBeginner(id).subscribe(
@@ -172,6 +174,15 @@ export class AdminPageComponent implements OnInit {
                 this.upDateAiPlayer(id, aiPlayer, isBeginner);
             }
         });
+    }
+
+    cancelReset(): void {
+        if (this.isResetConfirmation) this.isResetConfirmation = false;
+    }
+
+    resetData(): void {
+        // TODO truc bidon à remplacer par le vrai code
+        return;
     }
 
     private addAiPlayer(aiPlayer: AiPlayer, isBeginner: boolean): void {

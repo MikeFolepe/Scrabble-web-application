@@ -28,6 +28,7 @@
     "ajv": "^8.8.0",
     "chai": "^4.3.4",
     "express-fileupload": "^1.2.1",
+    "ng-click-outside": "^9.0.1",
     "rxjs": "~6.6.0",
     "set-default-browser": "^1.1.2",
     "socket.io": "^4.3.1",
