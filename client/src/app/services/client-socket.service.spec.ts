@@ -1,7 +1,5 @@
-/* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable no-unused-vars */
 /* eslint-disable dot-notation */
-/* eslint-disable sort-imports */
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -28,7 +26,6 @@ describe('ClientSocketService', () => {
 
     it('should navigate to game page on goToGameView event', () => {
         service.socket = {
-            // eslint-disable-next-line no-unused-vars
             on: (eventName: string, callback: () => void) => {
                 if (eventName === 'goToGameView') {
                     callback();
@@ -41,7 +38,6 @@ describe('ClientSocketService', () => {
 
     it('should initialize roomId with argument', () => {
         service.socket = {
-            // eslint-disable-next-line no-unused-vars
             on: (eventName: string, callback: (roomIdFromServer: string) => void) => {
                 if (eventName === 'yourRoomId') {
                     callback('fakeId');
@@ -64,7 +60,6 @@ describe('ClientSocketService', () => {
             'français',
         );
         service.socket = {
-            // eslint-disable-next-line no-unused-vars
             on: (eventName: string, callback: (gameSettings: GameSettings) => void) => {
                 if (eventName === 'yourGameSettings') {
                     callback(settings);
