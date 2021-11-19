@@ -70,33 +70,48 @@
                     <div class="beginner">
                         <p class="name-title">Noms débutants</p>
                         <hr />
-                        <div class="item" *ngFor="let aiName of this.beginnerNames">
-                            <p class="ai-name">{{ aiName }}</p>
+                        <div class="item" *ngFor="let aiBeginner of this.beginnerNames">
+                            <p class="ai-name">{{ aiBeginner.aiName }}</p>
                             <span class="icons">
-                                <mat-icon color="warn">delete_forever</mat-icon>
-                                <mat-icon>create</mat-icon>
+                                <button (click)="deleteAiPlayer(aiBeginner._id, true, aiBeginner.isDefault)">
+                                    <mat-icon color="warn">delete_forever</mat-icon>
+                                </button>
+                                <button (click)="addAiToDatabase(true, false, aiBeginner._id, aiBeginner.isDefault)">
+                                    <mat-icon>create</mat-icon>
+                                </button>
                             </span>
+                        </div>
+                        <div class="center">
+                            <!-- TODO changer couleur (vert si possible) -->
+                            <button mat-mini-fab id="add" color="" (click)="addAiToDatabase(true, true)">
+                                <mat-icon>add</mat-icon>
+                            </button>
                         </div>
                     </div>
                     <div class="separator"></div>
                     <div class="expert">
                         <p class="name-title">Noms experts</p>
                         <hr />
-                        <div class="item" *ngFor="let aiName of this.expertNames">
-                            <p class="ai-name">{{ aiName }}</p>
+                        <div class="item" *ngFor="let aiExpert of this.expertNames">
+                            <p class="ai-name">{{ aiExpert.aiName }}</p>
                             <span class="icons">
-                                <mat-icon color="warn">delete_forever</mat-icon>
-                                <mat-icon>create</mat-icon>
+                                <button (click)="deleteAiPlayer(aiExpert._id, false, aiExpert.isDefault)">
+                                    <mat-icon color="warn">delete_forever</mat-icon>
+                                </button>
+                                <button (click)="addAiToDatabase(false, false, aiExpert._id, aiExpert.isDefault)">
+                                    <mat-icon>create</mat-icon>
+                                </button>
                             </span>
+                        </div>
+                        <div class="center">
+                            <!-- TODO changer couleur (vert si possible) -->
+                            <button mat-mini-fab id="add" color="" (click)="addAiToDatabase(false, true)">
+                                <mat-icon>add</mat-icon>
+                            </button>
                         </div>
                     </div>
                 </div>
-                <div class="center">
-                    <!-- TODO changer couleur (vert si possible) -->
-                    <button mat-mini-fab id="add" color="">
-                        <mat-icon>add</mat-icon>
-                    </button>
-                </div>
+
             </div>
         </div>
 

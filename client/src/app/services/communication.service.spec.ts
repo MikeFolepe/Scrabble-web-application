@@ -32,7 +32,6 @@ describe('CommunicationService', () => {
         service.validationPost(newPlayedWords).subscribe((response: boolean) => {
             expect(response).toBeUndefined();
         }, fail);
-
         const req = httpMock.expectOne(`${baseUrl}/multiplayer/validateWords`);
         expect(req.request.method).toBe('POST');
         req.error(new ErrorEvent('Random error occurred'));
