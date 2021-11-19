@@ -11,13 +11,10 @@ export const BOARD_COLUMNS = 15;
 export const CENTRAL_CASE_POSITION: Vec2 = { x: 7, y: 7 };
 export const BOARD_SIZE = 16;
 export const GRID_CASE_SIZE = DEFAULT_WIDTH / BOARD_SIZE;
-
 export const EASEL_SIZE = 7;
 export const ALL_EASEL_BONUS = 50;
-
 export const MAX_NUMBER_OF_POSSIBILITY = 3;
 export const NUMBER_OF_SKIP = 6;
-
 export const ONE_SECOND_DELAY = 1000;
 export const TWO_SECOND_DELAY = 2000;
 export const THREE_SECONDS_DELAY = 3000;
@@ -30,7 +27,6 @@ export const PLAYER_ONE_INDEX = 0;
 export const PLAYER_TWO_INDEX = 1;
 export const PLAYER_AI_INDEX = 1;
 export const LAST_INDEX = -1;
-
 export const FONT_SIZE_MAX = 20;
 export const FONT_SIZE_MIN = 10;
 export const DEFAULT_FONT_SIZE = 13;
@@ -40,7 +36,6 @@ export const MIN_RESERVE_SIZE_TO_SWAP = 7;
 export const WHITE_LETTER_INDEX = 26;
 
 export const COLOR_BLACK = 'black';
-
 export const AI_NAME_DATABASE: string[] = ['Mister_Bucky', 'Mister_Samy', 'Miss_Betty'];
 
 export const NAME_SIZE: CustomRange = { min: 4, max: 12 };
