@@ -72,6 +72,12 @@ export class CommunicationService {
     }
 
     // TODO paramètre non utilise
+    uploadFile(file: File): Observable<string> {
+        const formData: FormData = new FormData();
+        formData.append('file', file);
+        return this.http.post<string>(`${this.baseUrl}/multiplayer/uploadDictionary`, formData);
+    }
+
     private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {
         return () => of(result as T);
     }

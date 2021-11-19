@@ -1,19 +1,23 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ERROR_MESSAGE_DELAY } from '@app/classes/constants';
+import { ERROR_MESSAGE_DELAY, THREE_SECONDS_DELAY } from '@app/classes/constants';
 import { JoinDialogComponent } from '@app/modules/initialize-solo-game/join-dialog/join-dialog.component';
 import { CommunicationService } from '@app/services/communication.service';
 import { AiPlayer, AiPlayerDB } from '@common/ai-name';
+import dictionarySchema from '@common/dictionarySchema.json';
+import { Dictionary } from '@app/classes/dictionary';
+import Ajv from 'ajv';
+
+
 
 interface Dictionnary {
     name: string;
     description: string;
     isDefault: boolean;
 }
-
 @Component({
     selector: 'app-admin-page',
     templateUrl: './admin-page.component.html',
@@ -21,17 +25,25 @@ interface Dictionnary {
 })
 export class AdminPageComponent implements OnInit {
     @ViewChild(MatAccordion) accordion: MatAccordion;
+    @ViewChild('fileInput') fileInput: ElementRef;
 
-    dictionaries: Dictionnary[] = [
-        { name: 'Dico #1', description: 'Dictionnaire par défaut', isDefault: true },
-        { name: 'Dico #2', description: 'blabla blablabla #2', isDefault: false },
-        { name: 'Dico #3', description: 'blabla blablabla #3', isDefault: false },
-        { name: 'Dico #4', description: 'blabla blablabla #4', isDefault: false },
+    file: File | null;
+    dictionary: Dictionary;
+    uploadMessage: string;
+    ajv = new Ajv();
+
+    dictionaries: Dictionary[] = [
+        { title: 'Dico #1', description: 'Dictionnaire par défaut', isDefault: true },
+        { title: 'Dico #2', description: 'blabla blablabla #2', isDefault: false },
+        { title: 'Dico #3', description: 'blabla blablabla #3', isDefault: false },
+        { title: 'Dico #4', description: 'blabla blablabla #4', isDefault: false },
     ];
     beginnerNames: AiPlayerDB[];
     expertNames: AiPlayerDB[];
-    isInDatabase: boolean;
-    constructor(private communicationService: CommunicationService, public dialog: MatDialog, public snackBar: MatSnackBar) {}
+    constructor(private communicationService: CommunicationService, public dialog: MatDialog, public snackBar: MatSnackBar) {
+        this.file = null;
+        this.uploadMessage = '';
+    }
 
     ngOnInit() {
         this.communicationService.getAiBeginners().subscribe(
@@ -73,6 +85,73 @@ export class AdminPageComponent implements OnInit {
                 },
             );
         }
+    }
+
+    onFileInput(files: FileList | null): void {
+        if (files) {
+            this.file = files.item(0);
+        }
+    }
+
+    async onSubmit() {
+        if (await this.isDictionaryValid()) {
+            this.addDictionary();
+        } else {
+            this.displayUploadMessage("Le fichier n'est pas un dictionnaire");
+        }
+    }
+
+    async isDictionaryValid(): Promise<boolean> {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            if (this.file) {
+                // If the file is not a JSON
+                if (this.file.type !== 'application/json') {
+                    resolve(false);
+                    return;
+                }
+                reader.readAsText(this.file);
+            }
+            reader.onloadend = () => {
+                // Validate the dictionary with a schema
+                if (typeof reader.result === 'string') this.dictionary = JSON.parse(reader.result);
+                resolve(this.ajv.validate(dictionarySchema, this.dictionary));
+            };
+        });
+    }
+
+    async addDictionary() {
+        if (this.isNameUsed()) {
+            this.displayUploadMessage('Il existe déjà un dictionnaire portant le même nom');
+            return;
+        }
+        this.dictionaries.push({
+            title: this.dictionary.title,
+            description: this.dictionary.description,
+            isDefault: false,
+        });
+        let serverMessage;
+        if (this.file) {
+            serverMessage = await this.communicationService.uploadFile(this.file).toPromise();
+            this.displayUploadMessage(serverMessage);
+        }
+    }
+
+    isNameUsed(): boolean {
+        for (const dictionary of this.dictionaries) {
+            if (this.dictionary.title === dictionary.title) return true;
+        }
+        return false;
+    }
+
+    displayUploadMessage(uploadMessage: string) {
+        if (this.uploadMessage.length) return; // There is already a message occuring
+        this.uploadMessage = uploadMessage;
+        this.file = null;
+        this.fileInput.nativeElement.value = '';
+        setTimeout(() => {
+            this.uploadMessage = '';
+        }, THREE_SECONDS_DELAY);
     }
 
     // TODO n'affiche pas forcement les joueurs ajoutes dans le bon ordre

@@ -23,7 +23,7 @@
                 <mat-expansion-panel *ngFor="let dictionary of this.dictionaries" [disabled]="dictionary.isDefault">
                     <mat-expansion-panel-header>
                         <mat-panel-title>
-                            {{ dictionary.name }}
+                            {{ dictionary.title }}
                         </mat-panel-title>
                         <mat-panel-description>
                             {{ dictionary.description }}
@@ -37,9 +37,18 @@
             </mat-accordion>
             <div class="center">
                 <!-- TODO changer couleur (vert si possible) -->
-                <button mat-fab id="add" color="">
+                <button mat-raised-button class="fill" (click)="fileInput.click()">
+                    {{ file ? file.name : 'Choisir un fichier' }}
+                    <div class="accepted-file" [ngClass]="{ invisible: file !== null }">(.json Seulement)</div>
+                </button>
+                <input hidden type="file" accept=".json" #fileInput (change)="onFileInput(fileInput.files)" />
+
+                <button mat-fab id="add" color="" [disabled]="!file" type="submit" (click)="onSubmit()">
                     <mat-icon>cloud_upload</mat-icon>
                 </button>
+            </div>
+            <div class="alert" [ngClass]="{ visible: uploadMessage.length, success: uploadMessage === 'Uploaded' }">
+                {{ uploadMessage }}
             </div>
         </div>
     </div>

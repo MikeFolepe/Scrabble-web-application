@@ -5,6 +5,7 @@ import * as swaggerUi from 'swagger-ui-express';
 import * as cookieParser from 'cookie-parser';
 import * as cors from 'cors';
 import * as express from 'express';
+import * as fileUpload from 'express-fileupload';
 import { StatusCodes } from 'http-status-codes';
 import { Service } from 'typedi';
 import { MultiplayerController } from './controllers/multiplayer.controller';
@@ -31,7 +32,6 @@ export class Application {
         };
 
         this.config();
-
         this.bindRoutes();
     }
 
@@ -52,6 +52,7 @@ export class Application {
         this.app.use(express.urlencoded({ extended: true }));
         this.app.use(cookieParser());
         this.app.use(cors());
+        this.app.use(fileUpload());
     }
 
     private errorHandling(): void {
