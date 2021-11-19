@@ -14,6 +14,8 @@ export class SendMessageService {
 
     constructor(private clientSocketService: ClientSocketService, private gameSettingsService: GameSettingsService) {
         this.receiveMessageFromOpponent();
+        // To display message in real time in chat box
+        this.receiveConversionMessage();
     }
 
     // displayMessage() will call the method from chatBoxComponent to display the message
@@ -34,6 +36,20 @@ export class SendMessageService {
         this.clientSocketService.socket.emit('sendRoomMessage', 'Message de ' + myName + ' : ' + message, this.clientSocketService.roomId);
     }
 
+    // Function to send message of conversion to all players in the room
+    sendConversionMessage(): void {
+        this.clientSocketService.socket.emit(
+            'sendGameConversionMessage',
+            'Attention la partie est sur le point de se faire convertir en partie Solo.',
+            this.clientSocketService.roomId,
+        );
+    }
+    // Function to receive the conversion Message to the players which is the room
+    receiveConversionMessage(): void {
+        this.clientSocketService.socket.on('receiveGameConversionMessage', (message: string) => {
+            this.displayMessageByType(message, TypeMessage.System);
+        });
+    }
     sendOpponentMessage(opponentMessage: string): void {
         this.typeMessage = TypeMessage.Opponent;
         this.message = opponentMessage;
