@@ -143,6 +143,7 @@ export class PlaceLetterService {
             this.isEaselSize,
             this.isRow,
         );
+
         if (finalResult.validation) {
             this.handleValidPlacement(finalResult, indexPlayer);
             this.skipTurnService.switchTurn();
@@ -339,11 +340,9 @@ export class PlaceLetterService {
         }
         this.isFirstRound = false;
     }
-
     private isLetterOnBoard(position: Vec2, letter: string): boolean {
         return letter.toUpperCase() === this.scrabbleBoard[position.y][position.x].toUpperCase();
     }
-
     private updatePosition(position: Vec2, orientation: Orientation): void {
         position = orientation === Orientation.Horizontal ? { x: position.x++, y: position.y } : { x: position.x, y: position.y++ };
     }

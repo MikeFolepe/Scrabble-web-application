@@ -5,7 +5,7 @@ import { SocketManagerService } from '@app/services/socket-manager.service';
 import * as http from 'http';
 import { AddressInfo } from 'net';
 import { Service } from 'typedi';
-import { DatabaseService } from './services/database.service';
+// import { DatabaseService } from './services/database.service';
 
 @Service()
 export class Server {
@@ -16,7 +16,7 @@ export class Server {
     private socketManagerService: SocketManagerService;
     private roomManagerService: RoomManagerService;
 
-    constructor(private readonly application: Application, private databaseService: DatabaseService) {}
+    constructor(private readonly application: Application /* , private databaseService: DatabaseService*/) {}
 
     private static normalizePort(val: number | string): number | string | boolean {
         const port: number = typeof val === 'string' ? parseInt(val, this.baseDix) : val;
@@ -38,10 +38,10 @@ export class Server {
         this.server.listen(Server.appPort);
         this.server.on('error', (error: NodeJS.ErrnoException) => this.onError(error));
         this.server.on('listening', () => this.onListening());
-        await this.databaseService.start().catch((error) => {
-            console.log('FAILED TO CONNECT... Details: ' + error);
-            process.exit(1);
-        });
+        // await this.databaseService.start().catch((error) => {
+        //     console.log('FAILED TO CONNECT... Details: ' + error);
+        //     process.exit(1);
+        // });
     }
 
     private onError(error: NodeJS.ErrnoException): void {
