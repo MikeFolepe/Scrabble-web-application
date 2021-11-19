@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
-import { INDEX_PLAYER_AI, INDEX_PLAYER_ONE, INDEX_PLAYER_TWO, NUMBER_OF_SKIP, RESERVE } from '@app/classes/constants';
+import { AI_NAME_DATABASE, INDEX_PLAYER_AI, INDEX_PLAYER_ONE, INDEX_PLAYER_TWO, NUMBER_OF_SKIP, RESERVE } from '@app/classes/constants';
 import { DebugService } from '@app/services/debug.service';
+import { PlayerScore } from '@common/player';
 import { ClientSocketService } from './client-socket.service';
+import { CommunicationService } from './communication.service';
 import { GameSettingsService } from './game-settings.service';
 import { LetterService } from './letter.service';
 import { PlayerService } from './player.service';
@@ -16,6 +18,7 @@ export class EndGameService {
     winnerNameByGiveUp = '';
 
     constructor(
+        private httpServer: CommunicationService,
         public clientSocketService: ClientSocketService,
         public letterService: LetterService,
         public playerService: PlayerService,
@@ -69,11 +72,18 @@ export class EndGameService {
 
         if (this.isEndGame) {
             this.clientSocketService.socket.emit('sendEndGame', this.isEndGame, this.clientSocketService.roomId);
+            // const players: PlayerScore[] = [];
+            // players[0] = { score: this.playerService.players[0].score, playerName: this.playerService.players[0].name, isDefault: false };
+            // players[1] = { score: this.playerService.players[1].score, playerName: this.playerService.players[1].name, isDefault: false };
+            // this.httpServer.addPlayers(players).subscribe(() => {
+            //     // eslint-disable-next-line no-console
+            //     console.log('score ajouté');
+            // });
         }
     }
 
     getFinalScore(indexPlayer: number): void {
-        if (!this.isEndGame || this.playerService.players[indexPlayer].score === 0) {
+        if (this.playerService.players[indexPlayer].score === 0) {
             return;
         }
         for (const letter of this.playerService.players[indexPlayer].letterTable) {
@@ -81,9 +91,28 @@ export class EndGameService {
             // Check if score decrease under 0 after subtraction
             if (this.playerService.players[indexPlayer].score < 0) {
                 this.playerService.players[indexPlayer].score = 0;
-                return;
+                break;
             }
         }
+        if (this.playerService.players[indexPlayer].name in AI_NAME_DATABASE) return;
+        // TODO: fort probablement changer ceci pour juste avoir un player au lieu d'un tableau de players
+        const players: PlayerScore[] = [];
+        players[indexPlayer] = {
+            score: this.playerService.players[indexPlayer].score,
+            playerName: this.playerService.players[indexPlayer].name,
+            isDefault: false,
+        };
+        // players[1] = { score: this.playerService.players[1].score, playerName: this.playerService.players[1].name, isDefault: false };
+        this.httpServer.addPlayers(players).subscribe(() => {
+            // eslint-disable-next-line no-console
+            console.log('score ajouté');
+        });
+    }
+
+    clearJoelleData(): void {
+        this.getFinalScore(0);
+        this.getFinalScore(1);
+        this.clearAllData();
     }
 
     clearAllData(): void {

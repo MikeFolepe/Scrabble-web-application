@@ -1,5 +1,5 @@
 import { GameSettings } from '@common/game-settings';
-import { PlayerIndex } from '@common/PlayerIndex';
+import { PlayerIndex } from '@common/playerIndex';
 
 export enum State {
     Playing,

@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { PlayerScore } from '@common/player';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
@@ -24,6 +25,16 @@ export class CommunicationService {
         return this.http
             .post<boolean>(`${this.baseUrl}/multiplayer/validateWords`, this.wordsToValidate)
             .pipe(catchError(this.handleError<boolean>('validationPost')));
+    }
+
+    addPlayers(player: PlayerScore[]): Observable<void> {
+        return this.http.post<void>(`${this.baseUrl}/multiplayer/best-scores`, player).pipe(catchError(this.handleError<void>('addPlayers')));
+    }
+
+    getBestPlayers(): Observable<PlayerScore[]> {
+        return this.http
+            .get<PlayerScore[]>(`${this.baseUrl}/multiplayer/best-scores`)
+            .pipe(catchError(this.handleError<PlayerScore[]>('getbestPlayers')));
     }
 
     private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {

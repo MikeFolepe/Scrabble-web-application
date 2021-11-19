@@ -34,11 +34,15 @@ export class Server {
         this.roomManagerService = new RoomManagerService();
         this.socketManagerService = new SocketManagerService(this.server, this.roomManagerService);
         this.socketManagerService.handleSockets();
-        this.server.listen(Server.appPort);
+        try {
+            this.server.listen(Server.appPort);
+        } catch (error) {
+            console.log('FAILED TO CONNECT SERVER: ' + error);
+        }
         this.server.on('error', (error: NodeJS.ErrnoException) => this.onError(error));
         this.server.on('listening', () => this.onListening());
         await this.databaseService.start().catch((error) => {
-            console.log('FAILED TO CONNECT... Details: ' + error);
+            console.log('FAILED TO CONNECT DATASE: ' + error);
             process.exit(1);
         });
     }

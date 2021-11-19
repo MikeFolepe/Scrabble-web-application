@@ -13,6 +13,7 @@ export class WordValidationService {
     private newPlayedWords: Map<string, string[]>;
     private newPositions: string[];
     private bonusesPositions: Map<string, string>;
+    // TODO: quel est le type de validationState?
     private validationState;
     private foundWords: string[];
 

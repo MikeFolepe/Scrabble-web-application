@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { ONE_SECOND_DELAY, TWO_SECOND_DELAY } from '@app/classes/constants';
 import { ClientSocketService } from '@app/services/client-socket.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
-import { PlayerIndex } from '@common/PlayerIndex';
+import { PlayerIndex } from '@common/playerIndex';
 
 @Component({
     selector: 'app-waiting-room',

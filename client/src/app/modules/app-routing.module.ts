@@ -1,12 +1,13 @@
+import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { FormComponent } from './initialize-solo-game/form/form.component';
-import { GameViewComponent } from './game-view/game-view/game-view.component';
+import { AdminPageComponent } from '@app/pages/admin-page/admin-page.component';
+import { BestScoresComponent } from '@app/pages/best-scores/best-scores.component';
 import { JoinRoomComponent } from '@app/pages/join-room/join-room.component';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
-import { NgModule } from '@angular/core';
 import { PageNotFoundComponent } from '@app/pages/page-not-found/page-not-found.component';
 import { WaitingRoomComponent } from '@app/pages/waiting-room/waiting-room.component';
-import { AdminPageComponent } from '@app/pages/admin-page/admin-page.component';
+import { GameViewComponent } from './game-view/game-view/game-view.component';
+import { FormComponent } from './initialize-solo-game/form/form.component';
 
 const routes: Routes = [
     { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -18,6 +19,7 @@ const routes: Routes = [
     { path: 'game', component: GameViewComponent },
     { path: 'page-not-found', component: PageNotFoundComponent },
     { path: 'admin', component: AdminPageComponent },
+    { path: 'best-scores', component: BestScoresComponent },
     { path: '**', redirectTo: '/page-not-found', pathMatch: 'full' },
 ];
 

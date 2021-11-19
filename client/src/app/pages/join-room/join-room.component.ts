@@ -4,7 +4,7 @@ import { PageEvent } from '@angular/material/paginator';
 import { ERROR_MESSAGE_DELAY } from '@app/classes/constants';
 import { JoinDialogComponent } from '@app/modules/initialize-solo-game/join-dialog/join-dialog.component';
 import { ClientSocketService } from '@app/services/client-socket.service';
-import { PlayerIndex } from '@common/PlayerIndex';
+import { PlayerIndex } from '@common/playerIndex';
 import { Room, State } from '@common/room';
 @Component({
     selector: 'app-join-room',
