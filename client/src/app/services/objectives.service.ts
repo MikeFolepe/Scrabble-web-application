@@ -37,6 +37,7 @@ export class ObjectivesService {
     isCompleted(id: number) {
         switch (id) {
             case 1: {
+                this.validateObjectiveOne();
                 break;
             }
             case 2: {
@@ -64,5 +65,9 @@ export class ObjectivesService {
                 break;
             }
         }
+    }
+
+    validateObjectiveOne() {
+        return;
     }
 }

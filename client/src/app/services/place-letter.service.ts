@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { Injectable } from '@angular/core';
 import {
     BOARD_COLUMNS,
@@ -26,6 +27,7 @@ import { SkipTurnService } from './skip-turn.service';
 })
 export class PlaceLetterService {
     isFirstRound: boolean = true;
+    lastPlacedWord: string;
     scrabbleBoard: string[][]; // 15x15 array
 
     private startPosition: Vec2;
@@ -146,6 +148,7 @@ export class PlaceLetterService {
 
         if (finalResult.validation) {
             this.handleValidPlacement(finalResult, indexPlayer);
+            this.findLastPlacedWord(position, orientation, word);
             this.skipTurnService.switchTurn();
             return true;
         }
@@ -345,5 +348,10 @@ export class PlaceLetterService {
     }
     private updatePosition(position: Vec2, orientation: Orientation): void {
         position = orientation === Orientation.Horizontal ? { x: position.x++, y: position.y } : { x: position.x, y: position.y++ };
+    }
+    private findLastPlacedWord(position: Vec2, orientation: Orientation, word: string) {
+        // const x = orientation === Orientation.Horizontal ? position.x : position.y;
+        // while (this.scrabbleBoard[])
+        console.log(position, orientation, word);
     }
 }

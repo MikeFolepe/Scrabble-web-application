@@ -54,6 +54,10 @@ export class SocketManagerService {
                 }
             });
 
+            socket.on('updatePlayedWords', (playedWords: string, roomId: string) => {
+                socket.to(roomId).emit('receivePlayedWords', playedWords);
+            });
+
             socket.on('updateScoreInfo', (score: number, indexPlayer: number, roomId: string) => {
                 socket.to(roomId).emit('receiveScoreInfo', score, indexPlayer);
             });
