@@ -19,10 +19,8 @@ export class ObjectivesComponent implements OnInit {
     }
 
     onupdate() {
-        const indexes: number[] = [6, 0, 2, 3];
+        const indexes: number[] = [6, 0, 7, 3];
         this.objectivesService.initializeObjectives(indexes);
-        this.publicObjectives[0].isCompleted = true;
-        this.publicObjectives[1].isCompleted = true;
         this.privateObjectives[1].isCompleted = true;
     }
 }

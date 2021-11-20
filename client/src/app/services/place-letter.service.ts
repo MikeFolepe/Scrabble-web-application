@@ -151,7 +151,6 @@ export class PlaceLetterService {
 
         if (finalResult.validation) {
             this.handleValidPlacement(finalResult, indexPlayer);
-            this.findLastPlacedWord(position, orientation);
             this.objectivesService.checkObjectivesCompletion();
             this.skipTurnService.switchTurn();
             return true;
@@ -351,23 +350,5 @@ export class PlaceLetterService {
     }
     private goToNextPosition(position: Vec2, orientation: Orientation): void {
         position = orientation === Orientation.Horizontal ? { x: position.x++, y: position.y } : { x: position.x, y: position.y++ };
-    }
-    private goToPreviousPosition(position: Vec2, orientation: Orientation): void {
-        position = orientation === Orientation.Horizontal ? { x: position.x--, y: position.y } : { x: position.x, y: position.y-- };
-    }
-
-    private findLastPlacedWord(position: Vec2, orientation: Orientation) {
-        let currentPosition = { x: position.x, y: position.y };
-        let lastPlacedWord = '';
-        while (this.isPositionFilled(currentPosition)) {
-            lastPlacedWord += this.scrabbleBoard[currentPosition.y][currentPosition.x];
-            this.goToNextPosition(currentPosition, orientation);
-        }
-        currentPosition = { x: position.x, y: position.y };
-        while (this.isPositionFilled(currentPosition)) {
-            this.goToPreviousPosition(currentPosition, orientation);
-            lastPlacedWord = this.scrabbleBoard[currentPosition.y][currentPosition.x] + lastPlacedWord;
-        }
-        this.lastPlacedWord = lastPlacedWord;
     }
 }

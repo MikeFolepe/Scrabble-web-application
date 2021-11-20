@@ -18,5 +18,6 @@ export const OBJECTIVES: Objective[] = [
 ];
 
 export const DEFAULT_OBJECTIVE: Objective = { name: '', isCompleted: false, isActive: false, score: 0, id: 0 };
-
 export const NUMBER_OF_OBJECTIVES = 2;
+export const CORNER_POSITIONS: string[] = ['A1', 'A15', 'O1', 'O15'];
+export const MIN_SIZE_FOR_BONUS = 8;

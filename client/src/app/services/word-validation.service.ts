@@ -213,14 +213,16 @@ export class WordValidationService {
         }
         this.removeBonuses(this.newPlayedWords);
 
+        this.lastPlayedWords.clear();
+        for (const word of this.newPlayedWords.keys()) {
+            this.lastPlayedWords.set(word, this.newPlayedWords.get(word) as string[]);
+        }
+
         for (const word of this.newPlayedWords.keys()) {
             this.addToPlayedWords(word, this.newPlayedWords.get(word) as string[], this.playedWords);
         }
         this.clientSocketService.socket.emit('updatePlayedWords', JSON.stringify(Array.from(this.playedWords)), this.clientSocketService.roomId);
-        // console.log(this.newPlayedWords);
-        for (const word of this.newPlayedWords.keys()) {
-            this.lastPlayedWords.set(word, this.newPlayedWords.get(word) as string[]);
-        }
+
         this.newPlayedWords.clear();
         return { validation: this.validationState, score: scoreTotal };
     }
