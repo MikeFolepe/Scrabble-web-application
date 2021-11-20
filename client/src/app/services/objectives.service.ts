@@ -1,8 +1,18 @@
 import { Injectable } from '@angular/core';
-import { Objective, OBJECTIVES, DEFAULT_OBJECTIVE, NUMBER_OF_OBJECTIVES, CORNER_POSITIONS, MIN_SIZE_FOR_BONUS } from '@app/classes/objectives';
+import {
+    Objective,
+    OBJECTIVES,
+    DEFAULT_OBJECTIVE,
+    NUMBER_OF_OBJECTIVES,
+    CORNER_POSITIONS,
+    MIN_SIZE_FOR_BONUS,
+    LETTERS_FOR_BONUS,
+} from '@common/objectives';
 import { WordValidationService } from './word-validation.service';
 import { PlayerService } from './player.service';
-import { INVALID_INDEX, PLAYER_ONE_INDEX } from '@app/classes/constants';
+import { PLAYER_ONE_INDEX } from '@app/classes/constants';
+import { ClientSocketService } from './client-socket.service';
+import { GameSettingsService } from './game-settings.service';
 
 @Injectable({
     providedIn: 'root',
@@ -12,10 +22,26 @@ export class ObjectivesService {
     privateObjectives: Objective[];
     publicObjectives: Objective[];
 
-    constructor(private wordValidationService: WordValidationService, private playerService: PlayerService) {
+    constructor(
+        private wordValidationService: WordValidationService,
+        private playerService: PlayerService,
+        private clientSocketService: ClientSocketService,
+        private gameSettingsService: GameSettingsService,
+    ) {
         this.objectives = OBJECTIVES;
         this.privateObjectives = [DEFAULT_OBJECTIVE, DEFAULT_OBJECTIVE];
         this.publicObjectives = [DEFAULT_OBJECTIVE, DEFAULT_OBJECTIVE];
+        this.receiveObjectives();
+    }
+
+    receiveObjectives() {
+        this.clientSocketService.socket.on('receiveObjectives', (objectives: Objective[]) => {
+            for (const objective of objectives) {
+                if (objective.isCompleted) {
+                    this.objectives[objective.id].isCompleted = true;
+                }
+            }
+        });
     }
 
     initializeObjectives(objectivesIndexes: number[]) {
@@ -24,10 +50,8 @@ export class ObjectivesService {
                 this.privateObjectives[i] = this.objectives[objectivesIndexes[i]];
             } else {
                 this.publicObjectives[i - NUMBER_OF_OBJECTIVES] = this.objectives[objectivesIndexes[i]];
-                this.publicObjectives[i - NUMBER_OF_OBJECTIVES].isActive = true;
             }
         }
-        this.privateObjectives[0].isActive = true;
     }
 
     checkObjectivesCompletion() {
@@ -41,8 +65,11 @@ export class ObjectivesService {
 
     isCompleted(id: number) {
         switch (id) {
-            case 1: {
+            case 0: {
                 this.validateObjectiveOne(id);
+                break;
+            }
+            case 1: {
                 break;
             }
             case 2: {
@@ -52,19 +79,17 @@ export class ObjectivesService {
                 break;
             }
             case 4: {
+                this.validateObjectiveFour(id);
                 break;
             }
             case 5: {
                 break;
             }
             case 6: {
-                break;
-            }
-            case 7: {
                 this.validateObjectiveSeven(id);
                 break;
             }
-            case 8: {
+            case 7: {
                 this.validateObjectiveEight(id);
                 break;
             }
@@ -78,11 +103,20 @@ export class ObjectivesService {
         return id;
     }
 
+    validateObjectiveFour(id: number) {
+        let count = 0;
+        for (const word of this.wordValidationService.lastPlayedWords.keys()) {
+            for (const letter of word) {
+                if (LETTERS_FOR_BONUS.includes(letter)) count++;
+            }
+        }
+        if (count > 1) this.addObjectiveScore(id);
+    }
+
     validateObjectiveSeven(id: number) {
         for (const word of this.wordValidationService.lastPlayedWords.keys()) {
             if (word.length >= MIN_SIZE_FOR_BONUS) {
-                this.playerService.addScore(OBJECTIVES[id - 1].score, PLAYER_ONE_INDEX);
-                this.objectives[id - 1].isCompleted = true;
+                this.addObjectiveScore(id);
             }
         }
     }
@@ -90,11 +124,21 @@ export class ObjectivesService {
     validateObjectiveEight(id: number) {
         for (const word of this.wordValidationService.lastPlayedWords.keys()) {
             for (const position of this.wordValidationService.lastPlayedWords.get(word) as string[]) {
-                if (CORNER_POSITIONS.indexOf(position) > INVALID_INDEX) {
-                    this.playerService.addScore(OBJECTIVES[id - 1].score, PLAYER_ONE_INDEX);
-                    this.objectives[id - 1].isCompleted = true;
+                if (CORNER_POSITIONS.includes(position)) {
+                    this.addObjectiveScore(id);
                 }
             }
         }
+    }
+
+    addObjectiveScore(id: number) {
+        this.playerService.addScore(this.objectives[id].score, PLAYER_ONE_INDEX);
+        this.objectives[id].isCompleted = true;
+        this.updateOpponentObjectives();
+    }
+
+    updateOpponentObjectives() {
+        if (!this.gameSettingsService.isSoloMode)
+            this.clientSocketService.socket.emit('sendObjectives', this.objectives, this.clientSocketService.roomId);
     }
 }

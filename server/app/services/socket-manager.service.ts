@@ -4,6 +4,7 @@ import { Letter } from '@common/letter';
 import { PlayerIndex } from '@common/PlayerIndex';
 import { Room, State } from '@common/room';
 import { Vec2 } from '@common/vec2';
+import { Objective } from '@common/objectives';
 import * as http from 'http';
 import * as io from 'socket.io';
 import { Service } from 'typedi';
@@ -56,6 +57,10 @@ export class SocketManagerService {
 
             socket.on('updateScoreInfo', (score: number, indexPlayer: number, roomId: string) => {
                 socket.to(roomId).emit('receiveScoreInfo', score, indexPlayer);
+            });
+
+            socket.on('sendObjectives', (objectives: Objective[], roomId: string) => {
+                socket.to(roomId).emit('receiveObjectives', objectives);
             });
 
             socket.on('sendActions', (actions: string[], roomId: string) => {

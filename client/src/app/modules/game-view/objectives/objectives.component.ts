@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Objective } from '@app/classes/objectives';
+import { Objective } from '@common/objectives';
 import { ObjectivesService } from '@app/services/objectives.service';
 
 @Component({
