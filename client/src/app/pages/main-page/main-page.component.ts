@@ -37,8 +37,6 @@ export class MainPageComponent implements OnInit {
         // update game type and game mode, then route
         this.selectedGameType = this.gameTypes[this.selectedGameTypeIndex];
         this.gameSettingsService.gameType = this.selectedGameType as GameTypes;
-        // eslint-disable-next-line no-console
-        console.log(this.selectedGameType);
         switch (this.selectedGameMode) {
             case this.gameModes[0]: {
                 this.gameSettingsService.isSoloMode = true;
