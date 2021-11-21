@@ -5,8 +5,6 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { PLAYER_AI_INDEX, PLAYER_TWO_INDEX, RESERVE } from '@app/classes/constants';
-// import { PlayerAI } from '@app/models/player-ai.model';
-// import { Player } from '@app/models/player.model';
 import { SkipTurnService } from '@app/services/skip-turn.service';
 import { GameSettings } from '@common/game-settings';
 import { Letter } from '@common/letter';

@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { NUMBER_OF_SKIP, PLAYER_AI_INDEX, PLAYER_ONE_INDEX, PLAYER_TWO_INDEX, RESERVE } from '@app/classes/constants';
 import { DebugService } from '@app/services/debug.service';
+import { PlayerScore } from '@common/player';
 import { ClientSocketService } from './client-socket.service';
+import { CommunicationService } from './communication.service';
 import { GameSettingsService } from './game-settings.service';
 import { LetterService } from './letter.service';
 import { PlayerService } from './player.service';
@@ -16,6 +18,7 @@ export class EndGameService {
     winnerNameByGiveUp = '';
 
     constructor(
+        private httpServer: CommunicationService,
         public clientSocketService: ClientSocketService,
         public letterService: LetterService,
         public playerService: PlayerService,
@@ -25,10 +28,8 @@ export class EndGameService {
         this.clearAllData();
         this.actionsLog = [];
         this.isEndGame = false;
-
         this.receiveEndGameFromServer();
         this.receiveActionsFromServer();
-        // this.receiveEndGameByGiveUp();
     }
 
     receiveEndGameFromServer(): void {
@@ -36,18 +37,6 @@ export class EndGameService {
             this.isEndGame = isEndGame;
         });
     }
-    // receiveEndGameByGiveUp(): void {
-    //     this.clientSocketService.socket.on('receiveEndGameByGiveUp', (isEndGameByGiveUp: boolean, winnerName: string) => {
-    //         console.log('winner' + winnerName);
-    //         console.log('Myclientname' + this.gameSettingsService.gameSettings.playersName[0]);
-    //         // this.isEndGameByGiveUp = isEndGameByGiveUp;
-    //         // this.winnerNameByGiveUp = winnerName;
-    //         if (winnerName === this.gameSettingsService.gameSettings.playersName[0]) {
-    //             console.log('On traduit la forme');
-    //             this.gameSettingsService.isSoloMode = isEndGameByGiveUp;
-    //         }
-    //     });
-    // }
 
     receiveActionsFromServer(): void {
         this.clientSocketService.socket.on('receiveActions', (actionsLog: string[]) => {
@@ -79,22 +68,35 @@ export class EndGameService {
     }
 
     getFinalScore(indexPlayer: number): void {
-        if (!this.isEndGame || this.playerService.players[indexPlayer].score === 0) {
+        if (this.playerService.players[indexPlayer].score === 0) {
             return;
         }
+
         for (const letter of this.playerService.players[indexPlayer].letterTable) {
             this.playerService.players[indexPlayer].score -= letter.points;
-            // Check if score decrease under 0 after subtraction
+            // Check if score decrease under 0 after substraction
             if (this.playerService.players[indexPlayer].score < 0) {
                 this.playerService.players[indexPlayer].score = 0;
-                return;
+                break;
             }
         }
+        // TODO: décommenter la ligne suivante si jamais le JV apparait dans les classements
+        // if (this.playerService.players[indexPlayer].name in AI_NAME_DATABASE) return;
+
+        // TODO: fort probablement changer ceci pour juste avoir un player au lieu d'un tableau de players
+        const players: PlayerScore[] = [];
+        players[indexPlayer] = {
+            score: this.playerService.players[indexPlayer].score,
+            playerName: this.playerService.players[indexPlayer].name,
+            isDefault: false,
+        };
+        this.httpServer.addPlayersScores(players, this.gameSettingsService.gameType).subscribe(() => {
+            // TODO:voir si supprimer ce subscribe
+        });
     }
 
     clearAllData(): void {
         this.playerService.players = [];
-        // console.log('Voici la taille du tableau de players' + this.playerService.players.length);
         this.letterService.reserve = JSON.parse(JSON.stringify(RESERVE));
         this.isEndGameByGiveUp = false;
         this.winnerNameByGiveUp = '';

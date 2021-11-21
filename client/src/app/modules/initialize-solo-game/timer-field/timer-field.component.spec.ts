@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
@@ -39,17 +40,13 @@ describe('TimerFieldComponent', () => {
     });
 
     it('Time must be invalidated if the input time is not in valid the range', () => {
-        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
         minuteInput = '70';
-        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
         secondInput = '00';
         expect(component.isValidTime(minuteInput, secondInput)).toBe(false);
     });
 
     it('Time must be validated if the input time is in valid the range', () => {
-        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
         minuteInput = '05';
-        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
         secondInput = '00';
         expect(component.isValidTime(minuteInput, secondInput)).toBe(true);
     });

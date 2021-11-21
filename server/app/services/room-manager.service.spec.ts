@@ -157,14 +157,11 @@ describe('RoomManagerService', () => {
     it('should find the room with state in waiting and return it', () => {
         settings.playersNames[1] = '';
         roomManagerService.createRoom(socketId1, id, settings);
-        // roomManagerService.createRoom(socketId1, 'LOG2993', settings);
-        // roomManagerService.createRoom(socketId1, 'LOG2994', settings);
-        // roomManagerService.createRoom(socketId1, 'LOG2995', settings);
+        // TODO:  traduire tous ces commentaires en anglais
         // Deuxieme room avec un joueur et etat waiting
         roomManagerService.createRoom(socketId3, id1, mySettings);
         roomManagerService.createRoom(socketId4, id4, mySettings1);
         expect(roomManagerService.findRoomInWaitingState('Mike')).not.to.equal(undefined);
-        // console.log(roomManagerService.roomWaiting.length);
     });
     it('should not find the room with state in waiting and return it', () => {
         // Premiere room en attente

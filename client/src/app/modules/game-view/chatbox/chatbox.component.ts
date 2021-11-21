@@ -83,11 +83,11 @@ export class ChatboxComponent implements OnInit, AfterViewInit {
     ngAfterViewInit(): void {
         const findEnd = setInterval(() => {
             this.endGameService.checkEndGame();
-            this.chatBoxService.displayFinalMessage(PLAYER_ONE_INDEX);
-            this.chatBoxService.displayFinalMessage(PLAYER_TWO_INDEX);
-            this.endGameService.getFinalScore(PLAYER_ONE_INDEX);
-            this.endGameService.getFinalScore(PLAYER_TWO_INDEX);
             if (this.endGameService.isEndGame) {
+                this.chatBoxService.displayFinalMessage(PLAYER_ONE_INDEX);
+                this.chatBoxService.displayFinalMessage(PLAYER_TWO_INDEX);
+                this.endGameService.getFinalScore(PLAYER_ONE_INDEX);
+                this.endGameService.getFinalScore(PLAYER_TWO_INDEX);
                 this.skipTurnService.stopTimer();
                 clearInterval(findEnd);
             }
