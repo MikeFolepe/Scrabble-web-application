@@ -23,7 +23,7 @@ export class ObjectivesService {
     objectives: Objective[];
     privateObjectives: Objective[];
     publicObjectives: Objective[];
-    activeTime: number;
+    activeTimeRemaining: number;
 
     constructor(
         private wordValidationService: WordValidationService,
@@ -34,7 +34,7 @@ export class ObjectivesService {
         this.objectives = OBJECTIVES;
         this.privateObjectives = [DEFAULT_OBJECTIVE, DEFAULT_OBJECTIVE];
         this.publicObjectives = [DEFAULT_OBJECTIVE, DEFAULT_OBJECTIVE];
-        this.activeTime = 0;
+        this.activeTimeRemaining = ONE_MINUTE;
         this.receiveObjectives();
     }
 
@@ -116,7 +116,7 @@ export class ObjectivesService {
     }
 
     validateObjectiveFour(id: number) {
-        if (this.activeTime <= ONE_MINUTE && this.playerService.players[PLAYER_ONE_INDEX].score >= MIN_SCORE_FOR_OBJ4) this.addObjectiveScore(id);
+        if (this.activeTimeRemaining > 0 && this.playerService.players[PLAYER_ONE_INDEX].score >= MIN_SCORE_FOR_OBJ4) this.addObjectiveScore(id);
     }
 
     validateObjectiveFive(id: number) {

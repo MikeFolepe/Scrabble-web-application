@@ -100,6 +100,6 @@ export class SkipTurnService {
     }
 
     updateActiveTime() {
-        if (this.isTurn) this.objectivesService.activeTime++;
+        if (this.isTurn && this.objectivesService.activeTimeRemaining > 0) this.objectivesService.activeTimeRemaining--;
     }
 }

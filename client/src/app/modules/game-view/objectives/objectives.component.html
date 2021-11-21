@@ -17,5 +17,9 @@
         <div class="score">{{ objective.score }}</div>
         <div class="description">{{ objective.name }}</div>
         <div class="checked" [ngClass]="{visible: objective.isCompleted}">&#10003;</div>
+        <div class="timer" [ngClass]="{visible: objective.id === 3 && !objective.isCompleted, 
+                                       failed: objectivesService.activeTimeRemaining === 0}">
+            {{objectivesService.activeTimeRemaining}}
+        </div>
     </div>
 </div>

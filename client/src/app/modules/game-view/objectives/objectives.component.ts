@@ -10,8 +10,9 @@ import { ObjectivesService } from '@app/services/objectives.service';
 export class ObjectivesComponent implements OnInit {
     privateObjectives: Objective[];
     publicObjectives: Objective[];
+    activeTimeRemaining: number;
 
-    constructor(private objectivesService: ObjectivesService) {}
+    constructor(public objectivesService: ObjectivesService) {}
 
     ngOnInit() {
         this.privateObjectives = this.objectivesService.privateObjectives;
@@ -19,7 +20,7 @@ export class ObjectivesComponent implements OnInit {
     }
 
     onupdate() {
-        const indexes: number[] = [3, 0, 7, 4];
+        const indexes: number[] = [4, 0, 7, 3];
         this.objectivesService.initializeObjectives(indexes);
         this.privateObjectives[1].isCompleted = true;
     }
