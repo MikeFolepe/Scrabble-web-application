@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+// JUSTIFICATION : required in order to display the DB and server connection status
 import { Application } from '@app/app';
 import { RoomManagerService } from '@app/services/room-manager.service';
 import { SocketManagerService } from '@app/services/socket-manager.service';
@@ -30,16 +31,19 @@ export class Server {
     }
     async init(): Promise<void> {
         this.application.app.set('port', Server.appPort);
-
         this.server = http.createServer(this.application.app);
         this.roomManagerService = new RoomManagerService();
         this.socketManagerService = new SocketManagerService(this.server, this.roomManagerService);
         this.socketManagerService.handleSockets();
-        this.server.listen(Server.appPort);
+        try {
+            this.server.listen(Server.appPort);
+        } catch (error) {
+            console.log('FAILED TO CONNECT SERVER: ' + error);
+        }
         this.server.on('error', (error: NodeJS.ErrnoException) => this.onError(error));
         this.server.on('listening', () => this.onListening());
         await this.databaseService.start().catch((error) => {
-            console.log('FAILED TO CONNECT... Details: ' + error);
+            console.log('FAILED TO CONNECT DATABASE: ' + error);
             process.exit(1);
         });
     }
@@ -63,7 +67,7 @@ export class Server {
         }
     }
 
-    /**
+    /* TODO: traduire ceci en anglais
      * Se produit lorsque le serveur se met à écouter sur le port.
      */
     private onListening(): void {

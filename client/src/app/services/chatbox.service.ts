@@ -78,7 +78,6 @@ export class ChatboxService {
     }
 
     displayFinalMessage(indexPlayer: number): void {
-        if (!this.endGameService.isEndGame) return;
         this.sendMessageService.displayMessageByType('Fin de partie - lettres restantes', TypeMessage.System);
         for (const letter of this.playerService.players[indexPlayer].letterTable) {
             this.endGameEasel += letter.value;

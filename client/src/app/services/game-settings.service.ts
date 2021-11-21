@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BONUS_POSITIONS } from '@app/classes/constants';
 import { GameSettings, StartingPlayer } from '@common/game-settings';
+import { GameType } from '@common/game-type';
 
 @Injectable({
     providedIn: 'root',
@@ -17,5 +18,6 @@ export class GameSettingsService {
         dictionary: '',
     };
     isSoloMode: boolean;
+    gameType: GameType;
     isRedirectedFromMultiplayerGame: boolean;
 }
