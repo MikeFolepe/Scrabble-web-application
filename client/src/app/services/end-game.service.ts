@@ -37,22 +37,6 @@ export class EndGameService {
             this.isEndGame = isEndGame;
         });
     }
-<<<<<<< HEAD
-    // TODO: qqun pour revoir ça svp
-    // receiveEndGameByGiveUp(): void {
-    //     this.clientSocketService.socket.on('receiveEndGameByGiveUp', (isEndGameByGiveUp: boolean, winnerName: string) => {
-    //         console.log('winner' + winnerName);
-    //         console.log('Myclientname' + this.gameSettingsService.gameSettings.playersName[0]);
-    //         // this.isEndGameByGiveUp = isEndGameByGiveUp;
-    //         // this.winnerNameByGiveUp = winnerName;
-    //         if (winnerName === this.gameSettingsService.gameSettings.playersName[0]) {
-    //             console.log('On traduit la forme');
-    //             this.gameSettingsService.isSoloMode = isEndGameByGiveUp;
-    //         }
-    //     });
-    // }
-=======
->>>>>>> 40c6fa3f1bb49595c51b3e07080f91d539712646
 
     receiveActionsFromServer(): void {
         this.clientSocketService.socket.on('receiveActions', (actionsLog: string[]) => {
