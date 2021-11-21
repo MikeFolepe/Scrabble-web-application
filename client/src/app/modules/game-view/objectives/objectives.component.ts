@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Objective } from '@common/objectives';
 import { ObjectivesService } from '@app/services/objectives.service';
+import { Objective } from '@common/objectives';
 
 @Component({
     selector: 'app-objectives',

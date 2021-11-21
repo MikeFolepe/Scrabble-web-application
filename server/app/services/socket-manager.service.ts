@@ -1,10 +1,10 @@
 import { RoomManagerService } from '@app/services/room-manager.service';
 import { GameSettings } from '@common/game-settings';
 import { Letter } from '@common/letter';
+import { Objective } from '@common/objectives';
 import { PlayerIndex } from '@common/PlayerIndex';
 import { Room, State } from '@common/room';
 import { Vec2 } from '@common/vec2';
-import { Objective } from '@common/objectives';
 import * as http from 'http';
 import * as io from 'socket.io';
 import { Service } from 'typedi';
@@ -112,6 +112,7 @@ export class SocketManagerService {
                 }
                 if (room.state === State.Playing) {
                     room.state = State.Finish;
+                    // TODO: prendre une decision sur ça
                     // this.sendWinnerName(socket, roomId);
                     return;
                 }
@@ -133,6 +134,7 @@ export class SocketManagerService {
             // room creation alerts all clients on the new rooms configurations
             this.sio.emit('roomConfiguration', this.roomManagerService.rooms);
             // Send number of rooms available
+            // TODO: getNumberofRoomInWaitingState -> Of
             this.sio.emit('roomAvailable', this.roomManagerService.getNumberofRoomInWaitingState());
         });
     }
@@ -169,6 +171,7 @@ export class SocketManagerService {
                     this.roomManagerService.getWinnerName(roomId, this.roomManagerService.findLoserIndex(socket.id)),
                 );
             this.roomManagerService.deleteRoom(roomId);
+            // TODO: prendre une decision sur ça
             // const room = roomId;
             // const isgame = isEndGame;
             // this.sio.in(roomId).emit('stopTimer');

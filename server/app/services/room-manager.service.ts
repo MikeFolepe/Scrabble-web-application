@@ -7,10 +7,12 @@ import { Service } from 'typedi';
 @Service()
 export class RoomManagerService {
     rooms: Room[];
+    // TODO: prendre une decision PM
     // roomWaiting: Room[];
 
     constructor() {
         this.rooms = [];
+        // TODO: prendre une decision PM
         // this.roomWaiting = [];
     }
 
@@ -88,6 +90,7 @@ export class RoomManagerService {
         return room !== undefined ? room.id : '';
     }
 
+    // TODO: loser --> looser ??
     findLoserIndex(socketId: string): number {
         for (const room of this.rooms) {
             for (const ids of room.socketIds) {
