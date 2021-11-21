@@ -21,6 +21,7 @@ export const THREE_SECONDS_DELAY = 3000;
 export const DELAY_BEFORE_PLAYING = 3000;
 export const ERROR_MESSAGE_DELAY = 4000;
 export const DELAY_TO_PASS_TURN = 5000;
+export const ONE_MINUTE = 60;
 
 export const INVALID_INDEX = -1;
 export const PLAYER_ONE_INDEX = 0;

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Objective } from '@common/objectives';
 import { ObjectivesService } from '@app/services/objectives.service';
+import { Objective } from '@common/objectives';
 
 @Component({
     selector: 'app-objectives',
@@ -19,7 +19,7 @@ export class ObjectivesComponent implements OnInit {
     }
 
     onupdate() {
-        const indexes: number[] = [6, 0, 7, 3];
+        const indexes: number[] = [3, 0, 7, 4];
         this.objectivesService.initializeObjectives(indexes);
         this.privateObjectives[1].isCompleted = true;
     }
