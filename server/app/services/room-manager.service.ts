@@ -1,6 +1,6 @@
 import { OUT_BOUND_INDEX_OF_SOCKET } from '@app/classes/constants';
 import { GameSettings, StartingPlayer } from '@common/game-settings';
-import { PlayerIndex } from '@common/playerIndex';
+import { PlayerIndex } from '@common/player-index';
 import { Room, State } from '@common/room';
 import { Service } from 'typedi';
 
