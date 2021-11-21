@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { AI_BEGINNERS, AI_EXPERTS, DATABASE_URL, DEFAULT_SCORES } from '@app/classes/constants';
-import { BEGINNER_NAME_MODEL, EXPERT_NAME_MODEL, SCORES_MODEL, SCORES_MODEL_CLASSIC, SCORES_MODEL_LOG2990 } from '@app/classes/database.schema';
+import { BEGINNER_NAME_MODEL, EXPERT_NAME_MODEL, SCORES_MODEL } from '@app/classes/database.schema';
 import { GameType } from '@common/game-type';
 import { PlayerScore } from '@common/player';
 import * as mongoose from 'mongoose';
@@ -66,9 +66,9 @@ export class DatabaseService {
         }
     }
 
-    async resetScores(): Promise<void> {
-        await SCORES_MODEL_CLASSIC.deleteMany({ isDefault: false }).exec();
-        await SCORES_MODEL_LOG2990.deleteMany({ isDefault: false }).exec();
+    async resetScores(gameType: GameType): Promise<void> {
+        const scoresModel = SCORES_MODEL.get(gameType) as mongoose.Model<PlayerScore>;
+        await scoresModel.deleteMany({ isDefault: false }).exec();
     }
 
     async resetData(): Promise<void> {
