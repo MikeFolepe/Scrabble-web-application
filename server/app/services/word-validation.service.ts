@@ -1,12 +1,7 @@
-import * as dictionaryData from '@common/dictionary.json';
 import { Service } from 'typedi';
 @Service()
 export class WordValidationService {
-    private dictionary: string[];
-    constructor() {
-        this.dictionary = JSON.parse(JSON.stringify(dictionaryData)).words;
-    }
-
+    dictionary: string[];
     isValidInDictionary(words: string[]): boolean {
         if (words.length === 0) return false;
         let validWordsCount = 0;

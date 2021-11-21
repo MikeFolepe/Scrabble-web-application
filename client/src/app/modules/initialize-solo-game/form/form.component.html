@@ -23,5 +23,10 @@
         </fieldset>
     </fieldset>
 </form>
+<div id = "dictionaries">
+    <div *ngFor="let dictionary of dictionaries">
+
+    </div>
+</div>
 <!-- TODO Bonus : press enter on that page = clicks on this button -->
-<button mat-raised-button (click)="initGame()" id="submit-button" color="warn" [disabled]="!form.valid">Continue</button>
+<button mat-raised-button (click)="initGame()" id="submit-button" color="warn" [disabled]="!form.valid && isDictionaryDeleted">Continue</button>

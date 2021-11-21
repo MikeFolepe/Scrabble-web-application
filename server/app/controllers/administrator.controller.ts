@@ -108,6 +108,10 @@ export class AdministratorController {
             res.status(StatusCodes.OK).send(this.administratorService.deleteDictionary(req.params.fileName));
         });
 
+        this.router.get('/download/:fileName', (req: Request, res: Response) => {
+            res.download(`./dictionaries/${req.params.fileName}`);
+        });
+
         this.router.post('/uploadDictionary', (req, res) => {
             let uploadedFile;
             if (!req['files']) return res.sendStatus(StatusCodes.NOT_FOUND).send(JSON.stringify('File not found'));

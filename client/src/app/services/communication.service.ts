@@ -28,6 +28,12 @@ export class CommunicationService {
             .pipe(catchError(this.handleError<boolean>('validationPost')));
     }
 
+    getGameDictionary(fileName: string): Observable<string[]> {
+        return this.http
+            .get<string[]>(`${this.baseUrl}/multiplayer/dictionary/${fileName}`)
+            .pipe(catchError(this.handleError<string[]>('getGameDictionary')));
+    }
+
     getAiPlayers(aiType: AiType): Observable<AiPlayerDB[]> {
         if (aiType) {
             return this.http.get<AiPlayerDB[]>(`${this.baseUrl}/admin/aiExperts`).pipe(catchError(this.handleError<AiPlayerDB[]>('getAiPlayers')));

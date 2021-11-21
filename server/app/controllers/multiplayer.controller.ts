@@ -1,5 +1,6 @@
 import { WordValidationService } from '@app/services/word-validation.service';
 import { Request, Response, Router } from 'express';
+import * as fileSystem from 'fs';
 import { StatusCodes } from 'http-status-codes';
 import { Service } from 'typedi';
 
@@ -37,6 +38,12 @@ export class MultiplayerController {
         this.router.post('/validateWords', (req: Request, res: Response) => {
             const validation = this.wordValidator.isValidInDictionary(req.body);
             res.status(StatusCodes.OK).send(validation);
+        });
+
+        this.router.get('/dictionary/:fileName', (req: Request, res: Response) => {
+            const readFile: string[] = JSON.parse(fileSystem.readFileSync(`./dictionaries/${req.params.fileName}`, 'utf8')).words;
+            this.wordValidator.dictionary = readFile;
+            res.status(StatusCodes.OK).send(readFile);
         });
     }
 }
