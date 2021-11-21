@@ -91,8 +91,7 @@ export class EndGameService {
             isDefault: false,
         };
         this.httpServer.addPlayersScores(players, this.gameSettingsService.gameType).subscribe(() => {
-            // eslint-disable-next-line no-console
-            console.log('score ajouté');
+            // TODO:voir si supprimer ce subscribe
         });
     }
 

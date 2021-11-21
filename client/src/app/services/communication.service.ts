@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AiPlayer, AiPlayerDB } from '@common/ai-name';
-import { GameTypes } from '@common/game-types';
+import { GameType } from '@common/game-type';
 import { PlayerScore } from '@common/player';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -29,8 +29,8 @@ export class CommunicationService {
             .pipe(catchError(this.handleError<boolean>('validationPost')));
     }
 
-    addPlayersScores(players: PlayerScore[], gameType: GameTypes): Observable<void> {
-        if (gameType === GameTypes.Classic)
+    addPlayersScores(players: PlayerScore[], gameType: GameType): Observable<void> {
+        if (gameType === GameType.Classic)
             return this.http
                 .post<void>(`${this.baseUrl}/multiplayer/best-scores-classic`, players)
                 .pipe(catchError(this.handleError<void>('addPlayers')));
@@ -39,8 +39,8 @@ export class CommunicationService {
             .pipe(catchError(this.handleError<void>('addPlayers')));
     }
 
-    getBestPlayers(gameType: GameTypes): Observable<PlayerScore[]> {
-        if (gameType === GameTypes.Classic)
+    getBestPlayers(gameType: GameType): Observable<PlayerScore[]> {
+        if (gameType === GameType.Classic)
             return this.http
                 .get<PlayerScore[]>(`${this.baseUrl}/multiplayer/best-scores-classic`)
                 .pipe(catchError(this.handleError<PlayerScore[]>('getbestPlayers')));

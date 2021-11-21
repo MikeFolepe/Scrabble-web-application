@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommunicationService } from '@app/services/communication.service';
-import { GameTypes } from '@common/game-types';
+import { GameType } from '@common/game-type';
 import { PlayerScore } from '@common/player';
 
 @Component({
@@ -14,7 +14,7 @@ export class BestScoresComponent implements OnInit {
     constructor(private communicationService: CommunicationService) {}
 
     ngOnInit(): void {
-        this.communicationService.getBestPlayers(GameTypes.Classic).subscribe((players: PlayerScore[]) => (this.bestPlayersInClassicMode = players));
-        this.communicationService.getBestPlayers(GameTypes.Log2990).subscribe((players: PlayerScore[]) => (this.bestPlayersInLog2990Mode = players));
+        this.communicationService.getBestPlayers(GameType.Classic).subscribe((players: PlayerScore[]) => (this.bestPlayersInClassicMode = players));
+        this.communicationService.getBestPlayers(GameType.Log2990).subscribe((players: PlayerScore[]) => (this.bestPlayersInLog2990Mode = players));
     }
 }

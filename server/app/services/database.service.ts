@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { AI_BEGINNERS, AI_EXPERTS, DATABASE_URL, DEFAULT_SCORES } from '@app/classes/constants';
-import { BEGINNER_NAME_MODEL, EXPERT_NAME_MODEL, SCORES_MODEL_CLASSIC, SCORES_MODEL_LOG2990 } from '@app/classes/database.schema';
+import { BEGINNER_NAME_MODEL, EXPERT_NAME_MODEL, SCORES_MODEL, SCORES_MODEL_CLASSIC, SCORES_MODEL_LOG2990 } from '@app/classes/database.schema';
+import { GameType } from '@common/game-type';
+import { PlayerScore } from '@common/player';
 import * as mongoose from 'mongoose';
 import { Service } from 'typedi';
 
@@ -23,17 +25,30 @@ export class DatabaseService {
                 throw new Error('Distant database connection error');
             });
         this.setDefaultData();
+        this.setDefaultScores(GameType.Classic);
+        this.setDefaultScores(GameType.Log2990);
     }
 
     async closeConnection(): Promise<void> {
         await mongoose.connection.close();
     }
+    async setDefaultScores(gameType: GameType): Promise<void> {
+        const scoresModel = SCORES_MODEL.get(gameType) as mongoose.Model<PlayerScore>;
+        await scoresModel.deleteMany({ isDefault: true }).exec();
+        for (const player of DEFAULT_SCORES) {
+            const scoreToAdd = new scoresModel({
+                score: player.score,
+                playerName: player.playerName,
+                isDefault: player.isDefault,
+            });
+            await scoreToAdd.save();
+        }
+    }
 
     async setDefaultData(): Promise<void> {
         await BEGINNER_NAME_MODEL.deleteMany({ isDefault: true }).exec();
         await EXPERT_NAME_MODEL.deleteMany({ isDefault: true }).exec();
-        await SCORES_MODEL_CLASSIC.deleteMany({ isDefault: true }).exec();
-        await SCORES_MODEL_LOG2990.deleteMany({ isDefault: true }).exec();
+
         for (const aiBeginner of AI_BEGINNERS) {
             const beginner = new BEGINNER_NAME_MODEL({
                 aiName: aiBeginner.aiName,
@@ -49,27 +64,16 @@ export class DatabaseService {
             });
             await expert.save();
         }
-        for (const player of DEFAULT_SCORES) {
-            const scoreToAddClassic = new SCORES_MODEL_CLASSIC({
-                score: player.score,
-                playerName: player.playerName,
-                isDefault: player.isDefault,
-            });
-            await scoreToAddClassic.save();
-            const scoreToAddLog2990 = new SCORES_MODEL_LOG2990({
-                score: player.score,
-                playerName: player.playerName,
-                isDefault: player.isDefault,
-            });
-            await scoreToAddLog2990.save();
-        }
+    }
+
+    async resetScores(): Promise<void> {
+        await SCORES_MODEL_CLASSIC.deleteMany({ isDefault: false }).exec();
+        await SCORES_MODEL_LOG2990.deleteMany({ isDefault: false }).exec();
     }
 
     async resetData(): Promise<void> {
         await BEGINNER_NAME_MODEL.deleteMany({ isDefault: false }).exec();
         await EXPERT_NAME_MODEL.deleteMany({ isDefault: false }).exec();
-        await SCORES_MODEL_CLASSIC.deleteMany({ isDefault: false }).exec();
-        await SCORES_MODEL_LOG2990.deleteMany({ isDefault: false }).exec();
         // TODO supprimer dictionnaires
     }
 }

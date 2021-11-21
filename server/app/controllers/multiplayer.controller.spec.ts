@@ -14,15 +14,15 @@ describe('MultiPlayerController', () => {
         expressApp = app.app;
     });
 
-    // it('should return the result of a validation from a valid post request from the client', (done) => {
-    //     chai.request(expressApp)
-    //         .post('/api/multiplayer/validateWords')
-    //         .send(new Array<string>('mdmd'))
-    //         .end((err, response) => {
-    //             expect(response.body).to.equal(false);
-    //             done();
-    //         });
-    // });
+    it('should return the result of a validation from a valid post request from the client', (done) => {
+        chai.request(expressApp)
+            .post('/api/multiplayer/validateWords')
+            .send(new Array<string>('mdmd'))
+            .end((err, response) => {
+                expect(response.body).to.equal(false);
+                done();
+            });
+    });
 
     it('should return the result of a validation from a valid post request from the client', (done) => {
         chai.request(expressApp)

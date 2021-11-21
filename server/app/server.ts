@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+// JUSTIFICATION : required in order to display the DB and server connection status
 import { Application } from '@app/app';
 import { RoomManagerService } from '@app/services/room-manager.service';
 import { SocketManagerService } from '@app/services/socket-manager.service';

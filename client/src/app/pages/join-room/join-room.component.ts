@@ -69,7 +69,6 @@ export class JoinRoomComponent implements OnInit {
                     }, ERROR_MESSAGE_DELAY);
                     return;
                 }
-                // console.log('jespere tu viens pas ici!!!');
                 this.clientSocketService.socket.emit('newRoomCustomer', playerName, room.id);
             });
     }
