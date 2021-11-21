@@ -1,8 +1,8 @@
 import { AI_BEGINNERS, AI_EXPERTS, DATABASE_URL } from '@app/classes/constants';
-import { BEGINNER_NAME_MODEL, EXPERT_NAME_MODEL } from '@app/classes/database.schema';
+import { AI_MODELS, DbModel } from '@app/classes/database.schema';
+import { AiType } from '@common/ai-name';
 import * as mongoose from 'mongoose';
 import { Service } from 'typedi';
-
 @Service()
 export class DatabaseService {
     database: mongoose.Mongoose = mongoose;
@@ -23,37 +23,25 @@ export class DatabaseService {
                 throw new Error('Distant database connection error');
             });
 
-        this.setDefaultData();
+        this.setDefaultData(AiType.beginner);
+        this.setDefaultData(AiType.expert);
     }
 
     async closeConnection(): Promise<void> {
         await mongoose.connection.close();
     }
 
-    async setDefaultData(): Promise<void> {
-        await BEGINNER_NAME_MODEL.deleteMany({ isDefault: true }).exec();
-        await EXPERT_NAME_MODEL.deleteMany({ isDefault: true }).exec();
-        for (const aiBeginner of AI_BEGINNERS) {
-            const beginner = new BEGINNER_NAME_MODEL({
-                aiName: aiBeginner.aiName,
-                isDefault: aiBeginner.isDefault,
-            });
-            await beginner.save();
-        }
+    async setDefaultData(aiEnum: number): Promise<void> {
+        const aiModel = AI_MODELS.get(aiEnum) as DbModel;
+        await aiModel.deleteMany({ isDefault: true }).exec();
 
-        for (const aiExpert of AI_EXPERTS) {
-            const expert = new EXPERT_NAME_MODEL({
-                aiName: aiExpert.aiName,
-                isDefault: aiExpert.isDefault,
+        const players = aiEnum ? AI_EXPERTS : AI_BEGINNERS;
+        for (const aiPlayer of players) {
+            const player = new aiModel({
+                aiName: aiPlayer.aiName,
+                isDefault: aiPlayer.isDefault,
             });
-            await expert.save();
+            await player.save();
         }
-    }
-
-    async resetData(): Promise<void> {
-        await BEGINNER_NAME_MODEL.deleteMany({ isDefault: false }).exec();
-        await EXPERT_NAME_MODEL.deleteMany({ isDefault: false }).exec();
-        // TODO supprimer meilleurs scores
-        // TODO supprimer dictionnaires
     }
 }

@@ -9,15 +9,11 @@ import { HttpClientModule } from '@angular/common/http';
 import { InitializeSoloGameModule } from '@app/modules/initialize-solo-game/initialize-solo-game.module';
 import { JoinRoomComponent } from '@app/pages/join-room/join-room.component';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
-import { MatCardModule } from '@angular/material/card';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { NgModule } from '@angular/core';
 import { PageNotFoundComponent } from '@app/pages/page-not-found/page-not-found.component';
 import { SharedModule } from '@app/modules/shared/shared.module';
 import { WaitingRoomComponent } from '@app/pages/waiting-room/waiting-room.component';
 import { AdminPageComponent } from './pages/admin-page/admin-page.component';
-import { ClickOutsideModule } from 'ng-click-outside';
 
 /**
  * Main module that is used in main.ts.
@@ -37,10 +33,6 @@ import { ClickOutsideModule } from 'ng-click-outside';
         GameViewModule,
         InitializeSoloGameModule,
         SharedModule,
-        MatProgressSpinnerModule,
-        MatPaginatorModule,
-        MatCardModule,
-        ClickOutsideModule,
     ],
     providers: [],
     bootstrap: [AppComponent],

@@ -1,5 +1,8 @@
+/* eslint-disable dot-notation */
+// JUSTIFICATION : Because the files are added in runtime with npm express-fileupload on the 'request' (req),
+//                 the Typescript compiler does not recognize them and it fails. So, they are referenced with dot notation
 import { AdministratorService } from '@app/services/administrator.service';
-import { AiPlayerDB } from '@common/ai-name';
+import { AiType } from '@common/ai-name';
 import { Request, Response, Router } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { Service } from 'typedi';
@@ -29,7 +32,7 @@ export class AdministratorController {
          */
         this.router.get('/aiBeginners', async (req: Request, res: Response) => {
             await this.administratorService
-                .getAllAiBeginnerPlayers()
+                .getAllAiPlayers(AiType.beginner)
                 .then((aiBeginners) => {
                     res.status(StatusCodes.OK).send(aiBeginners);
                 })
@@ -40,7 +43,7 @@ export class AdministratorController {
 
         this.router.get('/aiExperts', async (req: Request, res: Response) => {
             await this.administratorService
-                .getAllAiExpertPlayers()
+                .getAllAiPlayers(AiType.expert)
                 .then((aiExperts) => {
                     res.status(StatusCodes.OK).send(aiExperts);
                 })
@@ -49,31 +52,9 @@ export class AdministratorController {
                 });
         });
 
-        this.router.post('/aiBeginners', async (req: Request, res: Response) => {
-            await this.administratorService
-                .addBeginnerAi(req.body)
-                .then((aiBeginner) => {
-                    res.status(StatusCodes.OK).send(aiBeginner);
-                })
-                .catch((error: Error) => {
-                    res.status(StatusCodes.NOT_ACCEPTABLE).send('An error occurred while saving the ai beginner ' + error.message);
-                });
-        });
-
-        this.router.post('/aiExperts', async (req: Request, res: Response) => {
-            await this.administratorService
-                .addExpertAi(req.body)
-                .then((aiExpert: AiPlayerDB) => {
-                    res.status(StatusCodes.OK).send(aiExpert);
-                })
-                .catch((error: Error) => {
-                    res.status(StatusCodes.NOT_ACCEPTABLE).send('An error occurred while saving the ai expert ' + error.message);
-                });
-        });
-
         this.router.delete('/aiBeginners/:id', async (req: Request, res: Response) => {
             await this.administratorService
-                .deleteBeginnerAi(req.params.id)
+                .deleteAiPlayer(req.params.id, AiType.beginner)
                 .then((aiBeginners) => {
                     res.status(StatusCodes.OK).send(aiBeginners);
                 })
@@ -84,7 +65,7 @@ export class AdministratorController {
 
         this.router.delete('/aiExperts/:id', async (req: Request, res: Response) => {
             await this.administratorService
-                .deleteAiExpert(req.params.id)
+                .deleteAiPlayer(req.params.id, AiType.expert)
                 .then((aiExperts) => {
                     res.status(StatusCodes.OK).send(aiExperts);
                 })
@@ -93,26 +74,59 @@ export class AdministratorController {
                 });
         });
 
-        this.router.put('/aiBeginners/:id', async (req: Request, res: Response) => {
+        this.router.post('/aiPlayers', async (req: Request, res: Response) => {
             await this.administratorService
-                .updateAiBeginner(req.params.id, req.body)
-                .then((aiBeginners) => {
-                    res.status(StatusCodes.OK).send(aiBeginners);
+                .addAiPlayer(req.body.aiPlayer, req.body.aiType)
+                .then((aiBeginner) => {
+                    res.status(StatusCodes.OK).send(aiBeginner);
+                })
+                .catch((error: Error) => {
+                    res.status(StatusCodes.NOT_ACCEPTABLE).send('An error occurred while saving the ai beginner ' + error.message);
+                });
+        });
+
+        this.router.put('/aiPlayers/:id', async (req: Request, res: Response) => {
+            await this.administratorService
+                .updateAiPlayer(req.params.id, req.body)
+                .then((aiPlayers) => {
+                    res.status(StatusCodes.OK).send(aiPlayers);
                 })
                 .catch((error) => {
                     res.status(StatusCodes.NOT_MODIFIED).send('An error occurred while modifying the ai beginner ' + error.message);
                 });
         });
 
-        this.router.put('/aiExperts/:id', async (req: Request, res: Response) => {
-            await this.administratorService
-                .updateAiExpert(req.params.id, req.body)
-                .then((aiExperts) => {
-                    res.status(StatusCodes.OK).send(aiExperts);
-                })
-                .catch((error) => {
-                    res.status(StatusCodes.NOT_MODIFIED).send('An error occurred while modifying the ai beginner ' + error.message);
+        this.router.get('/dictionaries', (req: Request, res: Response) => {
+            res.status(StatusCodes.OK).send(this.administratorService.getDictionaries());
+        });
+
+        this.router.put('/dictionaries', (req: Request, res: Response) => {
+            res.status(StatusCodes.OK).send(this.administratorService.updateDictionary(req.body));
+        });
+
+        this.router.delete('/dictionaries/:fileName', (req: Request, res: Response) => {
+            res.status(StatusCodes.OK).send(this.administratorService.deleteDictionary(req.params.fileName));
+        });
+
+        this.router.post('/uploadDictionary', (req, res) => {
+            let uploadedFile;
+            if (!req['files']) return res.sendStatus(StatusCodes.NOT_FOUND).send(JSON.stringify('File not found'));
+
+            if (Array.isArray(req['files'].file)) {
+                // It must be an array of UploadedFile objects
+                for (const fic of req['files'].file) {
+                    fic.mv('./dictionaries' + fic.name, (err: boolean) => {
+                        if (err) res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(JSON.stringify('Upload error'));
+                    });
+                }
+            } else {
+                // It must be a single UploadedFile object
+                uploadedFile = req['files'].file;
+                uploadedFile.mv('./dictionaries/' + uploadedFile.name, (err: boolean) => {
+                    if (err) res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(JSON.stringify('Upload error'));
                 });
+            }
+            return res.status(StatusCodes.OK).send(JSON.stringify('Uploaded'));
         });
     }
 }
