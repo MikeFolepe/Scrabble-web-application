@@ -36,6 +36,7 @@ export class EndGameService {
             this.isEndGame = isEndGame;
         });
     }
+    // TODO: qqun pour revoir ça svp
     // receiveEndGameByGiveUp(): void {
     //     this.clientSocketService.socket.on('receiveEndGameByGiveUp', (isEndGameByGiveUp: boolean, winnerName: string) => {
     //         console.log('winner' + winnerName);

@@ -65,8 +65,10 @@ export class WaitingRoomComponent implements OnInit {
     }
 
     routeToGameView(): void {
+        // TODO: majid -> majid pourquoi j'ai fais ça???
         this.gameSettingsService.isSoloMode = true;
         this.gameSettingsService.isRedirectedFromMultiplayerGame = true;
+        /// ///
         this.delete();
         this.router.navigate(['solo-game-ai']);
     }

@@ -1,18 +1,18 @@
 import { Injectable } from '@angular/core';
+import { PLAYER_ONE_INDEX } from '@app/classes/constants';
 import {
+    CORNER_POSITIONS,
+    DEFAULT_OBJECTIVE,
+    LETTERS_FOR_BONUS,
+    MIN_SIZE_FOR_BONUS,
+    NUMBER_OF_OBJECTIVES,
     Objective,
     OBJECTIVES,
-    DEFAULT_OBJECTIVE,
-    NUMBER_OF_OBJECTIVES,
-    CORNER_POSITIONS,
-    MIN_SIZE_FOR_BONUS,
-    LETTERS_FOR_BONUS,
 } from '@common/objectives';
-import { WordValidationService } from './word-validation.service';
-import { PlayerService } from './player.service';
-import { PLAYER_ONE_INDEX } from '@app/classes/constants';
 import { ClientSocketService } from './client-socket.service';
 import { GameSettingsService } from './game-settings.service';
+import { PlayerService } from './player.service';
+import { WordValidationService } from './word-validation.service';
 
 @Injectable({
     providedIn: 'root',
@@ -34,7 +34,7 @@ export class ObjectivesService {
         this.receiveObjectives();
     }
 
-    receiveObjectives() {
+    receiveObjectives(): void {
         this.clientSocketService.socket.on('receiveObjectives', (objectives: Objective[]) => {
             for (const objective of objectives) {
                 if (objective.isCompleted) {
@@ -44,7 +44,7 @@ export class ObjectivesService {
         });
     }
 
-    initializeObjectives(objectivesIndexes: number[]) {
+    initializeObjectives(objectivesIndexes: number[]): void {
         for (let i = 0; i < objectivesIndexes.length; i++) {
             if (i < NUMBER_OF_OBJECTIVES) {
                 this.privateObjectives[i] = this.objectives[objectivesIndexes[i]];
@@ -54,7 +54,8 @@ export class ObjectivesService {
         }
     }
 
-    checkObjectivesCompletion() {
+    checkObjectivesCompletion(): void {
+        // TODO: comme normalement y'a un seul objectif privé on peut eventuellement enlever le '[]'.
         if (!this.privateObjectives[0].isCompleted) {
             this.isCompleted(this.privateObjectives[0].id);
         }
@@ -63,7 +64,7 @@ export class ObjectivesService {
         }
     }
 
-    isCompleted(id: number) {
+    isCompleted(id: number): void {
         switch (id) {
             case 0: {
                 this.validateObjectiveOne(id);
@@ -86,11 +87,12 @@ export class ObjectivesService {
                 break;
             }
             case 6: {
-                this.validateObjectiveSeven(id);
+                // TODO: y'a un petit offset de 1 entre le case et le nom de la fonction
+                this.validateObjectiveSix(id);
                 break;
             }
             case 7: {
-                this.validateObjectiveEight(id);
+                this.validateObjectiveSeven(id);
                 break;
             }
             default: {
@@ -103,7 +105,7 @@ export class ObjectivesService {
         return id;
     }
 
-    validateObjectiveFour(id: number) {
+    validateObjectiveFour(id: number): void {
         let count = 0;
         for (const word of this.wordValidationService.lastPlayedWords.keys()) {
             for (const letter of word) {
@@ -113,7 +115,7 @@ export class ObjectivesService {
         if (count > 1) this.addObjectiveScore(id);
     }
 
-    validateObjectiveSeven(id: number) {
+    validateObjectiveSix(id: number): void {
         for (const word of this.wordValidationService.lastPlayedWords.keys()) {
             if (word.length >= MIN_SIZE_FOR_BONUS) {
                 this.addObjectiveScore(id);
@@ -121,7 +123,7 @@ export class ObjectivesService {
         }
     }
 
-    validateObjectiveEight(id: number) {
+    validateObjectiveSeven(id: number): void {
         for (const word of this.wordValidationService.lastPlayedWords.keys()) {
             for (const position of this.wordValidationService.lastPlayedWords.get(word) as string[]) {
                 if (CORNER_POSITIONS.includes(position)) {
@@ -131,13 +133,13 @@ export class ObjectivesService {
         }
     }
 
-    addObjectiveScore(id: number) {
+    addObjectiveScore(id: number): void {
         this.playerService.addScore(this.objectives[id].score, PLAYER_ONE_INDEX);
         this.objectives[id].isCompleted = true;
         this.updateOpponentObjectives();
     }
 
-    updateOpponentObjectives() {
+    updateOpponentObjectives(): void {
         if (!this.gameSettingsService.isSoloMode)
             this.clientSocketService.socket.emit('sendObjectives', this.objectives, this.clientSocketService.roomId);
     }
