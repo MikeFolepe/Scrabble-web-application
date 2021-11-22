@@ -51,11 +51,11 @@ export class GameViewComponent implements OnInit {
     giveUpGame(): void {
         const ref = this.dialog.open(GiveUpGameDialogComponent, { disableClose: true });
 
-        ref.afterClosed().subscribe((decision: boolean) => {
+        ref.afterClosed().subscribe((hasGivenUp: boolean) => {
             // if user closes the dialog box without input nothing
-            if (!decision) return;
+            if (!hasGivenUp) return;
             // if decision is true the EndGame occurres
-            this.clientSocketService.socket.emit('sendEndGameByGiveUp', decision, this.clientSocketService.roomId);
+            this.clientSocketService.socket.emit('sendEndGameByGiveUp', hasGivenUp, this.clientSocketService.roomId);
             this.sendMessageService.sendConversionMessage();
         });
     }

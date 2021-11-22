@@ -3,7 +3,7 @@ import { AppMaterialModule } from '@app/modules/material.module';
 import { AppRoutingModule } from '@app/modules/app-routing.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { GameViewModule } from '@app/modules/game-view/game-view.module';
 import { HttpClientModule } from '@angular/common/http';
 import { InitializeSoloGameModule } from '@app/modules/initialize-solo-game/initialize-solo-game.module';
@@ -14,6 +14,8 @@ import { PageNotFoundComponent } from '@app/pages/page-not-found/page-not-found.
 import { SharedModule } from '@app/modules/shared/shared.module';
 import { WaitingRoomComponent } from '@app/pages/waiting-room/waiting-room.component';
 import { AdminPageComponent } from './pages/admin-page/admin-page.component';
+import { ClickOutsideModule } from 'ng-click-outside';
+import { EditDictionaryDialogComponent } from './pages/admin-page/edit-dictionary-dialog/edit-dictionary-dialog.component';
 
 /**
  * Main module that is used in main.ts.
@@ -22,7 +24,15 @@ import { AdminPageComponent } from './pages/admin-page/admin-page.component';
  * Otherwise Angular Cli will not know in which module to put new component
  */
 @NgModule({
-    declarations: [AppComponent, MainPageComponent, PageNotFoundComponent, WaitingRoomComponent, JoinRoomComponent, AdminPageComponent],
+    declarations: [
+        AppComponent,
+        MainPageComponent,
+        PageNotFoundComponent,
+        WaitingRoomComponent,
+        JoinRoomComponent,
+        AdminPageComponent,
+        EditDictionaryDialogComponent,
+    ],
     imports: [
         AppMaterialModule,
         AppRoutingModule,
@@ -33,6 +43,8 @@ import { AdminPageComponent } from './pages/admin-page/admin-page.component';
         GameViewModule,
         InitializeSoloGameModule,
         SharedModule,
+        ClickOutsideModule,
+        ReactiveFormsModule,
     ],
     providers: [],
     bootstrap: [AppComponent],

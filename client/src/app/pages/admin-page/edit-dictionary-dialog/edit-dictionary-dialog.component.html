@@ -1,0 +1,24 @@
+<h1 mat-dialog-title>Modifier un dictionnaire</h1>
+<div mat-dialog-content id="form-edit">
+    <mat-form-field [formGroup]="form" appearance="fill">
+        <mat-label>Titre du dictionnaire</mat-label>
+        <input matInput [formControlName]="'titleInput'" />
+    </mat-form-field>
+    <mat-form-field [formGroup]="form" appearance="fill">
+        <mat-label>Description du dictionnaire</mat-label>
+        <input matInput [formControlName]="'descriptionInput'" />
+        <mat-hint>
+            {{ nameSize.min }}-{{ nameSize.max }} caractères
+            <br />
+            Les 4 premiers caractères doivent être des lettres
+            <br />
+            {{ specialChar }} autorisés
+        </mat-hint>
+    </mat-form-field>
+</div>
+<div mat-dialog-actions>
+    <button mat-button mat-dialog-close (click)="this.dialogRef.close(null)">Fermer</button>
+    <button mat-raised-button mat-dialog-close (click)="this.dialogRef.close(this.form.value)" color="warn" [disabled]="!form.valid">
+        Confirmer
+    </button>
+</div>

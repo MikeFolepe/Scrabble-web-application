@@ -21,6 +21,7 @@ export class AdministratorService {
     fileInput: ElementRef;
     file: File | null;
     uploadMessage: string;
+    isResetting: boolean;
     ajv = new Ajv();
 
     constructor(private communicationService: CommunicationService, public snackBar: MatSnackBar, public dialog: MatDialog) {
@@ -71,7 +72,7 @@ export class AdministratorService {
             if (isNewAi) {
                 this.addAiPlayer(aiPlayer, aiType);
             } else {
-                this.upDateAiPlayer(id, aiPlayer, aiType);
+                this.updateAiPlayer(id, aiPlayer, aiType);
             }
         });
     }
@@ -85,7 +86,7 @@ export class AdministratorService {
         // eslint-disable-next-line no-underscore-dangle
         this.communicationService.deleteAiPlayer(aiPlayer._id, aiType).subscribe(
             (aiPlayers: AiPlayerDB[]) => {
-                if (aiType) {
+                if (aiType === AiType.expert) {
                     this.expertNames = aiPlayers;
                 } else {
                     this.beginnerNames = aiPlayers;
@@ -166,10 +167,24 @@ export class AdministratorService {
         this.communicationService.downloadDictionary(dictionary.fileName).subscribe();
     }
 
+    resetData(): void {
+        this.isResetting = true;
+        this.resetAiPlayers();
+
+        const createdDictionaries = this.dictionaries.filter((dictionary) => !dictionary.isDefault);
+        for (const dictionary of createdDictionaries) {
+            this.deleteDictionary(dictionary);
+        }
+
+        // this.resetBestScores();
+        this.isResetting = false;
+        this.displayMessage('La base de données à été réinitialisée');
+    }
+
     private addAiPlayer(aiPlayer: AiPlayer, aiType: AiType): void {
         this.communicationService.addAiPlayer(aiPlayer, aiType).subscribe(
             (aiFromDB: AiPlayerDB) => {
-                if (aiType) {
+                if (aiType === AiType.expert) {
                     this.expertNames.push(aiFromDB);
                 } else {
                     this.beginnerNames.push(aiFromDB);
@@ -182,10 +197,10 @@ export class AdministratorService {
         );
     }
 
-    private upDateAiPlayer(id: string, aiPlayer: AiPlayer, aiType: AiType): void {
+    private updateAiPlayer(id: string, aiPlayer: AiPlayer, aiType: AiType): void {
         this.communicationService.updateAiPlayer(id, aiPlayer, aiType).subscribe(
             (aiPlayers) => {
-                if (aiType) {
+                if (aiType === AiType.expert) {
                     this.expertNames = aiPlayers;
                 } else {
                     this.beginnerNames = aiPlayers;
@@ -199,6 +214,7 @@ export class AdministratorService {
     }
 
     private displayMessage(message: string): void {
+        if (this.isResetting) return;
         this.snackBar.open(message, 'OK', {
             duration: ERROR_MESSAGE_DELAY,
             horizontalPosition: 'center',
@@ -224,13 +240,25 @@ export class AdministratorService {
         this.displayMessage(`Nous n'avons pas pu accéder au serveur, erreur : ${error.message}`);
     }
 
-    private displayUploadMessage(uploadMessage: string) {
-        if (this.uploadMessage.length) return; // There is already a message occuring
+    private displayUploadMessage(uploadMessage: string): void {
+        if (this.uploadMessage.length) return; // There is already a message occurring
         this.uploadMessage = uploadMessage;
         this.file = null;
 
         setTimeout(() => {
             this.uploadMessage = '';
         }, THREE_SECONDS_DELAY);
+    }
+
+    private resetAiPlayers(): void {
+        const createdAiExpertNames = this.expertNames.filter((aiExpertPlayer) => !aiExpertPlayer.isDefault);
+        const createdAiBeginnerNames = this.beginnerNames.filter((aiBeginnerPlayer) => !aiBeginnerPlayer.isDefault);
+
+        for (const expertName of createdAiExpertNames) {
+            this.deleteAiPlayer(expertName, AiType.expert);
+        }
+        for (const beginnerName of createdAiBeginnerNames) {
+            this.deleteAiPlayer(beginnerName, AiType.beginner);
+        }
     }
 }

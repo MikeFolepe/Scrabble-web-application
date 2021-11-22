@@ -56,12 +56,7 @@ export class FormComponent implements OnDestroy {
     }
 
     getRightBonusPositions(): string {
-        let bonusPositions;
-        if (this.form.controls.randomBonus.value === 'Activer') {
-            bonusPositions = this.randomBonusService.shuffleBonusPositions();
-        } else {
-            bonusPositions = BONUS_POSITIONS;
-        }
+        const bonusPositions = this.form.controls.randomBonus.value === 'Activer' ? this.randomBonusService.shuffleBonusPositions() : BONUS_POSITIONS;
         return JSON.stringify(Array.from(bonusPositions));
     }
 
@@ -70,11 +65,7 @@ export class FormComponent implements OnDestroy {
         do {
             // Random value [0, AI_NAME_DATABASE.length[
             const randomNumber = Math.floor(Math.random() * AI_NAME_DATABASE.length);
-            if (levelInput === 'Facile') {
-                randomName = this.beginnersAi[randomNumber].aiName;
-            } else {
-                randomName = this.expertsAi[randomNumber].aiName;
-            }
+            randomName = levelInput === 'Facile' ? this.beginnersAi[randomNumber].aiName : this.expertsAi[randomNumber].aiName;
         } while (randomName === this.form.controls.playerName.value);
         return randomName;
     }
@@ -82,11 +73,8 @@ export class FormComponent implements OnDestroy {
     // Initializes the game with its settings
     initGame(): void {
         this.snapshotSettings();
-        if (this.gameSettingsService.isSoloMode) {
-            this.router.navigate(['game']);
-            return;
-        }
-        this.router.navigate(['multiplayer-mode-waiting-room']);
+        const nextUrl = this.gameSettingsService.isSoloMode ? 'game' : 'multiplayer-mode-waiting-room';
+        this.router.navigate([nextUrl]);
     }
 
     selectGameDictionary(dictionary: Dictionary): void {
@@ -120,6 +108,5 @@ export class FormComponent implements OnDestroy {
 
     ngOnDestroy(): void {
         this.gameSettingsService.isRedirectedFromMultiplayerGame = false;
-        return;
     }
 }

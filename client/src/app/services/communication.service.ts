@@ -35,7 +35,7 @@ export class CommunicationService {
     }
 
     getAiPlayers(aiType: AiType): Observable<AiPlayerDB[]> {
-        if (aiType) {
+        if (aiType === AiType.expert) {
             return this.http.get<AiPlayerDB[]>(`${this.baseUrl}/admin/aiExperts`).pipe(catchError(this.handleError<AiPlayerDB[]>('getAiPlayers')));
         }
         return this.http.get<AiPlayerDB[]>(`${this.baseUrl}/admin/aiBeginners`).pipe(catchError(this.handleError<AiPlayerDB[]>('getAiPlayers')));
@@ -48,7 +48,7 @@ export class CommunicationService {
     }
 
     deleteAiPlayer(id: string, aiType: AiType): Observable<AiPlayerDB[]> {
-        if (aiType) {
+        if (aiType === AiType.expert) {
             return this.http
                 .delete<AiPlayerDB[]>(`${this.baseUrl}/admin/aiExperts/${id}`)
                 .pipe(catchError(this.handleError<AiPlayerDB[]>('deleteAiExpert')));
@@ -74,10 +74,10 @@ export class CommunicationService {
         return this.http.get<Dictionary[]>(`${this.baseUrl}/admin/dictionaries`).pipe(catchError(this.handleError<Dictionary[]>('deleteAiBeginner')));
     }
 
-    upDateDictionary(dictionary: Dictionary): Observable<Dictionary[]> {
+    updateDictionary(dictionary: Dictionary): Observable<Dictionary[]> {
         return this.http
             .put<Dictionary[]>(`${this.baseUrl}/admin/dictionaries`, dictionary)
-            .pipe(catchError(this.handleError<Dictionary[]>('upDateDictionary')));
+            .pipe(catchError(this.handleError<Dictionary[]>('updateDictionary')));
     }
 
     deleteDictionary(fileName: string): Observable<Dictionary[]> {

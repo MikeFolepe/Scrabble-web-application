@@ -1,6 +1,8 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { AdministratorService } from '@app/services/administrator.service';
+import { EditDictionaryDialogComponent } from './edit-dictionary-dialog/edit-dictionary-dialog.component';
 
 @Component({
     selector: 'app-admin-page',
@@ -12,7 +14,7 @@ export class AdminPageComponent implements OnInit {
     @ViewChild('fileInput') fileInput: ElementRef;
     isResetConfirmation: boolean;
 
-    constructor(public adminService: AdministratorService) {
+    constructor(public adminService: AdministratorService, public dialog: MatDialog) {
         this.isResetConfirmation = false;
     }
 
@@ -25,12 +27,28 @@ export class AdminPageComponent implements OnInit {
         this.adminService.onSubmit();
         this.fileInput.nativeElement.value = '';
     }
+
     cancelReset(): void {
         if (this.isResetConfirmation) this.isResetConfirmation = false;
     }
 
-    resetData(): void {
-        // TODO truc bidon à remplacer par le vrai code
-        return;
+    editDictionary(): void {
+        this.dialog
+            .open(EditDictionaryDialogComponent, {
+                disableClose: true,
+                data: {
+                    title: '',
+                    description: '',
+                },
+            })
+            .afterClosed()
+            .subscribe((response) => {
+                if (!response.title || !response.description) return;
+
+                // TODO Verifier si titre existe déjà
+                // TODO ajouter fonction update dico
+                // eslint-disable-next-line no-console
+                console.log(response);
+            });
     }
 }
