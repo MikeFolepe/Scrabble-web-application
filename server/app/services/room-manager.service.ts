@@ -13,8 +13,6 @@ export class RoomManagerService {
 
     constructor() {
         this.rooms = [[], []];
-        console.log(this.rooms[0]);
-        console.log(this.rooms[1]);
         // TODO: prendre une decision PM
         // this.roomWaiting = [];
     }

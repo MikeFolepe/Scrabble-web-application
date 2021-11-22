@@ -27,11 +27,6 @@
         </mat-card>
     </div>
 </div>
-<div *ngIf="this.isRoomAvailable">
-    <button mat-raised-button color="warn" id="random-button" (click)="placeRandomly()" [disabled]="!this.isRandomButtonAvailable">
-        Placement aléatoire
-    </button>
-</div>
 
 <div *ngIf="shouldDisplayNameError">
     <mat-card class="error-message"><span class="warning">Erreur</span> : Ce nom de joueur est déjà utilisé dans cette partie </mat-card>
@@ -39,4 +34,10 @@
 
 <div *ngIf="shouldDisplayJoinError">
     <mat-card class="error-message"><span class="warning">Erreur</span> : Cette partie n'existe plus ou vient d'être rejointe </mat-card>
+</div>
+
+<div *ngIf="this.isRoomAvailable && !shouldDisplayNameError && !shouldDisplayJoinError">
+    <button mat-raised-button color="warn" id="random-button" (click)="placeRandomly()" [disabled]="!this.isRandomButtonAvailable">
+        Placement aléatoire
+    </button>
 </div>
