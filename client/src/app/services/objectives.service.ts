@@ -15,6 +15,8 @@ import { ClientSocketService } from './client-socket.service';
 import { GameSettingsService } from './game-settings.service';
 import { PlayerService } from './player.service';
 import { WordValidationService } from './word-validation.service';
+import { RandomBonusesService } from './random-bonuses.service';
+import { PlacementsHandlerService } from './placements-handler.service';
 
 @Injectable({
     providedIn: 'root',
@@ -24,12 +26,15 @@ export class ObjectivesService {
     privateObjectives: Objective[];
     publicObjectives: Objective[];
     activeTimeRemaining: number;
+    extendedWords: string[];
 
     constructor(
         private wordValidationService: WordValidationService,
         private playerService: PlayerService,
         private clientSocketService: ClientSocketService,
         private gameSettingsService: GameSettingsService,
+        private randomBonusesService: RandomBonusesService,
+        private placementsService: PlacementsHandlerService,
     ) {
         this.objectives = OBJECTIVES;
         this.privateObjectives = [DEFAULT_OBJECTIVE, DEFAULT_OBJECTIVE];
@@ -90,15 +95,16 @@ export class ObjectivesService {
                 break;
             }
             case 5: {
+                this.validateObjectiveSix(id);
                 break;
             }
             case 6: {
                 // TODO: y'a un petit offset de 1 entre le case et le nom de la fonction
-                this.validateObjectiveSix(id);
+                this.validateObjectiveSeven(id);
                 break;
             }
             case 7: {
-                this.validateObjectiveSeven(id);
+                this.validateObjectiveEight(id);
                 break;
             }
             default: {
@@ -131,7 +137,14 @@ export class ObjectivesService {
         if (count > 1) this.addObjectiveScore(id);
     }
 
-    validateObjectiveSix(id: number): void {
+    validateObjectiveSix(id: number) {
+        if (this.extendedWords.length === 0) return;
+        for (const position of this.placementsService.extendingPositions) {
+            if (this.randomBonusesService.bonusPositions.has(position)) this.addObjectiveScore(id);
+        }
+    }
+
+    validateObjectiveSeven(id: number): void {
         for (const word of this.wordValidationService.lastPlayedWords.keys()) {
             if (word.length >= MIN_SIZE_FOR_OBJ7) {
                 this.addObjectiveScore(id);
@@ -139,7 +152,7 @@ export class ObjectivesService {
         }
     }
 
-    validateObjectiveSeven(id: number): void {
+    validateObjectiveEight(id: number): void {
         for (const word of this.wordValidationService.lastPlayedWords.keys()) {
             for (const position of this.wordValidationService.lastPlayedWords.get(word) as string[]) {
                 if (CORNER_POSITIONS.includes(position)) {

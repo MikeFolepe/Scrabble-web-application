@@ -23,6 +23,7 @@ import { GameSettingsService } from './game-settings.service';
 import { SendMessageService } from './send-message.service';
 import { SkipTurnService } from './skip-turn.service';
 import { ObjectivesService } from './objectives.service';
+import { PlacementsHandlerService } from './placements-handler.service';
 @Injectable({
     providedIn: 'root',
 })
@@ -49,6 +50,7 @@ export class PlaceLetterService {
         private gameSettingsService: GameSettingsService,
         private endGameService: EndGameService,
         private objectivesService: ObjectivesService,
+        private placementsService: PlacementsHandlerService,
     ) {
         this.scrabbleBoard = []; // Initializes the array with empty letters
         this.validLetters = [];
@@ -92,7 +94,7 @@ export class PlaceLetterService {
                 this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', TypeMessage.Error);
                 return false;
             }
-            this.goToNextPosition(currentPosition, orientation);
+            this.placementsService.goToNextPosition(currentPosition, orientation);
         }
         if (this.numLettersUsedFromEasel === EASEL_SIZE) this.isEaselSize = true;
 
@@ -151,6 +153,8 @@ export class PlaceLetterService {
 
         if (finalResult.validation) {
             this.handleValidPlacement(finalResult, indexPlayer);
+            const lastLetters = this.placementsService.getLastLettersPlaced(this.startPosition, this.orientation, this.word, this.validLetters);
+            this.objectivesService.extendedWords = this.placementsService.getExtendedWords(this.orientation, this.scrabbleBoard, lastLetters);
             this.objectivesService.checkObjectivesCompletion();
             this.skipTurnService.switchTurn();
             return true;
@@ -194,7 +198,7 @@ export class PlaceLetterService {
                 if (!this.validLetters[i]) {
                     this.removePlacedLetter(currentPosition, word[i], indexPlayer);
                 }
-                this.goToNextPosition(currentPosition, orientation);
+                this.placementsService.goToNextPosition(currentPosition, orientation);
             }
         }, THREE_SECONDS_DELAY); // Waiting 3 seconds to erase the letters on the grid
     }
@@ -257,7 +261,7 @@ export class PlaceLetterService {
 
         for (const letter of word) {
             isLetterExisting = this.isLetterOnBoard(currentPosition, letter);
-            this.goToNextPosition(currentPosition, orientation);
+            this.placementsService.goToNextPosition(currentPosition, orientation);
 
             // If the letter isn't on the board, we look into the easel
             if (!isLetterExisting) {
@@ -292,7 +296,7 @@ export class PlaceLetterService {
         // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < word.length; i++) {
             if (currentPosition.x === CENTRAL_CASE_POSITION.x && currentPosition.y === CENTRAL_CASE_POSITION.y) return true;
-            this.goToNextPosition(currentPosition, orientation);
+            this.placementsService.goToNextPosition(currentPosition, orientation);
         }
         return false;
     }
@@ -307,24 +311,21 @@ export class PlaceLetterService {
 
         // Search each position around the word that are in bounds of the board
         for (let i = 0; i < word.length; i++) {
-            if (this.isPositionFilled({ x: currentPosition.x + y, y: currentPosition.y + x })) isWordTouching = true;
-            if (this.isPositionFilled({ x: currentPosition.x - y, y: currentPosition.y - x })) isWordTouching = true;
-            if (this.isPositionFilled({ x: currentPosition.x + x, y: currentPosition.y + y })) {
+            if (this.placementsService.isPositionFilled({ x: currentPosition.x + y, y: currentPosition.y + x }, this.scrabbleBoard))
+                isWordTouching = true;
+            if (this.placementsService.isPositionFilled({ x: currentPosition.x - y, y: currentPosition.y - x }, this.scrabbleBoard))
+                isWordTouching = true;
+            if (this.placementsService.isPositionFilled({ x: currentPosition.x + x, y: currentPosition.y + y }, this.scrabbleBoard)) {
                 if (word.length === 1 || i === word.length - 1) isWordTouching = true;
                 else if (this.validLetters[i + 1]) isWordTouching = true;
             }
-            if (this.isPositionFilled({ x: currentPosition.x - x, y: currentPosition.y - y })) {
+            if (this.placementsService.isPositionFilled({ x: currentPosition.x - x, y: currentPosition.y - y }, this.scrabbleBoard)) {
                 if (i === 0) isWordTouching = true;
                 if (this.validLetters[i - 1]) isWordTouching = true;
             }
-            this.goToNextPosition(currentPosition, orientation);
+            this.placementsService.goToNextPosition(currentPosition, orientation);
         }
         return isWordTouching;
-    }
-
-    private isPositionFilled(position: Vec2): boolean {
-        const isInBounds = position.x >= 0 && position.y >= 0 && position.x < BOARD_ROWS && position.y < BOARD_COLUMNS;
-        return isInBounds ? this.scrabbleBoard[position.y][position.x] !== '' : false;
     }
 
     private receivePlacement(): void {
@@ -341,14 +342,11 @@ export class PlaceLetterService {
         this.scrabbleBoard = scrabbleBoard;
         for (const letter of word) {
             this.gridService.drawLetter(this.gridService.gridContextLettersLayer, letter, currentPosition, this.playerService.fontSize);
-            this.goToNextPosition(currentPosition, orientation);
+            this.placementsService.goToNextPosition(currentPosition, orientation);
         }
         this.isFirstRound = false;
     }
     private isLetterOnBoard(position: Vec2, letter: string): boolean {
         return letter.toUpperCase() === this.scrabbleBoard[position.y][position.x].toUpperCase();
-    }
-    private goToNextPosition(position: Vec2, orientation: Orientation): void {
-        position = orientation === Orientation.Horizontal ? { x: position.x++, y: position.y } : { x: position.x, y: position.y++ };
     }
 }

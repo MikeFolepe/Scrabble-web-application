@@ -13,12 +13,12 @@
 
 .objective {
     display: flex;
+    justify-content: flex-start;
     gap: 0.5em;
     background-color: tan;
     border-radius: 6px;
     margin-bottom: 1em;
     padding: 0.2em;
-    height: 3em;
 }
 
 p {
@@ -45,13 +45,14 @@ h3 {
     font-size: 25px;
     font-weight: bold;
     color: teal;
-    margin: auto;
     margin-left: 0.3em;
+    margin-top: 0.5em;
 }
 
 .description {
-    margin: auto;
     font-size: 16px;
+    width: 70%;
+    text-align: left;
 }
 
 .checked {
@@ -59,7 +60,6 @@ h3 {
     color: green;
     font-size: 50px;
     margin: auto;
-    opacity: 0;
 }
 
 .timer {

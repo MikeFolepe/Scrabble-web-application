@@ -20,7 +20,7 @@ export class ObjectivesComponent implements OnInit {
     }
 
     onupdate() {
-        const indexes: number[] = [4, 0, 7, 3];
+        const indexes: number[] = [4, 0, 5, 3];
         this.objectivesService.initializeObjectives(indexes);
         this.privateObjectives[1].isCompleted = true;
     }
