@@ -78,9 +78,11 @@ export class FormComponent implements OnDestroy {
     }
 
     selectGameDictionary(dictionary: Dictionary): void {
+        // TODO: creer variable loacale pour verfier si pas supprine
         this.initializeDictionaries();
         if (!this.dictionaries.find((dictionaryInArray: Dictionary) => dictionary.title === dictionaryInArray.title)) {
             this.isDictionaryDeleted = true;
+
             return;
         }
         this.communicationService.getGameDictionary(dictionary.fileName).subscribe((gameDictionary: string[]) => {
