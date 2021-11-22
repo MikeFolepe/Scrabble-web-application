@@ -92,10 +92,6 @@ describe('EndGameService', () => {
             },
         } as unknown as Socket;
 
-        // service.receiveEndGameByGiveUp();
-        // expect(service.isEndGameByGiveUp).toEqual(true);
-        // expect(service.winnerNameByGiveUp).toEqual('Mike');
-        // Texte changé car fonction changé
         expect(service.isEndGameByGiveUp).toEqual(false);
         expect(service.winnerNameByGiveUp).toEqual('');
     });

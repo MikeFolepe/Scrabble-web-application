@@ -12,6 +12,7 @@ export enum PlacingStrategy {
     ThirteenToEighteen,
 }
 
+// TODO: MessageType au lieu de TypeMessage
 export enum TypeMessage {
     System,
     Opponent,

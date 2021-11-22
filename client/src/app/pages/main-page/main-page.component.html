@@ -4,12 +4,12 @@
     <img src="https://bit.ly/3m206ss" class="img-title" alt="Logo Scrabble" />
 
     <mat-tab-group class="tab-group" animationDuration="1000ms" [(selectedIndex)]="selectedGameTypeIndex">
-        <mat-tab label="{{ gameTypes[0] }}">
+        <mat-tab label="{{ gameType[0] }}">
             <mat-radio-group class="radio-group" [(ngModel)]="selectedGameMode">
                 <mat-radio-button class="radio-button" value="solo" *ngFor="let mode of gameModes" [value]="mode">{{ mode }} </mat-radio-button>
             </mat-radio-group>
         </mat-tab>
-        <mat-tab label="{{ gameTypes[1] }}">
+        <mat-tab label="{{ gameType[1] }}">
             <mat-radio-group class="radio-group" [(ngModel)]="selectedGameMode">
                 <mat-radio-button class="radio-button" value="soloLOG" *ngFor="let mode of gameModes" [value]="mode">{{ mode }}</mat-radio-button>
             </mat-radio-group>
@@ -17,7 +17,7 @@
     </mat-tab-group>
     <button class="button" id="playButton" mat-raised-button [disabled]="!selectedGameMode" color="warn" (click)="routeToGameMode()">Jouer!</button>
     <p>
-        {{ gameTypes[selectedGameTypeIndex] }}<br />
+        {{ gameType[selectedGameTypeIndex] }}<br />
         {{ selectedGameMode }}
     </p>
     <button
@@ -32,7 +32,6 @@
     </button>
     <br />
     <div class="justified">
-        <button class="button" mat-raised-button color="primary" routerLink="/material">Meilleurs scores</button>
+        <button class="button" mat-raised-button color="primary" routerLink="/best-scores">Meilleurs scores</button>
     </div>
 </div>
-

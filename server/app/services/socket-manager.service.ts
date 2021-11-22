@@ -2,7 +2,7 @@ import { RoomManagerService } from '@app/services/room-manager.service';
 import { GameSettings } from '@common/game-settings';
 import { Letter } from '@common/letter';
 import { Objective } from '@common/objectives';
-import { PlayerIndex } from '@common/PlayerIndex';
+import { PlayerIndex } from '@common/player-index';
 import { Room, State } from '@common/room';
 import { Vec2 } from '@common/vec2';
 import * as http from 'http';

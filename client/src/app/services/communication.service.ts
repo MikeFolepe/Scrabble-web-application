@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AiPlayer, AiPlayerDB } from '@common/ai-name';
+import { GameType } from '@common/game-type';
+import { PlayerScore } from '@common/player';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
@@ -25,6 +27,26 @@ export class CommunicationService {
         return this.http
             .post<boolean>(`${this.baseUrl}/multiplayer/validateWords`, this.wordsToValidate)
             .pipe(catchError(this.handleError<boolean>('validationPost')));
+    }
+
+    addPlayersScores(players: PlayerScore[], gameType: GameType): Observable<void> {
+        if (gameType === GameType.Classic)
+            return this.http
+                .post<void>(`${this.baseUrl}/multiplayer/best-scores-classic`, players)
+                .pipe(catchError(this.handleError<void>('addPlayers')));
+        return this.http
+            .post<void>(`${this.baseUrl}/multiplayer/best-scores-log2990`, players)
+            .pipe(catchError(this.handleError<void>('addPlayers')));
+    }
+
+    getBestPlayers(gameType: GameType): Observable<PlayerScore[]> {
+        if (gameType === GameType.Classic)
+            return this.http
+                .get<PlayerScore[]>(`${this.baseUrl}/multiplayer/best-scores-classic`)
+                .pipe(catchError(this.handleError<PlayerScore[]>('getbestPlayers')));
+        return this.http
+            .get<PlayerScore[]>(`${this.baseUrl}/multiplayer/best-scores-log2990`)
+            .pipe(catchError(this.handleError<PlayerScore[]>('getbestPlayers')));
     }
 
     getAiBeginners(): Observable<AiPlayerDB[]> {
@@ -71,7 +93,7 @@ export class CommunicationService {
             .pipe(catchError(this.handleError<AiPlayerDB[]>('deleteAiExpert')));
     }
 
-    // TODO paramètre non utilise
+    // TODO paramètre non utilisé
     uploadFile(file: File): Observable<string> {
         const formData: FormData = new FormData();
         formData.append('file', file);

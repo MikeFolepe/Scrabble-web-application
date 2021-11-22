@@ -4,7 +4,7 @@ import { PageEvent } from '@angular/material/paginator';
 import { ERROR_MESSAGE_DELAY } from '@app/classes/constants';
 import { JoinDialogComponent } from '@app/modules/initialize-solo-game/join-dialog/join-dialog.component';
 import { ClientSocketService } from '@app/services/client-socket.service';
-import { PlayerIndex } from '@common/PlayerIndex';
+import { PlayerIndex } from '@common/player-index';
 import { Room, State } from '@common/room';
 
 @Component({
@@ -69,7 +69,6 @@ export class JoinRoomComponent implements OnInit {
                     }, ERROR_MESSAGE_DELAY);
                     return;
                 }
-                // console.log('jespere tu viens pas ici!!!');
                 this.clientSocketService.socket.emit('newRoomCustomer', playerName, room.id);
             });
     }

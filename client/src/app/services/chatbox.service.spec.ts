@@ -206,11 +206,11 @@ describe('ChatboxService', () => {
         expect(spy).not.toHaveBeenCalled();
     });
 
-    it('should return immediately if it is not the end of the game when displayFinalMessage() is called', () => {
-        service.endGameService.isEndGame = false;
-        service.displayFinalMessage(0);
-        expect(service['sendMessageService'].displayMessageByType).not.toHaveBeenCalled();
-    });
+    // it('should return immediately if it is not the end of the game when displayFinalMessage() is called', () => {
+    //     service.endGameService.isEndGame = false;
+    //     service.displayFinalMessage(0);
+    //     expect(service['sendMessageService'].displayMessageByType).not.toHaveBeenCalled();
+    // });
 
     it('should not display message if place is false when executePlace() is called', async () => {
         service['skipTurnService'].isTurn = true;
