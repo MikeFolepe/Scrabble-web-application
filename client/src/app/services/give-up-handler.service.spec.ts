@@ -11,7 +11,7 @@ import { GameSettings } from '@common/game-settings';
 import { Socket } from 'socket.io-client';
 import { GiveUpHandlerService } from './give-up-handler.service';
 
-fdescribe('GiveUpHandlerService', () => {
+describe('GiveUpHandlerService', () => {
     let service: GiveUpHandlerService;
 
     beforeEach(() => {
