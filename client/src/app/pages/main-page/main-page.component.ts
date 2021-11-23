@@ -4,6 +4,8 @@ import { ClientSocketService } from '@app/services/client-socket.service';
 import { EndGameService } from '@app/services/end-game.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { GameType } from '@common/game-type';
+import { BestScoresComponent } from '@app/pages/best-scores/best-scores.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
     selector: 'app-main-page',
@@ -20,6 +22,7 @@ export class MainPageComponent implements OnInit {
     constructor(
         public gameSettingsService: GameSettingsService,
         private router: Router,
+        public bestScoresDialog: MatDialog,
         private clientSocketService: ClientSocketService,
         private endGameService: EndGameService,
     ) {
@@ -53,5 +56,9 @@ export class MainPageComponent implements OnInit {
                 break;
             }
         }
+    }
+
+    openBestScoresDialog() {
+        this.bestScoresDialog.open(BestScoresComponent, { disableClose: true });
     }
 }

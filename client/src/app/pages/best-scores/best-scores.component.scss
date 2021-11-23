@@ -1,9 +1,9 @@
-#title {
-    height: 3em;
+.title {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: rgba(0, 0, 0, 0.8);
+    color: #00804d;
+    font-size: xx-large;
 }
 
 mat-icon {
@@ -34,24 +34,12 @@ mat-icon {
     height: 25px;
 }
 
-@keyframes typing {
-    from {
-        width: 0;
-    }
-}
-
-@keyframes blink {
-    50% {
-        border-color: transparent;
-    }
-}
-
 #wrapper {
     display: flex;
     justify-content: center;
     gap: 3em;
-    height: 85vh;
-    width: 100vw;
+    height: 85%;
+    width: 100%;
     margin-top: 1em;
 }
 
@@ -77,23 +65,12 @@ h2 {
     width: 48%;
 }
 
-#right-bar {
+#virtual-names {
     width: 48%;
-    display: flex;
-    flex-direction: column;
-    gap: 1em;
 }
 
 .window-content {
     padding: 0 1em 1em;
-}
-
-.accordion-buttons {
-    padding-bottom: 0.5em;
-}
-
-.mat-expansion-panel-header-title {
-    font-weight: bold;
 }
 
 .list {
@@ -104,51 +81,21 @@ h2 {
     gap: 0.25em;
 }
 
-.separator {
-    border: 3px solid green;
-    border-radius: 3px;
-    height: inherit;
-    margin: 0 0.25em;
-}
-
-.beginner {
-    width: 50%;
-    flex: 1;
-}
-
-.expert {
-    width: 50%;
-    flex: 1;
-}
-
-#virtual-names {
-    height: 85%;
-}
-
 .center {
     text-align: center;
     padding-top: 1em;
 }
 
-#reset {
-    text-align: center;
-    padding: 3em;
+.table-header {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin: 0;
+    border: 3px solid transparent;
     border-radius: 6px;
-    height: 15%;
-}
-
-#reset button {
-    height: 5em;
-    width: 12em;
-}
-
-#reset span {
-    font-size: large;
-    margin-left: 0.25em;
-}
-
-#add {
-    color: green;
+    width: 100%;
+    font-weight: bold;
 }
 
 .item {
@@ -160,30 +107,20 @@ h2 {
     border: 3px solid transparent;
     border-radius: 6px;
     width: 100%;
+    align-items: center;
 }
 
-.icons {
-    visibility: hidden;
-    margin: 0.5em 0.5em 0.5em 0;
+.item p {
+    margin: 0;
 }
 
 .item:hover {
     border: 3px solid white;
 }
 
-.item:hover .icons {
-    visibility: visible;
-}
-
-.item .description {
-    visibility: hidden;
-}
-
-.item:hover .description {
-    visibility: visible;
-}
-
-.name-title {
-    text-align: center;
-    font-weight: bold;
+.playerName {
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    gap: 0.5em;
 }
