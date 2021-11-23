@@ -184,6 +184,17 @@ describe('EndGameService', () => {
         expect(service.playerService.players[0].score).toEqual(0);
     });
 
+    it('should set final score to 0 if score should is 0 form beginning', () => {
+        service.isEndGame = true;
+        player.score = 0;
+        player.letterTable = [letterA, letterA, letterA, letterB];
+        service.playerService.players.push(player);
+
+        service.getFinalScore(0);
+
+        expect(service.playerService.players[0].score).toEqual(0);
+    });
+
     it('should clear all data when clearAllData() is called', () => {
         service.playerService.players.push(player);
         service.playerService.players.push(playerAI);

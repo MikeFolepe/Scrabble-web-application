@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable no-unused-vars */
 /* eslint-disable max-lines */
@@ -94,9 +95,9 @@ describe('SocketManagerService', () => {
         service.handleSockets();
         expect(spyOnEmit.calledWith('yourRoomId', 'mike1234')).to.equal(true);
         expect(roomManagerService.createRoomId.calledWith(settings.playersNames[0])).to.equal(true);
-        expect(roomManagerService.createRoom.calledWith(fakeSocket.id, roomManagerService.createRoomId(settings.playersNames[0]), settings)).to.equal(
-            true,
-        );
+        expect(
+            roomManagerService.createRoom.calledWith(fakeSocket.id, roomManagerService.createRoomId(settings.playersNames[0], 'mike1234'), settings),
+        ).to.equal(true);
         expect(spyOnJoin.calledWith('mike1234')).to.equal(true);
     });
 
@@ -132,7 +133,7 @@ describe('SocketManagerService', () => {
         const spyOnEmit = Sinon.spy(service['sio'], 'emit');
         const spyOnLeave = Sinon.spy(service['sio'], 'socketsLeave');
         const room = new Room('mike1234', socketId, settings, State.Waiting);
-        roomManagerService.rooms = [room];
+        roomManagerService.rooms[0][0] = room;
         service.handleSockets();
         expect(spyOnEmit.calledWith('roomConfiguration', roomManagerService.rooms));
         expect(spyOnLeave.calledWith('mike1234'));
@@ -164,7 +165,7 @@ describe('SocketManagerService', () => {
             },
         } as unknown as io.Server;
         const room = new Room('mike1234', socketId, settings, State.Waiting);
-        roomManagerService.rooms = [room];
+        roomManagerService.rooms[0][0] = room;
         service.handleSockets();
         expect(spy.calledWith('roomConfiguration', roomManagerService.rooms)).to.equal(true);
     });
@@ -245,7 +246,7 @@ describe('SocketManagerService', () => {
         const spyOnTo = Sinon.spy(fakeSocket, 'to');
         // const spyOnLeave = Sinon.spy(service['sio'], 'socketsLeave');
         const room = new Room('mike1234', socketId, settings, State.Waiting);
-        roomManagerService.rooms = [room];
+        roomManagerService.rooms[0][0] = room;
 
         service.handleSockets();
         // expect(spyOnLeave.calledWith(room.id)).to.equal(true);

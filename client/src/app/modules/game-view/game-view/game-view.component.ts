@@ -7,6 +7,7 @@ import { ChatboxService } from '@app/services/chatbox.service';
 import { ClientSocketService } from '@app/services/client-socket.service';
 import { EndGameService } from '@app/services/end-game.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
+import { GiveUpHandlerService } from '@app/services/give-up-handler.service';
 import { GridService } from '@app/services/grid.service';
 import { PlayerService } from '@app/services/player.service';
 import { SendMessageService } from '@app/services/send-message.service';
@@ -31,8 +32,10 @@ export class GameViewComponent implements OnInit {
         private playerService: PlayerService,
         public dialog: MatDialog,
         public sendMessageService: SendMessageService,
+        public giveUpHandlerService: GiveUpHandlerService,
     ) {
         this.fontSize = DEFAULT_FONT_SIZE;
+        this.giveUpHandlerService.receiveEndGameByGiveUp();
     }
 
     ngOnInit(): void {
