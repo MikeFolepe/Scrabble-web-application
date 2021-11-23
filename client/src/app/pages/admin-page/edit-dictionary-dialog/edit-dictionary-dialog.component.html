@@ -1,8 +1,15 @@
 <h1 mat-dialog-title>Modifier un dictionnaire</h1>
 <div mat-dialog-content id="form-edit">
-    <mat-form-field [formGroup]="form" appearance="fill">
+    <mat-form-field [formGroup]="form" appearance="fill" id="first-field">
         <mat-label>Titre du dictionnaire</mat-label>
         <input matInput [formControlName]="'titleInput'" />
+        <mat-hint>
+            {{ descriptionSize.min }}-{{ descriptionSize.max }} caractères
+            <br />
+            Les {{ descriptionSize.min }} premiers caractères doivent être des lettres
+            <br />
+            {{ specialCharWhiteSpace }} autorisés
+        </mat-hint>
     </mat-form-field>
     <mat-form-field [formGroup]="form" appearance="fill">
         <mat-label>Description du dictionnaire</mat-label>
@@ -10,7 +17,7 @@
         <mat-hint>
             {{ nameSize.min }}-{{ nameSize.max }} caractères
             <br />
-            Les 4 premiers caractères doivent être des lettres
+            Les {{ nameSize.min }} premiers caractères doivent être des lettres
             <br />
             {{ specialChar }} autorisés
         </mat-hint>

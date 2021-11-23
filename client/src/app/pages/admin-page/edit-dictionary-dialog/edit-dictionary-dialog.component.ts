@@ -14,11 +14,14 @@ export class EditDictionaryDialogComponent implements OnInit {
     nameSize: CustomRange;
     descriptionSize: CustomRange;
     specialChar: string;
+    specialCharWhiteSpace: string;
 
     constructor(public dialogRef: MatDialogRef<EditDictionaryDialogComponent>) {
         this.nameSize = NAME_SIZE;
         this.specialChar = SPECIAL_CHAR;
-        this.descriptionSize = { min: 8, max: 25 };
+
+        this.specialCharWhiteSpace = this.specialChar + ' ';
+        this.descriptionSize = { min: 8, max: 30 };
         this.form = new FormGroup({
             titleInput: new FormControl(''),
             descriptionInput: new FormControl(''),
@@ -33,9 +36,11 @@ export class EditDictionaryDialogComponent implements OnInit {
             Validators.maxLength(NAME_SIZE.max),
         ]);
 
+        const descriptionValidationPattern = '^([A-Za-z][A-Za-z][A-Za-z][A-Za-z])[A-Za-z0-9' + this.specialCharWhiteSpace + ']*';
+
         this.form.controls.descriptionInput.setValidators([
             Validators.required,
-            Validators.pattern(VALIDATION_PATTERN),
+            Validators.pattern(descriptionValidationPattern),
             Validators.minLength(this.descriptionSize.min),
             Validators.maxLength(this.descriptionSize.max),
         ]);

@@ -43,12 +43,10 @@ export class AdminPageComponent implements OnInit {
             })
             .afterClosed()
             .subscribe((response) => {
-                if (!response.title || !response.description) return;
+                if (!response.titleInput || !response.descriptionInput) return;
 
                 // TODO Verifier si titre existe déjà
                 // TODO ajouter fonction update dico
-                // eslint-disable-next-line no-console
-                console.log(response);
             });
     }
 }
