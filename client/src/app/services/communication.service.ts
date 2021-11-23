@@ -2,8 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AiPlayer, AiPlayerDB, AiType } from '@common/ai-name';
 import { Dictionary } from '@common/dictionary';
-import { Observable, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -23,45 +22,33 @@ export class CommunicationService {
         for (const word of newPlayedWords.keys()) {
             this.wordsToValidate.push(word);
         }
-        return this.http
-            .post<boolean>(`${this.baseUrl}/multiplayer/validateWords`, this.wordsToValidate)
-            .pipe(catchError(this.handleError<boolean>('validationPost')));
+        return this.http.post<boolean>(`${this.baseUrl}/multiplayer/validateWords`, this.wordsToValidate);
     }
 
     getGameDictionary(fileName: string): Observable<string[]> {
-        return this.http
-            .get<string[]>(`${this.baseUrl}/multiplayer/dictionary/${fileName}`)
-            .pipe(catchError(this.handleError<string[]>('getGameDictionary')));
+        return this.http.get<string[]>(`${this.baseUrl}/multiplayer/dictionary/${fileName}`);
     }
 
     getAiPlayers(aiType: AiType): Observable<AiPlayerDB[]> {
         if (aiType === AiType.expert) {
-            return this.http.get<AiPlayerDB[]>(`${this.baseUrl}/admin/aiExperts`).pipe(catchError(this.handleError<AiPlayerDB[]>('getAiPlayers')));
+            return this.http.get<AiPlayerDB[]>(`${this.baseUrl}/admin/aiExperts`);
         }
-        return this.http.get<AiPlayerDB[]>(`${this.baseUrl}/admin/aiBeginners`).pipe(catchError(this.handleError<AiPlayerDB[]>('getAiPlayers')));
+        return this.http.get<AiPlayerDB[]>(`${this.baseUrl}/admin/aiBeginners`);
     }
 
     addAiPlayer(aiPlayer: AiPlayer, aiType: AiType): Observable<AiPlayerDB> {
-        return this.http
-            .post<AiPlayerDB>(`${this.baseUrl}/admin/aiPlayers`, { aiPlayer, aiType })
-            .pipe(catchError(this.handleError<AiPlayerDB>('postAiBeginners')));
+        return this.http.post<AiPlayerDB>(`${this.baseUrl}/admin/aiPlayers`, { aiPlayer, aiType });
     }
 
     deleteAiPlayer(id: string, aiType: AiType): Observable<AiPlayerDB[]> {
         if (aiType === AiType.expert) {
-            return this.http
-                .delete<AiPlayerDB[]>(`${this.baseUrl}/admin/aiExperts/${id}`)
-                .pipe(catchError(this.handleError<AiPlayerDB[]>('deleteAiExpert')));
+            return this.http.delete<AiPlayerDB[]>(`${this.baseUrl}/admin/aiExperts/${id}`);
         }
-        return this.http
-            .delete<AiPlayerDB[]>(`${this.baseUrl}/admin/aiBeginners/${id}`)
-            .pipe(catchError(this.handleError<AiPlayerDB[]>('deleteAiBeginner')));
+        return this.http.delete<AiPlayerDB[]>(`${this.baseUrl}/admin/aiBeginners/${id}`);
     }
 
     updateAiPlayer(id: string, aiBeginner: AiPlayer, aiType: AiType): Observable<AiPlayerDB[]> {
-        return this.http
-            .put<AiPlayerDB[]>(`${this.baseUrl}/admin/aiPlayers/${id}`, { aiBeginner, aiType })
-            .pipe(catchError(this.handleError<AiPlayerDB[]>('deleteAiBeginner')));
+        return this.http.put<AiPlayerDB[]>(`${this.baseUrl}/admin/aiPlayers/${id}`, { aiBeginner, aiType });
     }
 
     uploadFile(file: File): Observable<string> {
@@ -71,26 +58,24 @@ export class CommunicationService {
     }
 
     getDictionaries(): Observable<Dictionary[]> {
-        return this.http.get<Dictionary[]>(`${this.baseUrl}/admin/dictionaries`).pipe(catchError(this.handleError<Dictionary[]>('deleteAiBeginner')));
+        return this.http.get<Dictionary[]>(`${this.baseUrl}/admin/dictionaries`);
     }
 
     updateDictionary(dictionary: Dictionary): Observable<Dictionary[]> {
-        return this.http
-            .put<Dictionary[]>(`${this.baseUrl}/admin/dictionaries`, dictionary)
-            .pipe(catchError(this.handleError<Dictionary[]>('updateDictionary')));
+        return this.http.put<Dictionary[]>(`${this.baseUrl}/admin/dictionaries`, dictionary);
     }
 
     deleteDictionary(fileName: string): Observable<Dictionary[]> {
-        return this.http
-            .delete<Dictionary[]>(`${this.baseUrl}/admin/dictionaries/${fileName}`)
-            .pipe(catchError(this.handleError<Dictionary[]>('deleteDictionary')));
+        return this.http.delete<Dictionary[]>(`${this.baseUrl}/admin/dictionaries/${fileName}`);
     }
 
-    downloadDictionary(fileName: string): Observable<void> {
-        return this.http.get<void>(`${this.baseUrl}/admin/download/${fileName}`).pipe(catchError(this.handleError<void>('downloadDictionary')));
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    downloadDictionary(fileName: string): Observable<any> {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return this.http.get<any>(`${this.baseUrl}/admin/download/${fileName}`);
     }
 
-    private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {
-        return () => of(result as T);
-    }
+    // private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {
+    //     return () => of(result as T);
+    // }
 }

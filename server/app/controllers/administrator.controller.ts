@@ -4,6 +4,7 @@
 import { AdministratorService } from '@app/services/administrator.service';
 import { AiType } from '@common/ai-name';
 import { Request, Response, Router } from 'express';
+import * as fileSystem from 'fs';
 import { StatusCodes } from 'http-status-codes';
 import { Service } from 'typedi';
 
@@ -109,7 +110,7 @@ export class AdministratorController {
         });
 
         this.router.get('/download/:fileName', (req: Request, res: Response) => {
-            res.download(`./dictionaries/${req.params.fileName}`);
+            res.send(fileSystem.readFileSync(`./dictionaries/${req.params.fileName}`, 'utf8'));
         });
 
         this.router.post('/uploadDictionary', (req, res) => {

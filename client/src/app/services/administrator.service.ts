@@ -2,13 +2,14 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ElementRef, Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ERROR_MESSAGE_DELAY, THREE_SECONDS_DELAY } from '@app/classes/constants';
+import { ERROR_MESSAGE_DELAY } from '@app/classes/constants';
 import { JoinDialogComponent } from '@app/modules/initialize-solo-game/join-dialog/join-dialog.component';
 import { CommunicationService } from '@app/services/communication.service';
 import { AiPlayer, AiPlayerDB, AiType } from '@common/ai-name';
 import { Dictionary } from '@common/dictionary';
 import dictionarySchema from '@common/dictionarySchema.json';
 import Ajv from 'ajv';
+import { saveAs } from 'file-saver';
 
 @Injectable({
     providedIn: 'root',
@@ -132,25 +133,49 @@ export class AdministratorService {
         });
     }
 
-    async addDictionary() {
-        if (this.isDictionaryNameUsed()) {
+    addDictionary() {
+        if (this.isDictionaryNameUsed(this.currentDictionary.title)) {
             this.displayUploadMessage('Il existe déjà un dictionnaire portant le même nom');
             return;
         }
-        this.dictionaries.push({
-            fileName: this.file?.name as string,
-            title: this.currentDictionary.title,
-            description: this.currentDictionary.description,
-            isDefault: false,
-        });
-        let serverMessage;
+
         if (this.file) {
-            serverMessage = await this.communicationService.uploadFile(this.file).toPromise();
-            this.displayUploadMessage(serverMessage);
+            this.communicationService.uploadFile(this.file).subscribe(
+                (response: string) => {
+                    this.dictionaries.push({
+                        fileName: this.file?.name as string,
+                        title: this.currentDictionary.title,
+                        description: this.currentDictionary.description,
+                        isDefault: false,
+                    });
+                    this.displayUploadMessage(response);
+                },
+                (error: HttpErrorResponse) => {
+                    this.displayMessage(`Le dictionnaire n'a pas été téléversé, erreur : ${error.message}`);
+                },
+            );
         }
     }
 
-    // updateDictionary(dictionary: Dictionary): void {}
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    updateDictionary(dictionary: Dictionary, dialogResponse: any): void {
+        if (this.isDictionaryNameUsed(dialogResponse.title)) {
+            this.displayMessage('Ce titre de dictionnaire existe deja. Veuillez réessayer.');
+            return;
+        }
+
+        const newDictionary: Dictionary = {
+            fileName: dictionary.fileName,
+            title: dialogResponse.titleInput,
+            description: dialogResponse.descriptionInput,
+            isDefault: dictionary.isDefault,
+        };
+
+        this.communicationService.updateDictionary(newDictionary).subscribe((dictionaries: Dictionary[]) => {
+            this.dictionaries = dictionaries;
+            this.displayMessage('Dictionnaire modifié');
+        });
+    }
 
     deleteDictionary(dictionary: Dictionary): void {
         if (dictionary.isDefault) {
@@ -164,7 +189,13 @@ export class AdministratorService {
     }
 
     downloadDictionary(dictionary: Dictionary): void {
-        this.communicationService.downloadDictionary(dictionary.fileName).subscribe();
+        this.communicationService.downloadDictionary(dictionary.fileName).subscribe((response) => {
+            const fileToDownload = JSON.stringify(response);
+            console.log(fileToDownload);
+            const blob = new Blob([fileToDownload], { type: 'application/json' });
+            console.log(blob);
+            saveAs(blob, dictionary.fileName);
+        });
     }
 
     resetData(): void {
@@ -222,14 +253,15 @@ export class AdministratorService {
         });
     }
 
-    private isDictionaryNameUsed(): boolean {
+    private isDictionaryNameUsed(dictionaryTitle: string): boolean {
         for (const dictionary of this.dictionaries) {
-            if (this.currentDictionary.title === dictionary.title) return true;
+            if (dictionaryTitle === dictionary.title) return true;
         }
         return false;
     }
 
     private checkIfAlreadyExists(aiPlayerName: string): boolean {
+        if (this.beginnerNames === undefined && this.expertNames === undefined) return false;
         const aiBeginner = this.beginnerNames.find((aiBeginnerPlayer) => aiBeginnerPlayer.aiName === aiPlayerName);
         const aiExpert = this.expertNames.find((aiExpertPlayer) => aiExpertPlayer.aiName === aiPlayerName);
 
@@ -247,7 +279,7 @@ export class AdministratorService {
 
         setTimeout(() => {
             this.uploadMessage = '';
-        }, THREE_SECONDS_DELAY);
+        }, ERROR_MESSAGE_DELAY);
     }
 
     private resetAiPlayers(): void {

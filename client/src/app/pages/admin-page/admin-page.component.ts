@@ -2,6 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { AdministratorService } from '@app/services/administrator.service';
+import { Dictionary } from '@common/dictionary';
 import { EditDictionaryDialogComponent } from './edit-dictionary-dialog/edit-dictionary-dialog.component';
 
 @Component({
@@ -32,7 +33,7 @@ export class AdminPageComponent implements OnInit {
         if (this.isResetConfirmation) this.isResetConfirmation = false;
     }
 
-    editDictionary(): void {
+    editDictionary(dictionary: Dictionary): void {
         this.dialog
             .open(EditDictionaryDialogComponent, {
                 disableClose: true,
@@ -45,9 +46,9 @@ export class AdminPageComponent implements OnInit {
             .subscribe((response) => {
                 if (!response) return;
                 if (!response.titleInput || !response.descriptionInput) return;
-
                 // TODO Verifier si titre existe déjà
                 // TODO ajouter fonction update dico
+                this.adminService.updateDictionary(dictionary, response);
             });
     }
 }

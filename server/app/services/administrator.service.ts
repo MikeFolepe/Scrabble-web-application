@@ -68,14 +68,14 @@ export class AdministratorService {
         return this.getDictionaries();
     }
 
-    resetDictionaries(): Dictionary[] {
-        for (const dictionary of this.dictionaries) {
-            if (!dictionary.isDefault) {
-                fileSystem.unlinkSync(`./dictionaries/${dictionary.fileName}`);
-            }
-        }
-        return this.getDictionaries();
-    }
+    // resetDictionaries(): Dictionary[] {
+    //     for (const dictionary of this.dictionaries) {
+    //         if (!dictionary.isDefault) {
+    //             fileSystem.unlinkSync(`./dictionaries/${dictionary.fileName}`);
+    //         }
+    //     }
+    //     return this.getDictionaries();
+    // }
 
     // async resetAiPlayers(): Promise<AiPlayerDB[]> {
     //     await AI_MODELS.get(AiType.beginner)?.deleteMany({ isDefault: false }).exec();

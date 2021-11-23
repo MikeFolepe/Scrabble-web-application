@@ -1,7 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AI_NAME_DATABASE, BONUS_POSITIONS, PLAYER_ONE_INDEX } from '@app/classes/constants';
+import { BONUS_POSITIONS, PLAYER_ONE_INDEX } from '@app/classes/constants';
 import { CommunicationService } from '@app/services/communication.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { RandomBonusesService } from '@app/services/random-bonuses.service';
@@ -35,7 +35,7 @@ export class FormComponent implements OnDestroy {
             randomBonus: new FormControl(this.gameSettingsService.gameSettings.randomBonus),
         });
         this.initializeDictionaries();
-        this.gameDictionary = [];
+        this.communicationService.getGameDictionary('dictionary.json').subscribe((dictionary: string[]) => (this.gameDictionary = dictionary));
         this.initializeAiPlayers();
     }
 
@@ -50,8 +50,8 @@ export class FormComponent implements OnDestroy {
     }
 
     initializeDictionaries(): void {
-        this.communicationService.getDictionaries().subscribe((dictionaries: Dictionary[]) => {
-            this.dictionaries = dictionaries;
+        this.communicationService.getDictionaries().subscribe((dictionariesOnServer: Dictionary[]) => {
+            this.dictionaries = dictionariesOnServer;
         });
     }
 
@@ -64,7 +64,7 @@ export class FormComponent implements OnDestroy {
         let randomName = '';
         do {
             // Random value [0, AI_NAME_DATABASE.length[
-            const randomNumber = Math.floor(Math.random() * AI_NAME_DATABASE.length);
+            const randomNumber = Math.floor(Math.random() * this.beginnersAi.length);
             randomName = levelInput === 'Facile' ? this.beginnersAi[randomNumber].aiName : this.expertsAi[randomNumber].aiName;
         } while (randomName === this.form.controls.playerName.value);
         return randomName;
@@ -77,16 +77,15 @@ export class FormComponent implements OnDestroy {
         this.router.navigate([nextUrl]);
     }
 
-    selectGameDictionary(dictionary: Dictionary): void {
-        // TODO: creer variable loacale pour verfier si pas supprine
-        this.initializeDictionaries();
-        if (!this.dictionaries.find((dictionaryInArray: Dictionary) => dictionary.title === dictionaryInArray.title)) {
+    async selectGameDictionary(dictionary: Dictionary): Promise<void> {
+        const dictionaries = await this.communicationService.getDictionaries().toPromise();
+        if (!dictionaries.find((dictionaryInArray: Dictionary) => dictionary.title === dictionaryInArray.title)) {
             this.isDictionaryDeleted = true;
-
             return;
         }
         this.communicationService.getGameDictionary(dictionary.fileName).subscribe((gameDictionary: string[]) => {
             this.gameDictionary = gameDictionary;
+            console.log(this.gameDictionary);
         });
     }
 

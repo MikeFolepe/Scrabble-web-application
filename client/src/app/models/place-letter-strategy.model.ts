@@ -1,16 +1,18 @@
 import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSITION, INVALID_INDEX, PLAYER_AI_INDEX } from '@app/classes/constants';
 import { CustomRange } from '@app/classes/range';
 import { BoardPattern, Orientation, PatternInfo, PossibleWords } from '@app/classes/scrabble-board-pattern';
+import { GameSettingsService } from '@app/services/game-settings.service';
 import { PlayerAIService } from '@app/services/player-ai.service';
-import * as dictionaryData from '@common/dictionary.json';
+// import * as dictionaryData from '@common/dictionary.json';
 import { PlayerAI } from './player-ai.model';
 
 export class PlaceLetterStrategy {
     dictionary: string[];
     pointingRange: CustomRange;
     private board: string[][][];
-    constructor() {
-        this.dictionary = JSON.parse(JSON.stringify(dictionaryData)).words;
+    constructor(private gameSettingsService: GameSettingsService) {
+        debugger;
+        this.dictionary = this.gameSettingsService.gameSettings.dictionary;
         this.pointingRange = { min: 1, max: 18 };
         this.board = [];
     }

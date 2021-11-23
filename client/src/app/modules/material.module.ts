@@ -42,6 +42,8 @@ const modules = [
     MatCardModule,
     MatPaginatorModule,
     MatInputModule,
+    MatSelectModule,
+    MatFormFieldModule,
 ];
 
 /**
