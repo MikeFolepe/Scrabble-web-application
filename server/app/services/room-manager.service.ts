@@ -96,7 +96,7 @@ export class RoomManagerService {
     }
 
     // TODO: loser --> looser ??
-    findLoserIndex(socketIdToCompare: string): number {
+    findLooserIndex(socketIdToCompare: string): number {
         for (const roomMode of this.rooms) {
             for (const room of roomMode) {
                 for (const socketId of room.socketIds) {

@@ -167,7 +167,7 @@ export class SocketManagerService {
                 .emit(
                     'receiveEndGameByGiveUp',
                     true,
-                    this.roomManagerService.getWinnerName(roomId, this.roomManagerService.findLoserIndex(socket.id)),
+                    this.roomManagerService.getWinnerName(roomId, this.roomManagerService.findLooserIndex(socket.id)),
                 );
             socket.to(roomId).emit('receiveGameConversionMessage', 'Attention la partie est sur le point de se faire convertir en partie Solo.');
             socket.leave(roomId);
@@ -181,7 +181,7 @@ export class SocketManagerService {
                 .emit(
                     'receiveEndGameByGiveUp',
                     isGiveUp,
-                    this.roomManagerService.getWinnerName(roomId, this.roomManagerService.findLoserIndex(socket.id)),
+                    this.roomManagerService.getWinnerName(roomId, this.roomManagerService.findLooserIndex(socket.id)),
                 );
             this.sio.emit('roomConfiguration', this.roomManagerService.rooms);
             this.sio.socketsLeave(roomId);
