@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { GameSettingsService } from '@app/services/game-settings.service';
 import { ObjectivesService } from '@app/services/objectives.service';
 import { Objective } from '@common/objectives';
 
@@ -12,7 +13,7 @@ export class ObjectivesComponent implements OnInit {
     publicObjectives: Objective[];
     activeTimeRemaining: number;
 
-    constructor(public objectivesService: ObjectivesService) {}
+    constructor(private objectivesService: ObjectivesService, public gameSettingsService: GameSettingsService) {}
 
     ngOnInit() {
         this.privateObjectives = this.objectivesService.privateObjectives;

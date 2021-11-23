@@ -1,29 +1,32 @@
-<div id="objectives-container">
+<div *ngIf="this.gameSettingsService.gameType === 'Scrabble LOG2990'" id="objectives-container">
     <h2>Objectifs</h2>
     <h3>Privés</h3>
     <div class="objective">
         <div class="score">{{ privateObjectives[0].score }}</div>
         <div class="description">{{ privateObjectives[0].name }}</div>
-        <div class="checked" *ngIf="privateObjectives[0].isCompleted">&#10003;</div>
-        <div class="timer" *ngIf="privateObjectives[0].id === 3 && !privateObjectives[0].isCompleted" 
-                           [ngClass]="{failed: privateObjectives[0].id === 3 && objectivesService.activeTimeRemaining === 0}">
-            {{objectivesService.activeTimeRemaining}}
-        </div>
+        <div class="checked" [ngClass]="{ visible: privateObjectives[0].isCompleted }">&#10003;</div>
     </div>
-    <div class="objective" *ngIf="privateObjectives[1].isCompleted">
+    <div class="objective" [ngClass]="{ fade: privateObjectives[1].isCompleted, invisible: !privateObjectives[1].isCompleted }">
         <div class="score">{{ privateObjectives[1].score }}</div>
         <div class="description">{{ privateObjectives[1].name }}</div>
-        <div class="checked" *ngIf="privateObjectives[1].isCompleted">&#10003;</div>
+        <div class="checked" [ngClass]="{ visible: privateObjectives[1].isCompleted }">&#10003;</div>
     </div>
 
     <h3>Publics</h3>
     <div class="objective" *ngFor="let objective of publicObjectives; let i = index" (click)="onupdate()">
         <div class="score">{{ objective.score }}</div>
         <div class="description">{{ objective.name }}</div>
+        <<<<<<< Updated upstream
         <div class="checked" *ngIf="objective.isCompleted">&#10003;</div>
-        <div class="timer" *ngIf="objective.id === 3 && !objective.isCompleted" 
-                           [ngClass]="{failed: objective.id === 3 && objectivesService.activeTimeRemaining === 0}">
-            {{objectivesService.activeTimeRemaining}}
+        <div
+            class="timer"
+            *ngIf="objective.id === 3 && !objective.isCompleted"
+            [ngClass]="{ failed: objective.id === 3 && objectivesService.activeTimeRemaining === 0 }"
+        >
+            {{ objectivesService.activeTimeRemaining }}
         </div>
+        =======
+        <div class="checked" [ngClass]="{ visible: objective.isCompleted }">&#10003;</div>
+        >>>>>>> Stashed changes
     </div>
 </div>
