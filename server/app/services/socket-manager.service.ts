@@ -3,7 +3,6 @@ import { RoomManagerService } from '@app/services/room-manager.service';
 import { GameSettings } from '@common/game-settings';
 import { GameType2 } from '@common/game-type';
 import { Letter } from '@common/letter';
-import { Objective } from '@common/objectives';
 import { PlayerIndex } from '@common/player-index';
 import { Room, State } from '@common/room';
 import { Vec2 } from '@common/vec2';
@@ -61,8 +60,8 @@ export class SocketManagerService {
                 socket.to(roomId).emit('receiveScoreInfo', score, indexPlayer);
             });
 
-            socket.on('sendObjectives', (objectives: Objective[], roomId: string) => {
-                socket.to(roomId).emit('receiveObjectives', objectives);
+            socket.on('objectiveAccomplished', (id: number, roomId: string) => {
+                socket.to(roomId).emit('receiveObjectives', id);
             });
 
             socket.on('sendActions', (actions: string[], roomId: string) => {

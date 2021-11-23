@@ -9,20 +9,24 @@ import { Objective } from '@common/objectives';
     styleUrls: ['./objectives.component.scss'],
 })
 export class ObjectivesComponent implements OnInit {
-    privateObjectives: Objective[];
-    publicObjectives: Objective[];
+    objectives: Objective[][];
     activeTimeRemaining: number;
 
-    constructor(public objectivesService: ObjectivesService, public gameSettingsService: GameSettingsService) {}
+    constructor(public objectivesService: ObjectivesService, public gameSettingsService: GameSettingsService) {
+        this.objectives = [[], []];
+    }
 
     ngOnInit() {
-        this.privateObjectives = this.objectivesService.privateObjectives;
-        this.publicObjectives = this.objectivesService.publicObjectives;
+        // Dangereux car s'il y'a update de l'etat d'un objectif dans le service
+        // je ne suis pas sure que ta vue va s'update dynamiquement
+        // car tu as une copie des états des objectifs au moment de l'initialisation de la vue
+        // solution: utiliser this.objectivesService.attribDuServiceAAfficher dans le html
+        this.objectives = this.objectivesService.objectives;
+        console.log(this);
     }
 
     onupdate() {
-        const indexes: number[] = [4, 0, 5, 3];
-        this.objectivesService.initializeObjectives(indexes);
-        this.privateObjectives[1].isCompleted = true;
+        this.ngOnInit();
+        this.objectives[1][1].isCompleted = true;
     }
 }

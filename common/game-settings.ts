@@ -13,5 +13,6 @@ export class GameSettings {
         public randomBonus: string,
         public bonusPositions: string,
         public dictionary: string,
+        public objectiveIds: number[][] = [[], []],
     ) {}
 }

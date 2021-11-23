@@ -20,10 +20,10 @@ import { Vec2 } from '@common/vec2';
 import { ClientSocketService } from './client-socket.service';
 import { EndGameService } from './end-game.service';
 import { GameSettingsService } from './game-settings.service';
-import { SendMessageService } from './send-message.service';
-import { SkipTurnService } from './skip-turn.service';
 import { ObjectivesService } from './objectives.service';
 import { PlacementsHandlerService } from './placements-handler.service';
+import { SendMessageService } from './send-message.service';
+import { SkipTurnService } from './skip-turn.service';
 @Injectable({
     providedIn: 'root',
 })
@@ -154,6 +154,7 @@ export class PlaceLetterService {
         if (finalResult.validation) {
             this.handleValidPlacement(finalResult, indexPlayer);
             const lastLetters = this.placementsService.getLastLettersPlaced(this.startPosition, this.orientation, this.word, this.validLetters);
+            this.objectivesService.playerIndex = indexPlayer;
             this.objectivesService.extendedWords = this.placementsService.getExtendedWords(this.orientation, this.scrabbleBoard, lastLetters);
             this.objectivesService.checkObjectivesCompletion();
             this.skipTurnService.switchTurn();

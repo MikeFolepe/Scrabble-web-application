@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { ONE_MINUTE, PLAYER_ONE_INDEX } from '@app/classes/constants';
 import {
     CORNER_POSITIONS,
-    DEFAULT_OBJECTIVE,
     LETTERS_FOR_OBJ5,
     MIN_SCORE_FOR_OBJ4,
     MIN_SIZE_FOR_OBJ2,
@@ -11,20 +10,20 @@ import {
     Objective,
     OBJECTIVES,
 } from '@common/objectives';
+import { ObjectiveTypes } from '@common/objectives-type';
 import { ClientSocketService } from './client-socket.service';
 import { GameSettingsService } from './game-settings.service';
-import { PlayerService } from './player.service';
-import { WordValidationService } from './word-validation.service';
-import { RandomBonusesService } from './random-bonuses.service';
 import { PlacementsHandlerService } from './placements-handler.service';
+import { PlayerService } from './player.service';
+import { RandomBonusesService } from './random-bonuses.service';
+import { WordValidationService } from './word-validation.service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class ObjectivesService {
-    objectives: Objective[];
-    privateObjectives: Objective[];
-    publicObjectives: Objective[];
+    objectives: Objective[][];
+    playerIndex: number;
     activeTimeRemaining: number;
     extendedWords: string[];
 
@@ -36,39 +35,43 @@ export class ObjectivesService {
         private randomBonusesService: RandomBonusesService,
         private placementsService: PlacementsHandlerService,
     ) {
-        this.objectives = OBJECTIVES;
-        this.privateObjectives = [DEFAULT_OBJECTIVE, DEFAULT_OBJECTIVE];
-        this.publicObjectives = [DEFAULT_OBJECTIVE, DEFAULT_OBJECTIVE];
+        this.objectives = [[], []];
         this.activeTimeRemaining = ONE_MINUTE;
         this.receiveObjectives();
     }
 
-    receiveObjectives(): void {
-        this.clientSocketService.socket.on('receiveObjectives', (objectives: Objective[]) => {
-            for (const objective of objectives) {
-                if (objective.isCompleted) {
-                    this.objectives[objective.id].isCompleted = true;
-                }
+    initializeObjectives(): void {
+        const arrayOfIndex = this.gameSettingsService.gameSettings.objectiveIds;
+        for (let i = 0; i < NUMBER_OF_OBJECTIVES; i++) {
+            for (let j = 0; j < NUMBER_OF_OBJECTIVES; j++) {
+                const objective = OBJECTIVES[arrayOfIndex[i][j]];
+                this.objectives[i].push(objective);
             }
+        }
+    }
+
+    receiveObjectives(): void {
+        this.clientSocketService.socket.on('receiveObjectiveCompleted', (id: number) => {
+            const objective = this.findObjectiveById(id) as Objective;
+            objective.isCompleted = true;
         });
     }
 
-    initializeObjectives(objectivesIndexes: number[]): void {
-        for (let i = 0; i < objectivesIndexes.length; i++) {
-            if (i < NUMBER_OF_OBJECTIVES) {
-                this.privateObjectives[i] = this.objectives[objectivesIndexes[i]];
-            } else {
-                this.publicObjectives[i - NUMBER_OF_OBJECTIVES] = this.objectives[objectivesIndexes[i]];
-            }
-        }
+    updateOpponentObjectives(id: number): void {
+        // TODO: on peut enlever le if car si c'est mode solo, on n'est pas connecté au server,
+        // le emit devient du code mort
+        if (!this.gameSettingsService.isSoloMode) this.clientSocketService.socket.emit('objectiveAccomplished', id, this.clientSocketService.roomId);
     }
 
     checkObjectivesCompletion(): void {
-        // TODO: comme normalement y'a un seul objectif privé on peut eventuellement enlever le '[]'.
-        if (!this.privateObjectives[0].isCompleted) {
-            this.isCompleted(this.privateObjectives[0].id);
+        // Mode classique -> aucune vérification requise
+        if (this.gameSettingsService.gameType === 'Scrabble classique') return;
+
+        if (!this.objectives[ObjectiveTypes.Private][this.playerIndex].isCompleted) {
+            this.isCompleted(this.objectives[ObjectiveTypes.Private][this.playerIndex].id);
         }
-        for (const objective of this.publicObjectives) {
+
+        for (const objective of this.objectives[ObjectiveTypes.Public]) {
             if (!objective.isCompleted) this.isCompleted(objective.id);
         }
     }
@@ -163,13 +166,19 @@ export class ObjectivesService {
     }
 
     addObjectiveScore(id: number): void {
-        this.playerService.addScore(this.objectives[id].score, PLAYER_ONE_INDEX);
-        this.objectives[id].isCompleted = true;
-        this.updateOpponentObjectives();
+        const objective = this.findObjectiveById(id) as Objective;
+        this.playerService.addScore(objective.score, this.playerIndex);
+        objective.isCompleted = true;
+        this.updateOpponentObjectives(id);
     }
 
-    updateOpponentObjectives(): void {
-        if (!this.gameSettingsService.isSoloMode)
-            this.clientSocketService.socket.emit('sendObjectives', this.objectives, this.clientSocketService.roomId);
+    findObjectiveById(idToSearchFor: number): Objective | undefined {
+        for (let i = 0; i < NUMBER_OF_OBJECTIVES; i++) {
+            for (let j = 0; j < NUMBER_OF_OBJECTIVES; j++) {
+                if (this.objectives[i][j].id === idToSearchFor) return this.objectives[i][j];
+            }
+        }
+
+        return undefined;
     }
 }
