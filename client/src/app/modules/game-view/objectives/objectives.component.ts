@@ -13,7 +13,7 @@ export class ObjectivesComponent implements OnInit {
     publicObjectives: Objective[];
     activeTimeRemaining: number;
 
-    constructor(private objectivesService: ObjectivesService, public gameSettingsService: GameSettingsService) {}
+    constructor(public objectivesService: ObjectivesService, public gameSettingsService: GameSettingsService) {}
 
     ngOnInit() {
         this.privateObjectives = this.objectivesService.privateObjectives;

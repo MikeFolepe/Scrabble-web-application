@@ -6,6 +6,7 @@
     <div *ngFor="let room of rooms ? rooms.slice(roomItemIndex, roomItemIndex + pageSize) : []">
         <mat-card class="card">
             <mat-card-title>{{ room.gameSettings.playersNames[0] }} </mat-card-title>
+            <br />
             <mat-card-subtitle>
                 Minute : {{ room.gameSettings.timeMinute }}
                 <br />
