@@ -238,4 +238,18 @@ describe('SkipTurnService', () => {
         expect(spyOnStop).toHaveBeenCalledTimes(0);
         expect(spyOnSwitch).toHaveBeenCalledTimes(0);
     });
+
+    it('should not udpate the active time if the turn is false', () => {
+        service['objectivesService'].activeTime = 0;
+        service.isTurn = false;
+        service.updateActiveTime();
+        expect(service['objectivesService'].activeTime).toEqual(0);
+    });
+
+    it('should  udpate the active time if the turn is true', () => {
+        service['objectivesService'].activeTime = 0;
+        service.isTurn = true;
+        service.updateActiveTime();
+        expect(service['objectivesService'].activeTime).not.toEqual(0);
+    });
 });
