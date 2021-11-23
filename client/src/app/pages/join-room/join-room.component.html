@@ -1,12 +1,12 @@
 <app-background></app-background>
 
-<mat-paginator id="paginator" [length]="rooms.length" [pageSize]="pageSize" (page)="onPageChange($event)">
-</mat-paginator>
+<mat-paginator id="paginator" [length]="rooms.length" [pageSize]="pageSize" (page)="onPageChange($event)"> </mat-paginator>
 
 <div *ngIf="!shouldDisplayNameError && !shouldDisplayJoinError">
     <div *ngFor="let room of rooms ? rooms.slice(roomItemIndex, roomItemIndex + pageSize) : []">
         <mat-card class="card">
             <mat-card-title>{{ room.gameSettings.playersNames[0] }} </mat-card-title>
+            <br />
             <mat-card-subtitle>
                 Minute : {{ room.gameSettings.timeMinute }}
                 <br />
@@ -16,26 +16,29 @@
             </mat-card-subtitle>
             <mat-card-actions>
                 <span>Statut : </span>
-                <span [ngClass]="{
+                <span
+                    [ngClass]="{
                         red: room.state === 0,
                         green: room.state === 1
-                    }">{{ computeRoomState(room.state) }}</span>
+                    }"
+                    >{{ computeRoomState(room.state) }}</span
+                >
                 <button mat-button color="primary" (click)="join(room)" [disabled]="room.state === 0">Joindre</button>
             </mat-card-actions>
         </mat-card>
     </div>
 </div>
-<div *ngIf="this.isRoomAvailable">
-    <button mat-raised-button color="warn" id="random-button" (click)="placeRandomly()" [disabled]="
-        !this.isRandomButtonAvailable">Placement aléatoire</button>
-</div>
 
 <div *ngIf="shouldDisplayNameError">
-    <mat-card class="error-message"><span class="warning">Erreur</span> : Ce nom de joueur est déjà utilisé dans cette
-        partie </mat-card>
+    <mat-card class="error-message"><span class="warning">Erreur</span> : Ce nom de joueur est déjà utilisé dans cette partie </mat-card>
 </div>
 
 <div *ngIf="shouldDisplayJoinError">
-    <mat-card class="error-message"><span class="warning">Erreur</span> : Cette partie n'existe plus ou vient d'être
-        rejointe </mat-card>
+    <mat-card class="error-message"><span class="warning">Erreur</span> : Cette partie n'existe plus ou vient d'être rejointe </mat-card>
+</div>
+
+<div *ngIf="this.isRoomAvailable && !shouldDisplayNameError && !shouldDisplayJoinError">
+    <button mat-raised-button color="warn" id="random-button" (click)="placeRandomly()" [disabled]="!this.isRandomButtonAvailable">
+        Placement aléatoire
+    </button>
 </div>

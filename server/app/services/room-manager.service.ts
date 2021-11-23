@@ -1,26 +1,27 @@
 import { OUT_BOUND_INDEX_OF_SOCKET } from '@app/classes/constants';
 import { GameSettings, StartingPlayer } from '@common/game-settings';
+import { GameType2 } from '@common/game-type';
 import { PlayerIndex } from '@common/player-index';
 import { Room, State } from '@common/room';
 import { Service } from 'typedi';
 
 @Service()
 export class RoomManagerService {
-    rooms: Room[];
+    rooms: Room[][];
     // TODO: prendre une decision PM
     // roomWaiting: Room[];
 
     constructor() {
-        this.rooms = [];
+        this.rooms = [[], []];
         // TODO: prendre une decision PM
         // this.roomWaiting = [];
     }
 
-    createRoom(socketId: string, roomId: string, gameSettings: GameSettings) {
-        this.rooms.push(new Room(roomId, socketId, gameSettings));
+    createRoom(socketId: string, roomId: string, gameSettings: GameSettings, gameType: GameType2) {
+        this.rooms[gameType].push(new Room(roomId, socketId, gameSettings));
     }
 
-    createRoomId(playerName: string) {
+    createRoomId(playerName: string, socketId: string) {
         return (
             new Date().getFullYear().toString() +
             new Date().getMonth().toString() +
@@ -28,6 +29,7 @@ export class RoomManagerService {
             new Date().getMinutes().toString() +
             new Date().getSeconds().toString() +
             new Date().getMilliseconds().toString() +
+            socketId +
             playerName
         );
     }
@@ -74,27 +76,32 @@ export class RoomManagerService {
     }
 
     deleteRoom(roomId: string): void {
-        this.rooms.forEach((room, roomIndex) => {
-            if (room.id === roomId) this.rooms.splice(roomIndex, 1);
-        });
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
+        for (let i = 0; i < this.rooms.length; i++) {
+            for (let j = 0; j < this.rooms[i].length; j++) {
+                if (this.rooms[i][j].id === roomId) this.rooms[i].splice(j, 1);
+            }
+        }
     }
 
-    findRoomIdOf(socketId: string): string {
-        const room = this.rooms.find((rooms) => {
-            for (const id of rooms.socketIds) {
-                if (socketId === id) return true;
+    findRoomIdOf(socketIdToCompare: string): string {
+        for (const roomMode of this.rooms) {
+            for (const room of roomMode) {
+                for (const socketId of room.socketIds) {
+                    if (socketId === socketIdToCompare) return room.id;
+                }
             }
-            return false;
-        });
-
-        return room !== undefined ? room.id : '';
+        }
+        return '';
     }
 
     // TODO: loser --> looser ??
-    findLoserIndex(socketId: string): number {
-        for (const room of this.rooms) {
-            for (const ids of room.socketIds) {
-                if (ids === socketId) return room.socketIds.indexOf(ids) as number;
+    findLooserIndex(socketIdToCompare: string): number {
+        for (const roomMode of this.rooms) {
+            for (const room of roomMode) {
+                for (const socketId of room.socketIds) {
+                    if (socketId === socketIdToCompare) return room.socketIds.indexOf(socketId) as number;
+                }
             }
         }
         return OUT_BOUND_INDEX_OF_SOCKET;
@@ -111,12 +118,17 @@ export class RoomManagerService {
     }
 
     find(roomId: string): Room | undefined {
-        return this.rooms.find((room) => room.id === roomId);
+        for (const roomMode of this.rooms) {
+            for (const room of roomMode) {
+                if (room.id === roomId) return room;
+            }
+        }
+        return undefined;
     }
 
-    findRoomInWaitingState(customerName: string): Room | undefined {
+    findRoomInWaitingState(customerName: string, gameType: GameType2): Room | undefined {
         const roomWaiting: Room[] = [];
-        for (const room of this.rooms) {
+        for (const room of this.rooms[gameType]) {
             if (room.state === State.Waiting && room.gameSettings.playersNames[PlayerIndex.OWNER] !== customerName) {
                 roomWaiting.push(room);
             }
@@ -126,9 +138,9 @@ export class RoomManagerService {
         return roomWaiting[roomIndex] as Room;
     }
 
-    getNumberofRoomInWaitingState(): number {
+    getNumberOfRoomInWaitingState(gameType: GameType2): number {
         let numberOfRoom = 0;
-        for (const room of this.rooms) {
+        for (const room of this.rooms[gameType]) {
             if (room.state === State.Waiting) numberOfRoom++;
         }
         return numberOfRoom;
