@@ -43,6 +43,7 @@ export class AdminPageComponent implements OnInit {
             })
             .afterClosed()
             .subscribe((response) => {
+                if (!response) return;
                 if (!response.titleInput || !response.descriptionInput) return;
 
                 // TODO Verifier si titre existe déjà
