@@ -114,7 +114,6 @@ export class SocketManagerService {
                     // room.state = State.Finish;
                     // Emit the event
                     this.sendWinnerName(socket, roomId);
-                    // this.roomManagerService.deleteRoom(roomId);
                     return;
                 }
                 // so after all if the state is finish, delete the room
@@ -135,7 +134,6 @@ export class SocketManagerService {
             // room creation alerts all clients on the new rooms configurations
             this.sio.emit('roomConfiguration', this.roomManagerService.rooms);
             // Send number of rooms available
-            // TODO: getNumberofRoomInWaitingState -> Of
             this.sio.emit('roomAvailable', this.roomManagerService.getNumberOfRoomInWaitingState(gameType));
         });
     }
