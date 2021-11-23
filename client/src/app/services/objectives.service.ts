@@ -71,6 +71,7 @@ export class ObjectivesService {
         for (const objective of this.publicObjectives) {
             if (!objective.isCompleted) this.isCompleted(objective.id);
         }
+        console.log(this.wordValidationService.priorPlayedWords);
     }
 
     isCompleted(id: number): void {
@@ -84,6 +85,7 @@ export class ObjectivesService {
                 break;
             }
             case 2: {
+                this.validateObjectiveThree(id);
                 break;
             }
             case 3: {
@@ -119,7 +121,21 @@ export class ObjectivesService {
 
     validateObjectiveTwo(id: number) {
         for (const word of this.wordValidationService.lastPlayedWords.keys()) {
-            if (word.length >= MIN_SIZE_FOR_OBJ2 && this.wordValidationService.playedWords.has(word)) this.addObjectiveScore(id);
+            if (word.length >= MIN_SIZE_FOR_OBJ2 && this.wordValidationService.priorPlayedWords.has(word)) this.addObjectiveScore(id);
+        }
+    }
+
+    validateObjectiveThree(id: number) {
+        for (const positions of this.wordValidationService.lastPlayedWords.values()) {
+            const playedPositionsUsed: string[][] = [];
+            for (const position of positions) {
+                this.isPositionInPlayedWords(position, playedPositionsUsed);
+            }
+            console.log('MOTS INTERSECTIONS : ', playedPositionsUsed);
+            if (playedPositionsUsed.length > 1) {
+                this.addObjectiveScore(id);
+                return;
+            }
         }
     }
 
@@ -128,13 +144,17 @@ export class ObjectivesService {
     }
 
     validateObjectiveFive(id: number) {
-        let count = 0;
+        let specificLettersUsed = 0;
         for (const word of this.wordValidationService.lastPlayedWords.keys()) {
             for (const letter of word) {
-                if (LETTERS_FOR_OBJ5.includes(letter.toUpperCase())) count++;
+                if (LETTERS_FOR_OBJ5.includes(letter.toUpperCase())) specificLettersUsed++;
             }
+            if (specificLettersUsed > 1) {
+                this.addObjectiveScore(id);
+                return;
+            }
+            specificLettersUsed = 0;
         }
-        if (count > 1) this.addObjectiveScore(id);
     }
 
     validateObjectiveSix(id: number) {
@@ -158,6 +178,14 @@ export class ObjectivesService {
                 if (CORNER_POSITIONS.includes(position)) {
                     this.addObjectiveScore(id);
                 }
+            }
+        }
+    }
+
+    isPositionInPlayedWords(position: string, playedPositionsUsed: string[][]) {
+        for (const playedPositions of this.wordValidationService.priorPlayedWords.values()) {
+            if (playedPositions.includes(position) && !playedPositionsUsed.includes(playedPositions)) {
+                playedPositionsUsed.push(playedPositions);
             }
         }
     }
