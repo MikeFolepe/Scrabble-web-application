@@ -30,6 +30,7 @@ export class GiveUpHandlerService {
                 this.gameSettingsService.gameSettings.playersNames[1] = 'Miss_Betty';
                 const playerAi = new PlayerAI(2, 'Miss_Betty', this.playerService.players[PLAYER_TWO_INDEX].letterTable, this.playerAIservice);
                 this.playerService.players[PLAYER_TWO_INDEX] = playerAi;
+                if (!this.skipturnService.isTurn) playerAi.play();
             }
         });
     }

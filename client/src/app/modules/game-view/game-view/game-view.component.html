@@ -41,7 +41,10 @@
                         mat-raised-button
                         color="primary"
                         id="regular-button"
-                        (click)="endGameService.clearAllData(); clientSocketService.socket.emit('deleteGame', clientSocketService.roomId)"
+                        (click)="
+                            endGameService.clearAllData();
+                            clientSocketService.socket.emit('deleteGame', clientSocketService.roomId, clientSocketService.gameType)
+                        "
                         routerLink="/home"
                     >
                         Abandonner
@@ -52,7 +55,10 @@
                         mat-raised-button
                         color="primary"
                         id="regular-button"
-                        (click)="endGameService.clearAllData(); clientSocketService.socket.emit('deleteGame', clientSocketService.roomId)"
+                        (click)="
+                            endGameService.clearAllData();
+                            clientSocketService.socket.emit('deleteGame', clientSocketService.roomId, clientSocketService.gameType)
+                        "
                         routerLink="/home"
                     >
                         Quitter

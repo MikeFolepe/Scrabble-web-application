@@ -161,21 +161,20 @@ describe('RoomManagerService', () => {
     it('should find the room with state in waiting and return it', () => {
         settings.playersNames[1] = '';
         roomManagerService.createRoom(socketId1, id, settings, GameType2.Classic);
-        // TODO:  traduire tous ces commentaires en anglais
-        // Deuxieme room avec un joueur et etat waiting
+        // Second room with player in waiting state
         roomManagerService.createRoom(socketId3, id1, mySettings, GameType2.Classic);
         roomManagerService.createRoom(socketId4, id4, mySettings1, GameType2.Classic);
         expect(roomManagerService.findRoomInWaitingState('Mike', GameType2.Classic)).not.to.equal(undefined);
     });
     it('should not find the room with state in waiting and return it', () => {
-        // Premiere room en attente
+        // first room in waitin  state
         settings.playersNames[1] = '';
         roomManagerService.createRoom(socketId1, id, settings, GameType2.Classic);
         roomManagerService.setState(id, State.Playing);
-        // Deuxieme room avec un joueur et etat waiting
+        // Second room with player in waiting state
         roomManagerService.createRoom(socketId3, id1, mySettings, GameType2.Classic);
         roomManagerService.setState(id1, State.Playing);
-        // 3eme room en attente
+        // third room in waiting state
         roomManagerService.createRoom(socketId4, id4, mySettings1, GameType2.Classic);
         roomManagerService.setState(id4, State.Playing);
 
@@ -197,6 +196,10 @@ describe('RoomManagerService', () => {
         roomManagerService.createRoom(socketId3, id1, mySettings, GameType2.Classic);
         roomManagerService.setState(id1, State.Playing);
 
+        expect(roomManagerService.getNumberOfRoomInWaitingState(GameType2.Classic)).to.equal(0);
+    });
+    it('should return 0 if the number of rooms gameType is equal 0', () => {
+        roomManagerService.rooms = [[], []];
         expect(roomManagerService.getNumberOfRoomInWaitingState(GameType2.Classic)).to.equal(0);
     });
 });

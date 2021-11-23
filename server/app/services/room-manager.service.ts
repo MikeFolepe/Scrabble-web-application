@@ -95,7 +95,6 @@ export class RoomManagerService {
         return '';
     }
 
-    // TODO: loser --> looser ??
     findLooserIndex(socketIdToCompare: string): number {
         for (const roomMode of this.rooms) {
             for (const room of roomMode) {
@@ -140,6 +139,10 @@ export class RoomManagerService {
 
     getNumberOfRoomInWaitingState(gameType: GameType2): number {
         let numberOfRoom = 0;
+        // cas spécial
+        if (this.rooms[gameType].length === 0) {
+            return numberOfRoom;
+        }
         for (const room of this.rooms[gameType]) {
             if (room.state === State.Waiting) numberOfRoom++;
         }
