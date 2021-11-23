@@ -4,22 +4,22 @@
         <mat-label>Titre du dictionnaire</mat-label>
         <input matInput [formControlName]="'titleInput'" />
         <mat-hint>
-            {{ descriptionSize.min }}-{{ descriptionSize.max }} caractères
+            {{ nameSize.min }}-{{ nameSize.max }} caractères
             <br />
-            Les {{ descriptionSize.min }} premiers caractères doivent être des lettres
+            Les {{ nameSize.min }} premiers caractères doivent être des lettres
             <br />
-            {{ specialCharWhiteSpace }} autorisés
+            {{ specialChar }} autorisés
         </mat-hint>
     </mat-form-field>
     <mat-form-field [formGroup]="form" appearance="fill">
         <mat-label>Description du dictionnaire</mat-label>
         <input matInput [formControlName]="'descriptionInput'" />
         <mat-hint>
-            {{ nameSize.min }}-{{ nameSize.max }} caractères
+            {{ descriptionSize.min }}-{{ descriptionSize.max }} caractères
             <br />
-            Les {{ nameSize.min }} premiers caractères doivent être des lettres
+            Les {{ descriptionSize.min }} premiers caractères doivent être des lettres
             <br />
-            {{ specialChar }} autorisés
+            {{ specialCharWhiteSpace }} autorisés
         </mat-hint>
     </mat-form-field>
 </div>
