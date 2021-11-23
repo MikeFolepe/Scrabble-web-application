@@ -187,7 +187,7 @@ describe('RoomManagerService', () => {
         roomManagerService.createRoom(socketId1, id, settings, GameType2.Classic);
         roomManagerService.createRoom(socketId3, id1, mySettings, GameType2.Classic);
         roomManagerService.createRoom(socketId4, id4, mySettings1, GameType2.Classic);
-        expect(roomManagerService.getNumberofRoomInWaitingState(GameType2.Classic)).to.equal(3);
+        expect(roomManagerService.getNumberOfRoomInWaitingState(GameType2.Classic)).to.equal(3);
     });
     it('should return 0 if the number of rooms in state Waiting is 0', () => {
         settings.playersNames[1] = '';
@@ -197,6 +197,6 @@ describe('RoomManagerService', () => {
         roomManagerService.createRoom(socketId3, id1, mySettings, GameType2.Classic);
         roomManagerService.setState(id1, State.Playing);
 
-        expect(roomManagerService.getNumberofRoomInWaitingState(GameType2.Classic)).to.equal(0);
+        expect(roomManagerService.getNumberOfRoomInWaitingState(GameType2.Classic)).to.equal(0);
     });
 });

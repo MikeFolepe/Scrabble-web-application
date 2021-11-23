@@ -138,7 +138,7 @@ export class RoomManagerService {
         return roomWaiting[roomIndex] as Room;
     }
 
-    getNumberofRoomInWaitingState(gameType: GameType2): number {
+    getNumberOfRoomInWaitingState(gameType: GameType2): number {
         let numberOfRoom = 0;
         for (const room of this.rooms[gameType]) {
             if (room.state === State.Waiting) numberOfRoom++;
