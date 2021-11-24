@@ -64,9 +64,9 @@ describe('SocketManagerService', () => {
 
     it('should call createRoom callback', () => {
         const fakeSocket = {
-            on: (eventName: string, callback: (gameSettings: GameSettings) => void) => {
+            on: (eventName: string, callback: (gameSettings: GameSettings, gameType: GameType2) => void) => {
                 if (eventName === 'createRoom') {
-                    callback(settings);
+                    callback(settings, GameType2.Classic);
                 }
             },
 
@@ -93,13 +93,13 @@ describe('SocketManagerService', () => {
         } as unknown as io.Server;
         const spyOnJoin = Sinon.spy(fakeSocket, 'join');
         const spyOnEmit = Sinon.spy(fakeSocket, 'emit');
+        const room = new Room('mike1234', socketId, settings, State.Waiting);
+        roomManagerService.rooms = [[room], []];
         roomManagerService.createRoomId.returns('mike1234');
         service.handleSockets();
         expect(spyOnEmit.calledWith('yourRoomId', 'mike1234')).to.equal(true);
         expect(roomManagerService.createRoomId.calledWith(settings.playersNames[0])).to.equal(true);
-        expect(
-            roomManagerService.createRoom.calledWith(fakeSocket.id, roomManagerService.createRoomId(settings.playersNames[0], 'mike1234'), settings),
-        ).to.equal(true);
+        expect(roomManagerService.createRoom.called).to.equal(true);
         expect(spyOnJoin.calledWith('mike1234')).to.equal(true);
     });
 
@@ -199,8 +199,7 @@ describe('SocketManagerService', () => {
                 }
             },
         } as unknown as io.Server;
-        // const spyOnEmit = Sinon.spy(service['sio'], 'emit');
-        // const room = new Room('mike1234', socketId, settings, State.Waiting);
+
         roomManagerService.rooms = [[], []];
         roomManagerService.findRoomInWaitingState.returns(undefined);
         service.handleSockets();
@@ -383,9 +382,9 @@ describe('SocketManagerService', () => {
 
     it('should handle an end game by give up', () => {
         const fakeSocket = {
-            on: (eventName: string, callback: (isEndGame: boolean, roomId: string) => void) => {
+            on: (eventName: string, callback: (isEndGame: boolean, roomId: string, gameType: GameType2) => void) => {
                 if (eventName === 'sendEndGameByGiveUp') {
-                    callback(true, 'mike1234');
+                    callback(true, 'mike1234', GameType2.Classic);
                 }
             },
             emit: (eventName: string, args: any[] | any) => {
@@ -421,8 +420,7 @@ describe('SocketManagerService', () => {
 
         service.handleSockets();
         expect(spyOnLeave.calledWith(room.id)).to.equal(true);
-        // expect(roomManagerService.deleteRoom.calledWith(room.id)).to.equal(true);
-        expect(spyOnEmit.calledWith('roomConfiguration', roomManagerService.rooms)).to.equal(true);
+        expect(spyOnEmit.calledWith('roomConfiguration', roomManagerService.rooms[GameType2.Classic])).to.equal(true);
         expect(spyOnTo.calledWith(room.id)).to.equal(true);
     });
 

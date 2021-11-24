@@ -32,7 +32,6 @@ export class ClientSocketService {
     initializeRoomId(): void {
         this.socket.on('yourRoomId', (roomIdFromServer: string) => {
             this.roomId = roomIdFromServer;
-            console.log(roomIdFromServer);
         });
     }
 
