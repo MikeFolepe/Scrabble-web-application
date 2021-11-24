@@ -1,0 +1,70 @@
+<p> Meilleurs scores </p>
+<app-background></app-background>
+<div id="title">
+    <div id="typing">Page admin</div>
+</div>
+<div id="wrapper">
+    <div id="dictionaries" class="window">
+        <div class="fake-menu">
+            <div class="fake-buttons fake-close"></div>
+            <div class="fake-buttons fake-minimize"></div>
+            <div class="fake-buttons fake-zoom"></div>
+        </div>
+        <h2>
+            Mode classique
+            <hr />
+        </h2>
+        <div class="window-content">
+            <div class="list">
+                <div class="beginner">
+                    <p class="name-title">Noms</p>
+                    <hr />
+                    <div class="item" *ngFor="let player of this.bestPlayersInClassicMode">
+                        <p class="playersNames">{{ player.playerName }}</p>
+                    </div>
+                </div>
+                <div class="separator"></div>
+                <div class="expert">
+                    <p class="name-title">scores</p>
+                    <hr />
+                    <div class="item" *ngFor="let player of this.bestPlayersInClassicMode">
+                        <p class="playersScores">{{ player.score }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="right-bar">
+        <div id="virtual-names" class="window">
+            <div class="fake-menu">
+                <div class="fake-buttons fake-close"></div>
+                <div class="fake-buttons fake-minimize"></div>
+                <div class="fake-buttons fake-zoom"></div>
+            </div>
+            <h2>
+                Mode LOG2990
+                <hr />
+            </h2>
+            <div class="window-content">
+                <div class="list">
+                    <div class="beginner">
+                        <p class="name-title">Noms</p>
+                        <hr />
+                        <div class="item" *ngFor="let player of this.bestPlayersInLog2990Mode">
+                            <p class="playersNames">{{ player.playerName }}</p>
+                        </div>
+                    </div>
+                    <div class="separator"></div>
+                    <div class="expert">
+                        <p class="name-title">scores</p>
+                        <hr />
+                        <div class="item" *ngFor="let player of this.bestPlayersInLog2990Mode">
+                            <p class="playersScores">{{ player.score }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
