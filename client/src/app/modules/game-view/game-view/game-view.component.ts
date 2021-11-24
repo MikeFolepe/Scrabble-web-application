@@ -39,9 +39,6 @@ export class GameViewComponent implements OnInit {
         this.fontSize = DEFAULT_FONT_SIZE;
         this.giveUpHandlerService.receiveEndGameByGiveUp();
         this.objectiveService.initializeObjectives();
-        // TODO: enlever ca avant de merge plus tard
-        console.log(this.gameSettingsService);
-        console.log(this.objectiveService);
     }
 
     ngOnInit(): void {

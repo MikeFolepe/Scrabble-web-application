@@ -17,16 +17,6 @@ export class ObjectivesComponent implements OnInit {
     }
 
     ngOnInit() {
-        // Dangereux car s'il y'a update de l'etat d'un objectif dans le service
-        // je ne suis pas sure que ta vue va s'update dynamiquement
-        // car tu as une copie des états des objectifs au moment de l'initialisation de la vue
-        // solution: utiliser this.objectivesService.attribDuServiceAAfficher dans le html
         this.objectives = this.objectivesService.objectives;
-        console.log(this);
-    }
-
-    onupdate() {
-        this.ngOnInit();
-        this.objectives[1][1].isCompleted = true;
     }
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ONE_MINUTE, PLAYER_ONE_INDEX } from '@app/classes/constants';
+import { ONE_MINUTE } from '@app/classes/constants';
 import {
     CORNER_POSITIONS,
     LETTERS_FOR_OBJ5,
@@ -12,6 +12,7 @@ import {
 } from '@common/objectives';
 import { ObjectiveTypes } from '@common/objectives-type';
 import { ClientSocketService } from './client-socket.service';
+import { EndGameService } from './end-game.service';
 import { GameSettingsService } from './game-settings.service';
 import { PlacementsHandlerService } from './placements-handler.service';
 import { PlayerService } from './player.service';
@@ -26,6 +27,7 @@ export class ObjectivesService {
     playerIndex: number;
     activeTimeRemaining: number;
     extendedWords: string[];
+    private obj1Counter: number[];
 
     constructor(
         private wordValidationService: WordValidationService,
@@ -34,9 +36,11 @@ export class ObjectivesService {
         private gameSettingsService: GameSettingsService,
         private randomBonusesService: RandomBonusesService,
         private placementsService: PlacementsHandlerService,
+        private endGameService: EndGameService,
     ) {
         this.objectives = [[], []];
         this.activeTimeRemaining = ONE_MINUTE;
+        this.obj1Counter = [0, 0];
         this.receiveObjectives();
     }
 
@@ -117,17 +121,66 @@ export class ObjectivesService {
     }
 
     validateObjectiveOne(id: number) {
-        return id;
-    }
+        const actionLog: string[] = [];
+        const size = this.endGameService.actionsLog.length - 1;
+        let lastWordLength = 0;
 
-    validateObjectiveTwo(id: number) {
+        for (let index = size; index >= 0; index = index - 2) {
+            actionLog.push(this.endGameService.actionsLog[index]);
+        }
+
         for (const word of this.wordValidationService.lastPlayedWords.keys()) {
-            if (word.length >= MIN_SIZE_FOR_OBJ2 && this.wordValidationService.playedWords.has(word)) this.addObjectiveScore(id);
+            lastWordLength = word.length;
+        }
+
+        debugger;
+        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+        if (actionLog.length > 0 && actionLog[actionLog.length - 1] !== 'PlacerSucces' && lastWordLength >= 4) {
+            this.obj1Counter[this.playerIndex]++;
+        } else {
+            this.obj1Counter[this.playerIndex] = 1;
+        }
+
+        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+        if (this.obj1Counter[this.playerIndex] === 4) {
+            this.addObjectiveScore(id);
+            this.obj1Counter[this.playerIndex] = 0;
         }
     }
 
+    validateObjectiveTwo(id: number) {
+        let counter = 0;
+        for (const lastWord of this.wordValidationService.lastPlayedWords.keys()) {
+            for (const word of this.wordValidationService.playedWords.keys()) {
+                counter = 0;
+                if (lastWord.length >= MIN_SIZE_FOR_OBJ2 && word === lastWord) {
+                    counter++;
+                }
+            }
+        }
+
+        if (counter > 1) this.addObjectiveScore(id);
+    }
+
+    validateObjectiveThree(id: number) {
+        const wordsTouchingTheLastWord: string[] = [];
+        for (const lastWord of this.wordValidationService.lastPlayedWords.keys()) {
+            for (const word of this.wordValidationService.playedWords.keys()) {
+                if (word !== lastWord) {
+                    this.wordValidationService.playedWords.get(word)?.forEach((charInPlayedWord: string) => {
+                        this.wordValidationService.lastPlayedWords.get(lastWord)?.forEach((charInLastWord: string) => {
+                            if (charInLastWord === charInPlayedWord) wordsTouchingTheLastWord.push(word);
+                        });
+                    });
+                }
+            }
+        }
+
+        // if (counter > 1) this.addObjectiveScore(id);
+    }
+
     validateObjectiveFour(id: number) {
-        if (this.activeTimeRemaining > 0 && this.playerService.players[PLAYER_ONE_INDEX].score >= MIN_SCORE_FOR_OBJ4) this.addObjectiveScore(id);
+        if (this.activeTimeRemaining > 0 && this.playerService.players[this.playerIndex].score >= MIN_SCORE_FOR_OBJ4) this.addObjectiveScore(id);
     }
 
     validateObjectiveFive(id: number) {
@@ -178,7 +231,6 @@ export class ObjectivesService {
                 if (this.objectives[i][j].id === idToSearchFor) return this.objectives[i][j];
             }
         }
-
         return undefined;
     }
 }

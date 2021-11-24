@@ -5,16 +5,11 @@
         <div class="score">{{ objectives[1][0].score }}</div>
         <div class="description">{{ objectives[1][0].name }}</div>
         <div class="checked" *ngIf="objectives[1][0].isCompleted">&#10003;</div>
-        <div
-            class="timer"
-            *ngIf="objectives[1][0].id === 3 && !objectives[1][0].isCompleted"
-            [ngClass]="{ failed: objectives[1][0].id === 3 && objectivesService.activeTimeRemaining === 0 }"
-        >
+        <div class="timer" [ngClass]="{ failed: objectives[1][0].id === 3 && objectivesService.activeTimeRemaining === 0 }">
             {{ objectivesService.activeTimeRemaining }}
         </div>
     </div>
-    <!-- En tout temps un joueur ne peut voir que son objectif privé
-    J'ai mis un ngIf à des fins de débogage pour voir l'objectif privé du JV en cas de mode solo -->
+
     <div class="objective" [ngClass]="{ fade: objectives[1][1].isCompleted, invisible: !objectives[1][1].isCompleted }">
         <div class="score">{{ objectives[1][1].score }}</div>
         <div class="description">{{ objectives[1][1].name }}</div>
@@ -22,7 +17,7 @@
     </div>
 
     <h3>Publics</h3>
-    <div class="objective" *ngFor="let objective of objectives[0]; let i = index" (click)="onupdate()">
+    <div class="objective" *ngFor="let objective of objectives[0]; let i = index">
         <div class="score">{{ objective.score }}</div>
         <div class="description">{{ objective.name }}</div>
         <div class="checked" *ngIf="objective.isCompleted">&#10003;</div>

@@ -45,6 +45,7 @@ export class SocketManagerService {
             socket.on('sendGameConversionMessage', (message: string, roomId: string) => {
                 socket.to(roomId).emit('receiveGameConversionMessage', message);
             });
+
             socket.on('switchTurn', (turn: boolean, roomId: string) => {
                 if (turn) {
                     socket.to(roomId).emit('turnSwitched', turn);
