@@ -7,6 +7,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
 import { GameSettings } from '@common/game-settings';
+import { GameType2 } from '@common/game-type';
+import { Objective, OBJECTIVES } from '@common/objectives';
 import { Room, State } from '@common/room';
 import { expect } from 'chai';
 import * as http from 'http';
@@ -141,11 +143,12 @@ describe('SocketManagerService', () => {
     });
 
     it('should emit RoomConfigurations', () => {
+        const typeOfGame = GameType2.Classic;
         const fakeSocket = {
             // eslint-disable-next-line no-unused-vars
-            on: (eventName: string, callback: () => void) => {
+            on: (eventName: string, callback: (gameType: GameType2) => void) => {
                 if (eventName === 'getRoomsConfiguration') {
-                    callback();
+                    callback(typeOfGame);
                     // return;
                 }
             },
@@ -165,11 +168,102 @@ describe('SocketManagerService', () => {
             },
         } as unknown as io.Server;
         const room = new Room('mike1234', socketId, settings, State.Waiting);
-        roomManagerService.rooms[0][0] = room;
+        roomManagerService.rooms = [[room], []];
         service.handleSockets();
-        expect(spy.calledWith('roomConfiguration', roomManagerService.rooms)).to.equal(true);
+        expect(spy.calledWith('roomConfiguration', roomManagerService.rooms[typeOfGame])).to.equal(true);
     });
 
+    it('should emit the roomAvailbale ', () => {
+        const typeOfGame = GameType2.Classic;
+        const fakeSocket = {
+            // eslint-disable-next-line no-unused-vars
+            on: (eventName: string, callback: (gameType: GameType2) => void) => {
+                if (eventName === 'getRoomAvailable') {
+                    callback(typeOfGame);
+                    // return;
+                }
+            },
+            emit: (eventName: string, args: any[] | any) => {
+                return;
+            },
+        };
+        service['sio'] = {
+            on: (eventName: string, callback: (socket: any) => void) => {
+                if (eventName === 'connection') {
+                    callback(fakeSocket);
+                }
+            },
+            emit: (eventName: string, args: any[] | any) => {
+                return;
+            },
+        } as unknown as io.Server;
+        const spyOnEmit = Sinon.spy(service['sio'], 'emit');
+        const room = new Room('mike1234', socketId, settings, State.Waiting);
+        roomManagerService.rooms = [[room], []];
+        service.handleSockets();
+        expect(spyOnEmit.calledWith('roomAvailable', roomManagerService.getNumberOfRoomInWaitingState(typeOfGame))).to.equal(true);
+    });
+
+    it('should update objectives', () => {
+        const fakeSocket = {
+            // eslint-disable-next-line no-unused-vars
+            on: (eventName: string, callback: (objectives: Objective[], roomId: string) => void) => {
+                if (eventName === 'sendObjectives') {
+                    callback(OBJECTIVES, '1');
+                    // return;
+                }
+            },
+            emit: (eventName: string, args: any[] | any) => {
+                return;
+            },
+            to: (roomId: string) => {
+                return fakeIn;
+            },
+        };
+        const spy = Sinon.spy(fakeSocket, 'emit');
+        service['sio'] = {
+            on: (eventName: string, callback: (socket: any) => void) => {
+                if (eventName === 'connection') {
+                    callback(fakeSocket);
+                }
+            },
+            emit: (eventName: string, args: any[] | any) => {
+                return;
+            },
+        } as unknown as io.Server;
+        service.handleSockets();
+        expect(spy.calledWith('1')).to.equal(false);
+    });
+    it('should update the PlayeWords', () => {
+        const fakeSocket = {
+            // eslint-disable-next-line no-unused-vars
+            on: (eventName: string, callback: (playedWords: string, roomId: string) => void) => {
+                if (eventName === 'updatePlayedWords') {
+                    callback('a', '1');
+                    // return;
+                }
+            },
+            emit: (eventName: string, args: any[] | any) => {
+                return;
+            },
+            to: (roomId: string) => {
+                return fakeIn;
+            },
+        };
+        const spy = Sinon.spy(fakeSocket, 'to');
+        service['sio'] = {
+            on: (eventName: string, callback: (socket: any) => void) => {
+                if (eventName === 'connection') {
+                    callback(fakeSocket);
+                }
+            },
+            emit: (eventName: string, args: any[] | any) => {
+                return;
+            },
+        } as unknown as io.Server;
+        service.handleSockets();
+        expect(spy.calledWith('1')).to.equal(true);
+    });
     it('should handle a new customer', () => {
         const fakeSocket = {
             // eslint-disable-next-line no-unused-vars
@@ -395,6 +489,35 @@ describe('SocketManagerService', () => {
         const fakeSocket = {
             on: (eventName: string, callback: (message: string, roomId: string) => void) => {
                 if (eventName === 'sendRoomMessage') {
+                    callback('Mike', 'mike1234');
+                    // return;
+                }
+            },
+
+            emit: (eventName: string, args: any[] | any) => {
+                return;
+            },
+            to: (roomId: string) => {
+                return fakeIn;
+            },
+        };
+
+        const spy = Sinon.spy(fakeSocket, 'to');
+        service['sio'] = {
+            on: (eventName: string, callback: (socket: any) => void) => {
+                if (eventName === 'connection') {
+                    callback(fakeSocket);
+                }
+            },
+        } as unknown as io.Server;
+        service.handleSockets();
+        expect(spy.calledWith('mike1234')).to.equal(true);
+    });
+
+    it('should send Gameconversion a message', () => {
+        const fakeSocket = {
+            on: (eventName: string, callback: (message: string, roomId: string) => void) => {
+                if (eventName === 'sendGameConversionMessage') {
                     callback('Mike', 'mike1234');
                     // return;
                 }
