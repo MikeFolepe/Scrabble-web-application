@@ -3,6 +3,7 @@
 //                 the Typescript compiler does not recognize them and it fails. So, they are referenced with dot notation
 import { AdministratorService } from '@app/services/administrator.service';
 import { AiType } from '@common/ai-name';
+import { GameType } from '@common/game-type';
 import { Request, Response, Router } from 'express';
 import * as fileSystem from 'fs';
 import { StatusCodes } from 'http-status-codes';
@@ -73,6 +74,18 @@ export class AdministratorController {
                 .catch((error) => {
                     res.status(StatusCodes.NOT_MODIFIED).send('An error occurred while trying to delete then ai expert ' + error.message);
                 });
+        });
+
+        this.router.delete('/scores/Classic', async (req: Request, res: Response) => {
+            await this.administratorService.resetScores(GameType.Classic).catch((error) => {
+                res.status(StatusCodes.NOT_MODIFIED).send('An error occurred while trying to delete classic scores ' + error.message);
+            });
+        });
+
+        this.router.delete('/scores/Log2990', async (req: Request, res: Response) => {
+            await this.administratorService.resetScores(GameType.Log2990).catch((error) => {
+                res.status(StatusCodes.NOT_MODIFIED).send('An error occurred while trying to delete Log2990 scores ' + error.message);
+            });
         });
 
         this.router.post('/aiPlayers', async (req: Request, res: Response) => {

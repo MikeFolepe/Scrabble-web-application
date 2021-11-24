@@ -25,8 +25,6 @@ const expertNameModel = mongoose.model('AiExpertName', aiNameSchema);
 export const SCORE_MODEL = mongoose.model('Score', scoreSchema);
 export const SCORES_MODEL_CLASSIC = mongoose.model('ScoresClassic', scoreSchema);
 export const SCORES_MODEL_LOG2990 = mongoose.model('ScoresLog2990', scoreSchema);
-export const BEGINNER_NAME_MODEL = mongoose.model('AiBeginnerName', aiNameSchema);
-export const EXPERT_NAME_MODEL = mongoose.model('AiExpertName', aiNameSchema);
 
 export const AI_MODELS: Map<AiType, DbModel> = new Map<AiType, DbModel>([
     [AiType.beginner, beginnerNameModel],

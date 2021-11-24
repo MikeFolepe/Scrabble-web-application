@@ -74,6 +74,10 @@ export class CommunicationService {
         return this.http.delete<AiPlayerDB[]>(`${this.baseUrl}/admin/aiBeginners/${id}`);
     }
 
+    deleteScores(gameType: GameType): Observable<void> {
+        return this.http.delete<void>(`${this.baseUrl}/admin/scores/${gameType}`);
+    }
+
     updateAiPlayer(id: string, aiBeginner: AiPlayer, aiType: AiType): Observable<AiPlayerDB[]> {
         return this.http.put<AiPlayerDB[]>(`${this.baseUrl}/admin/aiPlayers/${id}`, { aiBeginner, aiType });
     }

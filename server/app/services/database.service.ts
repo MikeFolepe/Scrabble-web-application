@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { AiType } from '@common/ai-name';
 import { AI_BEGINNERS, AI_EXPERTS, DATABASE_URL, DEFAULT_SCORES } from '@app/classes/constants';
-import { BEGINNER_NAME_MODEL, EXPERT_NAME_MODEL, SCORES_MODEL, AI_MODELS, DbModel } from '@app/classes/database.schema';
+import { SCORES_MODEL, AI_MODELS, DbModel } from '@app/classes/database.schema';
 import { GameType } from '@common/game-type';
 import { PlayerScore } from '@common/player';
 import * as mongoose from 'mongoose';
@@ -36,6 +36,7 @@ export class DatabaseService {
     async closeConnection(): Promise<void> {
         await mongoose.connection.close();
     }
+
     async setDefaultScores(gameType: GameType): Promise<void> {
         const scoresModel = SCORES_MODEL.get(gameType) as mongoose.Model<PlayerScore>;
         await scoresModel.deleteMany({ isDefault: true }).exec();
@@ -61,16 +62,5 @@ export class DatabaseService {
             });
             await player.save();
         }
-    }
-
-    async resetScores(gameType: GameType): Promise<void> {
-        const scoresModel = SCORES_MODEL.get(gameType) as mongoose.Model<PlayerScore>;
-        await scoresModel.deleteMany({ isDefault: false }).exec();
-    }
-
-    async resetData(): Promise<void> {
-        await BEGINNER_NAME_MODEL.deleteMany({ isDefault: false }).exec();
-        await EXPERT_NAME_MODEL.deleteMany({ isDefault: false }).exec();
-        // TODO supprimer dictionnaires
     }
 }

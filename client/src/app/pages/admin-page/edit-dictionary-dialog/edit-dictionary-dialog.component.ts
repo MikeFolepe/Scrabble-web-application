@@ -17,6 +17,7 @@ export class EditDictionaryDialogComponent implements OnInit {
     specialCharWhiteSpace: string;
 
     constructor(public dialogRef: MatDialogRef<EditDictionaryDialogComponent>) {
+        // TODO à changer
         this.nameSize = NAME_SIZE;
         this.specialChar = SPECIAL_CHAR;
 

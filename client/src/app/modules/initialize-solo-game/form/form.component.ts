@@ -21,6 +21,8 @@ export class FormComponent implements OnDestroy {
     beginnersAi: AiPlayerDB[];
     expertsAi: AiPlayerDB[];
     isDictionaryDeleted: boolean;
+
+    // TODO fix console error on init
     constructor(
         public gameSettingsService: GameSettingsService,
         private router: Router,
@@ -85,9 +87,6 @@ export class FormComponent implements OnDestroy {
         }
         this.communicationService.getGameDictionary(dictionary.fileName).subscribe((gameDictionary: string[]) => {
             this.gameDictionary = gameDictionary;
-            // JUSTIFICATION :
-            // eslint-disable-next-line no-console
-            console.log(this.gameDictionary);
         });
     }
 

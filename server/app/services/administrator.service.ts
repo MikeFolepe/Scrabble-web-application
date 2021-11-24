@@ -1,8 +1,12 @@
-import { AI_MODELS, DbModel } from '@app/classes/database.schema';
+import { AI_MODELS, DbModel, SCORES_MODEL } from '@app/classes/database.schema';
 import { AiPlayer, AiPlayerDB, AiType } from '@common/ai-name';
 import { Dictionary } from '@common/dictionary';
+import { GameType } from '@common/game-type';
+import * as mongoose from 'mongoose';
 import * as fileSystem from 'fs';
 import { Service } from 'typedi';
+import { PlayerScore } from '@common/player';
+
 @Service()
 export class AdministratorService {
     private newAiPlayer: AiPlayerDB;
@@ -68,18 +72,8 @@ export class AdministratorService {
         return this.getDictionaries();
     }
 
-    // resetDictionaries(): Dictionary[] {
-    //     for (const dictionary of this.dictionaries) {
-    //         if (!dictionary.isDefault) {
-    //             fileSystem.unlinkSync(`./dictionaries/${dictionary.fileName}`);
-    //         }
-    //     }
-    //     return this.getDictionaries();
-    // }
-
-    // async resetAiPlayers(): Promise<AiPlayerDB[]> {
-    //     await AI_MODELS.get(AiType.beginner)?.deleteMany({ isDefault: false }).exec();
-    //     await AI_MODELS.get(AiType.expert)?.deleteMany({ isDefault: false }).exec();
-    //     return await this.getAllAiPlayers();
-    // }
+    async resetScores(gameType: GameType): Promise<void> {
+        const scoresModel = SCORES_MODEL.get(gameType) as mongoose.Model<PlayerScore>;
+        await scoresModel.deleteMany({ isDefault: false }).exec();
+    }
 }

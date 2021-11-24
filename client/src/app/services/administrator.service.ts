@@ -8,6 +8,7 @@ import { CommunicationService } from '@app/services/communication.service';
 import { AiPlayer, AiPlayerDB, AiType } from '@common/ai-name';
 import { Dictionary } from '@common/dictionary';
 import dictionarySchema from '@common/dictionarySchema.json';
+import { GameType } from '@common/game-type';
 import Ajv from 'ajv';
 import { saveAs } from 'file-saver';
 
@@ -204,14 +205,11 @@ export class AdministratorService {
 
     resetData(): void {
         this.isResetting = true;
+
         this.resetAiPlayers();
+        this.resetDictionaries();
+        this.resetScores();
 
-        const createdDictionaries = this.dictionaries.filter((dictionary) => !dictionary.isDefault);
-        for (const dictionary of createdDictionaries) {
-            this.deleteDictionary(dictionary);
-        }
-
-        // this.resetBestScores();
         this.isResetting = false;
         this.displayMessage('La base de données à été réinitialisée');
     }
@@ -249,7 +247,7 @@ export class AdministratorService {
     }
 
     private displayMessage(message: string): void {
-        if (this.isResetting) return;
+        if (this.isResetting) return; // TODO check si fonctionnel
         this.snackBar.open(message, 'OK', {
             duration: ERROR_MESSAGE_DELAY,
             horizontalPosition: 'center',
@@ -296,5 +294,17 @@ export class AdministratorService {
         for (const beginnerName of createdAiBeginnerNames) {
             this.deleteAiPlayer(beginnerName, AiType.beginner);
         }
+    }
+
+    private resetDictionaries(): void {
+        const createdDictionaries = this.dictionaries.filter((dictionary) => !dictionary.isDefault);
+        for (const dictionary of createdDictionaries) {
+            this.deleteDictionary(dictionary);
+        }
+    }
+
+    private resetScores(): void {
+        this.communicationService.deleteScores(GameType.Classic).subscribe();
+        this.communicationService.deleteScores(GameType.Log2990).subscribe();
     }
 }
