@@ -20,10 +20,10 @@ import { Vec2 } from '@common/vec2';
 import { ClientSocketService } from './client-socket.service';
 import { EndGameService } from './end-game.service';
 import { GameSettingsService } from './game-settings.service';
-import { SendMessageService } from './send-message.service';
-import { SkipTurnService } from './skip-turn.service';
 import { ObjectivesService } from './objectives.service';
 import { PlacementsHandlerService } from './placements-handler.service';
+import { SendMessageService } from './send-message.service';
+import { SkipTurnService } from './skip-turn.service';
 @Injectable({
     providedIn: 'root',
 })
@@ -143,7 +143,6 @@ export class PlaceLetterService {
     }
 
     async validatePlacement(position: Vec2, orientation: Orientation, word: string, indexPlayer: number): Promise<boolean> {
-        this.endGameService.addActionsLog('placer');
         // Validation of the placement
         const finalResult: ScoreValidation = await this.wordValidationService.validateAllWordsOnBoard(
             this.scrabbleBoard,
@@ -152,13 +151,18 @@ export class PlaceLetterService {
         );
 
         if (finalResult.validation) {
+            this.endGameService.addActionsLog('placerSucces');
+            this.clientSocketService.socket.emit('sendActions', this.endGameService.actionsLog, this.clientSocketService.roomId);
             this.handleValidPlacement(finalResult, indexPlayer);
             const lastLetters = this.placementsService.getLastLettersPlaced(this.startPosition, this.orientation, this.word, this.validLetters);
+            this.objectivesService.playerIndex = indexPlayer;
             this.objectivesService.extendedWords = this.placementsService.getExtendedWords(this.orientation, this.scrabbleBoard, lastLetters);
             this.objectivesService.checkObjectivesCompletion();
             this.skipTurnService.switchTurn();
             return true;
         }
+        this.endGameService.addActionsLog('placerEchec');
+        this.clientSocketService.socket.emit('sendActions', this.endGameService.actionsLog, this.clientSocketService.roomId);
         this.handleInvalidPlacement(position, orientation, word, indexPlayer);
         this.sendMessageService.displayMessageByType('ERREUR : Un ou des mots formés sont invalides', TypeMessage.Error);
         setTimeout(() => {

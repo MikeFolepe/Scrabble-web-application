@@ -9,20 +9,14 @@ import { Objective } from '@common/objectives';
     styleUrls: ['./objectives.component.scss'],
 })
 export class ObjectivesComponent implements OnInit {
-    privateObjectives: Objective[];
-    publicObjectives: Objective[];
+    objectives: Objective[][];
     activeTimeRemaining: number;
 
-    constructor(public objectivesService: ObjectivesService, public gameSettingsService: GameSettingsService) {}
-
-    ngOnInit() {
-        this.privateObjectives = this.objectivesService.privateObjectives;
-        this.publicObjectives = this.objectivesService.publicObjectives;
+    constructor(public objectivesService: ObjectivesService, public gameSettingsService: GameSettingsService) {
+        this.objectives = [[], []];
     }
 
-    onupdate() {
-        const indexes: number[] = [4, 0, 2, 1];
-        this.objectivesService.initializeObjectives(indexes);
-        this.privateObjectives[1].isCompleted = true;
+    ngOnInit() {
+        this.objectives = this.objectivesService.objectives;
     }
 }

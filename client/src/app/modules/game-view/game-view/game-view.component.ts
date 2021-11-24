@@ -9,6 +9,7 @@ import { EndGameService } from '@app/services/end-game.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { GiveUpHandlerService } from '@app/services/give-up-handler.service';
 import { GridService } from '@app/services/grid.service';
+import { ObjectivesService } from '@app/services/objectives.service';
 import { PlayerService } from '@app/services/player.service';
 import { SendMessageService } from '@app/services/send-message.service';
 import { SkipTurnService } from '@app/services/skip-turn.service';
@@ -33,9 +34,11 @@ export class GameViewComponent implements OnInit {
         public dialog: MatDialog,
         public sendMessageService: SendMessageService,
         public giveUpHandlerService: GiveUpHandlerService,
+        public objectiveService: ObjectivesService,
     ) {
         this.fontSize = DEFAULT_FONT_SIZE;
         this.giveUpHandlerService.receiveEndGameByGiveUp();
+        this.objectiveService.initializeObjectives();
     }
 
     ngOnInit(): void {

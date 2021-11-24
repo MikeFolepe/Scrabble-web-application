@@ -4,8 +4,8 @@ import { PlayerAI } from '@app/models/player-ai.model';
 import { ClientSocketService } from '@app/services/client-socket.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { EndGameService } from './end-game.service';
-import { PlayerService } from './player.service';
 import { ObjectivesService } from './objectives.service';
+import { PlayerService } from './player.service';
 
 @Injectable({
     providedIn: 'root',
@@ -84,6 +84,8 @@ export class SkipTurnService {
                 this.updateActiveTime();
             } else if (this.seconds === 0 && this.minutes === 0) {
                 if (this.isTurn) {
+                    this.endGameService.actionsLog.push('AucuneAction');
+                    this.clientSocket.socket.emit('sendActions', this.endGameService.actionsLog, this.clientSocket.roomId);
                     this.switchTurn();
                 }
             } else {

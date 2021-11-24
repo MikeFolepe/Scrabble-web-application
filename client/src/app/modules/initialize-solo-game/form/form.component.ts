@@ -1,10 +1,14 @@
+// TODO: enlever ça avant de merge
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 import { Component, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AI_NAME_DATABASE, BONUS_POSITIONS, PLAYER_ONE_INDEX } from '@app/classes/constants';
+import { AI_NAME_DATABASE, BONUS_POSITIONS, INVALID_INDEX, PLAYER_ONE_INDEX } from '@app/classes/constants';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { RandomBonusesService } from '@app/services/random-bonuses.service';
 import { GameSettings, StartingPlayer } from '@common/game-settings';
+import { OBJECTIVES } from '@common/objectives';
+import { ObjectiveTypes } from '@common/objectives-type';
 
 @Component({
     selector: 'app-form',
@@ -69,7 +73,25 @@ export class FormComponent implements OnDestroy {
             this.form.controls.randomBonus.value,
             this.getRightBonusPositions(),
             'dictionary.json',
+            this.initializeObjective(/* forcer des valeurs ici selon le formattage de la ligne 80 */),
         );
+    }
+
+    // [[idx1 = objPublic1, idx2 = ObjPublic2], [idx3 = ton ObjPrive, idx4 = ObjPrive de ton adversaire (multijoueur ou JV)]]
+    initializeObjective(forceValue: number[][] = [[], []]): number[][] {
+        // TODO: ligne 83 uniquement à des fins de débogage
+        if (forceValue[0].length === 2 && forceValue[1].length === 2) return forceValue;
+        const objectiveIds: number[] = [];
+        const objectiveByType: number[][] = [[], []];
+
+        while (objectiveIds.length < 4) {
+            const candidate = Math.floor(Number(Math.random()) * OBJECTIVES.length);
+            if (objectiveIds.indexOf(candidate) === INVALID_INDEX) objectiveIds.push(candidate);
+        }
+        objectiveByType[ObjectiveTypes.Public] = objectiveIds.slice(0, 2);
+        objectiveByType[ObjectiveTypes.Private] = objectiveIds.slice(2, objectiveIds.length);
+
+        return objectiveByType;
     }
 
     ngOnDestroy(): void {
