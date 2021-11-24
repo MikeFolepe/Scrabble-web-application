@@ -32,6 +32,7 @@ export class DatabaseService {
     async closeConnection(): Promise<void> {
         await mongoose.connection.close();
     }
+
     async setDefaultScores(gameType: GameType): Promise<void> {
         const scoresModel = SCORES_MODEL.get(gameType) as mongoose.Model<PlayerScore>;
         await scoresModel.deleteMany({ isDefault: true }).exec();

@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { BestScoresComponent } from '@app/pages/best-scores/best-scores.component';
 import { ClientSocketService } from '@app/services/client-socket.service';
 import { EndGameService } from '@app/services/end-game.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { GameType } from '@common/game-type';
-import { BestScoresComponent } from '@app/pages/best-scores/best-scores.component';
-import { MatDialog } from '@angular/material/dialog';
 
 @Component({
     selector: 'app-main-page',
