@@ -9,15 +9,19 @@ describe('RoomManagerService', () => {
     let roomManagerService: RoomManagerService;
     const id = 'LOG2990';
     const socketId1 = 'socket1';
-    const settings: GameSettings = new GameSettings(['Paul', 'Mike'], StartingPlayer.Player1, '00', '30', 'facile', 'Désactiver', 'français', '00');
+    const settings: GameSettings = new GameSettings(['Paul', 'Mike'], StartingPlayer.Player1, '00', '30', 'facile', 'Désactiver', 'français', ['00']);
 
     const id1 = 'LOG2991';
     const socketId3 = 'socket3';
-    const mySettings: GameSettings = new GameSettings(['Etienne', ''], StartingPlayer.Player1, '00', '30', 'facile', 'Désactiver', 'français', '00');
+    const mySettings: GameSettings = new GameSettings(['Etienne', ''], StartingPlayer.Player1, '00', '30', 'facile', 'Désactiver', 'français', [
+        '00',
+    ]);
 
     const id4 = 'LOG2992';
     const socketId4 = 'socket4';
-    const mySettings1: GameSettings = new GameSettings(['Johanna', ''], StartingPlayer.Player1, '00', '30', 'facile', 'Désactiver', 'français', '00');
+    const mySettings1: GameSettings = new GameSettings(['Johanna', ''], StartingPlayer.Player1, '00', '30', 'facile', 'Désactiver', 'français', [
+        '00',
+    ]);
 
     beforeEach(() => {
         roomManagerService = new RoomManagerService();

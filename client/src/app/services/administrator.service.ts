@@ -191,8 +191,12 @@ export class AdministratorService {
     downloadDictionary(dictionary: Dictionary): void {
         this.communicationService.downloadDictionary(dictionary.fileName).subscribe((response) => {
             const fileToDownload = JSON.stringify(response);
+            // JUSTIFICATION :
+            // eslint-disable-next-line no-console
             console.log(fileToDownload);
             const blob = new Blob([fileToDownload], { type: 'application/json' });
+            // JUSTIFICATION :
+            // eslint-disable-next-line no-console
             console.log(blob);
             saveAs(blob, dictionary.fileName);
         });

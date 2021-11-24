@@ -4,7 +4,7 @@ import { AiPlayer, AiPlayerDB, AiType } from '@common/ai-name';
 import { Dictionary } from '@common/dictionary';
 import { GameType } from '@common/game-type';
 import { PlayerScore } from '@common/player';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 
@@ -97,13 +97,15 @@ export class CommunicationService {
         return this.http.delete<Dictionary[]>(`${this.baseUrl}/admin/dictionaries/${fileName}`);
     }
 
+    // JUSTIFICATION :
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     downloadDictionary(fileName: string): Observable<any> {
+        // JUSTIFICATION :
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return this.http.get<any>(`${this.baseUrl}/admin/download/${fileName}`);
     }
 
-    // private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {
-    //     return () => of(result as T);
-    // }
+    private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {
+        return () => of(result as T);
+    }
 }

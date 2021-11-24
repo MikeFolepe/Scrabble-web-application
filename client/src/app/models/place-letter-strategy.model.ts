@@ -11,7 +11,6 @@ export class PlaceLetterStrategy {
     pointingRange: CustomRange;
     private board: string[][][];
     constructor(private gameSettingsService: GameSettingsService) {
-        debugger;
         this.dictionary = this.gameSettingsService.gameSettings.dictionary;
         this.pointingRange = { min: 1, max: 18 };
         this.board = [];
