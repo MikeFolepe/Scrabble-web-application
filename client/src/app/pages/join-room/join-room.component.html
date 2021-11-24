@@ -17,13 +17,13 @@
                 <span>Statut : </span>
                 <span
                     [ngClass]="{
-                        red: room.state === 0 || room.state ===2,
+                        red: room.state === 0 || room.state === 2,
 
                         green: room.state === 1
                     }"
                     >{{ computeRoomState(room.state) }}</span
                 >
-                <button mat-button color="primary" (click)="join(room)" [disabled]="room.state === 0 || room.state === 2 ">Joindre</button>
+                <button mat-button color="primary" (click)="join(room)" [disabled]="room.state === 0 || room.state === 2">Joindre</button>
             </mat-card-actions>
         </mat-card>
     </div>

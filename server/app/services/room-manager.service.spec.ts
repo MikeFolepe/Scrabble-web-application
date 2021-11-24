@@ -1,5 +1,7 @@
 /* eslint-disable max-len */
+// RAISON : Too much lines for test files
 /* eslint-disable @typescript-eslint/no-magic-numbers */
+// RAISON : use magic numbers insides testbench
 // import { OUT_BOUND_INDEX_OF_SOCKET } from '@app/classes/constants';
 import { OUT_BOUND_INDEX_OF_SOCKET } from '@app/classes/constants';
 import { RoomManagerService } from '@app/services/room-manager.service';

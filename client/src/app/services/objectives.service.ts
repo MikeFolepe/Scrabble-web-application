@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 import { Injectable } from '@angular/core';
 import { ONE_MINUTE, PLAYER_ONE_INDEX } from '@app/classes/constants';
 import {
@@ -98,6 +99,7 @@ export class ObjectivesService {
                 break;
             }
             case 7: {
+                // TODO regarder les nombres magiques et enlver le lintdisbale
                 this.validateObjectiveSeven(id);
                 break;
             }
