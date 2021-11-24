@@ -114,6 +114,7 @@ export class JoinRoomComponent implements OnInit {
     }
     private configureRooms(): void {
         this.clientSocketService.socket.on('roomConfiguration', (rooms: Room[]) => {
+            console.log(rooms);
             this.rooms = rooms;
         });
     }

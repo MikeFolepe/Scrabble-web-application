@@ -29,7 +29,7 @@ export class MainPageComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.clientSocketService.socket.disconnect();
+        // this.clientSocketService.socket.disconnect();
         this.endGameService.clearAllData();
     }
 

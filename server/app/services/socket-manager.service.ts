@@ -71,7 +71,7 @@ export class SocketManagerService {
 
             socket.on('deleteGame', (roomId: string, gameType: GameType2) => {
                 this.roomManagerService.deleteRoom(roomId);
-                this.sio.emit('roomConfiguration', this.roomManagerService.rooms);
+                this.sio.emit('roomConfiguration', this.roomManagerService.rooms[gameType]);
                 // Send number of rooms available
                 this.sio.emit('roomAvailable', this.roomManagerService.getNumberOfRoomInWaitingState(gameType));
                 this.sio.socketsLeave(roomId);
@@ -111,12 +111,14 @@ export class SocketManagerService {
                     return;
                 }
                 if (room.state === State.Playing) {
-                    // room.state = State.Finish;
+                    console.log('jespere tu viens pas la');
+                    room.state = State.Finish;
                     // Emit the event
                     this.sendWinnerName(socket, roomId);
                     return;
                 }
                 // so after all if the state is finish, delete the room
+                console.log('ni la encore');
                 this.roomManagerService.deleteRoom(roomId);
                 this.sio.emit('roomConfiguration', this.roomManagerService.rooms);
                 this.sio.socketsLeave(roomId);

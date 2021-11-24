@@ -8,13 +8,9 @@ import { Service } from 'typedi';
 @Service()
 export class RoomManagerService {
     rooms: Room[][];
-    // TODO: prendre une decision PM
-    // roomWaiting: Room[];
 
     constructor() {
         this.rooms = [[], []];
-        // TODO: prendre une decision PM
-        // this.roomWaiting = [];
     }
 
     createRoom(socketId: string, roomId: string, gameSettings: GameSettings, gameType: GameType2) {
