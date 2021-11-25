@@ -60,7 +60,7 @@ export class ObjectivesService {
     }
 
     checkObjectivesCompletion(): void {
-        // TODO: comme normalement y'a un seul objectif privé on peut eventuellement enlever le '[]'.
+        // TODO: comme normalement y'a un seul objectif privé on peut eventuellement enlever le '[]' a refactor le code ici d'apres Anthony.
         if (!this.privateObjectives[0].isCompleted) {
             this.isCompleted(this.privateObjectives[0].id);
         }

@@ -13,7 +13,7 @@
     </div>
 
     <h3>Publics</h3>
-    <div class="objective" *ngFor="let objective of publicObjectives; let i = index" (click)="onupdate()">
+    <div class="objective" *ngFor="let objective of publicObjectives; let i = index" (click)="onUpdate()">
         <div class="score">{{ objective.score }}</div>
         <div class="description">{{ objective.name }}</div>
         <div class="checked" [ngClass]="{ visible: objective.isCompleted }">&#10003;</div>

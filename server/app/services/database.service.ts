@@ -19,6 +19,7 @@ export class DatabaseService {
             .then(() => {
                 // JUSTIFICATION : required in order to display the DB connection status
                 // eslint-disable-next-line no-console
+                console.log('Connected successfully to Mongodb Atlas');
             })
             .catch(() => {
                 throw new Error('Distant database connection error');

@@ -72,6 +72,7 @@ export class RoomManagerService {
     }
 
     deleteRoom(roomId: string): void {
+        // JUSTIFICATION : We use it for use splice method of Array for (i,j) 2D array of Rooms
         // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < this.rooms.length; i++) {
             for (let j = 0; j < this.rooms[i].length; j++) {
@@ -133,9 +134,11 @@ export class RoomManagerService {
         return roomWaiting[roomIndex] as Room;
     }
 
-    getNumberOfRoomInWaitingState(gameType: GameType): number {
+    getNumberOfRoomInWaitingState(gameType: GameType): number | undefined {
         let numberOfRoom = 0;
-        // cas spécial
+        // first  spécial case
+        if (this.rooms[gameType] === undefined) return numberOfRoom;
+        // second spécial case
         if (this.rooms[gameType].length === 0) {
             return numberOfRoom;
         }

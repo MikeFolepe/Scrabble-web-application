@@ -204,4 +204,8 @@ describe('RoomManagerService', () => {
         roomManagerService.rooms = [[], []];
         expect(roomManagerService.getNumberOfRoomInWaitingState(GameType.Classic)).to.equal(0);
     });
+    it('should return 0 if the type of rooms gameType is undefined ', () => {
+        roomManagerService.rooms = [];
+        expect(roomManagerService.getNumberOfRoomInWaitingState(GameType.Classic)).to.equal(0);
+    });
 });

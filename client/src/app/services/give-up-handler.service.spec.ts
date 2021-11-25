@@ -57,7 +57,7 @@ describe('GiveUpHandlerService', () => {
         // Function Call
         service.receiveEndGameByGiveUp();
         // Expectation
-        expect(service.isSwitchMode).toEqual(false);
+        expect(service.isGivenUp).toEqual(false);
         expect(service['gameSettingsService'].isSoloMode).toEqual(false);
         expect(service['playerService'].players[1].name).toEqual('Player2');
         expect(service['playerService'].players[1].name).toEqual('Player2');
@@ -67,7 +67,7 @@ describe('GiveUpHandlerService', () => {
 
     it('should on at the event receiveEndGame from Server and the Winner is the truth  winner and should call play method is the turn is false', () => {
         service['gameSettingsService'].isSoloMode = false;
-        service.skipturnService.isTurn = false;
+        service.skipTurnService.isTurn = false;
         service['gameSettingsService'].gameSettings = new GameSettings(
             ['Paul', 'Mike'],
             1,
@@ -99,7 +99,7 @@ describe('GiveUpHandlerService', () => {
         service.receiveEndGameByGiveUp();
         const spyPlay = spyOn<any>(service['playerService'].players[1], 'play');
         // Expectation
-        expect(service.isSwitchMode).toEqual(true);
+        expect(service.isGivenUp).toEqual(true);
         expect(service['gameSettingsService'].isSoloMode).toEqual(true);
         expect(service['playerService'].players[1].name).toEqual('Miss_Betty');
         expect(service['playerService'].players[1]).toBeInstanceOf(PlayerAI);
@@ -109,7 +109,7 @@ describe('GiveUpHandlerService', () => {
 
     it('should on at the event receiveEndGame from Server and the Winner is the truth  winner and do not call play method if the turn is true', () => {
         service['gameSettingsService'].isSoloMode = false;
-        service.skipturnService.isTurn = true;
+        service.skipTurnService.isTurn = true;
         service['gameSettingsService'].gameSettings = new GameSettings(
             ['Paul', 'Mike'],
             1,
@@ -141,7 +141,7 @@ describe('GiveUpHandlerService', () => {
         service.receiveEndGameByGiveUp();
         const spyPlay = spyOn<any>(service['playerService'].players[1], 'play');
         // Expectation
-        expect(service.isSwitchMode).toEqual(true);
+        expect(service.isGivenUp).toEqual(true);
         expect(service['gameSettingsService'].isSoloMode).toEqual(true);
         expect(service['playerService'].players[1].name).toEqual('Miss_Betty');
         expect(service['playerService'].players[1]).toBeInstanceOf(PlayerAI);

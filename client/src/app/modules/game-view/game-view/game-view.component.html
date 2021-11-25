@@ -26,7 +26,7 @@
                         {{ endGameService.isEndGame ? 'Quitter' : 'Abandonner' }}
                     </button>
                 </div>
-                <div *ngIf="!endGameService.isEndGame && !gameSettingsService.isSoloMode && !giveUpHandlerService.isSwitchMode">
+                <div *ngIf="!endGameService.isEndGame && !gameSettingsService.isSoloMode && !giveUpHandlerService.isGivenUp">
                     <button mat-raised-button color="primary" id="regular-button" (click)="confirmGiveUpGame()">Abandonner</button>
                 </div>
             </div>

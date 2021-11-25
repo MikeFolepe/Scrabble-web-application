@@ -1,4 +1,5 @@
 /* eslint-disable max-lines */
+// TODO JUSTIFICATION : À confirmer  avec Ethienne
 import { Injectable } from '@angular/core';
 import {
     BOARD_COLUMNS,
@@ -20,9 +21,9 @@ import { Vec2 } from '@common/vec2';
 import { ClientSocketService } from './client-socket.service';
 import { EndGameService } from './end-game.service';
 import { GameSettingsService } from './game-settings.service';
+import { ObjectivesService } from './objectives.service';
 import { SendMessageService } from './send-message.service';
 import { SkipTurnService } from './skip-turn.service';
-import { ObjectivesService } from './objectives.service';
 @Injectable({
     providedIn: 'root',
 })

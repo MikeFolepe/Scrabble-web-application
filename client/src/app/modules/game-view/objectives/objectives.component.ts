@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-magic-numbers */
 import { Component, OnInit } from '@angular/core';
 import { ObjectivesService } from '@app/services/objectives.service';
 import { Objective } from '@common/objectives';
@@ -19,8 +18,9 @@ export class ObjectivesComponent implements OnInit {
         this.publicObjectives = this.objectivesService.publicObjectives;
     }
 
-    onupdate() {
+    onUpdate(): void {
         // TODO regarder les nombres magic ici
+        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
         const indexes: number[] = [3, 0, 7, 4];
         this.objectivesService.initializeObjectives(indexes);
         this.privateObjectives[1].isCompleted = true;

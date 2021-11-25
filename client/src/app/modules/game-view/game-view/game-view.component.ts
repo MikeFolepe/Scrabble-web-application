@@ -66,7 +66,7 @@ export class GameViewComponent implements OnInit {
     leaveGame(): void {
         if (this.gameSettingsService.isSoloMode) {
             this.endGameService.clearAllData();
-            if (this.giveUpHandlerService.isSwitchMode)
+            if (this.giveUpHandlerService.isGivenUp)
                 this.clientSocketService.socket.emit('deleteGame', this.clientSocketService.roomId, this.clientSocketService.gameType);
         }
     }
