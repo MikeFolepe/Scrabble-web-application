@@ -58,8 +58,8 @@ export class GameViewComponent implements OnInit {
             // if user closes the dialog box without input nothing
             if (!decision) return;
             // if decision is true the EndGame occurres
-            this.clientSocketService.socket.emit('sendEndGameByGiveUp', decision, this.clientSocketService.roomId, this.clientSocketService.gameType);
             this.sendMessageService.sendConversionMessage();
+            this.clientSocketService.socket.emit('sendEndGameByGiveUp', decision, this.clientSocketService.roomId, this.clientSocketService.gameType);
         });
     }
 
