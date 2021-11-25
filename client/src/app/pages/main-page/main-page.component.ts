@@ -36,8 +36,9 @@ export class MainPageComponent implements OnInit {
     routeToGameMode(): void {
         // update game type and game mode, then route
         this.selectedGameType = this.gameType[this.selectedGameTypeIndex];
-        this.gameSettingsService.gameType = this.selectedGameType as unknown as GameType;
-        this.clientSocketService.gameType = this.selectedGameType as unknown as GameType;
+        const gameTypeIndex = this.gameType[0] === this.selectedGameType ? 0 : 1;
+        this.gameSettingsService.gameType = gameTypeIndex;
+        this.clientSocketService.gameType = gameTypeIndex;
         switch (this.selectedGameMode) {
             case this.gameModes[0]: {
                 this.gameSettingsService.isSoloMode = true;

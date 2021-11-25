@@ -16,6 +16,7 @@ export class GiveUpHandlerService {
         public gameSettingsService: GameSettingsService,
         private clientSocket: ClientSocketService,
         public playerService: PlayerService,
+        // TODO changer le nom de la variable skipTurnService
         public skipturnService: SkipTurnService,
         private playerAIservice: PlayerAIService,
     ) {
