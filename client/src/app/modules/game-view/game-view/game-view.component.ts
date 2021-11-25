@@ -51,7 +51,7 @@ export class GameViewComponent implements OnInit {
         this.playerService.updateFontSize(this.fontSize);
     }
 
-    giveUpGame(): void {
+    confirmGiveUpGame(): void {
         const ref = this.dialog.open(GiveUpGameDialogComponent, { disableClose: true });
 
         ref.afterClosed().subscribe((decision: boolean) => {
@@ -61,5 +61,13 @@ export class GameViewComponent implements OnInit {
             this.clientSocketService.socket.emit('sendEndGameByGiveUp', decision, this.clientSocketService.roomId, this.clientSocketService.gameType);
             this.sendMessageService.sendConversionMessage();
         });
+    }
+
+    leaveGame(): void {
+        if (this.gameSettingsService.isSoloMode) {
+            this.endGameService.clearAllData();
+            if (this.giveUpHandlerService.isSwitchMode)
+                this.clientSocketService.socket.emit('deleteGame', this.clientSocketService.roomId, this.clientSocketService.gameType);
+        }
     }
 }
