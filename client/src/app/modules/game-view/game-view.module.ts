@@ -8,11 +8,20 @@ import { GameViewComponent } from '@app/modules/game-view/game-view/game-view.co
 import { InformationPanelComponent } from '@app/modules/game-view/information-panel/information-panel.component';
 import { LetterEaselComponent } from '@app/modules/game-view/letter-easel/letter-easel.component';
 import { ScrabbleBoardComponent } from '@app/modules/game-view/scrabble-board/scrabble-board.component';
-import { SharedModule } from '@app/modules/shared/shared.module';
 import { AppMaterialModule } from '@app/modules/material.module';
+import { SharedModule } from '@app/modules/shared/shared.module';
+import { ObjectivesComponent } from './objectives/objectives.component';
 
 @NgModule({
-    declarations: [GameViewComponent, ScrabbleBoardComponent, InformationPanelComponent, LetterEaselComponent, FontSizeComponent, ChatboxComponent],
+    declarations: [
+        GameViewComponent,
+        ScrabbleBoardComponent,
+        InformationPanelComponent,
+        LetterEaselComponent,
+        FontSizeComponent,
+        ChatboxComponent,
+        ObjectivesComponent,
+    ],
     imports: [CommonModule, AppRoutingModule, FormsModule, SharedModule, AppMaterialModule],
     exports: [GameViewComponent],
     bootstrap: [GameViewComponent],
