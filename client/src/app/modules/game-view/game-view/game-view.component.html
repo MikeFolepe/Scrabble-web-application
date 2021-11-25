@@ -21,32 +21,23 @@
                 >
                     Passer son tour
                 </button>
-
-                <div *ngIf="!this.endGameService.isEndGame && gameSettingsService.isSoloMode">
-                    <button mat-raised-button color="primary" id="regular-button" (click)="this.endGameService.clearAllData()" routerLink="/home">
-                        Abandonner
+                <div *ngIf="gameSettingsService.isSoloMode">
+                    <button mat-raised-button color="primary" id="regular-button" (click)="leaveGame()" routerLink="/home">
+                        {{ endGameService.isEndGame ? 'Quitter' : 'Abandonner' }}
                     </button>
                 </div>
-                <div *ngIf="this.endGameService.isEndGame && gameSettingsService.isSoloMode">
-                    <button mat-raised-button color="primary" id="regular-button" (click)="this.endGameService.clearAllData()" routerLink="/home">
-                        Quitter
-                    </button>
-                </div>
-                <div *ngIf="!gameSettingsService.isSoloMode && !endGameService.isEndGame">
-                    <button mat-raised-button color="primary" id="regular-button" (click)="giveUpGame()">Abandonner</button>
-                </div>
-
-                <div *ngIf="endGameService.isEndGame && !gameSettingsService.isSoloMode">
-                    <button mat-raised-button color="primary" id="regular-button" (click)="this.endGameService.clearAllData()" routerLink="/home">
-                        Quitter
-                    </button>
+                <div *ngIf="!endGameService.isEndGame && !gameSettingsService.isSoloMode && !giveUpHandlerService.isGivenUp">
+                    <button mat-raised-button color="primary" id="regular-button" (click)="confirmGiveUpGame()">Abandonner</button>
                 </div>
             </div>
-            <app-font-size id="font-size" [fontSize]="fontSize" (sizeChange)="handleFontSizeEvent($event)"> </app-font-size>
+            <app-font-size id="font-size" [fontSize]="fontSize" (sizeChange)="handleFontSizeEvent($event)"></app-font-size>
         </div>
     </div>
     <app-scrabble-board id="scrabble-board" tabindex="0"></app-scrabble-board>
     <app-letter-easel id="letter-easel"></app-letter-easel>
-    <app-chatbox id="chatbox"></app-chatbox>
+    <div id="chatbox">
+        <app-chatbox></app-chatbox>
+        <app-objectives></app-objectives>
+    </div>
 </div>
 <app-background></app-background>

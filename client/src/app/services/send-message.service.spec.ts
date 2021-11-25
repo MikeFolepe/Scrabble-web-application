@@ -58,7 +58,27 @@ describe('SendMessageService', () => {
         expect(service.typeMessage).toEqual(TypeMessage.Opponent);
     });
 
-    it('the emit receiveRoomMessage should call sendOpponentMessage', () => {
+    it('the emit sendGameConversionMessage should send the parametres of message of switchMode', () => {
+        const spyEmit = spyOn(service['clientSocketService'].socket, 'emit');
+        service.sendConversionMessage();
+        expect(spyEmit).toHaveBeenCalled();
+    });
+
+    it('should call displayMessageByType on event  receiveGameConversionMessage', () => {
+        service['clientSocketService'].socket = {
+            // eslint-disable-next-line no-unused-vars
+            on: (eventName: string, callback: (message: string) => void) => {
+                if (eventName === 'receiveGameConversionMessage') {
+                    callback('message');
+                }
+            },
+        } as unknown as Socket;
+        spyOn(service, 'displayMessageByType');
+        service.receiveConversionMessage();
+        expect(service.displayMessageByType).toHaveBeenCalledWith('message', TypeMessage.System);
+    });
+
+    it('the emit sendGameConversionMessage should call sendOpponentMessage', () => {
         service['clientSocketService'].socket = {
             // eslint-disable-next-line no-unused-vars
             on: (eventName: string, callback: (message: string) => void) => {
