@@ -7,7 +7,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
 import { GameSettings } from '@common/game-settings';
-import { GameType2 } from '@common/game-type';
+import { GameType } from '@common/game-type';
 import { Objective, OBJECTIVES } from '@common/objectives';
 import { Room, State } from '@common/room';
 import { expect } from 'chai';
@@ -64,9 +64,9 @@ describe('SocketManagerService', () => {
 
     it('should call createRoom callback', () => {
         const fakeSocket = {
-            on: (eventName: string, callback: (gameSettings: GameSettings, gameType: GameType2) => void) => {
+            on: (eventName: string, callback: (gameSettings: GameSettings, gameType: GameType) => void) => {
                 if (eventName === 'createRoom') {
-                    callback(settings, GameType2.Classic);
+                    callback(settings, GameType.Classic);
                 }
             },
 
@@ -104,7 +104,7 @@ describe('SocketManagerService', () => {
     });
 
     it('should handle delete game event ', () => {
-        const typeOfGame = GameType2.Classic;
+        const typeOfGame = GameType.Classic;
 
         const fakeSocket = {
             // eslint-disable-next-line no-unused-vars
@@ -146,10 +146,10 @@ describe('SocketManagerService', () => {
     });
 
     it('should emit RoomConfigurations', () => {
-        const typeOfGame = GameType2.Classic;
+        const typeOfGame = GameType.Classic;
         const fakeSocket = {
             // eslint-disable-next-line no-unused-vars
-            on: (eventName: string, callback: (gameType: GameType2) => void) => {
+            on: (eventName: string, callback: (gameType: GameType) => void) => {
                 if (eventName === 'getRoomsConfiguration') {
                     callback(typeOfGame);
                     // return;
@@ -177,10 +177,10 @@ describe('SocketManagerService', () => {
     });
 
     it('should not emit the event onNewRoomCustomerOfRandomPlacement if the room is undefined', () => {
-        const typeOfGame = GameType2.Classic;
+        const typeOfGame = GameType.Classic;
         const fakeSocket = {
             // eslint-disable-next-line no-unused-vars
-            on: (eventName: string, callback: (customerName: string, gameType: GameType2) => void) => {
+            on: (eventName: string, callback: (customerName: string, gameType: GameType) => void) => {
                 if (eventName === 'newRoomCustomerOfRandomPlacement') {
                     callback('Paul', typeOfGame);
                     // return;
@@ -207,10 +207,10 @@ describe('SocketManagerService', () => {
     });
 
     it('should  emit the event onNewRoomCustomerOfRandomPlacement if the room exist', () => {
-        const typeOfGame = GameType2.Classic;
+        const typeOfGame = GameType.Classic;
         const fakeSocket = {
             // eslint-disable-next-line no-unused-vars
-            on: (eventName: string, callback: (customerName: string, gameType: GameType2) => void) => {
+            on: (eventName: string, callback: (customerName: string, gameType: GameType) => void) => {
                 if (eventName === 'newRoomCustomerOfRandomPlacement') {
                     callback('Paul', typeOfGame);
                     // return;
@@ -237,10 +237,10 @@ describe('SocketManagerService', () => {
         expect(spy.called).to.equal(true);
     });
     it('should emit the roomAvailbale ', () => {
-        const typeOfGame = GameType2.Classic;
+        const typeOfGame = GameType.Classic;
         const fakeSocket = {
             // eslint-disable-next-line no-unused-vars
-            on: (eventName: string, callback: (gameType: GameType2) => void) => {
+            on: (eventName: string, callback: (gameType: GameType) => void) => {
                 if (eventName === 'getRoomAvailable') {
                     callback(typeOfGame);
                     // return;
@@ -328,10 +328,10 @@ describe('SocketManagerService', () => {
         expect(spy.calledWith('1')).to.equal(true);
     });
     it('should handle a new customer', () => {
-        const typeMode = GameType2.Classic;
+        const typeMode = GameType.Classic;
         const fakeSocket = {
             // eslint-disable-next-line no-unused-vars
-            on: (eventName: string, callback: (playerName: string, roomId: string, gameType: GameType2) => void) => {
+            on: (eventName: string, callback: (playerName: string, roomId: string, gameType: GameType) => void) => {
                 if (eventName === 'newRoomCustomer') {
                     callback('Mike', 'mike1234', typeMode);
                 }
@@ -382,9 +382,9 @@ describe('SocketManagerService', () => {
 
     it('should handle an end game by give up', () => {
         const fakeSocket = {
-            on: (eventName: string, callback: (isEndGame: boolean, roomId: string, gameType: GameType2) => void) => {
+            on: (eventName: string, callback: (isEndGame: boolean, roomId: string, gameType: GameType) => void) => {
                 if (eventName === 'sendEndGameByGiveUp') {
-                    callback(true, 'mike1234', GameType2.Classic);
+                    callback(true, 'mike1234', GameType.Classic);
                 }
             },
             emit: (eventName: string, args: any[] | any) => {
@@ -420,7 +420,7 @@ describe('SocketManagerService', () => {
 
         service.handleSockets();
         expect(spyOnLeave.calledWith(room.id)).to.equal(true);
-        expect(spyOnEmit.calledWith('roomConfiguration', roomManagerService.rooms[GameType2.Classic])).to.equal(true);
+        expect(spyOnEmit.calledWith('roomConfiguration', roomManagerService.rooms[GameType.Classic])).to.equal(true);
         expect(spyOnTo.calledWith(room.id)).to.equal(true);
     });
 
@@ -618,9 +618,9 @@ describe('SocketManagerService', () => {
     });
 
     it('should not add a new player in the room if the room is busy', () => {
-        const typeMode = GameType2.Classic;
+        const typeMode = GameType.Classic;
         const fakeSocket = {
-            on: (eventName: string, callback: (playerName: string, roomId: string, gameType: GameType2) => void) => {
+            on: (eventName: string, callback: (playerName: string, roomId: string, gameType: GameType) => void) => {
                 if (eventName === 'newRoomCustomer') {
                     callback('Mike', 'mike1234', typeMode);
                 }

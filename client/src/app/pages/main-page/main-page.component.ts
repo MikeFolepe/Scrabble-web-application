@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { ClientSocketService } from '@app/services/client-socket.service';
 import { EndGameService } from '@app/services/end-game.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
-import { GameType, GameType2 } from '@common/game-type';
+import { GameType } from '@common/game-type';
 
 @Component({
     selector: 'app-main-page',
@@ -14,7 +14,7 @@ export class MainPageComponent implements OnInit {
     selectedGameTypeIndex: number;
     selectedGameType: string | GameType;
     selectedGameMode?: string;
-    readonly gameType: GameType[];
+    readonly gameType: string[];
     readonly gameModes: string[];
 
     constructor(
@@ -24,7 +24,7 @@ export class MainPageComponent implements OnInit {
         private endGameService: EndGameService,
     ) {
         this.selectedGameTypeIndex = 0;
-        this.gameType = [GameType.Classic, GameType.Log2990];
+        this.gameType = ['Scrabble classique', 'Scrabble LOG2990'];
         this.gameModes = ['Jouer une partie en solo', 'Créer une partie multijoueur', 'Joindre une partie multijoueur'];
     }
 
@@ -36,8 +36,8 @@ export class MainPageComponent implements OnInit {
     routeToGameMode(): void {
         // update game type and game mode, then route
         this.selectedGameType = this.gameType[this.selectedGameTypeIndex];
-        this.gameSettingsService.gameType = this.selectedGameType as GameType;
-        this.clientSocketService.gameType = (this.selectedGameType as GameType) === 'Scrabble classique' ? GameType2.Classic : GameType2.Log2990;
+        this.gameSettingsService.gameType = this.selectedGameType as unknown as GameType;
+        this.clientSocketService.gameType = this.selectedGameType as unknown as GameType;
         switch (this.selectedGameMode) {
             case this.gameModes[0]: {
                 this.gameSettingsService.isSoloMode = true;

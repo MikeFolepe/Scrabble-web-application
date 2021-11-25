@@ -1,6 +1,6 @@
 import { OUT_BOUND_INDEX_OF_SOCKET } from '@app/classes/constants';
 import { GameSettings, StartingPlayer } from '@common/game-settings';
-import { GameType2 } from '@common/game-type';
+import { GameType } from '@common/game-type';
 import { PlayerIndex } from '@common/player-index';
 import { Room, State } from '@common/room';
 import { Service } from 'typedi';
@@ -13,7 +13,7 @@ export class RoomManagerService {
         this.rooms = [[], []];
     }
 
-    createRoom(socketId: string, roomId: string, gameSettings: GameSettings, gameType: GameType2) {
+    createRoom(socketId: string, roomId: string, gameSettings: GameSettings, gameType: GameType) {
         this.rooms[gameType].push(new Room(roomId, socketId, gameSettings));
     }
 
@@ -121,7 +121,7 @@ export class RoomManagerService {
         return undefined;
     }
 
-    findRoomInWaitingState(customerName: string, gameType: GameType2): Room | undefined {
+    findRoomInWaitingState(customerName: string, gameType: GameType): Room | undefined {
         const roomWaiting: Room[] = [];
         for (const room of this.rooms[gameType]) {
             if (room.state === State.Waiting && room.gameSettings.playersNames[PlayerIndex.OWNER] !== customerName) {
@@ -133,7 +133,7 @@ export class RoomManagerService {
         return roomWaiting[roomIndex] as Room;
     }
 
-    getNumberOfRoomInWaitingState(gameType: GameType2): number {
+    getNumberOfRoomInWaitingState(gameType: GameType): number {
         let numberOfRoom = 0;
         // cas spécial
         if (this.rooms[gameType].length === 0) {
