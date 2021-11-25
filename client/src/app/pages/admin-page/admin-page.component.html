@@ -48,7 +48,14 @@
                 </button>
                 <input hidden type="file" accept=".json" #fileInput (change)="adminService.onFileInput(fileInput.files)" />
 
-                <button mat-fab color="" [disabled]="!adminService.file" [ngClass]="{ add: adminService.file, transparentAdd: !adminService.file }" type="submit" (click)="onSubmitDictionary()">
+                <button
+                    mat-fab
+                    color=""
+                    [disabled]="!adminService.file"
+                    [ngClass]="{ add: adminService.file, transparentAdd: !adminService.file }"
+                    type="submit"
+                    (click)="onSubmitDictionary()"
+                >
                     <mat-icon>cloud_upload</mat-icon>
                 </button>
             </div>
