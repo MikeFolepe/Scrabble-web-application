@@ -5,6 +5,8 @@ import { ClientSocketService } from '@app/services/client-socket.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { EndGameService } from './end-game.service';
 import { PlayerService } from './player.service';
+import { ObjectivesService } from './objectives.service';
+
 @Injectable({
     providedIn: 'root',
 })
@@ -21,6 +23,7 @@ export class SkipTurnService {
         private endGameService: EndGameService,
         private clientSocket: ClientSocketService,
         private playerService: PlayerService,
+        private objectivesService: ObjectivesService,
     ) {
         this.receiveNewTurn();
         this.receiveStartFromServer();
@@ -78,12 +81,14 @@ export class SkipTurnService {
             if (this.seconds === 0 && this.minutes !== 0) {
                 this.minutes = this.minutes - 1;
                 this.seconds = 59;
+                this.updateActiveTime();
             } else if (this.seconds === 0 && this.minutes === 0) {
                 if (this.isTurn) {
                     this.switchTurn();
                 }
             } else {
                 this.seconds = this.seconds - 1;
+                this.updateActiveTime();
             }
         }, ONE_SECOND_DELAY);
     }
@@ -92,5 +97,9 @@ export class SkipTurnService {
         clearInterval(this.intervalID);
         this.minutes = 0;
         this.seconds = 0;
+    }
+
+    updateActiveTime() {
+        if (this.isTurn) this.objectivesService.activeTime++;
     }
 }

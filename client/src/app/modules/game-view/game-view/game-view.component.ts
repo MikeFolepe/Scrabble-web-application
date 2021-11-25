@@ -7,6 +7,7 @@ import { ChatboxService } from '@app/services/chatbox.service';
 import { ClientSocketService } from '@app/services/client-socket.service';
 import { EndGameService } from '@app/services/end-game.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
+import { GiveUpHandlerService } from '@app/services/give-up-handler.service';
 import { GridService } from '@app/services/grid.service';
 import { PlayerService } from '@app/services/player.service';
 import { SendMessageService } from '@app/services/send-message.service';
@@ -31,8 +32,10 @@ export class GameViewComponent implements OnInit {
         private playerService: PlayerService,
         public dialog: MatDialog,
         public sendMessageService: SendMessageService,
+        public giveUpHandlerService: GiveUpHandlerService,
     ) {
         this.fontSize = DEFAULT_FONT_SIZE;
+        this.giveUpHandlerService.receiveEndGameByGiveUp();
     }
 
     ngOnInit(): void {
@@ -48,15 +51,27 @@ export class GameViewComponent implements OnInit {
         this.playerService.updateFontSize(this.fontSize);
     }
 
-    giveUpGame(): void {
+    confirmGiveUpGame(): void {
         const ref = this.dialog.open(GiveUpGameDialogComponent, { disableClose: true });
 
         ref.afterClosed().subscribe((hasGivenUp: boolean) => {
-            // if user closes the dialog box without input nothing
             if (!hasGivenUp) return;
-            // if decision is true the EndGame occurres
-            this.clientSocketService.socket.emit('sendEndGameByGiveUp', hasGivenUp, this.clientSocketService.roomId);
+
             this.sendMessageService.sendConversionMessage();
+            this.clientSocketService.socket.emit(
+                'sendEndGameByGiveUp',
+                hasGivenUp,
+                this.clientSocketService.roomId,
+                this.clientSocketService.gameType,
+            );
         });
+    }
+
+    leaveGame(): void {
+        if (this.gameSettingsService.isSoloMode) {
+            this.endGameService.clearAllData();
+            if (this.giveUpHandlerService.isGivenUp)
+                this.clientSocketService.socket.emit('deleteGame', this.clientSocketService.roomId, this.clientSocketService.gameType);
+        }
     }
 }
