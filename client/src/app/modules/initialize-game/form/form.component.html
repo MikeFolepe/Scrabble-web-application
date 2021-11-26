@@ -23,5 +23,16 @@
         </fieldset>
     </fieldset>
 </form>
+<div id="dictionaries">
+    <h4>Selection d'un dictionnaire</h4>
+    <mat-form-field appearance="fill">
+        <mat-label> Dictionnaires </mat-label>
+        <mat-select>
+            <mat-option *ngFor="let dictionary of this.dictionaries" [value]="dictionary.title" (click)="selectGameDictionary(dictionary)">
+                Titre: {{ dictionary.title }} Description: {{ dictionary.description }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+</div>
 <!-- TODO Bonus : press enter on that page = clicks on this button -->
-<button mat-raised-button (click)="initGame()" id="submit-button" color="warn" [disabled]="!form.valid">Continue</button>
+<button mat-raised-button (click)="initGame()" id="submit-button" color="warn" [disabled]="!form.valid && isDictionaryDeleted">Continue</button>

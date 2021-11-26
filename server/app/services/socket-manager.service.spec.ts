@@ -8,7 +8,6 @@
 /* eslint-disable dot-notation */
 import { GameSettings } from '@common/game-settings';
 import { GameType } from '@common/game-type';
-import { Objective, OBJECTIVES } from '@common/objectives';
 import { Room, State } from '@common/room';
 import { expect } from 'chai';
 import * as http from 'http';
@@ -24,7 +23,7 @@ describe('SocketManagerService', () => {
     let service: SocketManagerService;
     let sio: SinonStubbedInstance<io.Server>;
     const socketId = 'socket1';
-    const settings: GameSettings = new GameSettings(['mi', 'ma'], 1, '01', '00', 'Facile', 'Activer', 'francais', '00');
+    const settings: GameSettings = new GameSettings(['mi', 'ma'], 1, '01', '00', 'Facile', 'Activer', 'francais', [[], []], ['00']);
     const scrabbleBoard: string[][] = [[]];
 
     const fakeIn = {
@@ -269,34 +268,31 @@ describe('SocketManagerService', () => {
 
     it('should update objectives', () => {
         const fakeSocket = {
-            // eslint-disable-next-line no-unused-vars
-            on: (eventName: string, callback: (objectives: Objective[], roomId: string) => void) => {
-                if (eventName === 'sendObjectives') {
-                    callback(OBJECTIVES, '1');
-                    // return;
+            on: (eventName: string, callback: (id: number, roomId: string) => void) => {
+                if (eventName === 'objectiveAccomplished') {
+                    callback(1, 'mike1234');
                 }
-            },
-            emit: (eventName: string, args: any[] | any) => {
-                return;
             },
             to: (roomId: string) => {
                 return fakeIn;
             },
+            emit: (eventName: string, args: any[] | any) => {
+                return;
+            },
         };
-        const spy = Sinon.spy(fakeSocket, 'emit');
+
         service['sio'] = {
             on: (eventName: string, callback: (socket: any) => void) => {
                 if (eventName === 'connection') {
                     callback(fakeSocket);
                 }
             },
-            emit: (eventName: string, args: any[] | any) => {
-                return;
-            },
         } as unknown as io.Server;
+        const spy = Sinon.spy(fakeSocket, 'to');
         service.handleSockets();
-        expect(spy.calledWith('1')).to.equal(false);
+        expect(spy.called).to.equal(true);
     });
+
     it('should update the PlayeWords', () => {
         const fakeSocket = {
             // eslint-disable-next-line no-unused-vars

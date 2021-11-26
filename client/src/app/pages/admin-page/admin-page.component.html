@@ -18,9 +18,8 @@
                 <button mat-button (click)="accordion.openAll()">Tout développer</button>
                 <button mat-button (click)="accordion.closeAll()">Tout réduire</button>
             </div>
-            <!-- TODO ajouter mat-paginator ?? -->
             <mat-accordion multi>
-                <mat-expansion-panel *ngFor="let dictionary of this.dictionaries" [disabled]="dictionary.isDefault">
+                <mat-expansion-panel *ngFor="let dictionary of adminService.dictionaries">
                     <mat-expansion-panel-header>
                         <mat-panel-title>
                             {{ dictionary.title }}
@@ -28,27 +27,39 @@
                         <mat-panel-description>
                             {{ dictionary.description }}
                         </mat-panel-description>
-                        <mat-icon *ngIf="dictionary.isDefault">lock</mat-icon>
                     </mat-expansion-panel-header>
-                    <mat-icon color="warn">delete_forever</mat-icon>
-                    <mat-icon>create</mat-icon>
-                    <mat-icon>get_app</mat-icon>
+                    <button (click)="adminService.deleteDictionary(dictionary)">
+                        <mat-icon color="warn">delete_forever</mat-icon>
+                    </button>
+                    <button (click)="editDictionary(dictionary)">
+                        <mat-icon>create</mat-icon>
+                    </button>
+                    <button (click)="adminService.downloadDictionary(dictionary)">
+                        <mat-icon>get_app</mat-icon>
+                    </button>
                 </mat-expansion-panel>
             </mat-accordion>
             <div class="center">
                 <!-- TODO changer couleur (vert si possible) -->
                 <button mat-raised-button class="fill" (click)="fileInput.click()">
-                    {{ file ? file.name : 'Choisir un fichier' }}
-                    <div class="accepted-file" [ngClass]="{ invisible: file !== null }">(.json Seulement)</div>
+                    {{ adminService.file ? adminService.file.name : 'Choisir un fichier' }}
+                    <div class="accepted-file" [ngClass]="{ invisible: adminService.file !== null }">(.json Seulement)</div>
                 </button>
-                <input hidden type="file" accept=".json" #fileInput (change)="onFileInput(fileInput.files)" />
+                <input hidden type="file" accept=".json" #fileInput (change)="adminService.onFileInput(fileInput.files)" />
 
-                <button mat-fab id="add" color="" [disabled]="!file" type="submit" (click)="onSubmit()">
+                <button
+                    mat-fab
+                    color=""
+                    [disabled]="!adminService.file"
+                    [ngClass]="{ add: adminService.file, transparentAdd: !adminService.file }"
+                    type="submit"
+                    (click)="onSubmitDictionary()"
+                >
                     <mat-icon>cloud_upload</mat-icon>
                 </button>
             </div>
-            <div class="alert" [ngClass]="{ visible: uploadMessage.length, success: uploadMessage === 'Uploaded' }">
-                {{ uploadMessage }}
+            <div class="alert" [ngClass]="{ visible: adminService.uploadMessage.length, success: adminService.uploadMessage === 'Uploaded' }">
+                {{ adminService.uploadMessage }}
             </div>
         </div>
     </div>
@@ -60,30 +71,30 @@
                 <div class="fake-buttons fake-minimize"></div>
                 <div class="fake-buttons fake-zoom"></div>
             </div>
-            <!-- TODO fixer limite de noms. si limite dépassée faire apparaître scrollbar -->
             <h2>
                 Noms des joueurs virtuels
                 <hr />
             </h2>
             <div class="window-content">
                 <div class="list">
+                    <!-- TODO afficher les noms par ordre d'ajout/alphabétique ? -->
                     <div class="beginner">
                         <p class="name-title">Noms débutants</p>
                         <hr />
-                        <div class="item" *ngFor="let aiBeginner of this.beginnerNames">
+                        <div class="item" *ngFor="let aiBeginner of adminService.beginnerNames">
                             <p class="ai-name">{{ aiBeginner.aiName }}</p>
                             <span class="icons">
-                                <button (click)="deleteAiPlayer(aiBeginner._id, true, aiBeginner.isDefault)">
+                                <button (click)="adminService.deleteAiPlayer(aiBeginner, 0)">
                                     <mat-icon color="warn">delete_forever</mat-icon>
                                 </button>
-                                <button (click)="addAiToDatabase(true, false, aiBeginner._id, aiBeginner.isDefault)">
+                                <button (click)="adminService.addAiToDatabase(0, false, aiBeginner._id, aiBeginner.isDefault)">
                                     <mat-icon>create</mat-icon>
                                 </button>
                             </span>
                         </div>
                         <div class="center">
                             <!-- TODO changer couleur (vert si possible) -->
-                            <button mat-mini-fab id="add" color="" (click)="addAiToDatabase(true, true)">
+                            <button mat-mini-fab id="add" color="" (click)="adminService.addAiToDatabase(0, true)">
                                 <mat-icon>add</mat-icon>
                             </button>
                         </div>
@@ -92,20 +103,20 @@
                     <div class="expert">
                         <p class="name-title">Noms experts</p>
                         <hr />
-                        <div class="item" *ngFor="let aiExpert of this.expertNames">
+                        <div class="item" *ngFor="let aiExpert of adminService.expertNames">
                             <p class="ai-name">{{ aiExpert.aiName }}</p>
                             <span class="icons">
-                                <button (click)="deleteAiPlayer(aiExpert._id, false, aiExpert.isDefault)">
+                                <button (click)="adminService.deleteAiPlayer(aiExpert, 1)">
                                     <mat-icon color="warn">delete_forever</mat-icon>
                                 </button>
-                                <button (click)="addAiToDatabase(false, false, aiExpert._id, aiExpert.isDefault)">
+                                <button (click)="adminService.addAiToDatabase(1, false, aiExpert._id, aiExpert.isDefault)">
                                     <mat-icon>create</mat-icon>
                                 </button>
                             </span>
                         </div>
                         <div class="center">
                             <!-- TODO changer couleur (vert si possible) -->
-                            <button mat-mini-fab id="add" color="" (click)="addAiToDatabase(false, true)">
+                            <button mat-mini-fab id="add" color="" (click)="adminService.addAiToDatabase(1, true)">
                                 <mat-icon>add</mat-icon>
                             </button>
                         </div>
@@ -115,10 +126,21 @@
         </div>
 
         <div id="reset">
-            <button mat-raised-button color="warn">
-                <mat-icon>restore</mat-icon>
-                <span>Réinitialiser</span>
-            </button>
+            <div class="delete-confirm">
+                <button
+                    mat-raised-button
+                    color="warn"
+                    (click)="isResetConfirmation = true"
+                    (clickOutside)="cancelReset()"
+                    [disabled]="isResetConfirmation"
+                    [ngClass]="{ delete: true, confirm: isResetConfirmation }"
+                >
+                    <mat-icon>{{ isResetConfirmation ? 'warning' : 'restore' }}</mat-icon>
+                    <span>{{ isResetConfirmation ? 'Confirmer?' : 'Réinitialiser' }}</span>
+                </button>
+                <button mat-raised-button class="yes" (click)="adminService.resetData()"><span>Oui</span></button>
+                <button mat-raised-button class="no"><span>Annuler</span></button>
+            </div>
         </div>
     </div>
 </div>

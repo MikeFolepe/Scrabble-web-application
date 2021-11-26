@@ -38,10 +38,10 @@ export class GameViewComponent implements OnInit {
     ) {
         this.fontSize = DEFAULT_FONT_SIZE;
         this.giveUpHandlerService.receiveEndGameByGiveUp();
-        this.objectiveService.initializeObjectives();
     }
 
     ngOnInit(): void {
+        this.objectiveService.initializeObjectives();
         const mapBonus = new Map<string, string>();
         JSON.parse(this.gameSettingsService.gameSettings.bonusPositions).map((element: string[]) => {
             mapBonus.set(element[0], element[1]);
@@ -57,12 +57,16 @@ export class GameViewComponent implements OnInit {
     confirmGiveUpGame(): void {
         const ref = this.dialog.open(GiveUpGameDialogComponent, { disableClose: true });
 
-        ref.afterClosed().subscribe((decision: boolean) => {
-            // if user closes the dialog box without input nothing
-            if (!decision) return;
-            // if decision is true the EndGame occurres
+        ref.afterClosed().subscribe((hasGivenUp: boolean) => {
+            if (!hasGivenUp) return;
+
             this.sendMessageService.sendConversionMessage();
-            this.clientSocketService.socket.emit('sendEndGameByGiveUp', decision, this.clientSocketService.roomId, this.clientSocketService.gameType);
+            this.clientSocketService.socket.emit(
+                'sendEndGameByGiveUp',
+                hasGivenUp,
+                this.clientSocketService.roomId,
+                this.clientSocketService.gameType,
+            );
         });
     }
 

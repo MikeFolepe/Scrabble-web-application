@@ -72,6 +72,7 @@ export class JoinRoomComponent implements OnInit {
                 this.clientSocketService.socket.emit('newRoomCustomer', playerName, room.id, this.clientSocketService.gameType);
             });
     }
+
     placeRandomly(): void {
         this.dialog
             .open(JoinDialogComponent, { disableClose: true })

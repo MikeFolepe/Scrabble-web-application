@@ -7,10 +7,10 @@ import {
     MIN_SCORE_FOR_OBJ4,
     MIN_SIZE_FOR_OBJ2,
     MIN_SIZE_FOR_OBJ7,
-    NUMBER_OF_OBJECTIVES,
+    NUMBER_OF_PUBLIC_OBJECTIVES,
     Objective,
     OBJECTIVES,
-} from '@common/objectives';
+} from '@app/classes/objectives';
 import { ObjectiveTypes } from '@common/objectives-type';
 import { ClientSocketService } from './client-socket.service';
 import { EndGameService } from './end-game.service';
@@ -50,8 +50,8 @@ export class ObjectivesService {
 
     initializeObjectives(): void {
         const arrayOfIndex = this.gameSettingsService.gameSettings.objectiveIds;
-        for (let i = 0; i < NUMBER_OF_OBJECTIVES; i++) {
-            for (let j = 0; j < NUMBER_OF_OBJECTIVES; j++) {
+        for (let i = 0; i < NUMBER_OF_PUBLIC_OBJECTIVES; i++) {
+            for (let j = 0; j < NUMBER_OF_PUBLIC_OBJECTIVES; j++) {
                 const objective = OBJECTIVES[arrayOfIndex[i][j]];
                 this.objectives[i].push(objective);
             }
@@ -72,7 +72,6 @@ export class ObjectivesService {
     checkObjectivesCompletion(): void {
         // Classic Mode -> No check for objectives completion
         if (this.gameSettingsService.gameType === GameType.Classic) return;
-        debugger;
         if (!this.objectives[ObjectiveTypes.Private][this.playerIndex].isCompleted) {
             this.objectives[ObjectiveTypes.Private][this.playerIndex].validate(this);
         }
@@ -212,8 +211,8 @@ export class ObjectivesService {
     }
 
     findObjectiveById(idToSearchFor: number): Objective | undefined {
-        for (let i = 0; i < NUMBER_OF_OBJECTIVES; i++) {
-            for (let j = 0; j < NUMBER_OF_OBJECTIVES; j++) {
+        for (let i = 0; i < NUMBER_OF_PUBLIC_OBJECTIVES; i++) {
+            for (let j = 0; j < NUMBER_OF_PUBLIC_OBJECTIVES; j++) {
                 if (this.objectives[i][j].id === idToSearchFor) return this.objectives[i][j];
             }
         }

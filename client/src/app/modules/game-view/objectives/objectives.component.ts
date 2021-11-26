@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { ObjectivesService } from '@app/services/objectives.service';
 // import { SkipTurnService } from '@app/services/skip-turn.service';
-import { Objective } from '@common/objectives';
+import { Objective } from '@app/classes/objectives';
 
 @Component({
     selector: 'app-objectives',

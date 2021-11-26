@@ -4,6 +4,7 @@ import { ScoreValidation } from '@app/classes/validation-score';
 import { CommunicationService } from '@app/services/communication.service';
 import { RandomBonusesService } from '@app/services/random-bonuses.service';
 import { ClientSocketService } from './client-socket.service';
+import { GameSettingsService } from './game-settings.service';
 
 @Injectable({
     providedIn: 'root',
@@ -23,6 +24,7 @@ export class WordValidationService {
         private httpServer: CommunicationService,
         private randomBonusService: RandomBonusesService,
         private clientSocketService: ClientSocketService,
+        private gameSettingsService: GameSettingsService,
     ) {
         this.newWords = new Array<string>();
         this.playedWords = new Map<string, string[]>();
@@ -197,7 +199,9 @@ export class WordValidationService {
         let scoreTotal = 0;
         this.passThroughAllRowsOrColumns(scrabbleBoard, isRow);
         this.passThroughAllRowsOrColumns(scrabbleBoard, !isRow);
-        this.validationState = await this.httpServer.validationPost(this.newPlayedWords).toPromise();
+        this.validationState = await this.httpServer
+            .validationPost(this.newPlayedWords, this.gameSettingsService.gameSettings.dictionary)
+            .toPromise();
         if (!this.validationState) {
             this.newPlayedWords.clear();
             return { validation: this.validationState, score: scoreTotal };

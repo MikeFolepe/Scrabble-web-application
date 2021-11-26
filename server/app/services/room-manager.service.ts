@@ -68,8 +68,8 @@ export class RoomManagerService {
             gameSettings.level,
             gameSettings.randomBonus,
             gameSettings.bonusPositions,
-            gameSettings.dictionary,
             [gameSettings.objectiveIds[ObjectiveTypes.Public], temp],
+            gameSettings.dictionary,
         );
 
         return formattedGameSettings;
@@ -109,6 +109,7 @@ export class RoomManagerService {
 
     getWinnerName(roomId: string, indexOfLoser: number): string {
         const room = this.find(roomId) as Room;
+        if (room === undefined) return '';
         return indexOfLoser === 0 ? room.gameSettings.playersNames[1] : room.gameSettings.playersNames[0];
     }
 

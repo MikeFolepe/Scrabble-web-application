@@ -2,7 +2,6 @@ import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSITION, INVALID_INDEX, PLAYER
 import { CustomRange } from '@app/classes/range';
 import { BoardPattern, Orientation, PatternInfo, PossibleWords } from '@app/classes/scrabble-board-pattern';
 import { PlayerAIService } from '@app/services/player-ai.service';
-import * as dictionaryData from '@common/dictionary.json';
 import { PlayerAI } from './player-ai.model';
 
 export class PlaceLetterStrategy {
@@ -10,7 +9,6 @@ export class PlaceLetterStrategy {
     pointingRange: CustomRange;
     private board: string[][][];
     constructor() {
-        this.dictionary = JSON.parse(JSON.stringify(dictionaryData)).words;
         this.pointingRange = { min: 1, max: 18 };
         this.board = [];
     }
@@ -20,6 +18,7 @@ export class PlaceLetterStrategy {
         const level = playerAiService.gameSettingsService.gameSettings.level;
         const isFirstRound = playerAiService.placeLetterService.isFirstRound;
         const scrabbleBoard = playerAiService.placeLetterService.scrabbleBoard;
+        this.dictionary = playerAiService.gameSettingsService.gameSettings.dictionary;
         let allPossibleWords: PossibleWords[];
         let matchingPointingRangeWords: PossibleWords[] = [];
 
