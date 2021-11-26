@@ -29,6 +29,7 @@ describe('GameViewComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(GameViewComponent);
         component = fixture.componentInstance;
+        spyOn(component['objectiveService'], 'initializeObjectives');
         spyOn(component['playerService'], 'bindUpdateEasel');
         fixture.detectChanges();
         component['playerService'].addPlayer(new Player(1, 'Player 1', []));

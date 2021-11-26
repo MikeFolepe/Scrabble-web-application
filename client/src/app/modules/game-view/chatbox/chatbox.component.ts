@@ -1,11 +1,12 @@
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
-import { ONE_SECOND_DELAY, PLAYER_ONE_INDEX, PLAYER_TWO_INDEX } from '@app/classes/constants';
+import { DEFAULT_CHAT_HEIGHT, LOG2990_CHAT_HEIGHT, ONE_SECOND_DELAY, PLAYER_ONE_INDEX, PLAYER_TWO_INDEX } from '@app/classes/constants';
 import { TypeMessage } from '@app/classes/enum';
 import { BoardHandlerService } from '@app/services/board-handler.service';
 import { ChatboxService } from '@app/services/chatbox.service';
 import { EndGameService } from '@app/services/end-game.service';
 import { SendMessageService } from '@app/services/send-message.service';
 import { SkipTurnService } from '@app/services/skip-turn.service';
+import { GameSettingsService } from '@app/services/game-settings.service';
 
 @Component({
     selector: 'app-chatbox',
@@ -30,6 +31,7 @@ export class ChatboxComponent implements OnInit, AfterViewInit {
         public endGameService: EndGameService,
         private boardHandlerService: BoardHandlerService,
         private skipTurnService: SkipTurnService,
+        private gameSettingsService: GameSettingsService,
     ) {
         this.message = '';
         this.listMessages = [];
@@ -45,6 +47,7 @@ export class ChatboxComponent implements OnInit, AfterViewInit {
 
     ngOnInit(): void {
         this.sendMessageService.displayBound(this.displayMessageByType.bind(this));
+        this.initializeChatHeight();
     }
 
     handleKeyEvent(event: KeyboardEvent): void {
@@ -78,6 +81,14 @@ export class ChatboxComponent implements OnInit, AfterViewInit {
             // Timeout is used to update the scroll after the last element added
             this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
         }, 1);
+    }
+
+    initializeChatHeight(): void {
+        const chatBox = document.getElementById('chat-box');
+        if (chatBox) {
+            if (this.gameSettingsService.gameType) chatBox.style.height = LOG2990_CHAT_HEIGHT + 'vh';
+            else chatBox.style.height = DEFAULT_CHAT_HEIGHT + 'vh';
+        }
     }
 
     ngAfterViewInit(): void {

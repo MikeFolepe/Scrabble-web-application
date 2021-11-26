@@ -9,6 +9,7 @@ import { EndGameService } from '@app/services/end-game.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { GiveUpHandlerService } from '@app/services/give-up-handler.service';
 import { GridService } from '@app/services/grid.service';
+import { ObjectivesService } from '@app/services/objectives.service';
 import { PlaceLetterService } from '@app/services/place-letter.service';
 import { PlayerService } from '@app/services/player.service';
 import { SendMessageService } from '@app/services/send-message.service';
@@ -34,6 +35,7 @@ export class GameViewComponent implements OnInit {
         public dialog: MatDialog,
         public sendMessageService: SendMessageService,
         public giveUpHandlerService: GiveUpHandlerService,
+        public objectiveService: ObjectivesService,
         private placeLetterService: PlaceLetterService,
     ) {
         this.fontSize = DEFAULT_FONT_SIZE;
@@ -41,6 +43,7 @@ export class GameViewComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.objectiveService.initializeObjectives();
         const mapBonus = new Map<string, string>();
         JSON.parse(this.gameSettingsService.gameSettings.bonusPositions).map((element: string[]) => {
             mapBonus.set(element[0], element[1]);

@@ -7,7 +7,7 @@ import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { PageNotFoundComponent } from '@app/pages/page-not-found/page-not-found.component';
 import { WaitingRoomComponent } from '@app/pages/waiting-room/waiting-room.component';
 import { GameViewComponent } from './game-view/game-view/game-view.component';
-import { FormComponent } from './initialize-solo-game/form/form.component';
+import { FormComponent } from './initialize-game/form/form.component';
 
 const routes: Routes = [
     { path: '', redirectTo: '/home', pathMatch: 'full' },

@@ -19,3 +19,8 @@ export enum TypeMessage {
     Player,
     Error,
 }
+
+export enum Direction {
+    Forwards,
+    Backwards,
+}
