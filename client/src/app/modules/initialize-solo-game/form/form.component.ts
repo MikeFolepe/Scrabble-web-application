@@ -74,8 +74,8 @@ export class FormComponent implements OnDestroy {
             this.getRightBonusPositions(),
             'dictionary.json',
             this.initializeObjective([
-                [6, 4],
-                [3, 1],
+                [6, 3],
+                [2, 0],
             ]),
         );
     }

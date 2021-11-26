@@ -29,6 +29,8 @@ export class ObjectivesService {
     activeTimeRemaining: number[];
     extendedWords: string[];
     private obj1Counter: number[];
+    private obj1ActionTracker: string[][];
+    private obj1LastAttempt: number[];
 
     constructor(
         private wordValidationService: WordValidationService,
@@ -41,7 +43,9 @@ export class ObjectivesService {
     ) {
         this.objectives = [[], []];
         this.activeTimeRemaining = [ONE_MINUTE, ONE_MINUTE];
+        this.obj1LastAttempt = [0, 0];
         this.obj1Counter = [0, 0];
+        this.obj1ActionTracker = [[], []];
         this.receiveObjectives();
     }
 
@@ -120,27 +124,43 @@ export class ObjectivesService {
     }
 
     validateObjectiveOne(id: number) {
-        const numberOfOccurencesToValidate = 3;
+        const numberOfOccurrencesToValidate = 3;
         const minLengthToValidate = 4;
-        const actionLog: string[] = [];
+        let actionLog: string[] = [];
         const size = this.endGameService.actionsLog.length - 1;
-        let lastWordLength = 0;
+        let currentWordLength = 0;
 
         for (let index = size; index >= 0; index = index - 2) {
             actionLog.push(this.endGameService.actionsLog[index]);
         }
 
+        actionLog = actionLog.reverse();
+
         for (const word of this.wordValidationService.lastPlayedWords.keys()) {
-            lastWordLength = word.length;
+            currentWordLength = word.length;
         }
 
-        if (actionLog.length > 0 && actionLog[actionLog.length - 1] !== 'PlacerSucces' && lastWordLength >= minLengthToValidate) {
-            this.obj1Counter[this.playerIndex]++;
-        } else {
-            this.obj1Counter[this.playerIndex] = 1;
+        for (let index = this.obj1LastAttempt[this.playerIndex]; index < actionLog.length; index++) {
+            this.obj1ActionTracker[this.playerIndex].push(actionLog[index]);
         }
 
-        if (this.obj1Counter[this.playerIndex] === numberOfOccurencesToValidate) {
+        const length = this.obj1ActionTracker[this.playerIndex].length - 1;
+        this.obj1ActionTracker[this.playerIndex][length] += currentWordLength >= minLengthToValidate ? 'Valide' : 'Invalide';
+        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+        this.obj1ActionTracker[this.playerIndex] = this.obj1ActionTracker[this.playerIndex].slice(Math.max(length - 1 - 3, 0), length + 1);
+
+        for (let index = length; index >= this.obj1LastAttempt[this.playerIndex]; index--) {
+            if (this.obj1ActionTracker[this.playerIndex][index] === 'placerSuccesValide') {
+                this.obj1Counter[this.playerIndex]++;
+            } else {
+                this.obj1Counter[this.playerIndex] = this.obj1ActionTracker[this.playerIndex][index] === 'placerSuccesInvalide' ? 0 : 1;
+                break;
+            }
+        }
+
+        this.obj1LastAttempt[this.playerIndex] = actionLog.length;
+
+        if (this.obj1Counter[this.playerIndex] === numberOfOccurrencesToValidate) {
             this.addObjectiveScore(id);
             this.obj1Counter[this.playerIndex] = 0;
         }
@@ -214,7 +234,7 @@ export class ObjectivesService {
         }
     }
 
-    // TODO: nom de fonction peut etre ameliorée eventuellement
+    // TODO: nom de fonction peut etre amelioré eventuellement
     isPositionInPlayedWords(position: string, playedPositionsUsed: string[][]) {
         for (const playedPositions of this.wordValidationService.priorPlayedWords.values()) {
             if (playedPositions.includes(position) && !playedPositionsUsed.includes(playedPositions)) {

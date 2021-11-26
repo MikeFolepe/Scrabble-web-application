@@ -1,5 +1,4 @@
 import { TestBed } from '@angular/core/testing';
-
 import { PlacementsHandlerService } from './placements-handler.service';
 
 describe('PlacementsHandlerService', () => {
