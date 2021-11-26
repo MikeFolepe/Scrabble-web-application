@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ClientSocketService } from '@app/services/client-socket.service';
-import { EndGameService } from '@app/services/end-game.service';
+// import { EndGameService } from '@app/services/end-game.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
+import { LetterService } from '@app/services/letter.service';
+import { PlaceLetterService } from '@app/services/place-letter.service';
 import { GameType } from '@common/game-type';
 
 @Component({
@@ -10,7 +12,7 @@ import { GameType } from '@common/game-type';
     templateUrl: './main-page.component.html',
     styleUrls: ['./main-page.component.scss'],
 })
-export class MainPageComponent implements OnInit {
+export class MainPageComponent {
     selectedGameTypeIndex: number;
     selectedGameType: string | GameType;
     selectedGameMode?: string;
@@ -21,16 +23,14 @@ export class MainPageComponent implements OnInit {
         public gameSettingsService: GameSettingsService,
         private router: Router,
         private clientSocketService: ClientSocketService,
-        private endGameService: EndGameService,
+        private letterService: LetterService,
+        private placeLetterService: PlaceLetterService,
     ) {
         this.selectedGameTypeIndex = 0;
         this.gameType = ['Scrabble classique', 'Scrabble LOG2990'];
         this.gameModes = ['Jouer une partie en solo', 'Créer une partie multijoueur', 'Joindre une partie multijoueur'];
-    }
-
-    ngOnInit() {
-        // this.clientSocketService.socket.disconnect();
-        this.endGameService.clearAllData();
+        this.letterService.ngOnDestroy();
+        this.placeLetterService.ngOnDestroy();
     }
 
     routeToGameMode(): void {

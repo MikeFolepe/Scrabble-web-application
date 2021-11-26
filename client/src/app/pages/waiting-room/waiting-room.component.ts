@@ -65,7 +65,6 @@ export class WaitingRoomComponent implements OnInit {
     }
 
     routeToGameView(): void {
-        // TODO: A revoir pourquoi delete avec majid pourquoi on a fait ça???
         this.gameSettingsService.isSoloMode = true;
         this.gameSettingsService.isRedirectedFromMultiplayerGame = true;
         this.delete();

@@ -4,8 +4,8 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/classes/constants';
-import { GridService } from '@app/services/grid.service';
 import { Orientation } from '@app/classes/scrabble-board-pattern';
+import { GridService } from '@app/services/grid.service';
 
 describe('GridService', () => {
     let service: GridService;
@@ -106,5 +106,11 @@ describe('GridService', () => {
         service.drawArrow(service.gridContextPlacementLayer, { x: 7, y: 7 }, Orientation.Vertical);
         expect(strokeSpy).toHaveBeenCalledTimes(2);
         expect(fillSpy).toHaveBeenCalledTimes(2);
+    });
+
+    it('Should call NgOnDestroy and eraseLayer', () => {
+        const spyErase = spyOn(service, 'eraseLayer');
+        service.ngOnDestroy();
+        expect(spyErase).toHaveBeenCalled();
     });
 });

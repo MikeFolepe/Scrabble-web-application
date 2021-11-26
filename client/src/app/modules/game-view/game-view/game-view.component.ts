@@ -9,6 +9,7 @@ import { EndGameService } from '@app/services/end-game.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { GiveUpHandlerService } from '@app/services/give-up-handler.service';
 import { GridService } from '@app/services/grid.service';
+import { PlaceLetterService } from '@app/services/place-letter.service';
 import { PlayerService } from '@app/services/player.service';
 import { SendMessageService } from '@app/services/send-message.service';
 import { SkipTurnService } from '@app/services/skip-turn.service';
@@ -33,6 +34,7 @@ export class GameViewComponent implements OnInit {
         public dialog: MatDialog,
         public sendMessageService: SendMessageService,
         public giveUpHandlerService: GiveUpHandlerService,
+        private placeLetterService: PlaceLetterService,
     ) {
         this.fontSize = DEFAULT_FONT_SIZE;
         this.giveUpHandlerService.receiveEndGameByGiveUp();
@@ -65,6 +67,8 @@ export class GameViewComponent implements OnInit {
 
     leaveGame(): void {
         if (this.gameSettingsService.isSoloMode) {
+            this.placeLetterService.ngOnDestroy();
+            this.gridService.ngOnDestroy();
             this.endGameService.clearAllData();
             if (this.giveUpHandlerService.isGivenUp)
                 this.clientSocketService.socket.emit('deleteGame', this.clientSocketService.roomId, this.clientSocketService.gameType);

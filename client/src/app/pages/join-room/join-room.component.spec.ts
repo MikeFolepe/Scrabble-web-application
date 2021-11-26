@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
@@ -167,31 +168,25 @@ describe('JoinRoomComponent', () => {
         expect(spyEmit).not.toHaveBeenCalled();
     });
 
-    // TODO À voir avec Ulrich
-    // it('should on at the event ReceiveRandomPlacement form the server', () => {
-    //     const fakeCustomerName = 'Mike';
-    //     const myIdRoom = '1';
-    //     component['clientSocketService'].socket = {
-    //         on: (eventName: string, callback: (customer: string, id: string) => void) => {
-    //             if (eventName === 'roomAvailable') {
-    //                 callback(fakeCustomerName, myIdRoom);
-    //             }
-    //         },
-    //     } as unknown as Socket;
-    //     component['receiveRandomPlacement']();
-    //     const spyEmit = spyOn(component['clientSocketService'].socket, 'emit');
-    //     expect(spyEmit).toHaveBeenCalled();
-    //     // expect(spyEmit).toHaveBeenCalledWith(fakeCustomerName, myIdRoom);
-    // });
-
-    // it('should on emit the New customer event  form the client', () => {
-    //     component['receiveRandomPlacement']();
-    //     const mySpyOn = spyOn(component['clientSocketService'].socket, 'on');
-    //     const spyEmit = spyOn(component['clientSocketService'].socket, 'emit');
-    //     expect(mySpyOn).toHaveBeenCalled();
-    //     expect(spyEmit).toHaveBeenCalled();
-    // });
-
+    it('should on at the event ReceiveRandomPlacement form the server', () => {
+        const fakeCustomerName = 'Mike';
+        const myIdRoom = '1';
+        component['clientSocketService'].socket = {
+            on: (eventName: string, callback: (customer: string, id: string) => void) => {
+                if (eventName === 'receiveCustomerOfRandomPlacement') {
+                    callback(fakeCustomerName, myIdRoom);
+                }
+            },
+            emit: (eventName: string, _args: any[] | any) => {
+                return;
+            },
+        } as unknown as Socket;
+        component['receiveRandomPlacement']();
+        // TODO: FIX THIS SHIT
+        // const spyEmit = spyOn(component['clientSocketService'].socket, 'emit');
+        // expect(spyEmit).toHaveBeenCalled();
+        // expect(spyEmit).toHaveBeenCalledWith(fakeCustomerName, myIdRoom);
+    });
     it('should on at the event ReceiveRoomAvailabe form the server and set the isRoomAvialable at false', () => {
         const numberOfmyRoom = 0;
         component['clientSocketService'].socket = {
