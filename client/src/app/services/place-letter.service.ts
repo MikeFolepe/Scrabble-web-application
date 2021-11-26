@@ -1,6 +1,6 @@
 /* eslint-disable max-lines */
 // TODO JUSTIFICATION : À confirmer  avec Ethienne
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import {
     BOARD_COLUMNS,
     BOARD_ROWS,
@@ -27,7 +27,7 @@ import { SkipTurnService } from './skip-turn.service';
 @Injectable({
     providedIn: 'root',
 })
-export class PlaceLetterService {
+export class PlaceLetterService implements OnDestroy {
     isFirstRound: boolean = true;
     lastPlacedWord: string;
     scrabbleBoard: string[][]; // 15x15 array
@@ -351,5 +351,20 @@ export class PlaceLetterService {
     }
     private goToNextPosition(position: Vec2, orientation: Orientation): void {
         position = orientation === Orientation.Horizontal ? { x: position.x++, y: position.y } : { x: position.x, y: position.y++ };
+    }
+    // eslint-disable-next-line @typescript-eslint/member-ordering
+    ngOnDestroy() {
+        this.isFirstRound = true;
+        this.scrabbleBoard = []; // Initializes the array with empty letters
+        this.validLetters = [];
+        this.isEaselSize = false;
+        this.numLettersUsedFromEasel = 0;
+        this.isRow = false;
+        for (let i = 0; i < BOARD_ROWS; i++) {
+            this.scrabbleBoard[i] = [];
+            for (let j = 0; j < BOARD_COLUMNS; j++) {
+                this.scrabbleBoard[i][j] = '';
+            }
+        }
     }
 }

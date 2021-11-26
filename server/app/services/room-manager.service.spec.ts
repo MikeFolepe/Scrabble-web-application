@@ -153,7 +153,7 @@ describe('RoomManagerService', () => {
         expect(roomManagerService.findLooserIndex(fakeSocket)).to.equal(OUT_BOUND_INDEX_OF_SOCKET);
     });
 
-    it('should return 1 the winner name depend of the index  the player who give up the game ', () => {
+    it('should return  the winner name depend of the index  the player who give up the game ', () => {
         roomManagerService.createRoom(socketId1, id, settings, GameType.Classic);
         const socketId2 = 'socket2';
         roomManagerService.setSocket(roomManagerService.rooms[0][0], socketId2);
@@ -207,5 +207,15 @@ describe('RoomManagerService', () => {
     it('should return 0 if the type of rooms gameType is undefined ', () => {
         roomManagerService.rooms = [];
         expect(roomManagerService.getNumberOfRoomInWaitingState(GameType.Classic)).to.equal(0);
+<<<<<<< HEAD
+=======
+    });
+
+    it('should return a empty string if the room is undefined ', () => {
+        roomManagerService.createRoom(socketId1, id, settings, GameType.Classic);
+        const socketId2 = 'socket2';
+        roomManagerService.setSocket(roomManagerService.rooms[0][0], socketId2);
+        expect(roomManagerService.getWinnerName('fake', roomManagerService.findLooserIndex(socketId2))).to.equal('');
+>>>>>>> 59358fb237b9fecd78334908a8fb3718526dd260
     });
 });

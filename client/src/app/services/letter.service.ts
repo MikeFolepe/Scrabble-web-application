@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { EASEL_SIZE, RESERVE } from '@app/classes/constants';
 import { ClientSocketService } from '@app/services/client-socket.service';
 import { Letter } from '@common/letter';
 @Injectable({
     providedIn: 'root',
 })
-export class LetterService {
+export class LetterService implements OnDestroy {
     // Property witch return total number of letters available
     randomElement: number;
     reserve: Letter[];
@@ -90,5 +90,14 @@ export class LetterService {
             };
         }
         return tab;
+    }
+
+    ngOnDestroy() {
+        this.reserve = JSON.parse(JSON.stringify(RESERVE));
+        let size = 0;
+        for (const letter of this.reserve) {
+            size += letter.quantity;
+        }
+        this.reserveSize = size;
     }
 }
