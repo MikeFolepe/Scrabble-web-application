@@ -42,7 +42,7 @@ export class GameController {
          *       200
          */
         this.router.post('/validateWords/:fileName', (req: Request, res: Response) => {
-            const validation = this.wordValidator.isValidInDictionary(req.body.words, req.params.fileName);
+            const validation = this.wordValidator.isValidInDictionary(req.body, req.params.fileName);
             res.status(StatusCodes.OK).send(validation);
         });
 
