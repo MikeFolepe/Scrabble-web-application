@@ -138,11 +138,11 @@ export class RoomManagerService {
         return roomWaiting[roomIndex] as Room;
     }
 
-    getNumberOfRoomInWaitingState(gameType: GameType): number | undefined {
+    getNumberOfRoomInWaitingState(gameType: GameType): number {
         let numberOfRoom = 0;
-        // first  spécial case
+        // First  special case
         if (this.rooms[gameType] === undefined) return numberOfRoom;
-        // second spécial case
+        // Second special case
         if (this.rooms[gameType].length === 0) {
             return numberOfRoom;
         }
