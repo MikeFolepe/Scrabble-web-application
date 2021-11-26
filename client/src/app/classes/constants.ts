@@ -1,5 +1,4 @@
 import { PlacingStrategy } from '@app/classes/enum';
-import dictionaryData from '@common/dictionary.json';
 import { Letter } from '@common/letter';
 import { Vec2 } from '@common/vec2';
 import { CustomRange } from './range';
@@ -37,13 +36,10 @@ export const MIN_RESERVE_SIZE_TO_SWAP = 7;
 export const WHITE_LETTER_INDEX = 26;
 
 export const COLOR_BLACK = 'black';
-export const AI_NAME_DATABASE: string[] = ['Mister_Bucky', 'Mister_Samy', 'Miss_Betty'];
 
 export const NAME_SIZE: CustomRange = { min: 4, max: 12 };
 export const SPECIAL_CHAR = '@#$%^&*_';
 export const VALIDATION_PATTERN = '^([A-Za-z][A-Za-z][A-Za-z][A-Za-z])[A-Za-z0-9' + SPECIAL_CHAR + ']*';
-
-export const DICTIONARY: string[] = JSON.parse(JSON.stringify(dictionaryData)).words;
 
 export const PLACING_BALLOT_BOX: PlacingStrategy[] = [
     PlacingStrategy.LessSix,

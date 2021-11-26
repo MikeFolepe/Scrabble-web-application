@@ -79,4 +79,32 @@ describe('GameViewComponent', () => {
         expect(spyEmit).not.toHaveBeenCalled();
         expect(spyMessage).not.toHaveBeenCalled();
     });
+
+    it('should clear all Data and emit deleteGame is isSolomode is true ', () => {
+        component['gameSettingsService'].isSoloMode = true;
+        component['giveUpHandlerService'].isGivenUp = true;
+        const spyEmit = spyOn(component['clientSocketService'].socket, 'emit');
+        const spyClear = spyOn(component.endGameService, 'clearAllData');
+        component.leaveGame();
+        expect(spyClear).toHaveBeenCalled();
+        expect(spyEmit).toHaveBeenCalled();
+    });
+    it('should clear all Data and not emit deleteGame is isSolomode is true  and isGvenUp  is false', () => {
+        component.gameSettingsService.isSoloMode = true;
+        component.giveUpHandlerService.isGivenUp = false;
+        const spyEmit = spyOn(component['clientSocketService'].socket, 'emit');
+        const spyClear = spyOn(component.endGameService, 'clearAllData');
+        component.leaveGame();
+        expect(spyClear).toHaveBeenCalled();
+        expect(spyEmit).not.toHaveBeenCalled();
+    });
+    it('should not clear all Data and not emit deleteGame is isSolomode is true  and isGvenUp  is false', () => {
+        component.gameSettingsService.isSoloMode = false;
+        component.giveUpHandlerService.isGivenUp = false;
+        const spyEmit = spyOn(component['clientSocketService'].socket, 'emit');
+        const spyClear = spyOn(component.endGameService, 'clearAllData');
+        component.leaveGame();
+        expect(spyClear).not.toHaveBeenCalled();
+        expect(spyEmit).not.toHaveBeenCalled();
+    });
 });

@@ -1,13 +1,12 @@
 /* eslint-disable dot-notation */
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { AI_NAME_DATABASE } from '@app/classes/constants';
 import { StartingPlayer } from '@common/game-settings';
 import { FormComponent } from './form.component';
-
 describe('FormComponent', () => {
     let component: FormComponent;
     let fixture: ComponentFixture<FormComponent>;
@@ -18,7 +17,7 @@ describe('FormComponent', () => {
         await TestBed.configureTestingModule({
             declarations: [FormComponent],
             providers: [{ provide: Router, useValue: router }],
-            imports: [RouterTestingModule],
+            imports: [HttpClientTestingModule, RouterTestingModule],
             schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
         router = TestBed.inject(Router) as jasmine.SpyObj<Router>;
@@ -38,23 +37,58 @@ describe('FormComponent', () => {
 
         component.gameSettingsService.gameSettings.playersNames[0] = 'player 1';
         component.gameSettingsService.isSoloMode = true;
+        component.expertsAi = [
+            {
+                _id: '1',
+                aiName: 'Mister_Felix',
+                isDefault: true,
+            },
+            {
+                _id: '2',
+                aiName: 'Miss_Patty',
+                isDefault: true,
+            },
+            {
+                _id: '3',
+                aiName: 'Miss_Judith',
+                isDefault: true,
+            },
+        ];
+
+        component.beginnersAi = [
+            {
+                _id: '1',
+                aiName: 'Mister_Bucky',
+                isDefault: true,
+            },
+            {
+                _id: '2',
+                aiName: 'Miss_Betty',
+                isDefault: true,
+            },
+            {
+                _id: '3',
+                aiName: 'Mister_Samy',
+                isDefault: true,
+            },
+        ];
     });
 
     it('should create', () => {
         expect(component).toBeTruthy();
     });
 
-    it('should have a predefined name for AI', () => {
-        const result = component['chooseRandomAIName']();
-        expect(AI_NAME_DATABASE).toContain(result);
-    });
+    // it('should have a predefined name for AI', () => {
+    //     const result = component['chooseRandomAIName']('Facile');
+    //     expect(component.expertsAi.values).toContain(result);
+    // });
 
     it('should have a different name from the player', () => {
-        component.form.controls.playerName.setValue(component['chooseRandomAIName']());
+        component.form.controls.playerName.setValue(component['chooseRandomAIName']('Facile'));
         // To consider randomness, we simulate three times the AI name
-        const firstAiName = component['chooseRandomAIName']();
-        const secondAiName = component['chooseRandomAIName']();
-        const thirdAiName = component['chooseRandomAIName']();
+        const firstAiName = component['chooseRandomAIName']('Facile');
+        const secondAiName = component['chooseRandomAIName']('Facile');
+        const thirdAiName = component['chooseRandomAIName']('Facile');
         expect(firstAiName).not.toEqual(component.form.controls.playerName.value);
         expect(secondAiName).not.toEqual(component.form.controls.playerName.value);
         expect(thirdAiName).not.toEqual(component.form.controls.playerName.value);

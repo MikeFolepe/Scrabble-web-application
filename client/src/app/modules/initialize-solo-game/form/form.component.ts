@@ -1,11 +1,14 @@
 // TODO check privacy of functions in this file
 
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AI_NAME_DATABASE, BONUS_POSITIONS, PLAYER_ONE_INDEX } from '@app/classes/constants';
+import { BONUS_POSITIONS, PLAYER_ONE_INDEX } from '@app/classes/constants';
+import { CommunicationService } from '@app/services/communication.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { RandomBonusesService } from '@app/services/random-bonuses.service';
+import { AiPlayerDB, AiType } from '@common/ai-name';
+import { Dictionary } from '@common/dictionary';
 import { GameSettings, StartingPlayer } from '@common/game-settings';
 
 @Component({
@@ -13,10 +16,20 @@ import { GameSettings, StartingPlayer } from '@common/game-settings';
     templateUrl: './form.component.html',
     styleUrls: ['./form.component.scss'],
 })
-export class FormComponent implements OnDestroy {
+export class FormComponent implements OnDestroy, OnInit {
     form: FormGroup;
+    dictionaries: Dictionary[];
+    gameDictionary: string[];
+    beginnersAi: AiPlayerDB[];
+    expertsAi: AiPlayerDB[];
+    isDictionaryDeleted: boolean;
 
-    constructor(public gameSettingsService: GameSettingsService, private router: Router, private randomBonusService: RandomBonusesService) {
+    constructor(
+        public gameSettingsService: GameSettingsService,
+        private router: Router,
+        private randomBonusService: RandomBonusesService,
+        private communicationService: CommunicationService,
+    ) {
         this.form = new FormGroup({
             playerName: new FormControl(this.gameSettingsService.gameSettings.playersNames[PLAYER_ONE_INDEX]),
             minuteInput: new FormControl(this.gameSettingsService.gameSettings.timeMinute),
@@ -26,22 +39,37 @@ export class FormComponent implements OnDestroy {
         });
     }
 
+    async ngOnInit(): Promise<void> {
+        await this.initializeDictionaries();
+        await this.selectGameDictionary(this.dictionaries[0]);
+        this.initializeAiPlayers();
+    }
+
+    initializeAiPlayers(): void {
+        this.communicationService.getAiPlayers(AiType.beginner).subscribe((aiBeginners: AiPlayerDB[]) => {
+            this.beginnersAi = aiBeginners;
+        });
+
+        this.communicationService.getAiPlayers(AiType.expert).subscribe((aiExperts: AiPlayerDB[]) => {
+            this.expertsAi = aiExperts;
+        });
+    }
+
+    async initializeDictionaries(): Promise<void> {
+        this.dictionaries = await this.communicationService.getDictionaries().toPromise();
+    }
+
     getRightBonusPositions(): string {
-        let bonusPositions;
-        if (this.form.controls.randomBonus.value === 'Activer') {
-            bonusPositions = this.randomBonusService.shuffleBonusPositions();
-        } else {
-            bonusPositions = BONUS_POSITIONS;
-        }
+        const bonusPositions = this.form.controls.randomBonus.value === 'Activer' ? this.randomBonusService.shuffleBonusPositions() : BONUS_POSITIONS;
         return JSON.stringify(Array.from(bonusPositions));
     }
 
-    chooseRandomAIName(): string {
-        let randomName: string;
+    chooseRandomAIName(levelInput: string): string {
+        let randomName = '';
         do {
             // Random value [0, AI_NAME_DATABASE.length[
-            const randomNumber = Math.floor(Math.random() * AI_NAME_DATABASE.length);
-            randomName = AI_NAME_DATABASE[randomNumber];
+            const randomNumber = Math.floor(Math.random() * this.beginnersAi.length);
+            randomName = levelInput === 'Facile' ? this.beginnersAi[randomNumber].aiName : this.expertsAi[randomNumber].aiName;
         } while (randomName === this.form.controls.playerName.value);
         return randomName;
     }
@@ -49,11 +77,17 @@ export class FormComponent implements OnDestroy {
     // Initializes the game with its settings
     initGame(): void {
         this.snapshotSettings();
-        if (this.gameSettingsService.isSoloMode) {
-            this.router.navigate(['game']);
+        const nextUrl = this.gameSettingsService.isSoloMode ? 'game' : 'multiplayer-mode-waiting-room';
+        this.router.navigate([nextUrl]);
+    }
+
+    async selectGameDictionary(dictionary: Dictionary): Promise<void> {
+        const dictionaries = await this.communicationService.getDictionaries().toPromise();
+        if (!dictionaries.find((dictionaryInArray: Dictionary) => dictionary.title === dictionaryInArray.title)) {
+            this.isDictionaryDeleted = true;
             return;
         }
-        this.router.navigate(['multiplayer-mode-waiting-room']);
+        this.gameDictionary = await this.communicationService.getGameDictionary(dictionary.fileName).toPromise();
     }
 
     chooseStartingPlayer(): StartingPlayer {
@@ -61,7 +95,7 @@ export class FormComponent implements OnDestroy {
     }
 
     snapshotSettings(): void {
-        const playersNames: string[] = [this.form.controls.playerName.value, this.chooseRandomAIName()];
+        const playersNames: string[] = [this.form.controls.playerName.value, this.chooseRandomAIName(this.form.controls.levelInput.value)];
         this.gameSettingsService.gameSettings = new GameSettings(
             playersNames,
             this.chooseStartingPlayer(),
@@ -70,12 +104,11 @@ export class FormComponent implements OnDestroy {
             this.form.controls.levelInput.value,
             this.form.controls.randomBonus.value,
             this.getRightBonusPositions(),
-            'dictionary.json',
+            this.gameDictionary,
         );
     }
 
     ngOnDestroy(): void {
         this.gameSettingsService.isRedirectedFromMultiplayerGame = false;
-        return;
     }
 }
