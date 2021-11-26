@@ -4,12 +4,12 @@ import { ScoreValidation } from '@app/classes/validation-score';
 import { CommunicationService } from '@app/services/communication.service';
 import { RandomBonusesService } from '@app/services/random-bonuses.service';
 import { ClientSocketService } from './client-socket.service';
-import { GameSettingsService } from './game-settings.service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class WordValidationService {
+    fileName: string;
     playedWords: Map<string, string[]>;
     lastPlayedWords: Map<string, string[]>;
     priorPlayedWords: Map<string, string[]>;
@@ -24,7 +24,6 @@ export class WordValidationService {
         private httpServer: CommunicationService,
         private randomBonusService: RandomBonusesService,
         private clientSocketService: ClientSocketService,
-        private gameSettingsService: GameSettingsService,
     ) {
         this.newWords = new Array<string>();
         this.playedWords = new Map<string, string[]>();
@@ -35,6 +34,7 @@ export class WordValidationService {
         this.bonusesPositions = new Map<string, string>(this.randomBonusService.bonusPositions);
         this.validationState = false;
         this.foundWords = new Array<string>();
+        this.fileName = '';
         this.receivePlayedWords();
     }
 
@@ -199,9 +199,7 @@ export class WordValidationService {
         let scoreTotal = 0;
         this.passThroughAllRowsOrColumns(scrabbleBoard, isRow);
         this.passThroughAllRowsOrColumns(scrabbleBoard, !isRow);
-        this.validationState = await this.httpServer
-            .validationPost(this.newPlayedWords, this.gameSettingsService.gameSettings.dictionary)
-            .toPromise();
+        this.validationState = await this.httpServer.validationPost(this.newPlayedWords, this.fileName).toPromise();
         if (!this.validationState) {
             this.newPlayedWords.clear();
             return { validation: this.validationState, score: scoreTotal };

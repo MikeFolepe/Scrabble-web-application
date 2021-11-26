@@ -41,15 +41,15 @@ export class GameController {
          *     responses:
          *       200
          */
-        this.router.post('/validateWords', (req: Request, res: Response) => {
-            const validation = this.wordValidator.isValidInDictionary(req.body.words, req.body.dico);
+        this.router.post('/validateWords/:fileName', (req: Request, res: Response) => {
+            const validation = this.wordValidator.isValidInDictionary(req.body.words, req.params.fileName);
             res.status(StatusCodes.OK).send(validation);
         });
 
         this.router.get('/dictionary/:fileName', (req: Request, res: Response) => {
-            // TODO: Make this request also send a game id to the client
-            const readFile: string[] = JSON.parse(fileSystem.readFileSync(`./dictionaries/${req.params.fileName}`, 'utf8')).words;
-            res.status(StatusCodes.OK).send(readFile);
+            const readFile = JSON.parse(fileSystem.readFileSync(`./dictionaries/${req.params.fileName}`, 'utf8'));
+            const words = readFile.words;
+            res.status(StatusCodes.OK).send(words);
         });
 
         this.router.post('/best-scores-classic', async (req: Request, res: Response) => {
@@ -84,25 +84,25 @@ export class GameController {
                 });
         });
 
-        this.router.post('/uploadDictionary', (req, res) => {
-            let uploadedFile;
-            if (!req['files']) return res.sendStatus(StatusCodes.NOT_FOUND).send(JSON.stringify('File not found'));
+        // this.router.post('/uploadDictionary', (req, res) => {
+        //     let uploadedFile;
+        //     if (!req['files']) return res.sendStatus(StatusCodes.NOT_FOUND).send(JSON.stringify('File not found'));
 
-            if (Array.isArray(req['files'].file)) {
-                // It must be an array of UploadedFile objects
-                for (const fic of req['files'].file) {
-                    fic.mv('./dictionaries' + fic.name, (err: boolean) => {
-                        if (err) res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(JSON.stringify('Upload error'));
-                    });
-                }
-            } else {
-                // It must be a single UploadedFile object
-                uploadedFile = req['files'].file;
-                uploadedFile.mv('./dictionaries/' + uploadedFile.name, (err: boolean) => {
-                    if (err) res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(JSON.stringify('Upload error'));
-                });
-            }
-            return res.status(StatusCodes.OK).send(JSON.stringify('Uploaded'));
-        });
+        //     if (Array.isArray(req['files'].file)) {
+        //         // It must be an array of UploadedFile objects
+        //         for (const fic of req['files'].file) {
+        //             fic.mv('./dictionaries' + fic.name, (err: boolean) => {
+        //                 if (err) res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(JSON.stringify('Upload error'));
+        //             });
+        //         }
+        //     } else {
+        //         // It must be a single UploadedFile object
+        //         uploadedFile = req['files'].file;
+        //         uploadedFile.mv('./dictionaries/' + uploadedFile.name, (err: boolean) => {
+        //             if (err) res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(JSON.stringify('Upload error'));
+        //         });
+        //     }
+        //     return res.status(StatusCodes.OK).send(JSON.stringify('Uploaded'));
+        // });
     }
 }

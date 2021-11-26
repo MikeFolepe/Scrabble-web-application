@@ -20,17 +20,12 @@ export class CommunicationService {
         this.wordsToValidate = [];
     }
 
-    validationPost(newPlayedWords: Map<string, string[]>, dictionary: string[]): Observable<boolean> {
+    validationPost(newPlayedWords: Map<string, string[]>, fileName: string): Observable<boolean> {
         this.wordsToValidate = [];
         for (const word of newPlayedWords.keys()) {
             this.wordsToValidate.push(word);
         }
-        // TODO: Modify the logic to get a game id from server and use it in the request
-        const object = {
-            words: this.wordsToValidate,
-            dico: dictionary,
-        };
-        return this.http.post<boolean>(`${this.baseUrl}/game/validateWords`, object);
+        return this.http.post<boolean>(`${this.baseUrl}/game/validateWords/${fileName}`, this.wordsToValidate);
     }
 
     getGameDictionary(fileName: string): Observable<string[]> {
