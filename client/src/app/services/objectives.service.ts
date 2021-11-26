@@ -127,10 +127,10 @@ export class ObjectivesService {
         const numberOfOccurrencesToValidate = 3;
         const minLengthToValidate = 4;
         let actionLog: string[] = [];
-        const size = this.endGameService.actionsLog.length - 1;
+        const actionLogSize = this.endGameService.actionsLog.length - 1;
         let currentWordLength = 0;
 
-        for (let index = size; index >= 0; index = index - 2) {
+        for (let index = actionLogSize; index >= 0; index = index - 2) {
             actionLog.push(this.endGameService.actionsLog[index]);
         }
 
@@ -144,12 +144,14 @@ export class ObjectivesService {
             this.obj1ActionTracker[this.playerIndex].push(actionLog[index]);
         }
 
-        const length = this.obj1ActionTracker[this.playerIndex].length - 1;
-        this.obj1ActionTracker[this.playerIndex][length] += currentWordLength >= minLengthToValidate ? 'Valide' : 'Invalide';
-        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-        this.obj1ActionTracker[this.playerIndex] = this.obj1ActionTracker[this.playerIndex].slice(Math.max(length - 1 - 3, 0), length + 1);
+        const obj1ActionTrackerSize = this.obj1ActionTracker[this.playerIndex].length - 1;
+        this.obj1ActionTracker[this.playerIndex][obj1ActionTrackerSize] += currentWordLength >= minLengthToValidate ? 'Valide' : 'Invalide';
+        this.obj1ActionTracker[this.playerIndex] = this.obj1ActionTracker[this.playerIndex].slice(
+            Math.max(obj1ActionTrackerSize - 1 - numberOfOccurrencesToValidate, 0),
+            obj1ActionTrackerSize + 1,
+        );
 
-        for (let index = length; index >= this.obj1LastAttempt[this.playerIndex]; index--) {
+        for (let index = obj1ActionTrackerSize; index >= this.obj1LastAttempt[this.playerIndex]; index--) {
             if (this.obj1ActionTracker[this.playerIndex][index] === 'placerSuccesValide') {
                 this.obj1Counter[this.playerIndex]++;
             } else {

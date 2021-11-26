@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
@@ -15,7 +16,6 @@ import { LevelFieldComponent } from './level-field/level-field.component';
 import { PlayerNameFieldComponent } from './player-name-field/player-name-field.component';
 import { RandomBonusComponent } from './random-bonus/random-bonus.component';
 import { TimerFieldComponent } from './timer-field/timer-field.component';
-import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
     declarations: [
@@ -43,4 +43,4 @@ import { MatDialogModule } from '@angular/material/dialog';
     exports: [FormComponent],
     entryComponents: [JoinDialogComponent],
 })
-export class InitializeSoloGameModule {}
+export class InitializeGameModule {}

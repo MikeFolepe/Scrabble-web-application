@@ -4,11 +4,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ERROR_MESSAGE_DELAY, THREE_SECONDS_DELAY } from '@app/classes/constants';
-import { JoinDialogComponent } from '@app/modules/initialize-solo-game/join-dialog/join-dialog.component';
+import { Dictionary } from '@app/classes/dictionary';
+import { JoinDialogComponent } from '@app/modules/initialize-game/join-dialog/join-dialog.component';
 import { CommunicationService } from '@app/services/communication.service';
 import { AiPlayer, AiPlayerDB } from '@common/ai-name';
 import dictionarySchema from '@common/dictionarySchema.json';
-import { Dictionary } from '@app/classes/dictionary';
 import Ajv from 'ajv';
 
 @Component({
