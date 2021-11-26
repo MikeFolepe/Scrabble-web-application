@@ -1,5 +1,5 @@
-// TODO: enlever ça avant de merge
-/* eslint-disable @typescript-eslint/no-magic-numbers */
+// TODO check privacy of functions in this file
+
 import { Component, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';

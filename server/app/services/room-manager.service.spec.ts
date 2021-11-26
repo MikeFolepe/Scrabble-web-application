@@ -1,10 +1,12 @@
 /* eslint-disable max-len */
+// RAISON : Too much lines for test files
 /* eslint-disable @typescript-eslint/no-magic-numbers */
+// RAISON : use magic numbers insides testbench
 // import { OUT_BOUND_INDEX_OF_SOCKET } from '@app/classes/constants';
 import { OUT_BOUND_INDEX_OF_SOCKET } from '@app/classes/constants';
 import { RoomManagerService } from '@app/services/room-manager.service';
 import { GameSettings, StartingPlayer } from '@common/game-settings';
-import { GameType2 } from '@common/game-type';
+import { GameType } from '@common/game-type';
 import { State } from '@common/room';
 import { expect } from 'chai';
 
@@ -32,7 +34,7 @@ describe('RoomManagerService', () => {
     });
 
     it('should create a Room', () => {
-        roomManagerService.createRoom(socketId1, id, settings, GameType2.Classic);
+        roomManagerService.createRoom(socketId1, id, settings, GameType.Classic);
         expect(roomManagerService.rooms[0].length).to.equal(1);
     });
 
@@ -42,24 +44,24 @@ describe('RoomManagerService', () => {
     });
 
     it('should not add customer at the Room if ht name are same', () => {
-        roomManagerService.createRoom(socketId1, id, settings, GameType2.Classic);
+        roomManagerService.createRoom(socketId1, id, settings, GameType.Classic);
         expect(roomManagerService.addCustomer('Paul', 'noFountID')).to.equal(false);
     });
 
     it('should add customer at the Room if ht name are same', () => {
-        roomManagerService.createRoom(socketId1, id, settings, GameType2.Classic);
+        roomManagerService.createRoom(socketId1, id, settings, GameType.Classic);
         settings.playersNames[1] = '';
         expect(roomManagerService.addCustomer('Paul', id)).to.equal(true);
     });
 
     it('should set the state of Room', () => {
-        roomManagerService.createRoom(socketId1, id, settings, GameType2.Classic);
+        roomManagerService.createRoom(socketId1, id, settings, GameType.Classic);
         roomManagerService.setState(id, State.Playing);
         expect(roomManagerService.rooms[0][0].state).to.equal(State.Playing);
     });
 
     it('should setSocket in the room', () => {
-        roomManagerService.createRoom(socketId1, id, settings, GameType2.Classic);
+        roomManagerService.createRoom(socketId1, id, settings, GameType.Classic);
         const socketId2 = 'socket2';
         const myRoom = roomManagerService.rooms[0][0];
         roomManagerService.setSocket(myRoom, socketId2);
@@ -67,7 +69,7 @@ describe('RoomManagerService', () => {
     });
 
     it('should return the gamesettings  of room', () => {
-        roomManagerService.createRoom(socketId1, id, settings, GameType2.Classic);
+        roomManagerService.createRoom(socketId1, id, settings, GameType.Classic);
         settings.startingPlayer = 0;
         expect(roomManagerService.rooms[0][0].gameSettings.startingPlayer).to.equal(0);
         expect(roomManagerService.formatGameSettingsForCustomerIn(id)).not.to.equal(undefined);
@@ -75,39 +77,39 @@ describe('RoomManagerService', () => {
     });
 
     it('should return the formatGameSettings for the Customer in a specific Room', () => {
-        roomManagerService.createRoom(socketId1, id, settings, GameType2.Classic);
+        roomManagerService.createRoom(socketId1, id, settings, GameType.Classic);
         settings.startingPlayer = 0;
         expect(roomManagerService.rooms[0][0].gameSettings.startingPlayer).to.equal(0);
         expect(roomManagerService.formatGameSettingsForCustomerIn(id)).not.to.equal(undefined);
     });
 
     it('should return the formatGameSettings for the Customer in a specific Room and swith the starting player', () => {
-        roomManagerService.createRoom(socketId1, id, settings, GameType2.Classic);
+        roomManagerService.createRoom(socketId1, id, settings, GameType.Classic);
         settings.startingPlayer = 1;
         expect(roomManagerService.rooms[0][0].gameSettings.startingPlayer).to.equal(1);
         expect(roomManagerService.formatGameSettingsForCustomerIn(id)).not.to.equal(undefined);
     });
 
     it('should delete the room with the right id', () => {
-        roomManagerService.createRoom(socketId1, id, settings, GameType2.Classic);
+        roomManagerService.createRoom(socketId1, id, settings, GameType.Classic);
         roomManagerService.deleteRoom(id);
         expect(roomManagerService.rooms[0].length).to.equal(0);
     });
 
     it('should not delete the room if his ID is not in the table', () => {
-        roomManagerService.createRoom(socketId1, id, settings, GameType2.Classic);
+        roomManagerService.createRoom(socketId1, id, settings, GameType.Classic);
         roomManagerService.deleteRoom('fakeId');
         expect(roomManagerService.rooms[0].length).to.equal(1);
     });
 
     it('should find the room with the soketId and return it', () => {
-        roomManagerService.createRoom(socketId1, id, settings, GameType2.Classic);
+        roomManagerService.createRoom(socketId1, id, settings, GameType.Classic);
         const myRoomId = roomManagerService.findRoomIdOf(socketId1);
         expect(myRoomId).to.equal(id);
     });
 
     it('should not find the room with the soketId and return it', () => {
-        roomManagerService.createRoom(socketId1, id, settings, GameType2.Classic);
+        roomManagerService.createRoom(socketId1, id, settings, GameType.Classic);
         const myRoomId = roomManagerService.findRoomIdOf('fakesocketId');
         expect(myRoomId).to.equal('');
     });
@@ -118,33 +120,33 @@ describe('RoomManagerService', () => {
     });
 
     it('should return false if the room  is available ', () => {
-        roomManagerService.createRoom(socketId1, id, settings, GameType2.Classic);
+        roomManagerService.createRoom(socketId1, id, settings, GameType.Classic);
         expect(roomManagerService.isNotAvailable(id)).to.equal(false);
     });
 
     it('should return the index of the player who leave the game', () => {
-        roomManagerService.createRoom(socketId1, id, settings, GameType2.Classic);
+        roomManagerService.createRoom(socketId1, id, settings, GameType.Classic);
         const socketId2 = 'socketId2';
         roomManagerService.setSocket(roomManagerService.rooms[0][0], socketId2);
         expect(roomManagerService.findLooserIndex(socketId2)).to.equal(1);
     });
 
     it('should return the index of the player who leave the game', () => {
-        roomManagerService.createRoom(socketId1, id, settings, GameType2.Classic);
+        roomManagerService.createRoom(socketId1, id, settings, GameType.Classic);
         const socketId2 = 'socketId2';
         roomManagerService.setSocket(roomManagerService.rooms[0][0], socketId2);
         expect(roomManagerService.findLooserIndex(socketId2)).to.equal(1);
     });
     it('should return the winner name depend of the index  the player who give up the game ', () => {
         roomManagerService.rooms = [[], []];
-        roomManagerService.createRoom(socketId1, id, settings, GameType2.Classic);
+        roomManagerService.createRoom(socketId1, id, settings, GameType.Classic);
         const socketId2 = 'socket2';
         roomManagerService.setSocket(roomManagerService.rooms[0][0], socketId2);
         expect(roomManagerService.getWinnerName(id, roomManagerService.findLooserIndex(socketId1))).to.equal('Paul');
     });
 
     it('should return the outbound index of socket if the socketId of the player who leave the game is not in the room', () => {
-        roomManagerService.createRoom(socketId1, id, settings, GameType2.Classic);
+        roomManagerService.createRoom(socketId1, id, settings, GameType.Classic);
         const socketId2 = 'socketId2';
         const fakeSocket = 'socketId3';
         roomManagerService.setSocket(roomManagerService.rooms[0][0], socketId2);
@@ -152,7 +154,7 @@ describe('RoomManagerService', () => {
     });
 
     it('should return 1 the winner name depend of the index  the player who give up the game ', () => {
-        roomManagerService.createRoom(socketId1, id, settings, GameType2.Classic);
+        roomManagerService.createRoom(socketId1, id, settings, GameType.Classic);
         const socketId2 = 'socket2';
         roomManagerService.setSocket(roomManagerService.rooms[0][0], socketId2);
         expect(roomManagerService.getWinnerName(id, roomManagerService.findLooserIndex(socketId2))).to.equal('Paul');
@@ -160,43 +162,50 @@ describe('RoomManagerService', () => {
 
     it('should find the room with state in waiting and return it', () => {
         settings.playersNames[1] = '';
-        roomManagerService.createRoom(socketId1, id, settings, GameType2.Classic);
-        // TODO:  traduire tous ces commentaires en anglais
-        // Deuxieme room avec un joueur et etat waiting
-        roomManagerService.createRoom(socketId3, id1, mySettings, GameType2.Classic);
-        roomManagerService.createRoom(socketId4, id4, mySettings1, GameType2.Classic);
-        expect(roomManagerService.findRoomInWaitingState('Mike', GameType2.Classic)).not.to.equal(undefined);
+        roomManagerService.createRoom(socketId1, id, settings, GameType.Classic);
+        // Second room with player in waiting state
+        roomManagerService.createRoom(socketId3, id1, mySettings, GameType.Classic);
+        roomManagerService.createRoom(socketId4, id4, mySettings1, GameType.Classic);
+        expect(roomManagerService.findRoomInWaitingState('Mike', GameType.Classic)).not.to.equal(undefined);
     });
     it('should not find the room with state in waiting and return it', () => {
-        // Premiere room en attente
+        // first room in waitin  state
         settings.playersNames[1] = '';
-        roomManagerService.createRoom(socketId1, id, settings, GameType2.Classic);
+        roomManagerService.createRoom(socketId1, id, settings, GameType.Classic);
         roomManagerService.setState(id, State.Playing);
-        // Deuxieme room avec un joueur et etat waiting
-        roomManagerService.createRoom(socketId3, id1, mySettings, GameType2.Classic);
+        // Second room with player in waiting state
+        roomManagerService.createRoom(socketId3, id1, mySettings, GameType.Classic);
         roomManagerService.setState(id1, State.Playing);
-        // 3eme room en attente
-        roomManagerService.createRoom(socketId4, id4, mySettings1, GameType2.Classic);
+        // third room in waiting state
+        roomManagerService.createRoom(socketId4, id4, mySettings1, GameType.Classic);
         roomManagerService.setState(id4, State.Playing);
 
-        expect(roomManagerService.findRoomInWaitingState('Mike', GameType2.Classic)).to.equal(undefined);
+        expect(roomManagerService.findRoomInWaitingState('Mike', GameType.Classic)).to.equal(undefined);
     });
 
     it('should return the number of rooms in state Waiting', () => {
         settings.playersNames[1] = '';
-        roomManagerService.createRoom(socketId1, id, settings, GameType2.Classic);
-        roomManagerService.createRoom(socketId3, id1, mySettings, GameType2.Classic);
-        roomManagerService.createRoom(socketId4, id4, mySettings1, GameType2.Classic);
-        expect(roomManagerService.getNumberOfRoomInWaitingState(GameType2.Classic)).to.equal(3);
+        roomManagerService.createRoom(socketId1, id, settings, GameType.Classic);
+        roomManagerService.createRoom(socketId3, id1, mySettings, GameType.Classic);
+        roomManagerService.createRoom(socketId4, id4, mySettings1, GameType.Classic);
+        expect(roomManagerService.getNumberOfRoomInWaitingState(GameType.Classic)).to.equal(3);
     });
     it('should return 0 if the number of rooms in state Waiting is 0', () => {
         settings.playersNames[1] = '';
-        roomManagerService.createRoom(socketId1, id, settings, GameType2.Classic);
+        roomManagerService.createRoom(socketId1, id, settings, GameType.Classic);
         roomManagerService.setState(id, State.Playing);
 
-        roomManagerService.createRoom(socketId3, id1, mySettings, GameType2.Classic);
+        roomManagerService.createRoom(socketId3, id1, mySettings, GameType.Classic);
         roomManagerService.setState(id1, State.Playing);
 
-        expect(roomManagerService.getNumberOfRoomInWaitingState(GameType2.Classic)).to.equal(0);
+        expect(roomManagerService.getNumberOfRoomInWaitingState(GameType.Classic)).to.equal(0);
+    });
+    it('should return 0 if the number of rooms gameType is equal 0', () => {
+        roomManagerService.rooms = [[], []];
+        expect(roomManagerService.getNumberOfRoomInWaitingState(GameType.Classic)).to.equal(0);
+    });
+    it('should return 0 if the type of rooms gameType is undefined ', () => {
+        roomManagerService.rooms = [];
+        expect(roomManagerService.getNumberOfRoomInWaitingState(GameType.Classic)).to.equal(0);
     });
 });

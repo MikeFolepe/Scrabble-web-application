@@ -54,15 +54,23 @@ export class GameViewComponent implements OnInit {
         this.playerService.updateFontSize(this.fontSize);
     }
 
-    giveUpGame(): void {
+    confirmGiveUpGame(): void {
         const ref = this.dialog.open(GiveUpGameDialogComponent, { disableClose: true });
 
         ref.afterClosed().subscribe((decision: boolean) => {
             // if user closes the dialog box without input nothing
             if (!decision) return;
             // if decision is true the EndGame occurres
-            this.clientSocketService.socket.emit('sendEndGameByGiveUp', decision, this.clientSocketService.roomId);
             this.sendMessageService.sendConversionMessage();
+            this.clientSocketService.socket.emit('sendEndGameByGiveUp', decision, this.clientSocketService.roomId, this.clientSocketService.gameType);
         });
+    }
+
+    leaveGame(): void {
+        if (this.gameSettingsService.isSoloMode) {
+            this.endGameService.clearAllData();
+            if (this.giveUpHandlerService.isGivenUp)
+                this.clientSocketService.socket.emit('deleteGame', this.clientSocketService.roomId, this.clientSocketService.gameType);
+        }
     }
 }

@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { GameSettingsService } from '@app/services/game-settings.service';
 import { ObjectivesService } from '@app/services/objectives.service';
 import { Objective } from '@common/objectives';
 
@@ -12,7 +11,7 @@ export class ObjectivesComponent implements OnInit {
     objectives: Objective[][];
     activeTimeRemaining: number;
 
-    constructor(public objectivesService: ObjectivesService, public gameSettingsService: GameSettingsService) {
+    constructor(public objectivesService: ObjectivesService) {
         this.objectives = [[], []];
     }
 

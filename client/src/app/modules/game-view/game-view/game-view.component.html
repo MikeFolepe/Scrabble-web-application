@@ -21,45 +21,16 @@
                 >
                     Passer son tour
                 </button>
-
-                <div *ngIf="!endGameService.isEndGame && gameSettingsService.isSoloMode && !giveUpHandlerService.isSwitchMode">
-                    <button mat-raised-button color="primary" id="regular-button" (click)="endGameService.clearAllData()" routerLink="/home">
-                        Abandonner
+                <div *ngIf="gameSettingsService.isSoloMode">
+                    <button mat-raised-button color="primary" id="regular-button" (click)="leaveGame()" routerLink="/home">
+                        {{ endGameService.isEndGame ? 'Quitter' : 'Abandonner' }}
                     </button>
                 </div>
-                <div *ngIf="endGameService.isEndGame && gameSettingsService.isSoloMode && !giveUpHandlerService.isSwitchMode">
-                    <button mat-raised-button color="primary" id="regular-button" (click)="endGameService.clearAllData()" routerLink="/home">
-                        Quitter
-                    </button>
-                </div>
-                <div *ngIf="!gameSettingsService.isSoloMode && !endGameService.isEndGame && !giveUpHandlerService.isSwitchMode">
-                    <button mat-raised-button color="primary" id="regular-button" (click)="giveUpGame()">Abandonner</button>
-                </div>
-                <!-- Je convertis la partie de multijoueur vers partie solo  ici soit le abandonner delete la room officiellement ou depuis giveUp() je fais ca -->
-                <div *ngIf="!endGameService.isEndGame && gameSettingsService.isSoloMode && giveUpHandlerService.isSwitchMode">
-                    <button
-                        mat-raised-button
-                        color="primary"
-                        id="regular-button"
-                        (click)="endGameService.clearAllData(); clientSocketService.socket.emit('deleteGame', clientSocketService.roomId)"
-                        routerLink="/home"
-                    >
-                        Abandonner
-                    </button>
-                </div>
-                <div *ngIf="endGameService.isEndGame && gameSettingsService.isSoloMode && giveUpHandlerService.isSwitchMode">
-                    <button
-                        mat-raised-button
-                        color="primary"
-                        id="regular-button"
-                        (click)="endGameService.clearAllData(); clientSocketService.socket.emit('deleteGame', clientSocketService.roomId)"
-                        routerLink="/home"
-                    >
-                        Quitter
-                    </button>
+                <div *ngIf="!endGameService.isEndGame && !gameSettingsService.isSoloMode && !giveUpHandlerService.isGivenUp">
+                    <button mat-raised-button color="primary" id="regular-button" (click)="confirmGiveUpGame()">Abandonner</button>
                 </div>
             </div>
-            <app-font-size id="font-size" [fontSize]="fontSize" (sizeChange)="handleFontSizeEvent($event)"> </app-font-size>
+            <app-font-size id="font-size" [fontSize]="fontSize" (sizeChange)="handleFontSizeEvent($event)"></app-font-size>
         </div>
     </div>
     <app-scrabble-board id="scrabble-board" tabindex="0"></app-scrabble-board>

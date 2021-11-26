@@ -4,8 +4,8 @@
 // if(GameType.LOG2990)
 //   // traitement pour le mode LOG2990
 export enum GameType {
-    Classic = 'Scrabble classique',
-    Log2990 = 'Scrabble LOG2990',
+    Classic,
+    Log2990,
 }
 
 export enum GameType2 {

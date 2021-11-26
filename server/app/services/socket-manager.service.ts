@@ -1,7 +1,7 @@
 import { DELAY_OF_DISCONNECT } from '@app/classes/constants';
 import { RoomManagerService } from '@app/services/room-manager.service';
 import { GameSettings } from '@common/game-settings';
-import { GameType2 } from '@common/game-type';
+import { GameType } from '@common/game-type';
 import { Letter } from '@common/letter';
 import { PlayerIndex } from '@common/player-index';
 import { Room, State } from '@common/room';
@@ -23,7 +23,7 @@ export class SocketManagerService {
         this.sio.on('connection', (socket) => {
             this.onCreateRoom(socket);
 
-            socket.on('getRoomsConfiguration', (gameType: GameType2) => {
+            socket.on('getRoomsConfiguration', (gameType: GameType) => {
                 // getRoomsConfigurations only alerts the asker about the rooms configurations
                 socket.emit('roomConfiguration', this.roomManagerService.rooms[gameType]);
             });
@@ -69,9 +69,9 @@ export class SocketManagerService {
                 socket.to(roomId).emit('receiveActions', actions);
             });
 
-            socket.on('deleteGame', (roomId: string, gameType: GameType2) => {
+            socket.on('deleteGame', (roomId: string, gameType: GameType) => {
                 this.roomManagerService.deleteRoom(roomId);
-                this.sio.emit('roomConfiguration', this.roomManagerService.rooms);
+                this.sio.emit('roomConfiguration', this.roomManagerService.rooms[gameType]);
                 // Send number of rooms available
                 this.sio.emit('roomAvailable', this.roomManagerService.getNumberOfRoomInWaitingState(gameType));
                 this.sio.socketsLeave(roomId);
@@ -90,14 +90,14 @@ export class SocketManagerService {
             });
 
             // Method handler by click on placement aléatoire
-            socket.on('newRoomCustomerOfRandomPlacement', (customerName: string, gameType: GameType2) => {
+            socket.on('newRoomCustomerOfRandomPlacement', (customerName: string, gameType: GameType) => {
                 const room = this.roomManagerService.findRoomInWaitingState(customerName, gameType) as Room;
                 if (room === undefined) return;
                 socket.emit('receiveCustomerOfRandomPlacement', customerName, room.id);
             });
 
             // Method to get to update the room available when you acces join-room page
-            socket.on('getRoomAvailable', (gameType: GameType2) => {
+            socket.on('getRoomAvailable', (gameType: GameType) => {
                 this.sio.emit('roomAvailable', this.roomManagerService.getNumberOfRoomInWaitingState(gameType));
             });
             socket.on('disconnect', () => {
@@ -111,7 +111,7 @@ export class SocketManagerService {
                     return;
                 }
                 if (room.state === State.Playing) {
-                    // room.state = State.Finish;
+                    room.state = State.Finish;
                     // Emit the event
                     this.sendWinnerName(socket, roomId);
                     return;
@@ -125,21 +125,21 @@ export class SocketManagerService {
     }
 
     onCreateRoom(socket: io.Socket): void {
-        socket.on('createRoom', (gameSettings: GameSettings, gameType: GameType2) => {
+        socket.on('createRoom', (gameSettings: GameSettings, gameType: GameType) => {
             const roomId = this.roomManagerService.createRoomId(gameSettings.playersNames[PlayerIndex.OWNER], socket.id);
             this.roomManagerService.createRoom(socket.id, roomId, gameSettings, gameType);
             socket.join(roomId);
             // give the client his roomId to communicate later with server
             socket.emit('yourRoomId', roomId);
             // room creation alerts all clients on the new rooms configurations
-            this.sio.emit('roomConfiguration', this.roomManagerService.rooms);
+            this.sio.emit('roomConfiguration', this.roomManagerService.rooms[gameType]);
             // Send number of rooms available
             this.sio.emit('roomAvailable', this.roomManagerService.getNumberOfRoomInWaitingState(gameType));
         });
     }
 
     onNewRoomPlayer(socket: io.Socket): void {
-        socket.on('newRoomCustomer', (playerName: string, roomId: string, gameType: GameType2) => {
+        socket.on('newRoomCustomer', (playerName: string, roomId: string, gameType: GameType) => {
             if (this.roomManagerService.isNotAvailable(roomId)) {
                 // block someone else entry from dialog window
                 socket.emit('roomAlreadyToken');
@@ -175,7 +175,7 @@ export class SocketManagerService {
     }
 
     onEndGameByGiveUp(socket: io.Socket): void {
-        socket.on('sendEndGameByGiveUp', (isGiveUp: boolean, roomId: string) => {
+        socket.on('sendEndGameByGiveUp', (isGiveUp: boolean, roomId: string, gameType: GameType) => {
             socket
                 .to(roomId)
                 .emit(
@@ -183,7 +183,7 @@ export class SocketManagerService {
                     isGiveUp,
                     this.roomManagerService.getWinnerName(roomId, this.roomManagerService.findLooserIndex(socket.id)),
                 );
-            this.sio.emit('roomConfiguration', this.roomManagerService.rooms);
+            this.sio.emit('roomConfiguration', this.roomManagerService.rooms[gameType]);
             this.sio.socketsLeave(roomId);
         });
     }

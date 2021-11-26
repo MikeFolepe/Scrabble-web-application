@@ -1,4 +1,5 @@
 /* eslint-disable max-lines */
+// TODO JUSTIFICATION : À confirmer  avec Ethienne
 import { Injectable } from '@angular/core';
 import {
     BOARD_COLUMNS,

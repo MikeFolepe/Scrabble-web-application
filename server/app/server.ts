@@ -67,8 +67,8 @@ export class Server {
         }
     }
 
-    /* TODO: traduire ceci en anglais
-     * Se produit lorsque le serveur se met à écouter sur le port.
+    /*
+     * Occurs when the server listen on the port.
      */
     private onListening(): void {
         const addr = this.server.address() as AddressInfo;

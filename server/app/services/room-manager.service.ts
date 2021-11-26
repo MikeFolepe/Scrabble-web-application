@@ -1,6 +1,6 @@
 import { OUT_BOUND_INDEX_OF_SOCKET } from '@app/classes/constants';
 import { GameSettings, StartingPlayer } from '@common/game-settings';
-import { GameType2 } from '@common/game-type';
+import { GameType } from '@common/game-type';
 import { ObjectiveTypes } from '@common/objectives-type';
 import { PlayerIndex } from '@common/player-index';
 import { Room, State } from '@common/room';
@@ -9,16 +9,12 @@ import { Service } from 'typedi';
 @Service()
 export class RoomManagerService {
     rooms: Room[][];
-    // TODO: prendre une decision PM
-    // roomWaiting: Room[];
 
     constructor() {
         this.rooms = [[], []];
-        // TODO: prendre une decision PM
-        // this.roomWaiting = [];
     }
 
-    createRoom(socketId: string, roomId: string, gameSettings: GameSettings, gameType: GameType2) {
+    createRoom(socketId: string, roomId: string, gameSettings: GameSettings, gameType: GameType) {
         this.rooms[gameType].push(new Room(roomId, socketId, gameSettings));
     }
 
@@ -80,6 +76,7 @@ export class RoomManagerService {
     }
 
     deleteRoom(roomId: string): void {
+        // JUSTIFICATION : We use it for use splice method of Array for (i,j) 2D array of Rooms
         // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < this.rooms.length; i++) {
             for (let j = 0; j < this.rooms[i].length; j++) {
@@ -99,7 +96,6 @@ export class RoomManagerService {
         return '';
     }
 
-    // TODO: loser --> looser ??
     findLooserIndex(socketIdToCompare: string): number {
         for (const roomMode of this.rooms) {
             for (const room of roomMode) {
@@ -130,7 +126,7 @@ export class RoomManagerService {
         return undefined;
     }
 
-    findRoomInWaitingState(customerName: string, gameType: GameType2): Room | undefined {
+    findRoomInWaitingState(customerName: string, gameType: GameType): Room | undefined {
         const roomWaiting: Room[] = [];
         for (const room of this.rooms[gameType]) {
             if (room.state === State.Waiting && room.gameSettings.playersNames[PlayerIndex.OWNER] !== customerName) {
@@ -142,8 +138,14 @@ export class RoomManagerService {
         return roomWaiting[roomIndex] as Room;
     }
 
-    getNumberOfRoomInWaitingState(gameType: GameType2): number {
+    getNumberOfRoomInWaitingState(gameType: GameType): number | undefined {
         let numberOfRoom = 0;
+        // first  spécial case
+        if (this.rooms[gameType] === undefined) return numberOfRoom;
+        // second spécial case
+        if (this.rooms[gameType].length === 0) {
+            return numberOfRoom;
+        }
         for (const room of this.rooms[gameType]) {
             if (room.state === State.Waiting) numberOfRoom++;
         }
