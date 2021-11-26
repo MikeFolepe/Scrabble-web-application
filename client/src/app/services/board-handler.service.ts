@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
-import { CASE_SIZE, INDEX_INVALID, INDEX_REAL_PLAYER, MouseButton, LAST_INDEX, BOARD_ROWS, BOARD_COLUMNS } from '@app/classes/constants';
-import { Vec2 } from '@app/classes/vec2';
+import { BOARD_COLUMNS, BOARD_ROWS, GRID_CASE_SIZE, INVALID_INDEX, LAST_INDEX, PLAYER_ONE_INDEX } from '@app/classes/constants';
+import { MouseButton, TypeMessage } from '@app/classes/enum';
+import { Orientation } from '@app/classes/scrabble-board-pattern';
+import { Vec2 } from '@common/vec2';
 import { GridService } from './grid.service';
 import { PlaceLetterService } from './place-letter.service';
 import { SendMessageService } from './send-message.service';
@@ -10,22 +12,28 @@ import { SkipTurnService } from './skip-turn.service';
     providedIn: 'root',
 })
 export class BoardHandlerService {
-    currentCase: Vec2 = { x: INDEX_INVALID, y: INDEX_INVALID };
-    firstCase: Vec2 = { x: INDEX_INVALID, y: INDEX_INVALID };
-    word: string = '';
-    placedLetters: boolean[] = [];
-    // Attribut indexletters? pour track les letters déja placées
-
-    isFirstCasePicked = false;
-    isFirstCaseLocked = false;
-    orientation = 'h';
+    word: string;
+    private currentCase: Vec2;
+    private firstCase: Vec2;
+    private placedLetters: boolean[];
+    private isFirstCasePicked: boolean;
+    private isFirstCaseLocked: boolean;
+    private orientation: Orientation;
 
     constructor(
         private gridService: GridService,
         private placeLetterService: PlaceLetterService,
         private sendMessageService: SendMessageService,
         private skipTurnService: SkipTurnService,
-    ) {}
+    ) {
+        this.currentCase = { x: INVALID_INDEX, y: INVALID_INDEX };
+        this.firstCase = { x: INVALID_INDEX, y: INVALID_INDEX };
+        this.word = '';
+        this.placedLetters = [];
+        this.isFirstCasePicked = false;
+        this.isFirstCaseLocked = false;
+        this.orientation = Orientation.Horizontal;
+    }
 
     buttonDetect(event: KeyboardEvent): void {
         switch (event.key) {
@@ -35,7 +43,11 @@ export class BoardHandlerService {
             }
             case 'Enter': {
                 if (this.word.length) {
-                    this.confirmPlacement();
+                    if (this.skipTurnService.isTurn) {
+                        this.confirmPlacement();
+                        break;
+                    }
+                    this.cancelPlacement();
                 }
                 break;
             }
@@ -71,55 +83,13 @@ export class BoardHandlerService {
         }
     }
 
-    placeLetter(letter: string): void {
-        if (this.isFirstCasePicked && !this.isFirstCaseLocked) {
-            // Placing the 1st letter
-            if (this.placeLetterService.placeWithKeyboard(this.currentCase, letter, this.orientation, this.word.length, INDEX_REAL_PLAYER)) {
-                this.placedLetters[this.word.length] = true;
-                this.word += letter;
-                this.isFirstCaseLocked = true;
-                this.updateCaseDisplay();
-            }
-        } else if (this.isFirstCaseLocked) {
-            // Placing following letters
-            this.goToNextCase();
-            if (this.placeLetterService.placeWithKeyboard(this.currentCase, letter, this.orientation, this.word.length, INDEX_REAL_PLAYER)) {
-                this.placedLetters[this.word.length] = true;
-                this.word += letter;
-                this.updateCaseDisplay();
-            } else {
-                this.goToPreviousCase();
-            }
-        }
-    }
-
-    removePlacedLetter(): void {
-        const letterToRemove = this.word[this.word.length - 1];
-        // Verify that letterToRemove isn't undefined
-        if (letterToRemove) {
-            this.word = this.word.slice(0, LAST_INDEX);
-            this.placeLetterService.removePlacedLetter(this.currentCase, letterToRemove, INDEX_REAL_PLAYER);
-        }
-        // If there's still at least one letter to remove
-        if (this.word.length) {
-            this.goToPreviousCase();
-            this.updateCaseDisplay();
-        }
-        // All the letters placed were removed
-        else {
-            // We can now select a new starting case
-            this.isFirstCaseLocked = false;
-            this.placedLetters = [];
-            this.updateCaseDisplay();
-        }
-    }
-
-    confirmPlacement(): void {
+    async confirmPlacement(): Promise<void> {
         // Validation of the placement
-        if (this.placeLetterService.validateKeyboardPlacement(this.firstCase, this.orientation, this.word, INDEX_REAL_PLAYER)) {
+        if (await this.placeLetterService.validateKeyboardPlacement(this.firstCase, this.orientation, this.word, PLAYER_ONE_INDEX)) {
             const column = (this.firstCase.x + 1).toString();
             const row: string = String.fromCharCode(this.firstCase.y + 'a'.charCodeAt(0));
-            this.sendMessageService.displayMessageByType('!placer ' + row + column + this.orientation + ' ' + this.word, 'player');
+            const charOrientation = this.orientation === Orientation.Horizontal ? 'h' : 'v';
+            this.sendMessageService.displayMessageByType('!placer ' + row + column + charOrientation + ' ' + this.word, TypeMessage.Player);
             this.word = '';
             this.placedLetters = [];
             this.isFirstCasePicked = false;
@@ -135,55 +105,94 @@ export class BoardHandlerService {
     }
 
     cancelPlacement(): void {
-        while (this.word.length) {
-            this.removePlacedLetter();
-        }
+        while (this.word.length) this.removePlacedLetter();
         this.gridService.eraseLayer(this.gridService.gridContextPlacementLayer);
-        this.currentCase.x = INDEX_INVALID;
-        this.currentCase.y = INDEX_INVALID;
+        this.currentCase.x = INVALID_INDEX;
+        this.currentCase.y = INVALID_INDEX;
         this.isFirstCasePicked = false;
     }
 
-    selectStartingCase(caseClicked: Vec2): void {
+    private async placeLetter(letter: string): Promise<void> {
+        if (this.isFirstCasePicked && !this.isFirstCaseLocked) {
+            // Placing the 1st letter
+            if (await this.placeLetterService.placeWithKeyboard(this.currentCase, letter, this.orientation, this.word.length, PLAYER_ONE_INDEX)) {
+                this.placedLetters[this.word.length] = true;
+                this.word += letter;
+                this.isFirstCaseLocked = true;
+                this.updateCaseDisplay();
+            }
+        } else if (this.isFirstCaseLocked) {
+            // Placing following letters
+            this.goToNextCase();
+            if (await this.placeLetterService.placeWithKeyboard(this.currentCase, letter, this.orientation, this.word.length, PLAYER_ONE_INDEX)) {
+                this.placedLetters[this.word.length] = true;
+                this.word += letter;
+                this.updateCaseDisplay();
+            } else {
+                this.goToPreviousCase();
+            }
+        }
+    }
+
+    private removePlacedLetter(): void {
+        const letterToRemove = this.word[this.word.length - 1];
+        // Verify that letterToRemove isn't undefined
+        if (letterToRemove) {
+            this.word = this.word.slice(0, LAST_INDEX);
+            this.placeLetterService.removePlacedLetter(this.currentCase, letterToRemove, PLAYER_ONE_INDEX);
+        }
+        // If there's still at least one letter to remove
+        if (this.word.length) {
+            this.goToPreviousCase();
+            this.updateCaseDisplay();
+        }
+        // All the letters placed were removed
+        else {
+            // We can now select a new starting case
+            this.isFirstCaseLocked = false;
+            this.placedLetters = [];
+            this.updateCaseDisplay();
+        }
+    }
+
+    private selectStartingCase(caseClicked: Vec2): void {
         this.currentCase = { x: caseClicked.x, y: caseClicked.y };
         this.firstCase = { x: caseClicked.x, y: caseClicked.y };
         this.isFirstCasePicked = true;
-        this.orientation = 'h';
+        this.orientation = Orientation.Horizontal;
         this.updateCaseDisplay();
     }
 
-    switchOrientation(): void {
-        this.orientation = this.orientation === 'h' ? 'v' : 'h'; // Change orientation when clicked
+    private switchOrientation(): void {
+        this.orientation = this.orientation === Orientation.Horizontal ? Orientation.Vertical : Orientation.Horizontal;
         this.updateCaseDisplay();
     }
 
-    calculateFirstCasePosition(event: MouseEvent): Vec2 {
+    private calculateFirstCasePosition(event: MouseEvent): Vec2 {
         const currentCase: Vec2 = { x: 0, y: 0 };
-        currentCase.x = Math.floor((event.offsetX - CASE_SIZE) / CASE_SIZE);
-        currentCase.y = Math.floor((event.offsetY - CASE_SIZE) / CASE_SIZE);
+        currentCase.x = Math.floor((event.offsetX - GRID_CASE_SIZE) / GRID_CASE_SIZE);
+        currentCase.y = Math.floor((event.offsetY - GRID_CASE_SIZE) / GRID_CASE_SIZE);
         return currentCase;
     }
 
-    areCasePositionsEqual(case1: Vec2, case2: Vec2): boolean {
+    private areCasePositionsEqual(case1: Vec2, case2: Vec2): boolean {
         return case1.x === case2.x && case1.y === case2.y;
     }
 
-    isCasePositionValid(caseSelected: Vec2): boolean {
-        if (caseSelected.x >= 0 && caseSelected.y >= 0) {
-            return this.placeLetterService.scrabbleBoard[caseSelected.y][caseSelected.x] === '';
-        }
-        return false;
+    private isCasePositionValid(caseSelected: Vec2): boolean {
+        return caseSelected.x >= 0 && caseSelected.y >= 0 ? this.placeLetterService.scrabbleBoard[caseSelected.y][caseSelected.x] === '' : false;
     }
 
-    goToNextCase(): void {
-        if (this.orientation === 'h') {
+    private goToNextCase(): void {
+        if (this.orientation === Orientation.Horizontal) {
             this.goToNextHorizontalCase();
-        } else if (this.orientation === 'v') {
+        } else if (this.orientation === Orientation.Vertical) {
             this.goToNextVerticalCase();
         }
     }
 
-    goToNextHorizontalCase(): void {
+    // TODO perte de points du à la duplication de code à cause des deux fonctions suivantes
+    private goToNextHorizontalCase(): void {
         this.currentCase.x++;
         if (this.currentCase.x + 1 > BOARD_COLUMNS) return;
         while (this.placeLetterService.scrabbleBoard[this.currentCase.y][this.currentCase.x] !== '') {
@@ -194,7 +203,7 @@ export class BoardHandlerService {
         }
     }
 
-    goToNextVerticalCase(): void {
+    private goToNextVerticalCase(): void {
         this.currentCase.y++;
         if (this.currentCase.y + 1 > BOARD_ROWS) return;
         while (this.placeLetterService.scrabbleBoard[this.currentCase.y][this.currentCase.x] !== '') {
@@ -205,8 +214,8 @@ export class BoardHandlerService {
         }
     }
 
-    goToPreviousCase(): void {
-        if (this.orientation === 'h') {
+    private goToPreviousCase(): void {
+        if (this.orientation === Orientation.Horizontal) {
             this.currentCase.x--;
             while (!this.placedLetters[this.currentCase.x - this.firstCase.x]) {
                 this.word = this.word.slice(0, LAST_INDEX);
@@ -221,45 +230,42 @@ export class BoardHandlerService {
         }
     }
 
-    updateCaseDisplay(): void {
+    private updateCaseDisplay(): void {
         this.gridService.eraseLayer(this.gridService.gridContextPlacementLayer);
-        this.gridService.drawBorder(this.gridService.gridContextPlacementLayer, this.currentCase.x, this.currentCase.y);
-        // Colored border of the current placement if there is letters placed
-        if (this.isFirstCaseLocked) {
-            this.drawPlacementBorder();
-        }
+        this.gridService.drawBorder(this.gridService.gridContextPlacementLayer, this.currentCase);
         // Drawing the arrow on the starting case when no letters are placed
         if (!this.isFirstCaseLocked) {
-            this.gridService.drawArrow(this.gridService.gridContextPlacementLayer, this.currentCase.x, this.currentCase.y, this.orientation);
+            this.gridService.drawArrow(this.gridService.gridContextPlacementLayer, this.currentCase, this.orientation);
             return;
         }
+        this.drawPlacementBorder();
         // Only display the arrow on the next empty tile if there is an empty tile in the direction of the orientation
         this.drawArrowOnNextEmpty();
     }
 
-    drawPlacementBorder(): void {
+    private drawPlacementBorder(): void {
         for (let i = 0; i < this.word.length; i++) {
-            if (this.orientation === 'h')
-                this.gridService.drawBorder(this.gridService.gridContextPlacementLayer, this.currentCase.x - i, this.currentCase.y);
-            else if (this.orientation === 'v')
-                this.gridService.drawBorder(this.gridService.gridContextPlacementLayer, this.currentCase.x, this.currentCase.y - i);
+            if (this.orientation === Orientation.Horizontal) {
+                this.gridService.drawBorder(this.gridService.gridContextPlacementLayer, { x: this.currentCase.x - i, y: this.currentCase.y });
+            } else {
+                this.gridService.drawBorder(this.gridService.gridContextPlacementLayer, { x: this.currentCase.x, y: this.currentCase.y - i });
+            }
         }
     }
 
-    drawArrowOnNextEmpty(): void {
+    private drawArrowOnNextEmpty(): void {
         const currentArrowIndex: Vec2 = { x: this.currentCase.x, y: this.currentCase.y };
-        if (this.orientation === 'h') {
+        if (this.orientation === Orientation.Horizontal) {
             do {
                 currentArrowIndex.x++;
                 if (currentArrowIndex.x + 1 > BOARD_COLUMNS) return;
             } while (this.placeLetterService.scrabbleBoard[currentArrowIndex.y][currentArrowIndex.x] !== '');
-        }
-        if (this.orientation === 'v') {
+        } else {
             do {
                 currentArrowIndex.y++;
                 if (currentArrowIndex.y + 1 > BOARD_ROWS) return;
             } while (this.placeLetterService.scrabbleBoard[currentArrowIndex.y][currentArrowIndex.x] !== '');
         }
-        this.gridService.drawArrow(this.gridService.gridContextPlacementLayer, currentArrowIndex.x, currentArrowIndex.y, this.orientation);
+        this.gridService.drawArrow(this.gridService.gridContextPlacementLayer, currentArrowIndex, this.orientation);
     }
 }

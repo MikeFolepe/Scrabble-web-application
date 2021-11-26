@@ -1,13 +1,16 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { INDEX_PLAYER_AI, INDEX_REAL_PLAYER } from '@app/classes/constants';
-import { GameSettings } from '@app/classes/game-settings';
+import { DELAY_BEFORE_PLAYING, PLAYER_AI_INDEX, PLAYER_ONE_INDEX, PLAYER_TWO_INDEX } from '@app/classes/constants';
 import { PlayerAI } from '@app/models/player-ai.model';
 import { Player } from '@app/models/player.model';
+import { ClientSocketService } from '@app/services/client-socket.service';
 import { EndGameService } from '@app/services/end-game.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { LetterService } from '@app/services/letter.service';
+import { PlayerAIService } from '@app/services/player-ai.service';
 import { PlayerService } from '@app/services/player.service';
 import { SkipTurnService } from '@app/services/skip-turn.service';
+import { GameSettings } from '@common/game-settings';
+import { Letter } from '@common/letter';
 
 @Component({
     selector: 'app-information-panel',
@@ -20,32 +23,67 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
         public gameSettingsService: GameSettingsService,
         public letterService: LetterService,
         public playerService: PlayerService,
-        public skipTurn: SkipTurnService,
+        public skipTurnService: SkipTurnService,
         public endGameService: EndGameService,
+        private clientSocketService: ClientSocketService,
+        public playerAiService: PlayerAIService,
     ) {
         this.gameSettings = gameSettingsService.gameSettings;
     }
 
     ngOnInit(): void {
+        this.endGameService.clearAllData();
         this.initializePlayers();
+        this.receivePlayerTwo();
         this.initializeFirstTurn();
-        if (this.gameSettingsService.isSoloMode) {
-            this.skipTurn.startTimer();
+        this.skipTurnService.startTimer();
+        this.callThePlayerAiOnItsTurn();
+    }
+
+    receivePlayerTwo(): void {
+        this.clientSocketService.socket.on('receivePlayerTwo', (letterTable: Letter[]) => {
+            const player = new Player(2, this.gameSettings.playersNames[PLAYER_TWO_INDEX], letterTable);
+            if (this.playerService.players.length < 2) this.playerService.addPlayer(player);
+            this.letterService.removeLettersFromReserve(this.playerService.players[PLAYER_ONE_INDEX].letterTable);
+        });
+    }
+
+    callThePlayerAiOnItsTurn(): void {
+        if (!this.skipTurnService.isTurn && this.gameSettingsService.isSoloMode) {
+            const playerAi = this.playerService.players[PLAYER_AI_INDEX] as PlayerAI;
+            setTimeout(() => {
+                playerAi.play();
+            }, DELAY_BEFORE_PLAYING);
         }
     }
+
     initializePlayers(): void {
-        let player = new Player(1, this.gameSettings.playersName[INDEX_REAL_PLAYER], this.letterService.getRandomLetters());
+        let player = new Player(1, this.gameSettings.playersNames[PLAYER_ONE_INDEX], this.letterService.getRandomLetters());
         this.playerService.addPlayer(player);
-        player = new PlayerAI(2, this.gameSettings.playersName[INDEX_PLAYER_AI], this.letterService.getRandomLetters());
-        this.playerService.addPlayer(player);
+        if (this.gameSettingsService.isSoloMode) {
+            player = new PlayerAI(2, this.gameSettings.playersNames[PLAYER_TWO_INDEX], this.letterService.getRandomLetters(), this.playerAiService);
+            this.playerService.addPlayer(player);
+            return;
+        }
+
+        this.clientSocketService.socket.emit('sendPlayerTwo', player.letterTable, this.clientSocketService.roomId);
     }
 
     initializeFirstTurn(): void {
-        this.skipTurn.isTurn = Boolean(this.gameSettings.startingPlayer.valueOf());
+        this.skipTurnService.isTurn = Boolean(this.gameSettings.startingPlayer.valueOf());
+    }
+
+    displaySeconds(): string {
+        let secondsFormatted: string;
+        const seconds = this.skipTurnService.seconds;
+        secondsFormatted = seconds > 0 ? seconds.toString() : '0';
+        const BIGGER_NUMBER_ONE_DIGIT = 9;
+        if (seconds <= BIGGER_NUMBER_ONE_DIGIT) secondsFormatted = '0' + secondsFormatted;
+        return secondsFormatted;
     }
 
     ngOnDestroy(): void {
         this.playerService.clearPlayers();
-        this.skipTurn.stopTimer();
+        this.skipTurnService.stopTimer();
     }
 }

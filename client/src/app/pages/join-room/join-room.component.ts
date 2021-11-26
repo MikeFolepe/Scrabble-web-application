@@ -1,75 +1,121 @@
-/* eslint-disable no-restricted-imports */
-/* eslint-disable @typescript-eslint/no-magic-numbers */
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
-import { Room, State } from '@app/classes/room';
-import { DialogComponent } from '@app/modules/initialize-solo-game/dialog/dialog.component';
+import { ERROR_MESSAGE_DELAY } from '@app/classes/constants';
+import { JoinDialogComponent } from '@app/modules/initialize-game/join-dialog/join-dialog.component';
 import { ClientSocketService } from '@app/services/client-socket.service';
+import { PlayerIndex } from '@common/player-index';
+import { Room, State } from '@common/room';
+
 @Component({
     selector: 'app-join-room',
     templateUrl: './join-room.component.html',
     styleUrls: ['./join-room.component.scss'],
 })
 export class JoinRoomComponent implements OnInit {
-    rooms: Room[] = [];
+    rooms: Room[];
+    roomItemIndex: number;
     pageSize: number;
-    startIdx: number;
-    isNameValid: boolean;
-    isRoomStillAvailable: boolean;
+    shouldDisplayNameError: boolean;
+    shouldDisplayJoinError: boolean;
+    isRoomAvailable: boolean;
+    isRandomButtonAvailable: boolean;
 
     constructor(private clientSocketService: ClientSocketService, public dialog: MatDialog) {
-        this.isNameValid = true;
-        this.isRoomStillAvailable = true;
-        this.startIdx = 0;
+        this.rooms = [];
+        this.roomItemIndex = 0;
         this.pageSize = 2; // 2 rooms per page
+        this.shouldDisplayNameError = false;
+        this.shouldDisplayJoinError = false;
+        this.isRoomAvailable = false;
+        this.isRandomButtonAvailable = false;
         this.clientSocketService.socket.connect();
-        this.clientSocketService.socket.emit('getRoomsConfiguration');
-        this.clientSocketService.route();
+        this.clientSocketService.socket.emit('getRoomsConfiguration', this.clientSocketService.gameType);
+        this.clientSocketService.socket.emit('getRoomAvailable', this.clientSocketService.gameType);
+        // Method for button and others
+        this.receiveRoomAvailable();
+        this.receiveRandomPlacement();
+        this.clientSocketService.routeToGameView();
     }
 
     ngOnInit(): void {
-        this.clientSocketService.socket.on('roomConfiguration', (room: Room[]) => {
-            this.rooms = room;
-        });
-
-        this.clientSocketService.socket.on('roomAlreadyToken', () => {
-            this.isRoomStillAvailable = false;
-            setTimeout(() => {
-                this.isRoomStillAvailable = true;
-            }, 4000);
-            return;
-        });
+        this.configureRooms();
+        this.receiveRoomAvailable();
+        this.handleRoomUnavailability();
+        this.receiveRandomPlacement();
     }
 
-    onPageChange(event: PageEvent) {
-        // set the offset for the view
-        this.startIdx = event.pageSize * event.pageIndex;
+    onPageChange(event: PageEvent): void {
+        // Set the offset for the view
+        this.roomItemIndex = event.pageSize * event.pageIndex;
     }
 
     computeRoomState(state: State): string {
-        if (state === State.Waiting) {
-            return 'En attente';
-        }
-
-        return 'Indisponible';
+        return state === State.Waiting ? 'En attente' : 'Indisponible';
     }
 
-    join(room: Room) {
-        const ref = this.dialog.open(DialogComponent, { disableClose: true });
+    join(room: Room): void {
+        this.dialog
+            .open(JoinDialogComponent, { disableClose: true })
+            .afterClosed()
+            .subscribe((playerName: string) => {
+                // if user closes the dialog box without input nothing
+                if (playerName === null) return;
+                // if names are equals
+                if (room.gameSettings.playersNames[PlayerIndex.OWNER] === playerName) {
+                    this.shouldDisplayNameError = true;
+                    setTimeout(() => {
+                        this.shouldDisplayNameError = false;
+                    }, ERROR_MESSAGE_DELAY);
+                    return;
+                }
+                this.clientSocketService.socket.emit('newRoomCustomer', playerName, room.id, this.clientSocketService.gameType);
+            });
+    }
 
-        ref.afterClosed().subscribe((playerName: string) => {
-            // if user closes the dialog box without input nothing
-            if (playerName === null) return;
-            // if names are equals
-            if (room.gameSettings.playersName[0] === playerName) {
-                this.isNameValid = false;
-                setTimeout(() => {
-                    this.isNameValid = true;
-                }, 4000);
+    placeRandomly(): void {
+        this.dialog
+            .open(JoinDialogComponent, { disableClose: true })
+            .afterClosed()
+            .subscribe((playerName: string) => {
+                // if user closes the dialog box without input nothing
+                if (playerName === null) return;
+                this.clientSocketService.socket.emit('newRoomCustomerOfRandomPlacement', playerName, this.clientSocketService.gameType);
+            });
+    }
+    receiveRandomPlacement(): void {
+        this.clientSocketService.socket.on('receiveCustomerOfRandomPlacement', (customerName: string, roomId: string) => {
+            this.clientSocketService.socket.emit('newRoomCustomer', customerName, roomId, this.clientSocketService.gameType);
+        });
+    }
+
+    receiveRoomAvailable(): void {
+        this.clientSocketService.socket.on('roomAvailable', (numberOfRooms: number) => {
+            if (numberOfRooms === 0) {
+                this.isRoomAvailable = false;
                 return;
+            } else if (numberOfRooms === 1) {
+                this.isRoomAvailable = true;
+                this.isRandomButtonAvailable = false;
+            } else {
+                this.isRoomAvailable = true;
+                this.isRandomButtonAvailable = true;
             }
-            this.clientSocketService.socket.emit('newRoomCustomer', playerName, room.id);
+        });
+    }
+
+    private handleRoomUnavailability(): void {
+        this.clientSocketService.socket.on('roomAlreadyToken', () => {
+            this.shouldDisplayJoinError = true;
+            setTimeout(() => {
+                this.shouldDisplayJoinError = false;
+            }, ERROR_MESSAGE_DELAY);
+            return;
+        });
+    }
+    private configureRooms(): void {
+        this.clientSocketService.socket.on('roomConfiguration', (rooms: Room[]) => {
+            this.rooms = rooms;
         });
     }
 }

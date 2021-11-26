@@ -12,16 +12,18 @@
     "eslint.validate": ["javascript", "typescript", "html", "vue", "markdown"],
     "cSpell.words": [
         "affichages",
+        "Bucky",
         "Chatbox",
         "débogage",
         "debugMessage",
+        "Désactiver",
         "dictionnary",
         "displaymessage",
-        "doubleletter",
-        "doubleword",
         "échanger",
         "ERREUR",
+        "fileupload",
         "invalide",
+        "Joindre",
         "lightyellow",
         "mais",
         "notok",
@@ -29,18 +31,17 @@
         "ONESECOND",
         "POSX",
         "syntaxe",
-        "tripleletter",
-        "tripleword",
+        "typedi",
         "Validationservice",
         "vrai"
     ],
     "[typescript]": {
-        "editor.defaultFormatter": "ms-vsliveshare.vsliveshare"
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
     "[html]": {
-        "editor.defaultFormatter": "vscode.html-language-features"
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
     "[scss]": {
-        "editor.defaultFormatter": "sibiraj-s.vscode-scss-formatter"
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
     }
 }

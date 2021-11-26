@@ -1,37 +1,37 @@
-/* eslint-disable prettier/prettier  */ // I get an non sense error on every line and the auto fix doesn't work
-// eslint-disable-next-line no-restricted-imports
-import * as fs from 'fs';
+import * as fileSystem from 'fs';
 import { Service } from 'typedi';
-
 @Service()
 export class WordValidationService {
-    // eslint-disable-next-line no-invalid-this
-    dictionaryData = fs.readFileSync('@../../../client/src/assets/dictionary.json');
-    private dictionary: string[];
+    gameDictionaries: Map<string, string[]>;
+    currentDictionary: string[];
+    // TODO: Find a way to initialize the dictionary
     constructor() {
-        // eslint-disable-next-line no-invalid-this
-
-        this.dictionary = JSON.parse(this.dictionaryData.toString()).words;
-        // console.log(this.dictionary);
+        this.initializeDictionaries();
+        this.currentDictionary = [];
     }
 
-    isValidInDictionary(words: string[]): boolean {
-        // eslint-disable-next-line @typescript-eslint/prefer-for-of
-        let countValidWords = 0;
+    isValidInDictionary(words: string[], fileName: string): boolean {
+        this.currentDictionary = this.gameDictionaries.get(fileName) as string[];
+        if (words.length === 0) return false;
+        let validWordsCount = 0;
+        // JUSTIFICATION : the server console returns that words is not of type Iteratable <string>
         // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < words.length; i++) {
-            for (const item of this.dictionary) {
+            for (const item of this.currentDictionary) {
                 if (words[i].toLowerCase() === item) {
-                    countValidWords++;
+                    validWordsCount++;
                 }
             }
         }
+        return validWordsCount === words.length;
+    }
 
-        if (countValidWords === words.length) {
-            return true;
+    initializeDictionaries(): void {
+        this.gameDictionaries = new Map<string, string[]>();
+        const files = fileSystem.readdirSync('./dictionaries/', 'utf8');
+        for (const file of files) {
+            const readFile = JSON.parse(fileSystem.readFileSync(`./dictionaries/${file}`, 'utf8')).words;
+            this.gameDictionaries.set(file, readFile);
         }
-        return false;
-
-        // return this.dictionary.find((word)=)
     }
 }

@@ -1,30 +1,29 @@
-/* eslint-disable no-restricted-imports */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-// Explication: Afin d'avoir le type any associé à la variable socket
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { GameSettings } from '../classes/game-settings';
-import { Room } from '../classes/room';
-import { io } from 'node_modules/socket.io-client/build/esm';
-import { GameSettingsService } from './game-settings.service';
+import { GameSettingsService } from '@app/services/game-settings.service';
+import { GameSettings } from '@common/game-settings';
+import { GameType } from '@common/game-type';
+import { Room } from '@common/room';
+import { io, Socket } from 'socket.io-client';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
     providedIn: 'root',
 })
 export class ClientSocketService {
-    socket: any;
-    rooms: Room[] = [];
+    socket: Socket;
+    rooms: Room[];
     roomId: string;
-    private urlString: string;
+    gameType: GameType;
 
-    constructor(private router: Router, private gameSettingsService: GameSettingsService) {
-        this.urlString = `http://${window.location.hostname}:3000`;
-        this.socket = io(this.urlString);
+    constructor(private gameSettingsService: GameSettingsService, private router: Router) {
+        this.socket = io(environment.serverUrl);
         this.initializeRoomId();
         this.initializeGameSettings();
+        this.routeToGameView();
     }
 
-    route(): void {
+    routeToGameView(): void {
         this.socket.on('goToGameView', () => {
             this.router.navigate(['game']);
         });
@@ -41,6 +40,4 @@ export class ClientSocketService {
             this.gameSettingsService.gameSettings = gameSettingsFromServer;
         });
     }
-
-    // les methodes de reception des commandes de jeu sont définies ici
 }
