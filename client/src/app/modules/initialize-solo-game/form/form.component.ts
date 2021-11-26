@@ -73,7 +73,10 @@ export class FormComponent implements OnDestroy {
             this.form.controls.randomBonus.value,
             this.getRightBonusPositions(),
             'dictionary.json',
-            this.initializeObjective(/* forcer des valeurs ici selon le formattage de la ligne 80 */),
+            this.initializeObjective([
+                [4, 3],
+                [6, 1],
+            ]),
         );
     }
 

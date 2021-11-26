@@ -11,7 +11,7 @@ export const OBJECTIVES: Objective[] = [
     { name: 'Former un mot qui coupe au moins deux mots déjà placés', isCompleted: false, score: 15, id: 2 },
     { name: 'Obtenir 60 points en une minute de jeu actif (incluant les bonus)', isCompleted: false, score: 30, id: 3 },
     { name: 'Placer un mot avec au moins 2 lettres parmi J, K, Q, W, X, Y, Z', isCompleted: false, score: 30, id: 4 },
-    { name: "Prolonger un mot en touchant à une case bonus", isCompleted: false, score: 20, id: 5 },
+    { name: 'Prolonger un mot en touchant à une case bonus', isCompleted: false, score: 20, id: 5 },
     { name: 'Former un mot de plus de 7 lettres', isCompleted: false, score: 20, id: 6 },
     { name: "Toucher l'un des 4 coins du board", isCompleted: false, score: 15, id: 7 },
 ];

@@ -1,16 +1,20 @@
-<div *ngIf="this.gameSettingsService.gameType === 'Scrabble LOG2990'" id="objectives-container">
+<div *ngIf="this.gameSettingsService.gameType === 1" id="objectives-container">
     <h2>Objectifs</h2>
     <h3>Privés</h3>
     <div class="objective">
         <div class="score">{{ objectives[1][0].score }}</div>
         <div class="description">{{ objectives[1][0].name }}</div>
         <div class="checked" *ngIf="objectives[1][0].isCompleted">&#10003;</div>
-        <div 
-            class="timer" 
-            *ngIf="objectives[1][0].id === 3 && !objectives[1][0].isCompleted" 
-            [ngClass]="{ failed: objectives[1][0].id === 3 && objectivesService.activeTimeRemaining === 0 }"
+        <div
+            class="timer"
+            *ngIf="objectives[1][0].id === 3 && !objectives[1][0].isCompleted"
+            [ngClass]="{ failed: objectives[1][0].id === 3 && objectivesService.activeTimeRemaining[0] === 0 }"
         >
-            {{ objectivesService.activeTimeRemaining }}
+            {{
+                objectivesService.activeTimeRemaining[this.resolveByTurn()] > 9
+                    ? objectivesService.activeTimeRemaining[this.resolveByTurn()]
+                    : '0' + objectivesService.activeTimeRemaining[this.resolveByTurn()]
+            }}
         </div>
     </div>
 
@@ -28,9 +32,13 @@
         <div
             class="timer"
             *ngIf="objective.id === 3 && !objective.isCompleted"
-            [ngClass]="{ failed: objective.id === 3 && objectivesService.activeTimeRemaining === 0 }"
+            [ngClass]="{ failed: objective.id === 3 && objectivesService.activeTimeRemaining[this.resolveByTurn()] === 0 }"
         >
-            {{ objectivesService.activeTimeRemaining }}
+            {{
+                objectivesService.activeTimeRemaining[this.resolveByTurn()] > 9
+                    ? objectivesService.activeTimeRemaining[this.resolveByTurn()]
+                    : '0' + objectivesService.activeTimeRemaining[this.resolveByTurn()]
+            }}
         </div>
     </div>
 </div>

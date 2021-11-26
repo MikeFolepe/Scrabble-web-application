@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ONE_MINUTE } from '@app/classes/constants';
+import { GameType } from '@common/game-type';
 import {
     CORNER_POSITIONS,
     LETTERS_FOR_OBJ5,
@@ -25,7 +26,7 @@ import { WordValidationService } from './word-validation.service';
 export class ObjectivesService {
     objectives: Objective[][];
     playerIndex: number;
-    activeTimeRemaining: number;
+    activeTimeRemaining: number[];
     extendedWords: string[];
     private obj1Counter: number[];
 
@@ -39,7 +40,7 @@ export class ObjectivesService {
         private endGameService: EndGameService,
     ) {
         this.objectives = [[], []];
-        this.activeTimeRemaining = ONE_MINUTE;
+        this.activeTimeRemaining = [ONE_MINUTE, ONE_MINUTE];
         this.obj1Counter = [0, 0];
         this.receiveObjectives();
     }
@@ -68,8 +69,8 @@ export class ObjectivesService {
     }
 
     checkObjectivesCompletion(): void {
-        // Mode classique -> aucune vérification requise
-        if (this.gameSettingsService.gameType === 'Scrabble classique') return;
+        // Classic Mode -> No check for objectives completion
+        if (this.gameSettingsService.gameType === GameType.Classic) return;
 
         if (!this.objectives[ObjectiveTypes.Private][this.playerIndex].isCompleted) {
             this.isCompleted(this.objectives[ObjectiveTypes.Private][this.playerIndex].id);
@@ -150,19 +151,11 @@ export class ObjectivesService {
 
     validateObjectiveTwo(id: number) {
         for (const word of this.wordValidationService.lastPlayedWords.keys()) {
-            if (word.length >= MIN_SIZE_FOR_OBJ2 && this.wordValidationService.priorPlayedWords.has(word)) this.addObjectiveScore(id);
+            const position = this.wordValidationService.playedWords.get(word) as string[];
+            const nbOfOccurences = position.length / word.length;
+
+            if (word.length >= MIN_SIZE_FOR_OBJ2 && nbOfOccurences > 1) this.addObjectiveScore(id);
         }
-        // TODO: version de Majid
-        // let counter = 0;
-        // for (const lastWord of this.wordValidationService.lastPlayedWords.keys()) {
-        //     for (const word of this.wordValidationService.playedWords.keys()) {
-        //         counter = 0;
-        //         if (lastWord.length >= MIN_SIZE_FOR_OBJ2 && word === lastWord) {
-        //             counter++;
-        //         }
-        //     }
-        // }
-        // if (counter > 1) this.addObjectiveScore(id);
     }
 
     validateObjectiveThree(id: number) {
@@ -177,26 +170,11 @@ export class ObjectivesService {
                 return;
             }
         }
-
-        // TODO: version de Majid en cours de developpement
-        // const wordsTouchingTheLastWord: string[] = [];
-        // for (const lastWord of this.wordValidationService.lastPlayedWords.keys()) {
-        //     for (const word of this.wordValidationService.playedWords.keys()) {
-        //         if (word !== lastWord) {
-        //             this.wordValidationService.playedWords.get(word)?.forEach((charInPlayedWord: string) => {
-        //                 this.wordValidationService.lastPlayedWords.get(lastWord)?.forEach((charInLastWord: string) => {
-        //                     if (charInLastWord === charInPlayedWord) wordsTouchingTheLastWord.push(word);
-        //                 });
-        //             });
-        //         }
-        //     }
-        // }
-
-        // if (counter > 1) this.addObjectiveScore(id);
     }
 
     validateObjectiveFour(id: number) {
-        if (this.activeTimeRemaining > 0 && this.playerService.players[this.playerIndex].score >= MIN_SCORE_FOR_OBJ4) this.addObjectiveScore(id);
+        if (this.activeTimeRemaining[this.playerIndex] > 0 && this.playerService.players[this.playerIndex].score >= MIN_SCORE_FOR_OBJ4)
+            this.addObjectiveScore(id);
     }
 
     validateObjectiveFive(id: number) {

@@ -1,5 +1,12 @@
 import { Injectable } from '@angular/core';
-import { DELAY_BEFORE_PLAYING, ONE_SECOND_DELAY, PLAYER_AI_INDEX, THREE_SECONDS_DELAY } from '@app/classes/constants';
+import {
+    DELAY_BEFORE_PLAYING,
+    ONE_SECOND_DELAY,
+    PLAYER_AI_INDEX,
+    PLAYER_ONE_INDEX,
+    PLAYER_TWO_INDEX,
+    THREE_SECONDS_DELAY,
+} from '@app/classes/constants';
 import { PlayerAI } from '@app/models/player-ai.model';
 import { ClientSocketService } from '@app/services/client-socket.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
@@ -102,6 +109,10 @@ export class SkipTurnService {
     }
 
     updateActiveTime() {
-        if (this.isTurn && this.objectivesService.activeTimeRemaining > 0) this.objectivesService.activeTimeRemaining--;
+        if (this.isTurn && this.objectivesService.activeTimeRemaining[PLAYER_ONE_INDEX] > 0)
+            this.objectivesService.activeTimeRemaining[PLAYER_ONE_INDEX]--;
+
+        if (this.isTurn === false && this.objectivesService.activeTimeRemaining[PLAYER_TWO_INDEX] > 0)
+            this.objectivesService.activeTimeRemaining[PLAYER_TWO_INDEX]--;
     }
 }
