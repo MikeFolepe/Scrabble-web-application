@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { ERROR_MESSAGE_DELAY } from '@app/classes/constants';
-import { JoinDialogComponent } from '@app/modules/initialize-solo-game/join-dialog/join-dialog.component';
+import { JoinDialogComponent } from '@app/modules/initialize-game/join-dialog/join-dialog.component';
 import { ClientSocketService } from '@app/services/client-socket.service';
 import { PlayerIndex } from '@common/player-index';
 import { Room, State } from '@common/room';
