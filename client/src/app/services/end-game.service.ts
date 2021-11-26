@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
-import { NUMBER_OF_SKIP, PLAYER_AI_INDEX, PLAYER_ONE_INDEX, PLAYER_TWO_INDEX, RESERVE } from '@app/classes/constants';
+import { NUMBER_OF_SKIP, PLAYER_AI_INDEX, PLAYER_ONE_INDEX, PLAYER_TWO_INDEX } from '@app/classes/constants';
 import { DebugService } from '@app/services/debug.service';
 import { PlayerScore } from '@common/player';
 import { ClientSocketService } from './client-socket.service';
 import { CommunicationService } from './communication.service';
 import { GameSettingsService } from './game-settings.service';
+// import { GridService } from './grid.service';
 import { LetterService } from './letter.service';
 import { PlayerService } from './player.service';
 
@@ -23,7 +24,7 @@ export class EndGameService {
         public letterService: LetterService,
         public playerService: PlayerService,
         public debugService: DebugService,
-        public gameSettingsService: GameSettingsService,
+        public gameSettingsService: GameSettingsService, // private gridService: GridService,
     ) {
         this.clearAllData();
         this.actionsLog = [];
@@ -97,7 +98,8 @@ export class EndGameService {
 
     clearAllData(): void {
         this.playerService.players = [];
-        this.letterService.reserve = JSON.parse(JSON.stringify(RESERVE));
+        // this.gridService.ngOnDestroy();
+        // this.letterService.reserve = JSON.parse(JSON.stringify(RESERVE));
         this.isEndGameByGiveUp = false;
         this.winnerNameByGiveUp = '';
         this.isEndGame = false;

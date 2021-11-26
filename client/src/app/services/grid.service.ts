@@ -1,13 +1,13 @@
 // JUSTIFICATION : We use  magic numbers to generate correct positions of the cases
 /* eslint-disable @typescript-eslint/no-magic-numbers */
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { BOARD_ROWS, COLOR_BLACK, DEFAULT_HEIGHT, DEFAULT_WIDTH, GRID_CASE_SIZE, RESERVE } from '@app/classes/constants';
 import { Orientation } from '@app/classes/scrabble-board-pattern';
 import { Vec2 } from '@common/vec2';
 @Injectable({
     providedIn: 'root',
 })
-export class GridService {
+export class GridService implements OnDestroy {
     gridContextBoardLayer: CanvasRenderingContext2D;
     gridContextLettersLayer: CanvasRenderingContext2D;
     gridContextPlacementLayer: CanvasRenderingContext2D;
@@ -115,7 +115,9 @@ export class GridService {
         context.stroke();
         context.fill();
     }
-
+    ngOnDestroy(): void {
+        this.eraseLayer(this.gridContextLettersLayer);
+    }
     // Transpose the positions from 15x15 array to 750x750 grid
     private positionTabToPositionGrid(positionTabX: number, positionTabY: number): Vec2 {
         return {

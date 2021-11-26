@@ -32,7 +32,7 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        this.endGameService.clearAllData();
+        // this.endGameService.clearAllData();
         this.initializePlayers();
         this.receivePlayerTwo();
         this.initializeFirstTurn();

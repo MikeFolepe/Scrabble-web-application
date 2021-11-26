@@ -105,6 +105,7 @@ export class RoomManagerService {
 
     getWinnerName(roomId: string, indexOfLoser: number): string {
         const room = this.find(roomId) as Room;
+        if (room === undefined) return '';
         return indexOfLoser === 0 ? room.gameSettings.playersNames[1] : room.gameSettings.playersNames[0];
     }
 
@@ -134,7 +135,7 @@ export class RoomManagerService {
         return roomWaiting[roomIndex] as Room;
     }
 
-    getNumberOfRoomInWaitingState(gameType: GameType): number | undefined {
+    getNumberOfRoomInWaitingState(gameType: GameType): number {
         let numberOfRoom = 0;
         // first  spécial case
         if (this.rooms[gameType] === undefined) return numberOfRoom;

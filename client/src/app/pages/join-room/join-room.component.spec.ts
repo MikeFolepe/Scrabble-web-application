@@ -177,7 +177,7 @@ describe('JoinRoomComponent', () => {
                     callback(fakeCustomerName, myIdRoom);
                 }
             },
-            emit: (eventName: string, args: any[] | any) => {
+            emit: (eventName: string, _args: any[] | any) => {
                 return;
             },
         } as unknown as Socket;
@@ -187,8 +187,7 @@ describe('JoinRoomComponent', () => {
         // expect(spyEmit).toHaveBeenCalled();
         // expect(spyEmit).toHaveBeenCalledWith(fakeCustomerName, myIdRoom);
     });
-
-    it('should on at the event ReceiveRoomAvailable form the server and set the isRoomAvailable at false', () => {
+    it('should on at the event ReceiveRoomAvailabe form the server and set the isRoomAvialable at false', () => {
         const numberOfmyRoom = 0;
         component['clientSocketService'].socket = {
             on: (eventName: string, callback: (numberOfRooms: number) => void) => {
