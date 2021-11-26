@@ -100,7 +100,16 @@ export class PlacementsHandlerService {
         return string.split('').reverse().join('');
     }
 
-    arePositionsEqual(array1: string[], array2: string[]): boolean {
-        return array1.length === array2.length && array1.every((value, index) => value === array2[index]);
+    arePositionsEqual(extentedPositions: string[], playedPositions: string[]): boolean {
+        // Slice et compare les 2 tab ?
+        let arePositionsEqual = false;
+        for (let i = 0; i < playedPositions.length / extentedPositions.length; i++) {
+            for (let j = 0; j < extentedPositions.length; j++) {
+                if (playedPositions[i * extentedPositions.length + j] === extentedPositions[j]) arePositionsEqual = true;
+                else arePositionsEqual = false;
+            }
+            if (arePositionsEqual) return true;
+        }
+        return false;
     }
 }

@@ -78,7 +78,6 @@ export class ObjectivesService {
         for (const objective of this.objectives[ObjectiveTypes.Public]) {
             if (!objective.isCompleted) this.isCompleted(objective.id);
         }
-        console.log(this.wordValidationService.priorPlayedWords);
     }
 
     isCompleted(id: number): void {
@@ -135,7 +134,6 @@ export class ObjectivesService {
             lastWordLength = word.length;
         }
 
-        debugger;
         // eslint-disable-next-line @typescript-eslint/no-magic-numbers
         if (actionLog.length > 0 && actionLog[actionLog.length - 1] !== 'PlacerSucces' && lastWordLength >= 4) {
             this.obj1Counter[this.playerIndex]++;

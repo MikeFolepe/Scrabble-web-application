@@ -5,7 +5,11 @@
         <div class="score">{{ objectives[1][0].score }}</div>
         <div class="description">{{ objectives[1][0].name }}</div>
         <div class="checked" *ngIf="objectives[1][0].isCompleted">&#10003;</div>
-        <div class="timer" [ngClass]="{ failed: objectives[1][0].id === 3 && objectivesService.activeTimeRemaining === 0 }">
+        <div 
+            class="timer" 
+            *ngIf="objectives[1][0].id === 3 && !objectives[1][0].isCompleted" 
+            [ngClass]="{ failed: objectives[1][0].id === 3 && objectivesService.activeTimeRemaining === 0 }"
+        >
             {{ objectivesService.activeTimeRemaining }}
         </div>
     </div>
