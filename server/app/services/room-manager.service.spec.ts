@@ -207,8 +207,6 @@ describe('RoomManagerService', () => {
     it('should return 0 if the type of rooms gameType is undefined ', () => {
         roomManagerService.rooms = [];
         expect(roomManagerService.getNumberOfRoomInWaitingState(GameType.Classic)).to.equal(0);
-<<<<<<< HEAD
-=======
     });
 
     it('should return a empty string if the room is undefined ', () => {
@@ -216,6 +214,5 @@ describe('RoomManagerService', () => {
         const socketId2 = 'socket2';
         roomManagerService.setSocket(roomManagerService.rooms[0][0], socketId2);
         expect(roomManagerService.getWinnerName('fake', roomManagerService.findLooserIndex(socketId2))).to.equal('');
->>>>>>> 59358fb237b9fecd78334908a8fb3718526dd260
     });
 });

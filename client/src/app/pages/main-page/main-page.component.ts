@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { BestScoresComponent } from '@app/pages/best-scores/best-scores.component';
 import { ClientSocketService } from '@app/services/client-socket.service';
