@@ -1,23 +1,26 @@
 // TODO: à tester
-// /* eslint-disable @typescript-eslint/no-magic-numbers */
-// import { SCORES_MODEL_CLASSIC } from '@app/classes/database.schema';
-// import { RoomManagerService } from '@app/services/room-manager.service';
-// import sinon = require('sinon');
-// // import Sinon = require('sinon');
+/* eslint-disable @typescript-eslint/no-magic-numbers */
+import { MongoMemoryServer } from 'mongodb-memory-server-core';
+import * as sinon from 'sinon';
+import { DatabaseService } from './database.service';
 
-// describe('RoomManagerService', () => {
-//     let roomManagerService: RoomManagerService;
+describe('databaseService', () => {
+    let service: DatabaseService;
+    let mongoServer: MongoMemoryServer;
+    // let fakeUrl: string;
 
-//     beforeEach(() => {
-//         roomManagerService = new RoomManagerService();
-//         roomManagerService.rooms = [];
-//     });
+    beforeEach(async () => {
+        mongoServer = await MongoMemoryServer.create();
+        // fakeUrl = mongoServer.getUri('fakedatabase');
+    });
 
-//     afterEach(() => {
-//         roomManagerService.rooms = [];
-//     });
+    afterEach(async () => {
+        sinon.restore();
+        await mongoServer.stop();
+        await service.closeConnection();
+    });
 
-//     it('setDefault score should should call mongoose save method', () => {
-//         const saveSpy = sinon.stub(SCORES_MODEL_CLASSIC, 'save');
-//     });
-// });
+    // it('setDefault score should should call mongoose save method', () => {
+    //     const saveSpy = fakeUrl;
+    // });
+});
