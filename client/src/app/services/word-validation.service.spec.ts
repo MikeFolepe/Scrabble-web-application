@@ -178,12 +178,13 @@ describe('WordValidationService', () => {
         service['newPositions'] = ['B2', 'B3', 'B4', 'B5', 'B6', 'B7'];
         service['playedWords'].set('ma', ['C1', 'C2']);
         service['playedWords'].set('humour', ['B2', 'B3', 'B4', 'B5', 'B6', 'B7']);
+        service['fileName'] = 'dictionary.json';
         spyOn(service, 'checkIfPlayed').and.returnValue(true);
         const isEaselSize = true;
         const isRow = true;
         const passThroughAllRowsOrColumnsSpy = spyOn(service, 'passThroughAllRowsOrColumns').and.callThrough();
         service.validateAllWordsOnBoard(scrabbleBoard, isEaselSize, isRow);
-        const req = httpMock.expectOne(`${service['httpServer']['baseUrl']}/game/validateWords`);
+        const req = httpMock.expectOne(`${service['httpServer']['baseUrl']}/game/validateWords/dictionary.json`);
         expect(req.request.method).toBe('POST');
         expect(passThroughAllRowsOrColumnsSpy).toHaveBeenCalledTimes(2);
     });

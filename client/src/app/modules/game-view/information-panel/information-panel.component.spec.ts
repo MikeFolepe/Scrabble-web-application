@@ -41,7 +41,7 @@ describe('InformationPanelComponent', () => {
             'facile',
             'Désactiver',
             "[['A1', 'doubleLetter'], ['A4', 'tripleLetter']]",
-            [],
+            '',
         );
         fixture.detectChanges();
         component['playerService'].players = [];

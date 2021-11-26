@@ -15,9 +15,10 @@ export class GameSettingsService {
         level: 'Facile',
         randomBonus: 'Désactiver',
         bonusPositions: JSON.stringify(Array.from(BONUS_POSITIONS)),
-        dictionary: [],
+        dictionary: '',
     };
     isSoloMode: boolean;
+    gameDictionary: string[];
     gameType: GameType;
     isRedirectedFromMultiplayerGame: boolean;
 }

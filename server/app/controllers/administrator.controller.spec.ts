@@ -9,7 +9,7 @@ import { Container } from 'typedi';
 import chaiHttp = require('chai-http');
 import Sinon = require('sinon');
 
-describe.only('AdminController', () => {
+describe('AdminController', () => {
     let expressApp: Express.Application;
     let administratorService: AdministratorService;
     chai.use(chaiHttp);

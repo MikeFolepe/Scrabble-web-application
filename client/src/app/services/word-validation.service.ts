@@ -32,7 +32,6 @@ export class WordValidationService {
         this.bonusesPositions = new Map<string, string>(this.randomBonusService.bonusPositions);
         this.validationState = false;
         this.foundWords = new Array<string>();
-        this.fileName = '';
         this.receivePlayedWords();
     }
 

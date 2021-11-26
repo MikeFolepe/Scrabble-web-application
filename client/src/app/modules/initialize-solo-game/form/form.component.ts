@@ -7,7 +7,6 @@ import { BONUS_POSITIONS, PLAYER_ONE_INDEX } from '@app/classes/constants';
 import { CommunicationService } from '@app/services/communication.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { RandomBonusesService } from '@app/services/random-bonuses.service';
-import { WordValidationService } from '@app/services/word-validation.service';
 import { AiPlayerDB, AiType } from '@common/ai-name';
 import { Dictionary } from '@common/dictionary';
 import { GameSettings, StartingPlayer } from '@common/game-settings';
@@ -20,17 +19,16 @@ import { GameSettings, StartingPlayer } from '@common/game-settings';
 export class FormComponent implements OnDestroy, OnInit {
     form: FormGroup;
     dictionaries: Dictionary[];
-    gameDictionary: string[];
     beginnersAi: AiPlayerDB[];
     expertsAi: AiPlayerDB[];
     isDictionaryDeleted: boolean;
+    fileName: string;
 
     constructor(
         public gameSettingsService: GameSettingsService,
         private router: Router,
         private randomBonusService: RandomBonusesService,
         private communicationService: CommunicationService,
-        private wordValidationService: WordValidationService,
     ) {
         this.form = new FormGroup({
             playerName: new FormControl(this.gameSettingsService.gameSettings.playersNames[PLAYER_ONE_INDEX]),
@@ -59,10 +57,7 @@ export class FormComponent implements OnDestroy, OnInit {
     async ngOnInit(): Promise<void> {
         await this.initializeDictionaries();
         await this.selectGameDictionary(this.dictionaries[0]);
-        this.initializeAiPlayers();
     }
-
-
 
     getRightBonusPositions(): string {
         const bonusPositions = this.form.controls.randomBonus.value === 'Activer' ? this.randomBonusService.shuffleBonusPositions() : BONUS_POSITIONS;
@@ -92,8 +87,9 @@ export class FormComponent implements OnDestroy, OnInit {
             this.isDictionaryDeleted = true;
             return;
         }
-        this.gameDictionary = await this.communicationService.getGameDictionary(dictionary.fileName).toPromise();
-        this.wordValidationService.fileName = dictionary.fileName;
+        this.gameSettingsService.gameDictionary = await this.communicationService.getGameDictionary(dictionary.fileName).toPromise();
+        this.fileName = dictionary.fileName;
+        console.log(this.fileName);
     }
 
     chooseStartingPlayer(): StartingPlayer {
@@ -110,8 +106,10 @@ export class FormComponent implements OnDestroy, OnInit {
             this.form.controls.levelInput.value,
             this.form.controls.randomBonus.value,
             this.getRightBonusPositions(),
-            this.gameDictionary,
+            this.fileName,
         );
+
+        console.log(this.gameSettingsService.gameSettings);
     }
 
     ngOnDestroy(): void {

@@ -35,7 +35,7 @@ describe('GiveUpHandlerService', () => {
             'facile',
             'Désactiver',
             "[['A1', 'doubleLetter'], ['A4', 'tripleLetter']]",
-            [],
+            '',
         );
         const fakeGiveUp = true;
         const fakeWinner = 'Jojo';
@@ -76,7 +76,7 @@ describe('GiveUpHandlerService', () => {
             'facile',
             'Désactiver',
             "[['A1', 'doubleLetter'], ['A4', 'tripleLetter']]",
-            [],
+            '',
         );
         const fakeGiveUp = true;
         const fakeWinner = 'Paul';
@@ -118,7 +118,7 @@ describe('GiveUpHandlerService', () => {
             'facile',
             'Désactiver',
             "[['A1', 'doubleLetter'], ['A4', 'tripleLetter']]",
-            [],
+            '',
         );
         const fakeGiveUp = true;
         const fakeWinner = 'Paul';

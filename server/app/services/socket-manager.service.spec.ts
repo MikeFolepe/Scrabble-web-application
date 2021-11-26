@@ -24,7 +24,7 @@ describe('SocketManagerService', () => {
     let service: SocketManagerService;
     let sio: SinonStubbedInstance<io.Server>;
     const socketId = 'socket1';
-    const settings: GameSettings = new GameSettings(['mi', 'ma'], 1, '01', '00', 'Facile', 'Activer', 'francais', ['00']);
+    const settings: GameSettings = new GameSettings(['mi', 'ma'], 1, '01', '00', 'Facile', 'Activer', 'francais', '00');
     const scrabbleBoard: string[][] = [[]];
 
     const fakeIn = {
