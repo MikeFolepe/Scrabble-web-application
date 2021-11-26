@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types */
 import { AI_BEGINNERS, AI_EXPERTS, DATABASE_URL, DEFAULT_SCORES } from '@app/classes/constants';
 import { BEGINNER_NAME_MODEL, EXPERT_NAME_MODEL, SCORES_MODEL } from '@app/classes/database.schema';
 import { GameType } from '@common/game-type';

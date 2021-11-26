@@ -83,7 +83,6 @@ export class EndGameService {
         // TODO: décommenter la ligne suivante si jamais le JV apparait dans les classements
         // if (this.playerService.players[indexPlayer].name in AI_NAME_DATABASE) return;
 
-        // TODO: fort probablement changer ceci pour juste avoir un player au lieu d'un tableau de players
         const players: PlayerScore[] = [];
         players[indexPlayer] = {
             score: this.playerService.players[indexPlayer].score,
