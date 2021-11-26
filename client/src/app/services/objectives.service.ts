@@ -31,7 +31,6 @@ export class ObjectivesService {
     private obj1Counter: number[];
     private obj1ActionTracker: string[][];
     private obj1LastAttempt: number[];
-
     constructor(
         private wordValidationService: WordValidationService,
         private playerService: PlayerService,
@@ -73,53 +72,13 @@ export class ObjectivesService {
     checkObjectivesCompletion(): void {
         // Classic Mode -> No check for objectives completion
         if (this.gameSettingsService.gameType === GameType.Classic) return;
-
+        debugger;
         if (!this.objectives[ObjectiveTypes.Private][this.playerIndex].isCompleted) {
-            this.isCompleted(this.objectives[ObjectiveTypes.Private][this.playerIndex].id);
+            this.objectives[ObjectiveTypes.Private][this.playerIndex].validate(this);
         }
 
         for (const objective of this.objectives[ObjectiveTypes.Public]) {
-            if (!objective.isCompleted) this.isCompleted(objective.id);
-        }
-    }
-
-    isCompleted(id: number): void {
-        switch (id) {
-            case 0: {
-                this.validateObjectiveOne(id);
-                break;
-            }
-            case 1: {
-                this.validateObjectiveTwo(id);
-                break;
-            }
-            case 2: {
-                this.validateObjectiveThree(id);
-                break;
-            }
-            case 3: {
-                this.validateObjectiveFour(id);
-                break;
-            }
-            case 4: {
-                this.validateObjectiveFive(id);
-                break;
-            }
-            case 5: {
-                this.validateObjectiveSix(id);
-                break;
-            }
-            case 6: {
-                this.validateObjectiveSeven(id);
-                break;
-            }
-            case 7: {
-                this.validateObjectiveEight(id);
-                break;
-            }
-            default: {
-                break;
-            }
+            if (!objective.isCompleted) objective.validate(this);
         }
     }
 
@@ -171,9 +130,9 @@ export class ObjectivesService {
     validateObjectiveTwo(id: number) {
         for (const word of this.wordValidationService.lastPlayedWords.keys()) {
             const position = this.wordValidationService.playedWords.get(word) as string[];
-            const nbOfOccurences = position.length / word.length;
+            const nbOfOccurrences = position.length / word.length;
 
-            if (word.length >= MIN_SIZE_FOR_OBJ2 && nbOfOccurences > 1) this.addObjectiveScore(id);
+            if (word.length >= MIN_SIZE_FOR_OBJ2 && nbOfOccurrences > 1) this.addObjectiveScore(id);
         }
     }
 
