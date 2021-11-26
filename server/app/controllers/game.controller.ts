@@ -11,7 +11,7 @@ import { StatusCodes } from 'http-status-codes';
 import { Service } from 'typedi';
 
 @Service()
-export class MultiplayerController {
+export class GameController {
     router: Router;
     constructor(private wordValidator: WordValidationService, private bestScoresService: BestScoresService) {
         this.configureRouter();
@@ -21,7 +21,7 @@ export class MultiplayerController {
         /**
          * @swagger
          *
-         * /api/multiplayer/validateWords:
+         * /api/game/validateWords:
          *   post:
          *     description: return the validation result of a placed word
          *     tags:
@@ -31,7 +31,7 @@ export class MultiplayerController {
          *     responses:
          *       200
          *
-         * /api/multiplayer/uploadDictionary:
+         * /api/game/uploadDictionary:
          *   post:
          *     description: upload a dictionary (json file) to server
          *     tags:
@@ -42,13 +42,13 @@ export class MultiplayerController {
          *       200
          */
         this.router.post('/validateWords', (req: Request, res: Response) => {
-            const validation = this.wordValidator.isValidInDictionary(req.body);
+            const validation = this.wordValidator.isValidInDictionary(req.body.words, req.body.dico);
             res.status(StatusCodes.OK).send(validation);
         });
 
         this.router.get('/dictionary/:fileName', (req: Request, res: Response) => {
+            // TODO: Make this request also send a game id to the client
             const readFile: string[] = JSON.parse(fileSystem.readFileSync(`./dictionaries/${req.params.fileName}`, 'utf8')).words;
-            this.wordValidator.dictionary = readFile;
             res.status(StatusCodes.OK).send(readFile);
         });
 

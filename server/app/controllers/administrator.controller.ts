@@ -21,7 +21,7 @@ export class AdministratorController {
         /**
          * @swagger
          *
-         * /api/multiplayer/validateWords:
+         * /api/game/validateWords:
          *   post:
          *     description: return the validation result of a placed word
          *     tags:

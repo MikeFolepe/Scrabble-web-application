@@ -183,7 +183,7 @@ describe('WordValidationService', () => {
         const isRow = true;
         const passThroughAllRowsOrColumnsSpy = spyOn(service, 'passThroughAllRowsOrColumns').and.callThrough();
         service.validateAllWordsOnBoard(scrabbleBoard, isEaselSize, isRow);
-        const req = httpMock.expectOne(`${service['httpServer']['baseUrl']}/multiplayer/validateWords`);
+        const req = httpMock.expectOne(`${service['httpServer']['baseUrl']}/game/validateWords`);
         expect(req.request.method).toBe('POST');
         expect(passThroughAllRowsOrColumnsSpy).toHaveBeenCalledTimes(2);
     });

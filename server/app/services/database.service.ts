@@ -9,13 +9,14 @@ import { Service } from 'typedi';
 
 @Service()
 export class DatabaseService {
+    database: mongoose.Mongoose = mongoose;
     private options = {
         useNewUrlParser: true,
         useUnifiedTopology: true,
     } as mongoose.ConnectOptions;
 
     async start(url: string = DATABASE_URL): Promise<void> {
-        await mongoose
+        await this.database
             .connect(url, this.options)
             .then(() => {
                 // JUSTIFICATION : required in order to display the DB connection status
@@ -50,11 +51,11 @@ export class DatabaseService {
         }
     }
 
-    async setDefaultData(aiEnum: number): Promise<void> {
-        const aiModel = AI_MODELS.get(aiEnum) as DbModel;
+    async setDefaultData(aiType: AiType): Promise<void> {
+        const aiModel = AI_MODELS.get(aiType) as DbModel;
         await aiModel.deleteMany({ isDefault: true }).exec();
 
-        const players = aiEnum ? AI_EXPERTS : AI_BEGINNERS;
+        const players = aiType ? AI_EXPERTS : AI_BEGINNERS;
         for (const aiPlayer of players) {
             const player = new aiModel({
                 aiName: aiPlayer.aiName,

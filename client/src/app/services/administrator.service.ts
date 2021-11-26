@@ -24,9 +24,10 @@ export class AdministratorService {
     file: File | null;
     uploadMessage: string;
     isResetting: boolean;
-    ajv = new Ajv();
+    ajv: Ajv;
 
     constructor(private communicationService: CommunicationService, public snackBar: MatSnackBar, public dialog: MatDialog) {
+        this.ajv = new Ajv();
         this.file = null;
         this.uploadMessage = '';
     }
@@ -116,6 +117,7 @@ export class AdministratorService {
     }
 
     async isDictionaryValid(): Promise<boolean> {
+        // TODO ajouter un try catch pour le JSON.parse afin d'éviter les erreurs de syntaxes qui crash
         return new Promise((resolve) => {
             const reader = new FileReader();
             if (this.file) {
@@ -157,7 +159,7 @@ export class AdministratorService {
             );
         }
     }
-
+    // JUSTIFICATION: Required as we don't know the explicit type of a dialog response
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     updateDictionary(dictionary: Dictionary, dialogResponse: any): void {
         if (this.isDictionaryNameUsed(dialogResponse.title)) {
@@ -192,13 +194,7 @@ export class AdministratorService {
     downloadDictionary(dictionary: Dictionary): void {
         this.communicationService.downloadDictionary(dictionary.fileName).subscribe((response) => {
             const fileToDownload = JSON.stringify(response);
-            // JUSTIFICATION :
-            // eslint-disable-next-line no-console
-            console.log(fileToDownload);
             const blob = new Blob([fileToDownload], { type: 'application/json' });
-            // JUSTIFICATION :
-            // eslint-disable-next-line no-console
-            console.log(blob);
             saveAs(blob, dictionary.fileName);
         });
     }
@@ -263,6 +259,7 @@ export class AdministratorService {
     }
 
     private checkIfAlreadyExists(aiPlayerName: string): boolean {
+        // TODO: if (this.beginnerNames.find()... || this.expertNames.find()...) return false;
         if (this.beginnerNames === undefined && this.expertNames === undefined) return false;
         const aiBeginner = this.beginnerNames.find((aiBeginnerPlayer) => aiBeginnerPlayer.aiName === aiPlayerName);
         const aiExpert = this.expertNames.find((aiExpertPlayer) => aiExpertPlayer.aiName === aiPlayerName);

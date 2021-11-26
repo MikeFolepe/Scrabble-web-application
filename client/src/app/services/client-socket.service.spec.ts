@@ -57,7 +57,7 @@ describe('ClientSocketService', () => {
             'facile',
             'Désactiver',
             "[['A1', 'doubleLetter'], ['A8', 'tripleLetter']]",
-            'français',
+            [],
         );
         service.socket = {
             on: (eventName: string, callback: (gameSettings: GameSettings) => void) => {

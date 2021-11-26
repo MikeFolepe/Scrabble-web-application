@@ -1,6 +1,6 @@
 // TODO check privacy of functions in this file
 
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BONUS_POSITIONS, PLAYER_ONE_INDEX } from '@app/classes/constants';
@@ -16,7 +16,7 @@ import { GameSettings, StartingPlayer } from '@common/game-settings';
     templateUrl: './form.component.html',
     styleUrls: ['./form.component.scss'],
 })
-export class FormComponent implements OnDestroy {
+export class FormComponent implements OnDestroy, OnInit {
     form: FormGroup;
     dictionaries: Dictionary[];
     gameDictionary: string[];
@@ -24,7 +24,6 @@ export class FormComponent implements OnDestroy {
     expertsAi: AiPlayerDB[];
     isDictionaryDeleted: boolean;
 
-    // TODO fix console error on init
     constructor(
         public gameSettingsService: GameSettingsService,
         private router: Router,
@@ -38,8 +37,11 @@ export class FormComponent implements OnDestroy {
             levelInput: new FormControl(this.gameSettingsService.gameSettings.level),
             randomBonus: new FormControl(this.gameSettingsService.gameSettings.randomBonus),
         });
-        this.initializeDictionaries();
-        this.communicationService.getGameDictionary('dictionary.json').subscribe((dictionary: string[]) => (this.gameDictionary = dictionary));
+    }
+
+    async ngOnInit(): Promise<void> {
+        await this.initializeDictionaries();
+        await this.selectGameDictionary(this.dictionaries[0]);
         this.initializeAiPlayers();
     }
 
@@ -53,10 +55,8 @@ export class FormComponent implements OnDestroy {
         });
     }
 
-    initializeDictionaries(): void {
-        this.communicationService.getDictionaries().subscribe((dictionariesOnServer: Dictionary[]) => {
-            this.dictionaries = dictionariesOnServer;
-        });
+    async initializeDictionaries(): Promise<void> {
+        this.dictionaries = await this.communicationService.getDictionaries().toPromise();
     }
 
     getRightBonusPositions(): string {
@@ -87,9 +87,7 @@ export class FormComponent implements OnDestroy {
             this.isDictionaryDeleted = true;
             return;
         }
-        this.communicationService.getGameDictionary(dictionary.fileName).subscribe((gameDictionary: string[]) => {
-            this.gameDictionary = gameDictionary;
-        });
+        this.gameDictionary = await this.communicationService.getGameDictionary(dictionary.fileName).toPromise();
     }
 
     chooseStartingPlayer(): StartingPlayer {

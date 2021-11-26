@@ -20,16 +20,21 @@ export class CommunicationService {
         this.wordsToValidate = [];
     }
 
-    validationPost(newPlayedWords: Map<string, string[]>): Observable<boolean> {
+    validationPost(newPlayedWords: Map<string, string[]>, dictionary: string[]): Observable<boolean> {
         this.wordsToValidate = [];
         for (const word of newPlayedWords.keys()) {
             this.wordsToValidate.push(word);
         }
-        return this.http.post<boolean>(`${this.baseUrl}/multiplayer/validateWords`, this.wordsToValidate);
+        // TODO: Modify the logic to get a game id from server and use it in the request
+        const object = {
+            words: this.wordsToValidate,
+            dico: dictionary,
+        };
+        return this.http.post<boolean>(`${this.baseUrl}/game/validateWords`, object);
     }
 
     getGameDictionary(fileName: string): Observable<string[]> {
-        return this.http.get<string[]>(`${this.baseUrl}/multiplayer/dictionary/${fileName}`);
+        return this.http.get<string[]>(`${this.baseUrl}/game/dictionary/${fileName}`);
     }
 
     addPlayersScores(players: PlayerScore[], gameType: GameType): Observable<void> {
@@ -57,10 +62,9 @@ export class CommunicationService {
     }
 
     getAiPlayers(aiType: AiType): Observable<AiPlayerDB[]> {
-        if (aiType === AiType.expert) {
-            return this.http.get<AiPlayerDB[]>(`${this.baseUrl}/admin/aiExperts`);
-        }
-        return this.http.get<AiPlayerDB[]>(`${this.baseUrl}/admin/aiBeginners`);
+        return aiType === AiType.expert
+            ? this.http.get<AiPlayerDB[]>(`${this.baseUrl}/admin/aiExperts`)
+            : this.http.get<AiPlayerDB[]>(`${this.baseUrl}/admin/aiBeginners`);
     }
 
     addAiPlayer(aiPlayer: AiPlayer, aiType: AiType): Observable<AiPlayerDB> {
@@ -68,10 +72,9 @@ export class CommunicationService {
     }
 
     deleteAiPlayer(id: string, aiType: AiType): Observable<AiPlayerDB[]> {
-        if (aiType === AiType.expert) {
-            return this.http.delete<AiPlayerDB[]>(`${this.baseUrl}/admin/aiExperts/${id}`);
-        }
-        return this.http.delete<AiPlayerDB[]>(`${this.baseUrl}/admin/aiBeginners/${id}`);
+        return aiType === AiType.expert
+            ? this.http.delete<AiPlayerDB[]>(`${this.baseUrl}/admin/aiExperts/${id}`)
+            : this.http.delete<AiPlayerDB[]>(`${this.baseUrl}/admin/aiBeginners/${id}`);
     }
 
     deleteScores(gameType: GameType): Observable<void> {
@@ -85,7 +88,6 @@ export class CommunicationService {
     uploadFile(file: File): Observable<string> {
         const formData: FormData = new FormData();
         formData.append('file', file);
-        // return this.http.post<string>(`${this.baseUrl}/multiplayer/uploadDictionary`, formData);
         return this.http.post<string>(`${this.baseUrl}/admin/uploadDictionary`, formData);
     }
 
@@ -101,10 +103,9 @@ export class CommunicationService {
         return this.http.delete<Dictionary[]>(`${this.baseUrl}/admin/dictionaries/${fileName}`);
     }
 
-    // JUSTIFICATION :
+    // JUSTIFICATION : Required as the server respond with an object containing the dictionary
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     downloadDictionary(fileName: string): Observable<any> {
-        // JUSTIFICATION :
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return this.http.get<any>(`${this.baseUrl}/admin/download/${fileName}`);
     }
