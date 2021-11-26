@@ -6,33 +6,43 @@ import {
     EASEL_SIZE,
     FONT_SIZE_MAX,
     FONT_SIZE_MIN,
-    INDEX_INVALID,
+    INVALID_INDEX,
     RESERVE,
+    WHITE_LETTER_INDEX,
 } from '@app/classes/constants';
-import { Letter } from '@app/classes/letter';
 import { Player } from '@app/models/player.model';
-import { GridService } from './grid.service';
-import { LetterService } from './letter.service';
+import { GridService } from '@app/services/grid.service';
+import { LetterService } from '@app/services/letter.service';
+import { Letter } from '@common/letter';
+import { ClientSocketService } from './client-socket.service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class PlayerService {
-    scrabbleBoard: string[][];
-    fontSize = DEFAULT_FONT_SIZE;
-    players: Player[] = new Array<Player>();
+    fontSize: number;
+    players: Player[];
+    private scrabbleBoard: string[][];
 
     private updateEasel: () => void;
 
-    constructor(private letterService: LetterService, private gridService: GridService) {
+    constructor(private letterService: LetterService, private gridService: GridService, private clientSocketService: ClientSocketService) {
         this.fontSize = DEFAULT_FONT_SIZE;
+        this.players = new Array<Player>();
+        this.receiveScoreFromServer();
     }
 
     bindUpdateEasel(fn: () => void) {
         this.updateEasel = fn;
     }
 
-    addPlayer(user: Player) {
+    receiveScoreFromServer(): void {
+        this.clientSocketService.socket.on('receiveScoreInfo', (score: number, indexPlayer: number) => {
+            this.players[indexPlayer].score = score;
+        });
+    }
+
+    addPlayer(user: Player): void {
         this.players.push(user);
     }
 
@@ -63,14 +73,14 @@ export class PlayerService {
         for (let i = 0; i < BOARD_ROWS; i++) {
             for (let j = 0; j < BOARD_COLUMNS; j++) {
                 if (this.scrabbleBoard[i][j] !== '') {
-                    this.gridService.eraseLetter(this.gridService.gridContextLettersLayer, j, i);
-                    this.gridService.drawLetter(this.gridService.gridContextLettersLayer, this.scrabbleBoard[i][j], j, i, this.fontSize);
+                    this.gridService.eraseLetter(this.gridService.gridContextLettersLayer, { x: j, y: i });
+                    this.gridService.drawLetter(this.gridService.gridContextLettersLayer, this.scrabbleBoard[i][j], { x: j, y: i }, this.fontSize);
                 }
             }
         }
     }
 
-    swap(indexToSwap: number, indexPlayer: number) {
+    swap(indexToSwap: number, indexPlayer: number): void {
         const letterFromReserve = this.letterService.getRandomLetter();
         // Add a copy of the random letter from the reserve
         const letterToAdd = {
@@ -93,33 +103,30 @@ export class PlayerService {
     addLetterToEasel(letterToAdd: string, indexPlayer: number): void {
         // If it is a white letter
         if (letterToAdd === letterToAdd.toUpperCase()) {
-            for (const letter of RESERVE) {
-                if (letter.value === '*') {
-                    this.players[indexPlayer].letterTable.push({
-                        value: letter.value,
-                        quantity: letter.quantity,
-                        points: letter.points,
-                        isSelectedForSwap: letter.isSelectedForSwap,
-                        isSelectedForManipulation: letter.isSelectedForManipulation,
-                    });
-                }
-            }
-        } else {
-            for (const letter of RESERVE) {
-                if (letterToAdd.toUpperCase() === letter.value) {
-                    this.players[indexPlayer].letterTable.push({
-                        value: letter.value,
-                        quantity: letter.quantity,
-                        points: letter.points,
-                        isSelectedForSwap: letter.isSelectedForSwap,
-                        isSelectedForManipulation: letter.isSelectedForManipulation,
-                    });
-                }
+            this.players[indexPlayer].letterTable.push({
+                value: RESERVE[WHITE_LETTER_INDEX].value,
+                quantity: RESERVE[WHITE_LETTER_INDEX].quantity,
+                points: RESERVE[WHITE_LETTER_INDEX].points,
+                isSelectedForSwap: RESERVE[WHITE_LETTER_INDEX].isSelectedForSwap,
+                isSelectedForManipulation: RESERVE[WHITE_LETTER_INDEX].isSelectedForManipulation,
+            });
+            return;
+        }
+
+        for (const letter of RESERVE) {
+            if (letterToAdd.toUpperCase() === letter.value) {
+                this.players[indexPlayer].letterTable.push({
+                    value: letter.value,
+                    quantity: letter.quantity,
+                    points: letter.points,
+                    isSelectedForSwap: letter.isSelectedForSwap,
+                    isSelectedForManipulation: letter.isSelectedForManipulation,
+                });
             }
         }
     }
 
-    addEaselLetterToReserve(indexInEasel: number, indexPlayer: number) {
+    addEaselLetterToReserve(indexInEasel: number, indexPlayer: number): void {
         this.letterService.addLetterToReserve(this.getEasel(indexPlayer)[indexInEasel].value);
     }
 
@@ -153,14 +160,15 @@ export class PlayerService {
                 }
             }
         }
-        return INDEX_INVALID;
+        return INVALID_INDEX;
     }
 
     addScore(score: number, indexPlayer: number): void {
         this.players[indexPlayer].score += score;
+        this.clientSocketService.socket.emit('updateScoreInfo', this.players[indexPlayer].score, 1, this.clientSocketService.roomId);
     }
 
-    getScore(indexPlayer: number): number {
-        return this.players[indexPlayer].score;
+    isEaselEmpty(indexPlayer: number): boolean {
+        return this.players[indexPlayer].letterTable.length === 0;
     }
 }

@@ -1,175 +1,257 @@
-import { TestBed } from '@angular/core/testing';
-// import { ONE_SECOND_TIME } from '@app/classes/constants';
-// import { GameSettingsService } from './game-settings.service';
-import { SkipTurnService } from './skip-turn.service';
-import { RouterTestingModule } from '@angular/router/testing';
+/* eslint-disable no-unused-vars */
+/* eslint-disable @typescript-eslint/no-magic-numbers */
+/* eslint-disable dot-notation */
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { TestBed } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
+import { DELAY_BEFORE_PLAYING, ONE_SECOND_DELAY, THREE_SECONDS_DELAY } from '@app/classes/constants';
+import { PlayerAI } from '@app/models/player-ai.model';
+import { Player } from '@app/models/player.model';
+import { Letter } from '@common/letter';
+import { Socket } from 'socket.io-client';
+import { EndGameService } from './end-game.service';
+import { GameSettingsService } from './game-settings.service';
+import { PlayerAIService } from './player-ai.service';
+import { SkipTurnService } from './skip-turn.service';
 
 describe('SkipTurnService', () => {
     let service: SkipTurnService;
-    // let clearInterval: jasmine.Spy<jasmine.Func>;
-    // let gameSettingsService: GameSettingsService;
+    let gameSettingsService: jasmine.SpyObj<GameSettingsService>;
+    let endGameService: jasmine.SpyObj<EndGameService>;
+    let playerService: PlayerAIService;
+    let letterA: Letter;
+
     beforeEach(() => {
+        const settingsSpy = jasmine.createSpyObj('GameSettingsService', ['gameSettings']);
+        const endGameSpy = jasmine.createSpyObj('EndGameService', ['isEndGame']);
         TestBed.configureTestingModule({
             imports: [HttpClientTestingModule, RouterTestingModule],
+            providers: [SkipTurnService, { provide: GameSettingsService, useValue: settingsSpy }, { provide: EndGameService, useValue: endGameSpy }],
         });
+        playerService = TestBed.inject(PlayerAIService);
         service = TestBed.inject(SkipTurnService);
-        // clearInterval = jasmine.createSpy('clearInterval');
-    });
-    // beforeEach(() => {
-    //     skipTurnSpy = jasmine.createSpyObj('SkipTurnService', ['startTimer']);
-    // });
-    beforeEach(() => {
-        jasmine.clock().install();
+        gameSettingsService = TestBed.inject(GameSettingsService) as jasmine.SpyObj<GameSettingsService>;
+        endGameService = TestBed.inject(EndGameService) as jasmine.SpyObj<EndGameService>;
     });
 
-    it('should be created', () => {
-        expect(service).toBeTruthy();
+    beforeEach(() => {
+        jasmine.clock().install();
     });
 
     afterEach(() => {
         jasmine.clock().uninstall();
     });
 
-    it('should create', () => {
+    it('should be created', () => {
         expect(service).toBeTruthy();
     });
 
-    // it('should call setTimer onInit', () => {
-    //     component.ngOnInit();
-    //     spyOn<any>(component, 'setTimer');
-    //     jasmine.clock().tick(ONESECOND_TIME + 1);
-    //     expect(component.setTimer).toHaveBeenCalled();
-    // });
-    it('should call clearInterval on stopTimer', () => {
+    it('should get the newTurn from the server', () => {
+        service['clientSocket'].socket = {
+            on: (eventName: string, callback: (turn: boolean) => void) => {
+                if (eventName === 'turnSwitched') {
+                    callback(true);
+                }
+            },
+        } as unknown as Socket;
+
+        service.receiveNewTurn();
+        expect(service.isTurn).toEqual(true);
+    });
+
+    it('should restart the timer when receiving event from server', () => {
+        service['clientSocket'].socket = {
+            on: (eventName: string, callback: () => void) => {
+                if (eventName === 'startTimer') {
+                    callback();
+                }
+            },
+        } as unknown as Socket;
         spyOn(service, 'stopTimer');
-        service.stopTimer();
+        spyOn(service, 'startTimer');
+        service.receiveStartFromServer();
         expect(service.stopTimer).toHaveBeenCalled();
+        expect(service.startTimer).toHaveBeenCalled();
+    });
+
+    it('should stop', () => {
+        service['clientSocket'].socket = {
+            on: (eventName: string, callback: () => void) => {
+                if (eventName === 'stopTimer') {
+                    callback();
+                }
+            },
+        } as unknown as Socket;
+        spyOn(service, 'stopTimer');
+        service.receiveStopFromServer();
+        expect(service.stopTimer).toHaveBeenCalled();
+    });
+
+    it('should get the newTurn from the server', () => {
+        service['clientSocket'].socket = {
+            on: (eventName: string, callback: (turn: boolean) => void) => {
+                if (eventName === 'turnSwitched') {
+                    callback(true);
+                }
+            },
+        } as unknown as Socket;
+
+        service.receiveNewTurn();
+        expect(service.isTurn).toEqual(true);
+    });
+
+    it('should get the newTurn from the server', () => {
+        service['clientSocket'].socket = {
+            on: (eventName: string, callback: () => void) => {
+                if (eventName === 'startTimer') {
+                    callback();
+                }
+            },
+        } as unknown as Socket;
+        spyOn(service, 'stopTimer');
+        spyOn(service, 'startTimer');
+        service.receiveStartFromServer();
+        expect(service.stopTimer).toHaveBeenCalled();
+        expect(service.startTimer).toHaveBeenCalled();
+    });
+
+    it('should get the newTurn from the server', () => {
+        service['clientSocket'].socket = {
+            on: (eventName: string, callback: () => void) => {
+                if (eventName === 'startTimer') {
+                    callback();
+                }
+            },
+        } as unknown as Socket;
+        spyOn(service, 'stopTimer');
+        spyOn(service, 'startTimer');
+        service.receiveStartFromServer();
+        expect(service.stopTimer).toHaveBeenCalled();
+        expect(service.startTimer).toHaveBeenCalled();
     });
 
     it('should stopTimer when switching turn', () => {
-        spyOn(service, 'stopTimer');
+        endGameService.isEndGame = false;
+        const spy = spyOn(service, 'stopTimer');
         service.switchTurn();
-        expect(service.stopTimer).toHaveBeenCalled();
+        expect(spy).toHaveBeenCalled();
     });
 
-    // it('should startTimer when switching turns', () => {
-    //     service.isTurn = false;
-    //     const newTurn = true;
-    //     spyOn(service, 'startTimer').andz;
-    //     service.switchTurn();
-    //     expect(service.isTurn).toEqual(newTurn);
-    //     expect(service.startTimer).toHaveBeenCalled();
-    // });
+    it('should startTimer when switching turns', () => {
+        gameSettingsService.isSoloMode = true;
+        service.isTurn = false;
+        const newTurn = true;
+        endGameService.isEndGame = false;
+        const spyStart = spyOn(service, 'startTimer');
+        service.switchTurn();
+        jasmine.clock().tick(THREE_SECONDS_DELAY + 1);
+        jasmine.clock().tick(ONE_SECOND_DELAY);
+        expect(service.isTurn).toEqual(newTurn);
+        expect(spyStart).toHaveBeenCalled();
+    });
 
-    // it('should clearInterval when stopping timer', () => {
-    //     service.stopTimer();
-    //     expect(clearInterval).toHaveBeenCalled();
-    // });
+    it('should startTimer when switching when in multiplayer mode', () => {
+        gameSettingsService.isSoloMode = false;
+        service.isTurn = true;
+        const newTurn = false;
+        endGameService.isEndGame = false;
+        service.switchTurn();
+        jasmine.clock().tick(THREE_SECONDS_DELAY + 1);
+        expect(service.isTurn).toEqual(newTurn);
+    });
 
-    /* eslint-disable @typescript-eslint/no-magic-numbers */
-    /* eslint-disable @typescript-eslint/no-explicit-any */
-    // import { ComponentFixture, TestBed } from '@angular/core/testing';
-    // import { ONESECOND_TIME } from '@app/classes/constants';
-    // import { CountdownComponent } from './countdown.component';
+    it('should startTimer when switching turns 2', () => {
+        const player1 = new Player(1, 'mike', [letterA]);
+        const player2 = new PlayerAI(2, 'agha', [letterA], playerService);
+        service['playerService'].players.push(player1);
+        service['playerService'].players.push(player2);
+        gameSettingsService.isSoloMode = true;
+        service.isTurn = true;
+        const newTurn = false;
+        const spyPlay = spyOn(player2, 'play');
+        endGameService.isEndGame = false;
+        const spyStart = spyOn(service, 'startTimer');
+        service.switchTurn();
+        jasmine.clock().tick(THREE_SECONDS_DELAY + 1);
+        jasmine.clock().tick(DELAY_BEFORE_PLAYING + 1);
+        expect(service.isTurn).toEqual(newTurn);
+        expect(spyStart).toHaveBeenCalled();
+        expect(spyPlay).toHaveBeenCalledTimes(1);
+    });
 
-    // describe('CountdownComponent', () => {
-    //     let component: CountdownComponent;
-    //     let fixture: ComponentFixture<CountdownComponent>;
+    it('should decrease the countdown', () => {
+        gameSettingsService.gameSettings.timeMinute = '00';
+        gameSettingsService.gameSettings.timeSecond = '59';
+        endGameService.isEndGame = false;
+        service.startTimer();
+        jasmine.clock().tick(ONE_SECOND_DELAY + 1);
+        expect(service['minutes']).toEqual(0);
+        expect(service['seconds']).toEqual(58);
+    });
 
-    //     beforeEach(async () => {
-    //         await TestBed.configureTestingModule({
-    //             declarations: [CountdownComponent],
-    //         }).compileComponents();
-    //     });
+    it('should clearInterval when stopping timer', () => {
+        service.stopTimer();
+        expect(service['minutes']).toEqual(0);
+        expect(service['seconds']).toEqual(0);
+    });
 
-    //     beforeEach(() => {
-    //         fixture = TestBed.createComponent(CountdownComponent);
-    //         component = fixture.componentInstance;
-    //         fixture.detectChanges();
-    //     });
+    it('adapt time output to correct value when when only seconds input is 0', () => {
+        gameSettingsService.gameSettings.timeMinute = '05';
+        gameSettingsService.gameSettings.timeSecond = '00';
+        endGameService.isEndGame = false;
+        service.startTimer();
+        jasmine.clock().tick(ONE_SECOND_DELAY + 1);
+        expect(service['seconds']).toEqual(59);
+        expect(service['minutes']).toEqual(4);
+    });
 
-    //     beforeEach(() => {
-    //         jasmine.clock().install();
-    //     });
+    it('should do nothing when it is an endgame', () => {
+        endGameService.isEndGame = true;
+        service.isTurn = false;
+        const newturn = false;
+        service.switchTurn();
+        expect(service.isTurn).toEqual(newturn);
+    });
 
-    //     afterEach(() => {
-    //         jasmine.clock().uninstall();
-    //     });
+    it('should stop the timer and then switch turn when the countdown is done ', () => {
+        spyOn(service, 'updateActiveTime');
+        service['endGameService'].actionsLog = [];
+        service.gameSettingsService.gameSettings.timeMinute = '00';
+        service.gameSettingsService.gameSettings.timeSecond = '00';
+        endGameService.isEndGame = false;
+        service.isTurn = true;
+        const spyOnStop = spyOn(service, 'stopTimer');
+        const spyOnSwitch = spyOn(service, 'switchTurn').and.callThrough();
+        service.startTimer();
+        jasmine.clock().tick(ONE_SECOND_DELAY + 1);
+        expect(spyOnStop).toHaveBeenCalled();
+        expect(spyOnSwitch).toHaveBeenCalled();
+    });
 
-    //     it('should create', () => {
-    //         expect(component).toBeTruthy();
-    //     });
+    it('should not switch the turn if it is not my turn when the countdown is done ', () => {
+        service.gameSettingsService.gameSettings.timeMinute = '00';
+        service.gameSettingsService.gameSettings.timeSecond = '00';
+        endGameService.isEndGame = false;
+        service.isTurn = false;
+        const spyOnStop = spyOn(service, 'stopTimer');
+        const spyOnSwitch = spyOn(service, 'switchTurn').and.callThrough();
+        service.startTimer();
+        jasmine.clock().tick(ONE_SECOND_DELAY + 1);
+        expect(spyOnStop).toHaveBeenCalledTimes(0);
+        expect(spyOnSwitch).toHaveBeenCalledTimes(0);
+    });
 
-    //     it('should call setTimer onInit', () => {
-    //         component.ngOnInit();
-    //         spyOn<any>(component, 'setTimer');
-    //         jasmine.clock().tick(ONESECOND_TIME + 1);
-    //         expect(component.setTimer).toHaveBeenCalled();
-    //     });
+    it('should not udpate the active time if the turn is false', () => {
+        service['objectivesService'].activeTimeRemaining[0] = 60;
+        service.isTurn = false;
+        service.updateActiveTime();
+        expect(service['objectivesService'].activeTimeRemaining[0]).toEqual(60);
+    });
 
-    //     it('should stop timer if it is the end of the game', () => {
-    //         spyOn(component, 'stopTimer');
-    //         component.endgameService.isEndGame = true;
-
-    //         component.setTimer();
-
-    //         expect(component.stopTimer).toHaveBeenCalled();
-    //     });
-
-    //     it('adapt time output to correct value when when only seconds input is 0', () => {
-    //         // when seconds input is 0
-    //         component.seconds = '00';
-    //         component.minutes = '05';
-    //         component.setTimer();
-    //         jasmine.clock().tick(ONESECOND_TIME + 1);
-    //         expect(component.secondsInt).toEqual(59);
-    //         expect(component.minutesInt).toEqual(4);
-    //     });
-
-    //     it('adapt time output to correct value when seconds input and minutes input are both 0', () => {
-    //         component.seconds = '0';
-    //         component.minutes = '0';
-    //         const nullTime = 0;
-    //         spyOn<any>(component.checkTime, 'emit');
-    //         component.setTimer();
-    //         jasmine.clock().tick(ONESECOND_TIME + 1);
-    //         expect(component.secondsInt).toEqual(nullTime);
-    //         expect(component.minutesInt).toEqual(nullTime);
-    //         expect(component.checkTime.emit).toHaveBeenCalledWith(nullTime);
-    //     });
-
-    //     it('adapt time output to correct value when neither seconds nor minutes input is 0', () => {
-    //         component.seconds = '30';
-    //         component.minutes = '03';
-    //         component.setTimer();
-    //         jasmine.clock().tick(ONESECOND_TIME + 1);
-    //         expect(component.secondsInt).toEqual(29);
-    //         expect(component.minutesInt).toEqual(3);
-    //     });
-
-    //     it('stopping timer should set seconds and minutes input to zero and emit seconds only if the message is --!passer--', () => {
-    //         component.message = '!passer';
-    //         component.secondsInt = 30;
-    //         component.minutesInt = 4;
-    //         const nullTime = 0;
-    //         spyOn<any>(component.checkTime, 'emit');
-    //         component.stopTimer();
-    //         expect(component.secondsInt).toEqual(nullTime);
-    //         expect(component.minutesInt).toEqual(nullTime);
-    //         expect(component.checkTime.emit).toHaveBeenCalledWith(nullTime);
-    //     });
-
-    //     it('stopping timer should not not do anything if the message is not --!passer--', () => {
-    //         component.message = '!wrong';
-    //         component.secondsInt = 30;
-    //         component.minutesInt = 4;
-    //         const nullTime = 0;
-    //         spyOn<any>(component.checkTime, 'emit');
-    //         component.stopTimer();
-    //         expect(component.secondsInt).toEqual(30);
-    //         expect(component.minutesInt).toEqual(4);
-    //         expect(component.checkTime.emit).not.toHaveBeenCalledWith(nullTime);
-    //     });
-    // });
+    it('should udpate the active time if the turn is true', () => {
+        service['objectivesService'].activeTimeRemaining[0] = 60;
+        service.isTurn = true;
+        service.updateActiveTime();
+        expect(service['objectivesService'].activeTimeRemaining[0]).not.toEqual(60);
+    });
 });

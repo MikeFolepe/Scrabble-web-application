@@ -6,11 +6,13 @@ import { PossibleWords } from '@app/classes/scrabble-board-pattern';
 })
 export class DebugService {
     debugServiceMessage: PossibleWords[];
-    debugActivate: string[] = [];
-    isDebugActive: boolean = false;
+    isDebugActive: boolean;
+
     constructor() {
-        this.debugServiceMessage = new Array(0);
+        this.debugServiceMessage = [];
+        this.isDebugActive = false;
     }
+
     receiveAIDebugPossibilities(table: PossibleWords[]): void {
         this.debugServiceMessage = table;
     }
@@ -20,10 +22,6 @@ export class DebugService {
     }
 
     switchDebugMode(): void {
-        if (this.isDebugActive) {
-            this.isDebugActive = false;
-            return;
-        }
-        this.isDebugActive = true;
+        this.isDebugActive = !this.isDebugActive;
     }
 }

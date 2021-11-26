@@ -1,27 +1,32 @@
 <div id="chat-box" class="chat-box">
-    <div class="fakeMenu">
-        <div class="fakeButtons fakeClose"></div>
-        <div class="fakeButtons fakeMinimize"></div>
-        <div class="fakeButtons fakeZoom"></div>
+    <div class="fake-menu">
+        <div class="fake-buttons fake-close"></div>
+        <div class="fake-buttons fake-minimize"></div>
+        <div class="fake-buttons fake-zoom"></div>
     </div>
 
-    <h3 class="header-item">Boite de communication</h3>
+    <h2>Boite de communication</h2>
 
     <div class="display" #scrollMe>
         <p
-            id="listDisplay"
+            id="list-display"
             *ngFor="let message of listMessages; let i = index; let last = last"
             [ngClass]="{
-                playerStyle: listTypes[i] === 'player',
-                opponentStyle: listTypes[i] === 'opponent',
-                systemStyle: listTypes[i] === 'system',
-                errorStyle: listTypes[i] === 'error'
+                playerStyle: listTypes[i] === htmlTypeMessage.Player,
+                opponentStyle: listTypes[i] === htmlTypeMessage.Opponent,
+                systemStyle: listTypes[i] === htmlTypeMessage.System,
+                errorStyle: listTypes[i] === htmlTypeMessage.Error
             }"
         >
             > {{ message }}
         </p>
     </div>
 
-    <input type="text" placeholder="Veuillez entrer un message ou une commande" maxlength="512" [(ngModel)]="message"
-        (keypress)="handleKeyEvent($event)"/>
+    <input
+        type="text"
+        placeholder="Veuillez entrer un message ou une commande"
+        maxlength="512"
+        [(ngModel)]="message"
+        (keypress)="handleKeyEvent($event)"
+    />
 </div>

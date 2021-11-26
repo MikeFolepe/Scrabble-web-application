@@ -1,8 +1,18 @@
 import { Injectable } from '@angular/core';
-import { ONE_SECOND_TIME } from '@app/classes/constants';
+import {
+    DELAY_BEFORE_PLAYING,
+    ONE_SECOND_DELAY,
+    PLAYER_AI_INDEX,
+    PLAYER_ONE_INDEX,
+    PLAYER_TWO_INDEX,
+    THREE_SECONDS_DELAY,
+} from '@app/classes/constants';
+import { PlayerAI } from '@app/models/player-ai.model';
 import { ClientSocketService } from '@app/services/client-socket.service';
-import { EndGameService } from '@app/services/end-game.service';
-import { GameSettingsService } from './game-settings.service';
+import { GameSettingsService } from '@app/services/game-settings.service';
+import { EndGameService } from './end-game.service';
+import { ObjectivesService } from './objectives.service';
+import { PlayerService } from './player.service';
 
 @Injectable({
     providedIn: 'root',
@@ -11,72 +21,98 @@ export class SkipTurnService {
     isTurn: boolean;
     minutes: number;
     seconds: number;
+    // JUSTIFICATION : Next line is mandatory, NodeJS return an eslint issue
     // eslint-disable-next-line no-undef
     intervalID: NodeJS.Timeout;
-    private playAiTurn: () => void;
 
-    constructor(public gameSettingsService: GameSettingsService, public endGameService: EndGameService, private clientSocket: ClientSocketService) {
+    constructor(
+        public gameSettingsService: GameSettingsService,
+        private endGameService: EndGameService,
+        private clientSocket: ClientSocketService,
+        private playerService: PlayerService,
+        private objectivesService: ObjectivesService,
+    ) {
+        this.receiveNewTurn();
+        this.receiveStartFromServer();
+        this.receiveStopFromServer();
+    }
+
+    receiveNewTurn(): void {
         this.clientSocket.socket.on('turnSwitched', (turn: boolean) => {
             this.isTurn = turn;
         });
+    }
+
+    receiveStartFromServer(): void {
         this.clientSocket.socket.on('startTimer', () => {
             this.stopTimer();
             this.startTimer();
         });
     }
-
-    bindAiTurn(fn: () => void) {
-        this.playAiTurn = fn;
+    receiveStopFromServer(): void {
+        this.clientSocket.socket.on('stopTimer', () => {
+            this.stopTimer();
+        });
     }
 
     switchTurn(): void {
-        // console.log('Switching TURN');
         if (this.endGameService.isEndGame) {
             return;
         }
         this.stopTimer();
-        if (this.gameSettingsService.isSoloMode) {
-            setTimeout(() => {
+        setTimeout(() => {
+            if (this.gameSettingsService.isSoloMode) {
                 if (this.isTurn) {
                     this.isTurn = false;
                     this.startTimer();
-                    this.playAiTurn();
+                    const playerAi = this.playerService.players[PLAYER_AI_INDEX] as PlayerAI;
+                    setTimeout(() => {
+                        playerAi.play();
+                    }, DELAY_BEFORE_PLAYING);
                 } else {
                     this.isTurn = true;
                     this.startTimer();
                 }
-            }, ONE_SECOND_TIME);
-        } else {
-            this.clientSocket.socket.emit('switchTurn', this.isTurn, this.clientSocket.roomId);
-            this.isTurn = false;
-        }
+            } else {
+                this.clientSocket.socket.emit('switchTurn', this.isTurn, this.clientSocket.roomId);
+                this.isTurn = false;
+            }
+        }, THREE_SECONDS_DELAY);
     }
 
     startTimer(): void {
-        if (this.endGameService.isEndGame) {
-            this.stopTimer();
-            return;
-        }
         this.minutes = parseInt(this.gameSettingsService.gameSettings.timeMinute, 10);
         this.seconds = parseInt(this.gameSettingsService.gameSettings.timeSecond, 10);
-        clearInterval(this.intervalID);
+
         this.intervalID = setInterval(() => {
             if (this.seconds === 0 && this.minutes !== 0) {
                 this.minutes = this.minutes - 1;
                 this.seconds = 59;
-            } else if (this.seconds === 0 - 1 && this.minutes === 0) {
+                this.updateActiveTime();
+            } else if (this.seconds === 0 && this.minutes === 0) {
                 if (this.isTurn) {
+                    this.endGameService.actionsLog.push('AucuneAction');
+                    this.clientSocket.socket.emit('sendActions', this.endGameService.actionsLog, this.clientSocket.roomId);
                     this.switchTurn();
                 }
             } else {
                 this.seconds = this.seconds - 1;
+                this.updateActiveTime();
             }
-        }, ONE_SECOND_TIME);
+        }, ONE_SECOND_DELAY);
     }
 
     stopTimer(): void {
         clearInterval(this.intervalID);
         this.minutes = 0;
         this.seconds = 0;
+    }
+
+    updateActiveTime() {
+        if (this.isTurn && this.objectivesService.activeTimeRemaining[PLAYER_ONE_INDEX] > 0)
+            this.objectivesService.activeTimeRemaining[PLAYER_ONE_INDEX]--;
+
+        if (this.isTurn === false && this.objectivesService.activeTimeRemaining[PLAYER_TWO_INDEX] > 0)
+            this.objectivesService.activeTimeRemaining[PLAYER_TWO_INDEX]--;
     }
 }

@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { INDEX_REAL_PLAYER, RESERVE } from '@app/classes/constants';
+import { RouterTestingModule } from '@angular/router/testing';
+import { PLAYER_ONE_INDEX, RESERVE } from '@app/classes/constants';
+import { TypeMessage } from '@app/classes/enum';
 import { Orientation, PossibleWords } from '@app/classes/scrabble-board-pattern';
 import { Player } from '@app/models/player.model';
-import { ChatboxService } from './chatbox.service';
-import { RouterTestingModule } from '@angular/router/testing';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { ChatboxService } from '@app/services/chatbox.service';
 
 describe('ChatboxService', () => {
     let service: ChatboxService;
@@ -25,7 +26,7 @@ describe('ChatboxService', () => {
         const firstPlayerEasel = [letterA, letterA, letterB, letterB, letterC, letterC, letterA];
         const firstPlayer = new Player(1, 'Player 1', firstPlayerEasel);
         service['playerService'].addPlayer(firstPlayer);
-        possibleWord = { word: 'test', orientation: Orientation.HorizontalOrientation, line: 0, startIdx: 0, point: 1 };
+        possibleWord = { word: 'test', orientation: Orientation.Horizontal, line: 0, startIndex: 0, point: 1 };
 
         spyOn(service['sendMessageService'], 'displayMessageByType');
     });
@@ -35,60 +36,60 @@ describe('ChatboxService', () => {
     });
 
     it('should have type error if command is not valid', () => {
-        service.message = '!debugg';
-        service.sendPlayerMessage(service.message);
-        expect(service.message).toEqual('ERREUR : La syntaxe est invalide');
+        service['message'] = '!debugg';
+        service.sendPlayerMessage(service['message']);
+        expect(service['message']).toEqual('ERREUR : La syntaxe est invalide');
     });
 
     it('should have type player if command is valid', () => {
-        spyOn(service, 'isValid').and.returnValue(true);
+        spyOn<any>(service, 'isValid').and.returnValue(true);
 
-        service.message = '';
-        service.sendPlayerMessage(service.message);
-        expect(service.typeMessage).toEqual('player');
+        service['message'] = '';
+        service.sendPlayerMessage(service['message']);
+        expect(service['typeMessage']).toEqual(TypeMessage.Player);
     });
 
     it('should have type player if command is valid', () => {
-        spyOn(service, 'isValid').and.returnValue(true);
+        spyOn<any>(service, 'isValid').and.returnValue(true);
 
-        service.sendPlayerMessage(service.message);
-        expect(service.typeMessage).toEqual('player');
-        expect(service.command).toEqual('');
+        service.sendPlayerMessage(service['message']);
+        expect(service['typeMessage']).toEqual(TypeMessage.Player);
+        expect(service['command']).toEqual('');
     });
 
     it('should know if input is valid', () => {
-        service.message = '!debug';
-        expect(service.isValid()).toBeTrue();
+        service['message'] = '!debug';
+        expect(service['isValid']()).toBeTrue();
 
-        service.message = '!passer';
-        expect(service.isValid()).toBeTrue();
+        service['message'] = '!passer';
+        expect(service['isValid']()).toBeTrue();
 
-        service.message = '!échanger *s';
-        expect(service.isValid()).toBeTrue();
+        service['message'] = '!échanger *s';
+        expect(service['isValid']()).toBeTrue();
 
-        service.message = '!échanger';
-        expect(service.isValid()).toBeFalse();
-        expect(service.message).toEqual('ERREUR : La syntaxe est invalide');
+        service['message'] = '!échanger';
+        expect(service['isValid']()).toBeFalse();
+        expect(service['message']).toEqual('ERREUR : La syntaxe est invalide');
 
-        service.message = '!placer h8h test';
-        expect(service.isValid()).toBeTrue();
+        service['message'] = '!placer h8h test';
+        expect(service['isValid']()).toBeTrue();
 
-        service.message = '!placer 333';
-        expect(service.isValid()).toBeFalse();
+        service['message'] = '!placer 333';
+        expect(service['isValid']()).toBeFalse();
 
-        service.message = '!placer';
-        expect(service.isValid()).toBeFalse();
+        service['message'] = '!placer';
+        expect(service['isValid']()).toBeFalse();
 
-        service.message = '!notok';
-        expect(service.isValid()).toBeFalse();
+        service['message'] = '!notok';
+        expect(service['isValid']()).toBeFalse();
 
-        service.message = 'random text';
-        expect(service.isValid()).toBeTrue();
+        service['message'] = 'random text';
+        expect(service['isValid']()).toBeTrue();
     });
 
     it('using command !debug should call executeDebug()', () => {
-        const spy = spyOn(service, 'executeDebug');
-        service.command = 'debug';
+        const spy = spyOn<any>(service, 'executeDebug');
+        service['command'] = 'debug';
         const table: PossibleWords[] = [];
         table.push(possibleWord);
 
@@ -100,117 +101,167 @@ describe('ChatboxService', () => {
     });
 
     it('using command !debug without debug messages should display the respective message', () => {
-        service.command = 'debug';
+        service['command'] = 'debug';
         service['debugService'].isDebugActive = false;
         service['debugService'].clearDebugMessage();
 
         service.sendPlayerMessage('!debug');
-        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('Aucune possibilité de placement trouvée!', 'system');
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith(
+            'Aucune possibilité de placement trouvée!',
+            TypeMessage.System,
+        );
     });
 
     it('using command !passer should display the respective message', () => {
-        spyOn(service['skipTurn'], 'switchTurn');
-        service['skipTurn'].isTurn = true;
-        service.command = 'passer';
+        spyOn(service['skipTurnService'], 'switchTurn');
+        service['skipTurnService'].isTurn = true;
+        service['command'] = 'passer';
         service.sendPlayerMessage('!passer');
-        expect(service.message).toEqual('!passer');
+        expect(service['message']).toEqual('!passer');
     });
 
-    it('using a valid command !placer should display the respective message', () => {
-        spyOn(service['skipTurn'], 'switchTurn');
-        service['skipTurn'].isTurn = true;
-        spyOn(service['placeLetterService'], 'placeCommand').and.returnValue(true);
-        service.command = 'placer';
-        service.sendPlayerMessage('!placer h8h hello');
-        expect(service.message).toEqual('!placer h8h hello');
+    it('using a valid command !placer should display the respective message', async () => {
+        spyOn(service['skipTurnService'], 'switchTurn');
+        service['skipTurnService'].isTurn = true;
+        spyOn(service['placeLetterService'], 'placeCommand').and.returnValue(Promise.resolve(true));
+        service['command'] = 'placer';
+        service['message'] = '!placer h8h hello';
+        service['typeMessage'] = TypeMessage.Player;
+        await service['executePlace']();
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('!placer h8h hello', TypeMessage.Player);
     });
 
     it('using a valid command !échanger should display the respective message', () => {
-        spyOn(service['skipTurn'], 'switchTurn');
-        service['skipTurn'].isTurn = true;
+        spyOn(service['skipTurnService'], 'switchTurn');
+        service['skipTurnService'].isTurn = true;
         spyOn(service['swapLetterService'], 'swapCommand').and.returnValue(true);
-        service.command = 'echanger';
+        service['command'] = 'echanger';
         service.sendPlayerMessage('!échanger abc');
-        expect(service.message).toEqual('Player 1 : !échanger abc');
+        expect(service['message']).toEqual('Player 1 : !échanger abc');
     });
 
     it('deactivating debug should display the respective message', () => {
         spyOn<any>(service, 'displayDebugMessage');
 
-        service.command = 'debug';
-        const table: { word: string; orientation: Orientation; line: number; startIdx: number; point: number }[] = [
-            { word: 'message de debug', orientation: Orientation.HorizontalOrientation, line: 0, startIdx: 0, point: 1 },
+        service['command'] = 'debug';
+        const table: { word: string; orientation: Orientation; line: number; startIndex: number; point: number }[] = [
+            { word: 'message de debug', orientation: Orientation.Horizontal, line: 0, startIndex: 0, point: 1 },
         ];
 
         service['debugService'].debugServiceMessage = table;
         service['debugService'].isDebugActive = true;
 
         service.sendPlayerMessage('!debug');
-        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('affichages de débogage désactivés', 'system');
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('Affichages de débogage désactivés', TypeMessage.System);
     });
 
     it('using command !passer while it is not your turn should display an error', () => {
-        service['skipTurn'].isTurn = false;
-        service.command = 'passer';
+        service['skipTurnService'].isTurn = false;
+        service['command'] = 'passer';
         service.sendPlayerMessage('!passer');
-        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith("ERREUR : Ce n'est pas ton tour", 'error');
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith("ERREUR : Ce n'est pas ton tour", TypeMessage.Error);
     });
 
     it('using command !échanger while it is not your turn should display an error', () => {
-        service['skipTurn'].isTurn = false;
-        service.command = 'echanger';
+        service['skipTurnService'].isTurn = false;
+        service['command'] = 'echanger';
         service.sendPlayerMessage('!échanger');
-        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith("ERREUR : Ce n'est pas ton tour", 'error');
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith("ERREUR : Ce n'est pas ton tour", TypeMessage.Error);
     });
 
-    it('using command !placer while it is not your turn should display an error', () => {
-        service['skipTurn'].isTurn = false;
-        service.command = 'placer';
-        service.sendPlayerMessage('!placer');
-        expect(service.message).toEqual("ERREUR : Ce n'est pas ton tour");
+    it('using command !placer while it is not your turn should display an error', async () => {
+        service['skipTurnService'].isTurn = false;
+        service['command'] = 'placer';
+        await service['executePlace']();
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith("ERREUR : Ce n'est pas ton tour", TypeMessage.Error);
     });
 
     it('should display the right debug message if no possibility has been found', () => {
         service['debugService'].debugServiceMessage = [];
-        service.displayDebugMessage();
-        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('Aucune possibilité de placement trouvée!', 'system');
+        service['displayDebugMessage']();
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith(
+            'Aucune possibilité de placement trouvée!',
+            TypeMessage.System,
+        );
     });
 
     it('should display the right debug message if at least one possibility has been found', () => {
-        service['debugService'].debugServiceMessage = [
-            { word: 'test', orientation: Orientation.HorizontalOrientation, line: 0, startIdx: 0, point: 3 },
-        ];
-        service.displayDebugMessage();
-        expect(service.message).toEqual('test: -- 3');
+        service['debugService'].debugServiceMessage = [{ word: 'test', orientation: Orientation.Horizontal, line: 0, startIndex: 0, point: 3 }];
+        service['displayDebugMessage']();
+        expect(service['message']).toEqual('test: -- 3');
     });
 
     it('calling displayFinalMessage should send the respective message to the chatbox', () => {
         service['endGameService'].isEndGame = true;
-        service.displayFinalMessage(INDEX_REAL_PLAYER);
-        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('Player 1 : AABBCCA', 'system');
+        service.displayFinalMessage(PLAYER_ONE_INDEX);
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('Player 1 : AABBCCA', TypeMessage.System);
     });
 
     it('should not write a message if swapCommand is false in executeSwap()', () => {
-        service['skipTurn'].isTurn = true;
-        const spy = spyOn(service['skipTurn'], 'switchTurn');
+        service['skipTurnService'].isTurn = true;
+        const spy = spyOn(service['skipTurnService'], 'switchTurn');
         spyOn(service['swapLetterService'], 'swapCommand').and.returnValue(false);
-        service.message = '!échanger *s';
-        service.executeSwap();
+        service['message'] = '!échanger *s';
+        service['executeSwap']();
         expect(spy).not.toHaveBeenCalled();
     });
 
-    it('should return immediately if it is not the end of the game when displayFinalMessage() is called', () => {
-        service.endGameService.isEndGame = false;
-        service.displayFinalMessage(0);
-        expect(service['sendMessageService'].displayMessageByType).not.toHaveBeenCalled();
+    // it('should return immediately if it is not the end of the game when displayFinalMessage() is called', () => {
+    //     service.endGameService.isEndGame = false;
+    //     service.displayFinalMessage(0);
+    //     expect(service['sendMessageService'].displayMessageByType).not.toHaveBeenCalled();
+    // });
+
+    it('should not display message if place is false when executePlace() is called', async () => {
+        service['skipTurnService'].isTurn = true;
+        const spy = spyOn(service['skipTurnService'], 'switchTurn');
+        spyOn(service['placeLetterService'], 'placeCommand').and.returnValue(Promise.resolve(false));
+        service['message'] = '!placer h8h test';
+        await service['executePlace']();
+        expect(spy).not.toHaveBeenCalled();
     });
 
-    it('should not display message if place is false when executePlace() is called', () => {
-        service['skipTurn'].isTurn = true;
-        const spy = spyOn(service['skipTurn'], 'switchTurn');
-        spyOn(service['placeLetterService'], 'placeCommand').and.returnValue(false);
-        service.message = '!placer h8h test';
-        service.executePlace();
-        expect(spy).not.toHaveBeenCalled();
+    it('sending a command placer should call executePlace', () => {
+        spyOn<any>(service, 'executePlace');
+        service['message'] = 'placer h8h allo';
+        service['command'] = 'placer';
+        service.sendPlayerMessage(service['message']);
+        expect(service['executePlace']).toHaveBeenCalled();
+    });
+
+    it('using command !reserve while debug is active should call sendMessageService', () => {
+        service['command'] = 'reserve';
+        service['debugService'].isDebugActive = true;
+        service.sendPlayerMessage('!reserve');
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledTimes(service['letterService'].reserve.length);
+    });
+
+    it('using command !reserve while debug is inactive should display the respective message', () => {
+        service['command'] = 'reserve';
+        service['debugService'].isDebugActive = false;
+        service.sendPlayerMessage('!reserve');
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('Commande non réalisable', TypeMessage.Error);
+    });
+
+    it('should call executeHelp() when !aide is written by player', () => {
+        spyOn<any>(service, 'executeHelp');
+        service['message'] = 'aide';
+        service['command'] = 'aide';
+        service.sendPlayerMessage(service['message']);
+        expect(service['executeHelp']).toHaveBeenCalled();
+    });
+
+    it('should write the right help message', () => {
+        let expected = "Liste des commandes :\n\n!aide\nListe l'ensemble des commandes disponibles et explique brièvement leur utilisation. ";
+        expected += "Ne prend aucun argument.\n\n!debug\nActive et désactive l'affichage d'informations relatives aux choix de jeu faits par les ";
+        expected += 'joueurs virtuels. Ne prend aucun argument.\n\n!échanger\nÉchange une ou plusieurs lettres du chevalet. Entrer les lettres à ';
+        expected += 'échanger sans espace entre-elles.\n\n!passer\nPasse son tour. Ne prend aucun argument.\n\n!placer\nPlace une lettre sur le ';
+        expected += "plateau. Entrer les coordonnées de la case de la première lettre,suivi de l'orientation (h pour horizontal ou v pour vertical).";
+        expected += " Vient ensuite le mot à placer. Une lettre en majuscule utilisera la lettre *.\n\n!réserve\nAffiche l'état courant de la ";
+        expected += 'réserve. Ne prend aucun argument.';
+
+        service['command'] = 'aide';
+        service.sendPlayerMessage('!aide');
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith(expected, TypeMessage.System);
     });
 });

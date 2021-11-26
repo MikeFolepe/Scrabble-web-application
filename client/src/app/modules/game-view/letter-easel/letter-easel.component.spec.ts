@@ -3,22 +3,24 @@
 /* eslint-disable dot-notation */
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { INDEX_REAL_PLAYER } from '@app/classes/constants';
-import { Letter } from '@app/classes/letter';
-import { Player } from '@app/models/player.model';
+import { PLAYER_ONE_INDEX } from '@app/classes/constants';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { Letter } from '@common/letter';
 import { LetterEaselComponent } from './letter-easel.component';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { Player } from '@app/models/player.model';
 import { RouterTestingModule } from '@angular/router/testing';
 
 describe('LetterEaselComponent', () => {
     let component: LetterEaselComponent;
     let fixture: ComponentFixture<LetterEaselComponent>;
-    let getLettersSpy: any;
+    let getLettersSpy: jasmine.Spy<(indexPlayer: number) => Letter[]>;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [LetterEaselComponent],
             imports: [HttpClientTestingModule, RouterTestingModule],
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
     });
 
@@ -51,14 +53,6 @@ describe('LetterEaselComponent', () => {
         component.ngOnInit();
         expect(updateSpy).toHaveBeenCalled();
         expect(getLettersSpy).toHaveBeenCalled();
-    });
-
-    it('should update component fontSize and playerService fontSize with new fontSize', () => {
-        spyOn(component['playerService'], 'updateFontSize');
-        const fontSize = 10;
-        component.handleFontSizeEvent(fontSize);
-        expect(component.fontSize).toEqual(fontSize);
-        expect(component['playerService'].updateFontSize).toHaveBeenCalled();
     });
 
     it('left clicking on a letter in the easel should call onLeftClick()', () => {
@@ -108,10 +102,10 @@ describe('LetterEaselComponent', () => {
 
         component.letterEaselTab[0].isSelectedForSwap = true;
         component.swap();
-        expect(swapSpy).toHaveBeenCalledOnceWith(0, INDEX_REAL_PLAYER);
+        expect(swapSpy).toHaveBeenCalledOnceWith(0, PLAYER_ONE_INDEX);
     });
 
-    it('cancelling selection should unselect all letters and disactivate the cancel button', () => {
+    it('cancelling selection should unselect all letters and disable cancel button', () => {
         for (const letters of component.letterEaselTab) {
             letters.isSelectedForSwap = true;
         }
@@ -124,18 +118,18 @@ describe('LetterEaselComponent', () => {
         expect(component.isCancelButtonActive()).toBeTrue();
     });
 
-    it('swap button should be disactive if it is not your turn', () => {
+    it('swap button should be disabled if it is not your turn', () => {
         component['skipTurnService'].isTurn = false;
         expect(component.isSwapButtonActive()).toBeFalse();
     });
 
-    it('swap button should be disactive if there is less than 7 letters in the reserve', () => {
+    it('swap button should be disabled if there is less than 7 letters in the reserve', () => {
         component['skipTurnService'].isTurn = true;
         component['letterService'].reserveSize = 6;
         expect(component.isSwapButtonActive()).toBeFalse();
     });
 
-    it('swap button should be disactive if none letters are selected for swapping', () => {
+    it('swap button should be disabled if none letters are selected for swapping', () => {
         component['skipTurnService'].isTurn = true;
         component['letterService'].reserveSize = 7;
         expect(component.isSwapButtonActive()).toBeFalse();
@@ -177,5 +171,17 @@ describe('LetterEaselComponent', () => {
         const event = new Event('wheel');
         document.dispatchEvent(event);
         expect(component['manipulateService'].onMouseWheelTick).toHaveBeenCalled();
+    });
+
+    it('should be selected to be swapped only if the letter is not already selected for swap or manipulation', () => {
+        component.letterEaselTab[0].isSelectedForSwap = false;
+        component.letterEaselTab[0].isSelectedForManipulation = false;
+        component['handleSwapSelection'](0);
+        expect(component.letterEaselTab[0].isSelectedForSwap).toBeTrue();
+
+        component.letterEaselTab[0].isSelectedForSwap = false;
+        component.letterEaselTab[0].isSelectedForManipulation = true;
+        component['handleSwapSelection'](0);
+        expect(component.letterEaselTab[0].isSelectedForSwap).toBeFalse();
     });
 });
