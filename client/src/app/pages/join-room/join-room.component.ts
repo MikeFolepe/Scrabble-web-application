@@ -14,8 +14,8 @@ import { Room, State } from '@common/room';
 })
 export class JoinRoomComponent implements OnInit {
     rooms: Room[];
-    pageSize: number;
     roomItemIndex: number;
+    pageSize: number;
     shouldDisplayNameError: boolean;
     shouldDisplayJoinError: boolean;
     isRoomAvailable: boolean;
@@ -23,15 +23,15 @@ export class JoinRoomComponent implements OnInit {
 
     constructor(private clientSocketService: ClientSocketService, public dialog: MatDialog) {
         this.rooms = [];
-        this.isRandomButtonAvailable = false;
-        this.isRoomAvailable = false;
-        this.shouldDisplayNameError = false;
-        this.shouldDisplayJoinError = false;
         this.roomItemIndex = 0;
         this.pageSize = 2; // 2 rooms per page
+        this.shouldDisplayNameError = false;
+        this.shouldDisplayJoinError = false;
+        this.isRoomAvailable = false;
+        this.isRandomButtonAvailable = false;
         this.clientSocketService.socket.connect();
-        this.clientSocketService.socket.emit('getRoomsConfiguration');
-        this.clientSocketService.socket.emit('getRoomAvailable');
+        this.clientSocketService.socket.emit('getRoomsConfiguration', this.clientSocketService.gameType);
+        this.clientSocketService.socket.emit('getRoomAvailable', this.clientSocketService.gameType);
         // Method for button and others
         this.receiveRoomAvailable();
         this.receiveRandomPlacement();
@@ -69,7 +69,7 @@ export class JoinRoomComponent implements OnInit {
                     }, ERROR_MESSAGE_DELAY);
                     return;
                 }
-                this.clientSocketService.socket.emit('newRoomCustomer', playerName, room.id);
+                this.clientSocketService.socket.emit('newRoomCustomer', playerName, room.id, this.clientSocketService.gameType);
             });
     }
     placeRandomly(): void {
@@ -79,12 +79,12 @@ export class JoinRoomComponent implements OnInit {
             .subscribe((playerName: string) => {
                 // if user closes the dialog box without input nothing
                 if (playerName === null) return;
-                this.clientSocketService.socket.emit('newRoomCustomerOfRandomPlacement', playerName);
+                this.clientSocketService.socket.emit('newRoomCustomerOfRandomPlacement', playerName, this.clientSocketService.gameType);
             });
     }
     receiveRandomPlacement(): void {
         this.clientSocketService.socket.on('receiveCustomerOfRandomPlacement', (customerName: string, roomId: string) => {
-            this.clientSocketService.socket.emit('newRoomCustomer', customerName, roomId);
+            this.clientSocketService.socket.emit('newRoomCustomer', customerName, roomId, this.clientSocketService.gameType);
         });
     }
 

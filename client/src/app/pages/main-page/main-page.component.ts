@@ -16,7 +16,7 @@ export class MainPageComponent implements OnInit {
     selectedGameTypeIndex: number;
     selectedGameType: string | GameType;
     selectedGameMode?: string;
-    readonly gameType: GameType[];
+    readonly gameType: string[];
     readonly gameModes: string[];
 
     constructor(
@@ -27,19 +27,21 @@ export class MainPageComponent implements OnInit {
         private endGameService: EndGameService,
     ) {
         this.selectedGameTypeIndex = 0;
-        this.gameType = [GameType.Classic, GameType.Log2990];
+        this.gameType = ['Scrabble classique', 'Scrabble LOG2990'];
         this.gameModes = ['Jouer une partie en solo', 'Créer une partie multijoueur', 'Joindre une partie multijoueur'];
     }
 
     ngOnInit() {
-        this.clientSocketService.socket.disconnect();
+        // this.clientSocketService.socket.disconnect();
         this.endGameService.clearAllData();
     }
 
     routeToGameMode(): void {
         // update game type and game mode, then route
         this.selectedGameType = this.gameType[this.selectedGameTypeIndex];
-        this.gameSettingsService.gameType = this.selectedGameType as GameType;
+        const gameTypeIndex = this.gameType[0] === this.selectedGameType ? 0 : 1;
+        this.gameSettingsService.gameType = gameTypeIndex;
+        this.clientSocketService.gameType = gameTypeIndex;
         switch (this.selectedGameMode) {
             case this.gameModes[0]: {
                 this.gameSettingsService.isSoloMode = true;

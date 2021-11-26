@@ -58,7 +58,7 @@ describe('GameViewComponent', () => {
         component.dialog = matDialogMock;
         const spyEmit = spyOn(component['clientSocketService'].socket, 'emit');
         const spyMessage = spyOn(component.sendMessageService, 'sendConversionMessage');
-        component.giveUpGame();
+        component.confirmGiveUpGame();
         expect(spyMessage).toHaveBeenCalled();
         expect(spyEmit).toHaveBeenCalled();
     });
@@ -75,7 +75,7 @@ describe('GameViewComponent', () => {
         component.dialog = matDialogMock;
         const spyEmit = spyOn(component['clientSocketService'].socket, 'emit');
         const spyMessage = spyOn(component.sendMessageService, 'sendConversionMessage');
-        component.giveUpGame();
+        component.confirmGiveUpGame();
         expect(spyEmit).not.toHaveBeenCalled();
         expect(spyMessage).not.toHaveBeenCalled();
     });
