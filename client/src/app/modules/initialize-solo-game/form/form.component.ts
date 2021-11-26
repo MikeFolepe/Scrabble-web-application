@@ -7,6 +7,7 @@ import { BONUS_POSITIONS, PLAYER_ONE_INDEX } from '@app/classes/constants';
 import { CommunicationService } from '@app/services/communication.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { RandomBonusesService } from '@app/services/random-bonuses.service';
+import { WordValidationService } from '@app/services/word-validation.service';
 import { AiPlayerDB, AiType } from '@common/ai-name';
 import { Dictionary } from '@common/dictionary';
 import { GameSettings, StartingPlayer } from '@common/game-settings';
@@ -29,6 +30,7 @@ export class FormComponent implements OnDestroy, OnInit {
         private router: Router,
         private randomBonusService: RandomBonusesService,
         private communicationService: CommunicationService,
+        private wordValidationService: WordValidationService,
     ) {
         this.form = new FormGroup({
             playerName: new FormControl(this.gameSettingsService.gameSettings.playersNames[PLAYER_ONE_INDEX]),
@@ -88,6 +90,7 @@ export class FormComponent implements OnDestroy, OnInit {
             return;
         }
         this.gameDictionary = await this.communicationService.getGameDictionary(dictionary.fileName).toPromise();
+        this.wordValidationService.fileName = dictionary.fileName;
     }
 
     chooseStartingPlayer(): StartingPlayer {
