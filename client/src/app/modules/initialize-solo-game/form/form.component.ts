@@ -74,13 +74,12 @@ export class FormComponent implements OnDestroy {
             this.getRightBonusPositions(),
             'dictionary.json',
             this.initializeObjective([
-                [4, 3],
-                [6, 1],
+                [6, 4],
+                [3, 1],
             ]),
         );
     }
 
-    // [[idx1 = objPublic1, idx2 = ObjPublic2], [idx3 = ton ObjPrive, idx4 = ObjPrive de ton adversaire (multijoueur ou JV)]]
     initializeObjective(forceValue: number[][] = [[], []]): number[][] {
         // TODO: ligne 83 uniquement à des fins de débogage
         if (forceValue[0].length === 2 && forceValue[1].length === 2) return forceValue;
