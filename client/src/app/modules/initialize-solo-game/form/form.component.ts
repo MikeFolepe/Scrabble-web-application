@@ -81,7 +81,7 @@ export class FormComponent implements OnDestroy {
     }
 
     initializeObjective(forceValue: number[][] = [[], []]): number[][] {
-        // TODO: ligne 83 uniquement à des fins de débogage
+        // TODO: ligne suivante uniquement à des fins de débogage
         if (forceValue[0].length === 2 && forceValue[1].length === 2) return forceValue;
         const objectiveIds: number[] = [];
         const objectiveByType: number[][] = [[], []];

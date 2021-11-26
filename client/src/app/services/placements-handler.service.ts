@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { BOARD_COLUMNS, BOARD_ROWS } from '@app/classes/constants';
+import { Direction } from '@app/classes/enum';
 import { Orientation } from '@app/classes/scrabble-board-pattern';
 import { Vec2 } from '@common/vec2';
 import { WordValidationService } from './word-validation.service';
-import { Direction } from '@app/classes/enum';
 
 @Injectable({
     providedIn: 'root',
@@ -101,6 +101,7 @@ export class PlacementsHandlerService {
     }
 
     arePositionsEqual(extentedPositions: string[], playedPositions: string[]): boolean {
+        // TODO: Etienne prendre une decision puis effacer ce todo
         // Slice et compare les 2 tab ?
         let arePositionsEqual = false;
         for (let i = 0; i < playedPositions.length / extentedPositions.length; i++) {

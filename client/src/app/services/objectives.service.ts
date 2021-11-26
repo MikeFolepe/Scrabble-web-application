@@ -63,8 +63,6 @@ export class ObjectivesService {
     }
 
     updateOpponentObjectives(id: number): void {
-        // TODO: on peut enlever le if car si c'est mode solo, on n'est pas connecté au server,
-        // le emit devient du code mort
         if (!this.gameSettingsService.isSoloMode) this.clientSocketService.socket.emit('objectiveAccomplished', id, this.clientSocketService.roomId);
     }
 
@@ -108,7 +106,6 @@ export class ObjectivesService {
                 break;
             }
             case 6: {
-                // TODO: y'a un petit offset de 1 entre le case et le nom de la fonction
                 this.validateObjectiveSeven(id);
                 break;
             }
@@ -123,6 +120,8 @@ export class ObjectivesService {
     }
 
     validateObjectiveOne(id: number) {
+        const numberOfOccurencesToValidate = 3;
+        const minLengthToValidate = 4;
         const actionLog: string[] = [];
         const size = this.endGameService.actionsLog.length - 1;
         let lastWordLength = 0;
@@ -135,15 +134,13 @@ export class ObjectivesService {
             lastWordLength = word.length;
         }
 
-        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-        if (actionLog.length > 0 && actionLog[actionLog.length - 1] !== 'PlacerSucces' && lastWordLength >= 4) {
+        if (actionLog.length > 0 && actionLog[actionLog.length - 1] !== 'PlacerSucces' && lastWordLength >= minLengthToValidate) {
             this.obj1Counter[this.playerIndex]++;
         } else {
             this.obj1Counter[this.playerIndex] = 1;
         }
 
-        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-        if (this.obj1Counter[this.playerIndex] === 4) {
+        if (this.obj1Counter[this.playerIndex] === numberOfOccurencesToValidate) {
             this.addObjectiveScore(id);
             this.obj1Counter[this.playerIndex] = 0;
         }
@@ -164,7 +161,8 @@ export class ObjectivesService {
             for (const position of positions) {
                 this.isPositionInPlayedWords(position, playedPositionsUsed);
             }
-            console.log('MOTS INTERSECTIONS : ', playedPositionsUsed);
+            // TODO: supprimer cette ligne lorsque satisfait
+            // console.log('MOTS INTERSECTIONS : ', playedPositionsUsed);
             if (playedPositionsUsed.length > 1) {
                 this.addObjectiveScore(id);
                 return;
@@ -216,6 +214,7 @@ export class ObjectivesService {
         }
     }
 
+    // TODO: nom de fonction peut etre ameliorée eventuellement
     isPositionInPlayedWords(position: string, playedPositionsUsed: string[][]) {
         for (const playedPositions of this.wordValidationService.priorPlayedWords.values()) {
             if (playedPositions.includes(position) && !playedPositionsUsed.includes(playedPositions)) {
