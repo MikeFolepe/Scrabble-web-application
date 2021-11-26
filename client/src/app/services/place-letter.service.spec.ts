@@ -55,6 +55,7 @@ describe('PlaceLetterService', () => {
         spyOn(service['sendMessageService'], 'displayMessageByType');
         spyOn(service['sendMessageService'], 'receiveMessageFromOpponent');
         spyOn(service['sendMessageService'], 'sendMessageToOpponent');
+        spyOn(service['objectivesService'], 'checkObjectivesCompletion');
     });
 
     afterEach(() => {

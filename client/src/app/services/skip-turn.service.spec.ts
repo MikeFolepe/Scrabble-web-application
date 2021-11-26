@@ -214,6 +214,8 @@ describe('SkipTurnService', () => {
     });
 
     it('should stop the timer and then switch turn when the countdown is done ', () => {
+        spyOn(service, 'updateActiveTime');
+        service['endGameService'].actionsLog = [];
         service.gameSettingsService.gameSettings.timeMinute = '00';
         service.gameSettingsService.gameSettings.timeSecond = '00';
         endGameService.isEndGame = false;
@@ -240,16 +242,16 @@ describe('SkipTurnService', () => {
     });
 
     it('should not udpate the active time if the turn is false', () => {
-        service['objectivesService'].activeTime = 0;
+        service['objectivesService'].activeTimeRemaining[0] = 60;
         service.isTurn = false;
         service.updateActiveTime();
-        expect(service['objectivesService'].activeTime).toEqual(0);
+        expect(service['objectivesService'].activeTimeRemaining[0]).toEqual(60);
     });
 
     it('should  udpate the active time if the turn is true', () => {
-        service['objectivesService'].activeTime = 0;
+        service['objectivesService'].activeTimeRemaining[0] = 60;
         service.isTurn = true;
         service.updateActiveTime();
-        expect(service['objectivesService'].activeTime).not.toEqual(0);
+        expect(service['objectivesService'].activeTimeRemaining[0]).not.toEqual(60);
     });
 });

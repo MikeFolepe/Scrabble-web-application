@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { GameSettingsService } from '@app/services/game-settings.service';
 import { ObjectivesService } from '@app/services/objectives.service';
-import { Objective } from '@common/objectives';
+// import { SkipTurnService } from '@app/services/skip-turn.service';
+import { Objective } from '@app/classes/objectives';
 
 @Component({
     selector: 'app-objectives',
@@ -8,21 +10,23 @@ import { Objective } from '@common/objectives';
     styleUrls: ['./objectives.component.scss'],
 })
 export class ObjectivesComponent implements OnInit {
-    privateObjectives: Objective[];
-    publicObjectives: Objective[];
+    objectives: Objective[][];
+    activeTimeRemaining: number;
 
-    constructor(private objectivesService: ObjectivesService) {}
-
-    ngOnInit() {
-        this.privateObjectives = this.objectivesService.privateObjectives;
-        this.publicObjectives = this.objectivesService.publicObjectives;
+    constructor(
+        public objectivesService: ObjectivesService,
+        public gameSettingsService: GameSettingsService, // private skipTurnService: SkipTurnService,
+    ) {
+        this.objectives = [[], []];
     }
 
-    onUpdate(): void {
-        // TODO regarder les nombres magic ici
-        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-        const indexes: number[] = [3, 0, 7, 4];
-        this.objectivesService.initializeObjectives(indexes);
-        this.privateObjectives[1].isCompleted = true;
+    resolveByTurn(): number {
+        // if (this.gameSettingsService.isSoloMode) return this.skipTurnService.isTurn ? 0 : 1;
+
+        return 0;
+    }
+
+    ngOnInit() {
+        this.objectives = this.objectivesService.objectives;
     }
 }

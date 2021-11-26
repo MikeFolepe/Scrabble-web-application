@@ -153,7 +153,7 @@ describe('RoomManagerService', () => {
         expect(roomManagerService.findLooserIndex(fakeSocket)).to.equal(OUT_BOUND_INDEX_OF_SOCKET);
     });
 
-    it('should return  the winner name depend of the index  the player who give up the game ', () => {
+    it('should return the winner name depend of the index  the player who give up the game ', () => {
         roomManagerService.createRoom(socketId1, id, settings, GameType.Classic);
         const socketId2 = 'socket2';
         roomManagerService.setSocket(roomManagerService.rooms[0][0], socketId2);
