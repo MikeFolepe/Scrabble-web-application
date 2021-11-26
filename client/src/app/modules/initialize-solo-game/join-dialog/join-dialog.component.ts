@@ -1,3 +1,5 @@
+// TODO renommer quelque chose du genre name-selector.component.ts car est utilisé dans plusieurs components
+
 import { Component, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';

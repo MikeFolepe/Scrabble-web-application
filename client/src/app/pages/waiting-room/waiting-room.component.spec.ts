@@ -31,7 +31,7 @@ describe('WaitingRoomComponent', () => {
     it('should redirect to home page if the Owner name is empty', () => {
         jasmine.clock().install();
 
-        component['gameSettingsService'].gameSettings = new GameSettings(['', ''], 1, '01', '00', 'Facile', 'Activer', 'francais', '00');
+        component['gameSettingsService'].gameSettings = new GameSettings(['', ''], 1, '01', '00', 'Facile', 'Activer', 'francais', []);
         component.handleReloadErrors();
         jasmine.clock().tick(6000);
         expect(component.status).toEqual('Une erreur est survenue');
@@ -42,7 +42,7 @@ describe('WaitingRoomComponent', () => {
     it('should not redirect to home page if the Owner name is not empty', () => {
         jasmine.clock().install();
         component.status = 'test';
-        component['gameSettingsService'].gameSettings = new GameSettings(['Mike', ''], 1, '01', '00', 'Facile', 'Activer', 'francais', 'ooo');
+        component['gameSettingsService'].gameSettings = new GameSettings(['Mike', ''], 1, '01', '00', 'Facile', 'Activer', 'francais', []);
         component.handleReloadErrors();
         jasmine.clock().tick(4000);
         expect(component.status).toEqual('test');
@@ -59,7 +59,7 @@ describe('WaitingRoomComponent', () => {
 
     it('should route the user a the view on init', () => {
         jasmine.clock().install();
-        component['gameSettingsService'].gameSettings = new GameSettings(['Mike', ''], 1, '01', '00', 'Facile', 'Activer', 'null', 'francais');
+        component['gameSettingsService'].gameSettings = new GameSettings(['Mike', ''], 1, '01', '00', 'Facile', 'Activer', 'null', []);
         component['gameSettingsService'].isRedirectedFromMultiplayerGame = false;
         component['gameSettingsService'].isSoloMode = false;
         component.routeToGameView();

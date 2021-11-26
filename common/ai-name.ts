@@ -8,3 +8,8 @@ export type AiPlayerDB = {
     aiName: string;
     isDefault: boolean;
 };
+
+export enum AiType {
+    beginner,
+    expert,
+}

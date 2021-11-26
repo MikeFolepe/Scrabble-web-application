@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-types */
+import { AiType } from '@common/ai-name';
 import { AI_BEGINNERS, AI_EXPERTS, DATABASE_URL, DEFAULT_SCORES } from '@app/classes/constants';
-import { BEGINNER_NAME_MODEL, EXPERT_NAME_MODEL, SCORES_MODEL } from '@app/classes/database.schema';
+import { SCORES_MODEL, AI_MODELS, DbModel } from '@app/classes/database.schema';
 import { GameType } from '@common/game-type';
 import { PlayerScore } from '@common/player';
 import * as mongoose from 'mongoose';
@@ -8,13 +9,14 @@ import { Service } from 'typedi';
 
 @Service()
 export class DatabaseService {
+    database: mongoose.Mongoose = mongoose;
     private options = {
         useNewUrlParser: true,
         useUnifiedTopology: true,
     } as mongoose.ConnectOptions;
 
     async start(url: string = DATABASE_URL): Promise<void> {
-        await mongoose
+        await this.database
             .connect(url, this.options)
             .then(() => {
                 // JUSTIFICATION : required in order to display the DB connection status
@@ -24,7 +26,10 @@ export class DatabaseService {
             .catch(() => {
                 throw new Error('Distant database connection error');
             });
-        this.setDefaultData();
+
+        this.setDefaultData(AiType.beginner);
+        this.setDefaultData(AiType.expert);
+
         this.setDefaultScores(GameType.Classic);
         this.setDefaultScores(GameType.Log2990);
     }
@@ -32,6 +37,7 @@ export class DatabaseService {
     async closeConnection(): Promise<void> {
         await mongoose.connection.close();
     }
+
     async setDefaultScores(gameType: GameType): Promise<void> {
         const scoresModel = SCORES_MODEL.get(gameType) as mongoose.Model<PlayerScore>;
         await scoresModel.deleteMany({ isDefault: true }).exec();
@@ -45,35 +51,17 @@ export class DatabaseService {
         }
     }
 
-    async setDefaultData(): Promise<void> {
-        await BEGINNER_NAME_MODEL.deleteMany({ isDefault: true }).exec();
-        await EXPERT_NAME_MODEL.deleteMany({ isDefault: true }).exec();
+    async setDefaultData(aiType: AiType): Promise<void> {
+        const aiModel = AI_MODELS.get(aiType) as DbModel;
+        await aiModel.deleteMany({ isDefault: true }).exec();
 
-        for (const aiBeginner of AI_BEGINNERS) {
-            const beginner = new BEGINNER_NAME_MODEL({
-                aiName: aiBeginner.aiName,
-                isDefault: aiBeginner.isDefault,
+        const players = aiType ? AI_EXPERTS : AI_BEGINNERS;
+        for (const aiPlayer of players) {
+            const player = new aiModel({
+                aiName: aiPlayer.aiName,
+                isDefault: aiPlayer.isDefault,
             });
-            await beginner.save();
+            await player.save();
         }
-
-        for (const aiExpert of AI_EXPERTS) {
-            const expert = new EXPERT_NAME_MODEL({
-                aiName: aiExpert.aiName,
-                isDefault: aiExpert.isDefault,
-            });
-            await expert.save();
-        }
-    }
-
-    async resetScores(gameType: GameType): Promise<void> {
-        const scoresModel = SCORES_MODEL.get(gameType) as mongoose.Model<PlayerScore>;
-        await scoresModel.deleteMany({ isDefault: false }).exec();
-    }
-
-    async resetData(): Promise<void> {
-        await BEGINNER_NAME_MODEL.deleteMany({ isDefault: false }).exec();
-        await EXPERT_NAME_MODEL.deleteMany({ isDefault: false }).exec();
-        // TODO supprimer dictionnaires
     }
 }

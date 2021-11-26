@@ -12,6 +12,6 @@ export class GameSettings {
         public level: string,
         public randomBonus: string,
         public bonusPositions: string,
-        public dictionary: string,
+        public dictionary: string[],
     ) {}
 }
