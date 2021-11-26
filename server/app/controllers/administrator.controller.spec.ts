@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 import { Application } from '@app/app';
 import { AdministratorService } from '@app/services/administrator.service';
-import { AiPlayerDB } from '@common/ai-name';
+import { AiPlayerDB, AiType } from '@common/ai-name';
 import * as chai from 'chai';
 import { expect } from 'chai';
 import { StatusCodes } from 'http-status-codes';
@@ -125,6 +125,73 @@ describe.only('AdminController', () => {
                 done();
             });
     });
+
+    it('should handle the error while deleting the beginners ', (done) => {
+        const stubOnDelete = Sinon.stub(administratorService, 'deleteAiPlayer').returns(Promise.reject(new Error('fail')));
+        chai.request(expressApp)
+            .delete('/api/admin/aiBeginners/1')
+            .end((err, response) => {
+                expect(stubOnDelete.called).to.equal(true);
+                expect(response.status).to.equal(StatusCodes.NOT_MODIFIED);
+                stubOnDelete.restore();
+                done();
+            });
+    });
+
+    it('should handle the error while deleting the experts ', (done) => {
+        const stubOnDelete = Sinon.stub(administratorService, 'deleteAiPlayer').returns(Promise.reject(new Error('fail')));
+        chai.request(expressApp)
+            .delete('/api/admin/aiExperts/1')
+            .end((err, response) => {
+                expect(stubOnDelete.called).to.equal(true);
+                expect(response.status).to.equal(StatusCodes.NOT_MODIFIED);
+                stubOnDelete.restore();
+                done();
+            });
+    });
+
+    it('should add the the Ai', (done) => {
+        const aiPlayer = {
+            aiName: 'Miss_Betty',
+            isDefault: true,
+        };
+        const stubOnAdd = Sinon.stub(administratorService, 'addAiPlayer').returns(Promise.resolve(aiPlayers[1]));
+        chai.request(expressApp)
+            .post('/api/admin/aiPlayers')
+            .send({
+                aiPlayer,
+                aiType: AiType.beginner,
+            })
+            .end((err, response) => {
+                expect(stubOnAdd.called).to.equal(true);
+                expect(response.status).to.equal(StatusCodes.OK);
+                expect(response.body).to.deep.equal(aiPlayers[1]);
+                stubOnAdd.restore();
+                done();
+            });
+    });
+
+    it('should handle an error while adding the Ai', (done) => {
+        const aiPlayer = {
+            aiName: 'Miss_Betty',
+            isDefault: true,
+        };
+        const stubOnAdd = Sinon.stub(administratorService, 'addAiPlayer').returns(Promise.reject(new Error('fail')));
+        chai.request(expressApp)
+            .post('/api/admin/aiPlayers')
+            .send({
+                aiPlayer,
+                aiType: AiType.beginner,
+            })
+            .end((err, response) => {
+                expect(stubOnAdd.called).to.equal(true);
+                expect(response.status).to.equal(StatusCodes.NOT_ACCEPTABLE);
+                stubOnAdd.restore();
+                done();
+            });
+    });
+
+    
 
     // it('should return the result of a validation from a valid post request from the client', (done) => {
     //     const stubValidate = Sinon.stub(wordValidationService, 'isValidInDictionary').returns(true);

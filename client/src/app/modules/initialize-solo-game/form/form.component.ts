@@ -31,7 +31,11 @@ export class FormComponent implements OnDestroy, OnInit {
         private randomBonusService: RandomBonusesService,
         private communicationService: CommunicationService,
         private wordValidationService: WordValidationService,
-    ) {
+    ) {}
+
+    async ngOnInit(): Promise<void> {
+        await this.initializeDictionaries();
+        await this.selectGameDictionary(this.dictionaries[0]);
         this.form = new FormGroup({
             playerName: new FormControl(this.gameSettingsService.gameSettings.playersNames[PLAYER_ONE_INDEX]),
             minuteInput: new FormControl(this.gameSettingsService.gameSettings.timeMinute),
@@ -39,11 +43,6 @@ export class FormComponent implements OnDestroy, OnInit {
             levelInput: new FormControl(this.gameSettingsService.gameSettings.level),
             randomBonus: new FormControl(this.gameSettingsService.gameSettings.randomBonus),
         });
-    }
-
-    async ngOnInit(): Promise<void> {
-        await this.initializeDictionaries();
-        await this.selectGameDictionary(this.dictionaries[0]);
         this.initializeAiPlayers();
     }
 
