@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import { AiType } from '@common/ai-name';
 import { AI_BEGINNERS, AI_EXPERTS, DATABASE_URL, DEFAULT_SCORES } from '@app/classes/constants';
-import { SCORES_MODEL, AI_MODELS, DbModel } from '@app/classes/database.schema';
+import { AI_MODELS, DbModel, SCORES_MODEL } from '@app/classes/database.schema';
+import { AiType } from '@common/ai-name';
 import { GameType } from '@common/game-type';
 import { PlayerScore } from '@common/player';
 import * as mongoose from 'mongoose';

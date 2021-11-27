@@ -23,7 +23,8 @@ export class BestScoresService {
                 playerName: player.playerName,
                 isDefault: player.isDefault,
             });
-            await scoreToAdd.save();
+            const playerFound = await scoresModel.find({ playerName: player.playerName, score: player.score }).exec();
+            if (playerFound.length === 0) await scoreToAdd.save();
         }
     }
 

@@ -1,31 +1,26 @@
-/* eslint-disable @typescript-eslint/no-require-imports */
-/* eslint-disable dot-notation */
-// import { AI_MODELS } from '@app/classes/database.schema';
-import { AiType } from '@common/ai-name';
-import { expect } from 'chai';
+// TODO: à tester
+/* eslint-disable @typescript-eslint/no-magic-numbers */
+import { MongoMemoryServer } from 'mongodb-memory-server-core';
+import * as sinon from 'sinon';
 import { DatabaseService } from './database.service';
-// import Sinon = require('sinon');
-// import { MongoMemoryServer } from 'mongodb-memory-server';
 
-describe('databaSeservice', () => {
-    let databaseService: DatabaseService;
+describe('databaseService', () => {
+    let service: DatabaseService;
+    let mongoServer: MongoMemoryServer;
+    // let fakeUrl: string;
 
     beforeEach(async () => {
-        databaseService = new DatabaseService();
+        mongoServer = await MongoMemoryServer.create();
+        // fakeUrl = mongoServer.getUri('fakedatabase');
     });
 
     afterEach(async () => {
-        if (databaseService.database.connection.readyState) {
-            await databaseService.closeConnection();
-        }
+        sinon.restore();
+        await mongoServer.stop();
+        await service.closeConnection();
     });
 
-    it('start(): should connect to the database when start is called', async () => {
-        await databaseService.start();
-        expect(databaseService.database.connection.readyState).to.equal(1);
-    });
-
-    it('start(): should not connect to the database when start is called with wrong URL', async () => {
-        databaseService.setDefaultData(AiType.beginner);
-    });
+    // it('setDefault score should should call mongoose save method', () => {
+    //     const saveSpy = fakeUrl;
+    // });
 });

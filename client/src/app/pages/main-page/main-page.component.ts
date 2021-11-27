@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { BestScoresComponent } from '@app/pages/best-scores/best-scores.component';
 import { ClientSocketService } from '@app/services/client-socket.service';
 // import { EndGameService } from '@app/services/end-game.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
@@ -22,6 +24,7 @@ export class MainPageComponent {
     constructor(
         public gameSettingsService: GameSettingsService,
         private router: Router,
+        public bestScoresDialog: MatDialog,
         private clientSocketService: ClientSocketService,
         private letterService: LetterService,
         private placeLetterService: PlaceLetterService,
@@ -55,5 +58,9 @@ export class MainPageComponent {
                 break;
             }
         }
+    }
+
+    openBestScoresDialog() {
+        this.bestScoresDialog.open(BestScoresComponent, { disableClose: true });
     }
 }
