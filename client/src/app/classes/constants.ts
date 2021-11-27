@@ -30,6 +30,8 @@ export const PLAYER_ONE_INDEX = 0;
 export const PLAYER_TWO_INDEX = 1;
 export const PLAYER_AI_INDEX = 1;
 export const LAST_INDEX = -1;
+export const DEFAULT_DICTIONARY_INDEX = 0;
+
 export const FONT_SIZE_MAX = 20;
 export const FONT_SIZE_MIN = 10;
 export const DEFAULT_FONT_SIZE = 13;
