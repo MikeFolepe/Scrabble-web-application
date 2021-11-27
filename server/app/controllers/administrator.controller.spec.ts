@@ -67,7 +67,7 @@ describe('AdminController', () => {
         expressApp = app.app;
     });
 
-    it('should return the the beginner Ais', (done) => {
+    it('should return the beginner Ais', (done) => {
         const stubOnGet = Sinon.stub(administratorService, 'getAllAiPlayers').returns(Promise.resolve(aiPlayers));
         chai.request(expressApp)
             .get('/api/admin/aiBeginners')
@@ -80,7 +80,7 @@ describe('AdminController', () => {
             });
     });
 
-    it('should return the the experts Ais', (done) => {
+    it('should return the experts Ais', (done) => {
         const stubOnGet = Sinon.stub(administratorService, 'getAllAiPlayers').returns(Promise.resolve(aiPlayers));
         chai.request(expressApp)
             .get('/api/admin/aiExperts')

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
 import { CommunicationService } from '@app/services/communication.service';
 import { GameType } from '@common/game-type';
 import { PlayerScore } from '@common/player';
@@ -11,7 +12,8 @@ import { PlayerScore } from '@common/player';
 export class BestScoresComponent implements OnInit {
     bestPlayersInClassicMode: PlayerScore[];
     bestPlayersInLog2990Mode: PlayerScore[];
-    constructor(private communicationService: CommunicationService) {}
+
+    constructor(public bestScoresDialogRef: MatDialogRef<BestScoresComponent>, private communicationService: CommunicationService) {}
 
     ngOnInit(): void {
         this.communicationService.getBestPlayers(GameType.Classic).subscribe((players: PlayerScore[]) => (this.bestPlayersInClassicMode = players));
