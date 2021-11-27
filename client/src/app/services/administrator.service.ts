@@ -199,7 +199,7 @@ export class AdministratorService {
         });
     }
 
-    resetData(): void {
+    async resetData(): Promise<void> {
         this.isResetting = true;
 
         this.resetAiPlayers();
@@ -207,6 +207,7 @@ export class AdministratorService {
         this.resetScores();
 
         this.isResetting = false;
+        // TODO fix envoie message reset
         this.displayMessage('La base de données à été réinitialisée');
     }
 

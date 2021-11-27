@@ -47,7 +47,7 @@ export class AdministratorService {
         const files = fileSystem.readdirSync('./dictionaries/', 'utf8');
         for (const file of files) {
             const readFile = JSON.parse(fileSystem.readFileSync(`./dictionaries/${file}`, 'utf8'));
-            const isDefault = file === 'dictionary.json' ? true : false;
+            const isDefault = file === 'dictionary.json';
             const dictionary: Dictionary = {
                 fileName: file,
                 title: readFile.title,

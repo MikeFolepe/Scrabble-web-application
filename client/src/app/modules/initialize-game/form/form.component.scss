@@ -42,3 +42,16 @@
     margin-top: 2%;
     margin-bottom: 2%;
 }
+
+.warning {
+    color: red;
+}
+
+.loading {
+    display: flex;
+    height: 50%;
+    font-size: large;
+    align-items: center;
+    justify-content: center;
+    margin: auto auto;
+}

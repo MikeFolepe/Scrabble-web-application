@@ -98,22 +98,22 @@ h2 {
     padding-bottom: 0.5em;
 }
 
+.accordion-buttons button {
+    color: white;
+}
+
 .mat-expansion-panel-header-title {
     font-weight: bold;
 }
 
-// TODO renommer classes
-.example-headers-align .mat-expansion-panel-header-title,
-.example-headers-align .mat-expansion-panel-header-description {
-    flex-basis: 0;
-}
-
-.example-headers-align .mat-expansion-panel-header-description {
+::ng-deep .mat-expansion-panel-header-title,
+.mat-expansion-panel-header-description {
+    flex-grow: 0;
     justify-content: space-between;
     align-items: center;
 }
 
-.example-headers-align .mat-form-field + .mat-form-field {
+.mat-form-field + .mat-form-field {
     margin-left: 8px;
 }
 
@@ -249,25 +249,37 @@ h2 {
     opacity: 0;
 }
 
-.visible {
-    opacity: 1;
+.upload {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.invisible {
-    opacity: 0;
+.content .text {
+    margin-bottom: 0;
+    display: inline-block;
+    height: 25px;
+}
+
+.content .description {
+    margin-bottom: 0;
+    display: inline-block;
+    height: 25px;
+    font-size: smaller;
+}
+
+.content .file {
+    margin-bottom: 0;
 }
 
 .fill {
-    margin-right: 2em;
+    margin-right: 1em;
     border-radius: 4em;
     border-style: solid;
-    border-width: 0.1em;
+    border-width: 0.2em;
     height: 3.8em;
     width: 15em;
     font-size: 18px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 .fill:hover,
@@ -275,26 +287,19 @@ h2 {
     box-shadow: inset 0 0 0 5em var(--hover);
 }
 
-$colors: (
-    fill: green,
-);
-
-@each $button, $color in $colors {
-    .#{$button} {
-        --color: #{$color};
-        --hover: #{adjust-hue($color, 45deg)};
-    }
+button {
+    color: green;
 }
 
-button {
-    color: var(--color);
-
-    &:hover,
-    &:focus {
-        border-width: 0.1em;
-        border-color: white;
-        color: #fff;
-    }
+.content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    align-content: center;
+    flex-wrap: wrap;
+    flex-direction: row;
 }
 
 #reset {
@@ -313,13 +318,6 @@ button {
 .success {
     color: green;
     border: 3px solid green;
-}
-
-.accepted-file {
-    font-size: 14px;
-    position: absolute;
-    top: 2.4em;
-    left: 5.8em;
 }
 
 .delete-confirm {
@@ -357,19 +355,113 @@ button {
 }
 .delete-confirm button.delete.confirm ~ button.yes {
     transform: translate(-100%, 0);
-    background-color: #f44336;
+    background-color: #00aa05;
 }
 .delete-confirm button.delete.confirm ~ button.yes:after {
-    background-color: #f44336;
-    border: 2px solid #f44336;
+    background-color: #00aa05;
+    border: 2px solid #00aa05;
 }
 .delete-confirm button.delete.confirm ~ button.no {
     transform: translate(100%, 0);
-    background-color: #00aa05;
+    background-color: #f44336;
 }
 .delete-confirm button.delete.confirm ~ button.no:after {
+    background-color: #f44336;
+    border: 2px solid #f44336;
+}
+.delete-confirm button.yes,
+.delete-confirm button.no {
+    position: absolute;
+    top: 0;
+    color: #00aa05;
+    visibility: hidden;
+    z-index: 1;
+    transition: all 0.5s ease, visibility 0.5s, background-color 0.3s ease;
+    height: 5em;
+    width: 8em;
+}
+.delete-confirm button.yes:after,
+.delete-confirm button.no:after {
+    content: '';
+    display: block;
+    opacity: 0;
+    position: absolute;
+    box-sizing: border-box;
+    top: 50%;
+    width: 8px;
+    height: 8px;
     background-color: #00aa05;
     border: 2px solid #00aa05;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    z-index: 2;
+}
+.delete-confirm button.yes {
+    left: 0;
+}
+.delete-confirm button.yes:after {
+    right: 0;
+    transform: translate(50%, -50%);
+}
+.delete-confirm button.no {
+    right: 0;
+}
+.delete-confirm button.no:after {
+    left: 0;
+    transform: translate(-50%, -50%);
+}
+.delete-confirm button:focus {
+    outline: none;
+}
+
+.delete-confirm {
+    position: relative;
+    display: inline-block;
+    margin: 2em 0;
+}
+.delete-confirm button {
+    position: relative;
+    border: none;
+    border-radius: 6px;
+}
+.delete-confirm button.delete {
+    z-index: 3;
+    transition: all 0.2s ease 0.1s;
+    height: 5em;
+    width: 12em;
+}
+.delete-confirm button.delete.confirm {
+    transition: all 0.2s ease 0.2s;
+    z-index: 0;
+}
+.delete-confirm button.delete.confirm ~ button.yes,
+.delete-confirm button.delete.confirm ~ button.no {
+    visibility: visible;
+    color: white;
+    height: 5em;
+    width: 8em;
+    transition: all 0.5s ease, visibility 0, background-color 0.3s ease 0.2s;
+}
+.delete-confirm button.delete.confirm ~ button.yes:after,
+.delete-confirm button.delete.confirm ~ button.no:after {
+    opacity: 1;
+    transition: all 0.3s ease 0.2s;
+}
+.delete-confirm button.delete.confirm ~ button.yes {
+    transform: translate(-100%, 0);
+    background-color: #00aa05;
+}
+.delete-confirm button.delete.confirm ~ button.yes:after {
+    background-color: #00aa05;
+    border: 2px solid #00aa05;
+}
+.delete-confirm button.delete.confirm ~ button.no {
+    transform: translate(100%, 0);
+    background-color: #f44336;
+}
+.delete-confirm button.delete.confirm ~ button.no:after {
+    background-color: #f44336;
+    border: 2px solid #f44336;
 }
 .delete-confirm button.yes,
 .delete-confirm button.no {

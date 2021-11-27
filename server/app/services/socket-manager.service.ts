@@ -96,7 +96,7 @@ export class SocketManagerService {
                 socket.emit('receiveCustomerOfRandomPlacement', customerName, room.id);
             });
 
-            // Method to get to update the room available when you acces join-room page
+            // Method to get to update the room available when you access join-room page
             socket.on('getRoomAvailable', (gameType: GameType) => {
                 this.sio.emit('roomAvailable', this.roomManagerService.getNumberOfRoomInWaitingState(gameType));
             });
