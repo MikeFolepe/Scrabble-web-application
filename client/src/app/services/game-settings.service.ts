@@ -12,7 +12,7 @@ export class GameSettingsService {
         startingPlayer: StartingPlayer.Player1,
         timeMinute: '01',
         timeSecond: '00',
-        level: 'Facile', // TODO changer partout pour Débutant / Expert voire faire enum directement
+        level: 'Débutant', // TODO changer partout pour Débutant / Expert voire faire enum directement
         randomBonus: 'Désactiver',
         bonusPositions: JSON.stringify(Array.from(BONUS_POSITIONS)),
         dictionary: '',

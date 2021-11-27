@@ -57,14 +57,12 @@ export class FormComponent implements OnInit, OnDestroy {
 
     // Checks if dictionary is not deleted and update the attributes
     async selectGameDictionary(dictionary: Dictionary): Promise<void> {
-        this.dictionaries = await this.communicationService.getDictionaries().toPromise();
-
-        if (!this.dictionaries.find((dictionaryInArray: Dictionary) => dictionary.title === dictionaryInArray.title)) {
+        const dictionaries = await this.communicationService.getDictionaries().toPromise();
+        if (!dictionaries.find((dictionaryInArray: Dictionary) => dictionary.title === dictionaryInArray.title)) {
             this.isDictionaryDeleted = true;
             this.form.controls.dictionaryInput.setErrors({ incorrect: true });
             return;
         }
-
         this.isDictionaryDeleted = false;
         if (this.form) this.form.controls.dictionaryInput.setErrors(null);
         this.selectedDictionary = dictionary;
@@ -104,7 +102,7 @@ export class FormComponent implements OnInit, OnDestroy {
         do {
             // Random value [0, AI_NAME_DATABASE.length[
             const randomNumber = Math.floor(Math.random() * this.beginnersAi.length);
-            randomName = levelInput === 'Facile' ? this.beginnersAi[randomNumber].aiName : this.expertsAi[randomNumber].aiName;
+            randomName = levelInput === 'Débutant' ? this.beginnersAi[randomNumber].aiName : this.expertsAi[randomNumber].aiName;
         } while (randomName === this.form.controls.playerName.value);
         return randomName;
     }

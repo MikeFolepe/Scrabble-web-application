@@ -21,7 +21,7 @@ describe('RandomBonusComponent', () => {
             playerName: new FormControl('player 1'),
             minuteInput: new FormControl('01'),
             secondInput: new FormControl('00'),
-            levelInput: new FormControl('Facile'),
+            levelInput: new FormControl('Débutant'),
             randomBonus: new FormControl('Non'),
         });
 

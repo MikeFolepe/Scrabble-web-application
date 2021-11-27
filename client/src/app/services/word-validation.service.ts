@@ -198,6 +198,7 @@ export class WordValidationService {
         let scoreTotal = 0;
         this.passThroughAllRowsOrColumns(scrabbleBoard, isRow);
         this.passThroughAllRowsOrColumns(scrabbleBoard, !isRow);
+
         this.validationState = await this.httpServer.validationPost(this.newPlayedWords, this.fileName).toPromise();
         if (!this.validationState) {
             this.newPlayedWords.clear();
@@ -213,6 +214,7 @@ export class WordValidationService {
             this.newPlayedWords.clear();
             return { validation: this.validationState, score: scoreTotal };
         }
+
         this.removeBonuses(this.newPlayedWords);
 
         this.lastPlayedWords.clear();

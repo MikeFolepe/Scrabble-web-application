@@ -14,11 +14,13 @@ export class PlaceLetterStrategy {
     }
 
     async execute(playerAiService: PlayerAIService): Promise<void> {
+        console.log('execute');
         const playerAi = playerAiService.playerService.players[PLAYER_AI_INDEX] as PlayerAI;
         const level = playerAiService.gameSettingsService.gameSettings.level;
         const isFirstRound = playerAiService.placeLetterService.isFirstRound;
         const scrabbleBoard = playerAiService.placeLetterService.scrabbleBoard;
         this.dictionary = playerAiService.gameSettingsService.gameDictionary;
+        console.log('dico', this.dictionary);
         let allPossibleWords: PossibleWords[];
         let matchingPointingRangeWords: PossibleWords[] = [];
 
@@ -36,8 +38,8 @@ export class PlaceLetterStrategy {
         allPossibleWords = await playerAiService.calculatePoints(allPossibleWords);
         playerAiService.sortDecreasingPoints(allPossibleWords);
         matchingPointingRangeWords = playerAiService.filterByRange(allPossibleWords, this.pointingRange);
-        if (level === 'Difficile') await this.computeResults(allPossibleWords, playerAiService);
-        if (level === 'Facile') await this.computeResults(matchingPointingRangeWords, playerAiService, false);
+        if (level === 'Expert') await this.computeResults(allPossibleWords, playerAiService);
+        if (level === 'Débutant') await this.computeResults(matchingPointingRangeWords, playerAiService, false);
 
         playerAiService.debugService.receiveAIDebugPossibilities(allPossibleWords);
     }

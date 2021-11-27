@@ -33,7 +33,7 @@ describe('FormComponent', () => {
             playerName: new FormControl(''),
             minuteInput: new FormControl('70'),
             secondInput: new FormControl('00'),
-            levelInput: new FormControl('Facile'),
+            levelInput: new FormControl('Débutant'),
             randomBonus: new FormControl('Désactiver'),
         });
 
@@ -81,16 +81,16 @@ describe('FormComponent', () => {
     });
 
     // it('should have a predefined name for AI', () => {
-    //     const result = component['chooseRandomAIName']('Facile');
+    //     const result = component['chooseRandomAIName']('Débutant');
     //     expect(component.expertsAi.values).toContain(result);
     // });
 
     it('should have a different name from the player', () => {
-        component.form.controls.playerName.setValue(component['chooseRandomAIName']('Facile'));
+        component.form.controls.playerName.setValue(component['chooseRandomAIName']('Débutant'));
         // To consider randomness, we simulate three times the AI name
-        const firstAiName = component['chooseRandomAIName']('Facile');
-        const secondAiName = component['chooseRandomAIName']('Facile');
-        const thirdAiName = component['chooseRandomAIName']('Facile');
+        const firstAiName = component['chooseRandomAIName']('Débutant');
+        const secondAiName = component['chooseRandomAIName']('Débutant');
+        const thirdAiName = component['chooseRandomAIName']('Débutant');
         expect(firstAiName).not.toEqual(component.form.controls.playerName.value);
         expect(secondAiName).not.toEqual(component.form.controls.playerName.value);
         expect(thirdAiName).not.toEqual(component.form.controls.playerName.value);
@@ -134,7 +134,7 @@ describe('FormComponent', () => {
             playerName: new FormControl(''),
             minuteInput: new FormControl('01'),
             secondInput: new FormControl('00'),
-            levelInput: new FormControl('Facile'),
+            levelInput: new FormControl('Débutant'),
             randomBonus: new FormControl('Activer'),
         });
         const bonus = component['getRightBonusPositions']();
