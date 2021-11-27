@@ -14,13 +14,11 @@ export class PlaceLetterStrategy {
     }
 
     async execute(playerAiService: PlayerAIService): Promise<void> {
-        console.log('execute');
         const playerAi = playerAiService.playerService.players[PLAYER_AI_INDEX] as PlayerAI;
         const level = playerAiService.gameSettingsService.gameSettings.level;
         const isFirstRound = playerAiService.placeLetterService.isFirstRound;
         const scrabbleBoard = playerAiService.placeLetterService.scrabbleBoard;
         this.dictionary = playerAiService.gameSettingsService.gameDictionary;
-        console.log('dico', this.dictionary);
         let allPossibleWords: PossibleWords[];
         let matchingPointingRangeWords: PossibleWords[] = [];
 
