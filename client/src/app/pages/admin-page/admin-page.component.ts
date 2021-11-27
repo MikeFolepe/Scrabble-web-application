@@ -46,8 +46,6 @@ export class AdminPageComponent implements OnInit {
             .subscribe((response) => {
                 if (!response) return;
                 if (!response.titleInput || !response.descriptionInput) return;
-                // TODO Verifier si titre existe déjà
-                // TODO ajouter fonction update dico
                 this.adminService.updateDictionary(dictionary, response);
             });
     }

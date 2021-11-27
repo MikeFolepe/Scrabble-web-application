@@ -3,14 +3,14 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { BONUS_POSITIONS, PLAYER_ONE_INDEX } from '@app/classes/constants';
+import { BONUS_POSITIONS, INVALID_INDEX, PLAYER_ONE_INDEX } from '@app/classes/constants';
+import { NUMBER_OF_OBJECTIVES, OBJECTIVES } from '@app/classes/objectives';
 import { CommunicationService } from '@app/services/communication.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { RandomBonusesService } from '@app/services/random-bonuses.service';
 import { AiPlayerDB, AiType } from '@common/ai-name';
 import { Dictionary } from '@common/dictionary';
 import { GameSettings, StartingPlayer } from '@common/game-settings';
-import { NUMBER_OF_OBJECTIVES, OBJECTIVES } from '@app/classes/objectives';
 import { ObjectiveTypes } from '@common/objectives-type';
 
 @Component({
@@ -91,7 +91,6 @@ export class FormComponent implements OnDestroy, OnInit {
         }
         this.gameSettingsService.gameDictionary = await this.communicationService.getGameDictionary(dictionary.fileName).toPromise();
         this.fileName = dictionary.fileName;
-        console.log(this.fileName);
     }
 
     chooseStartingPlayer(): StartingPlayer {
@@ -111,8 +110,6 @@ export class FormComponent implements OnDestroy, OnInit {
             this.fileName,
             this.initializeObjective([[], []]),
         );
-
-        console.log(this.gameSettingsService.gameSettings);
     }
 
     initializeObjective(forceValue: number[][] = [[], []]): number[][] {

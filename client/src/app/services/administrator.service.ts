@@ -3,7 +3,7 @@ import { ElementRef, Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ERROR_MESSAGE_DELAY } from '@app/classes/constants';
-import { JoinDialogComponent } from '@app/modules/initialize-solo-game/join-dialog/join-dialog.component';
+import { JoinDialogComponent } from '@app/modules/initialize-game/join-dialog/join-dialog.component';
 import { CommunicationService } from '@app/services/communication.service';
 import { AiPlayer, AiPlayerDB, AiType } from '@common/ai-name';
 import { Dictionary } from '@common/dictionary';

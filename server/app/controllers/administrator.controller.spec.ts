@@ -2,14 +2,16 @@
 import { Application } from '@app/app';
 import { AdministratorService } from '@app/services/administrator.service';
 import { AiPlayerDB, AiType } from '@common/ai-name';
+import { Dictionary } from '@common/dictionary';
 import * as chai from 'chai';
 import { expect } from 'chai';
+import * as fileSystem from 'fs';
 import { StatusCodes } from 'http-status-codes';
 import { Container } from 'typedi';
 import chaiHttp = require('chai-http');
 import Sinon = require('sinon');
 
-describe('AdminController', () => {
+describe.only('AdminController', () => {
     let expressApp: Express.Application;
     let administratorService: AdministratorService;
     chai.use(chaiHttp);
@@ -41,6 +43,21 @@ describe('AdminController', () => {
             _id: '3',
             aiName: 'Mister_Samy',
             isDefault: true,
+        },
+    ];
+
+    const dictionaries: Dictionary[] = [
+        {
+            fileName: 'dictionary.json',
+            title: 'dictionaire',
+            description: 'TestController',
+            isDefault: false,
+        },
+        {
+            fileName: 'test.json',
+            title: 'manger',
+            description: 'Controller',
+            isDefault: false,
         },
     ];
 
@@ -191,47 +208,112 @@ describe('AdminController', () => {
             });
     });
 
-    
+    it('should handle an error while resetting the scores', (done) => {
+        const stubOnReset = Sinon.stub(administratorService, 'resetScores').returns(Promise.reject(new Error('fail')));
+        chai.request(expressApp)
+            .delete('/api/admin/scores/Classic')
+            .end((err, response) => {
+                expect(stubOnReset.called).to.equal(true);
+                expect(response.status).to.equal(StatusCodes.NOT_MODIFIED);
+                stubOnReset.restore();
+                done();
+            });
+    });
 
-    // it('should return the result of a validation from a valid post request from the client', (done) => {
-    //     const stubValidate = Sinon.stub(wordValidationService, 'isValidInDictionary').returns(true);
-    //     chai.request(expressApp)
-    //         .post('/api/game/validateWords/dictionary.json')
-    //         .send(['sud', 'maman'])
-    //         .end((err, response) => {
-    //             expect(stubValidate.called).to.equal(true);
-    //             expect(response.status).to.equal(StatusCodes.OK);
-    //             expect(response.body).to.equal(true);
-    //             stubValidate.restore();
-    //             done();
-    //         });
-    // });
+    it('should handle an error while resetting the scores', (done) => {
+        const stubOnReset = Sinon.stub(administratorService, 'resetScores').returns(Promise.reject(new Error('fail')));
+        chai.request(expressApp)
+            .delete('/api/admin/scores/Log2990')
+            .end((err, response) => {
+                expect(stubOnReset.called).to.equal(true);
+                expect(response.status).to.equal(StatusCodes.NOT_MODIFIED);
+                stubOnReset.restore();
+                done();
+            });
+    });
 
-    // it('should return the dictionary asked by the client', (done) => {
-    //     // fileSystem.readFileSync('./dictionaries/dictionary.json', 'utf8')).words;
+    it('should update an ai player', (done) => {
+        const aiPlayer = {
+            aiName: 'Mike',
+            isDefault: true,
+        };
 
-    //     const jsonDictionary = `{
-    //         "title": "Mon dictionnaire",
-    //         "description": "Description de base",
-    //         "words": [
-    //             "aa",
-    //             "aalenien",
-    //             "aalenienne",
-    //             "aaleniennes",
-    //             "aaleniens"
-    //         ]
-    //     }`;
-    //     const dictionary = JSON.parse(jsonDictionary);
-    //     const stubOnParse = Sinon.stub(fileSystem, 'readFileSync').returns(jsonDictionary);
+        const beginner = AiType.beginner;
 
-    //     chai.request(expressApp)
-    //         .get('/api/game/dictionary/dictionary.json')
-    //         .end((err, response) => {
-    //             expect(stubOnParse.called).to.equal(true);
-    //             expect(response.body).to.deep.equal(dictionary.words);
-    //             expect(response.status).to.equal(StatusCodes.OK);
-    //             stubOnParse.restore();
-    //             done();
-    //         });
-    // });
+        const stubOnUpdate = Sinon.stub(administratorService, 'updateAiPlayer').returns(Promise.resolve(aiPlayers));
+        chai.request(expressApp)
+            .put('/api/admin/aiPlayers/2')
+            .send({ aiPlayer, beginner })
+            .end((err, response) => {
+                expect(stubOnUpdate.called).to.equal(true);
+                expect(response.body).to.deep.equal(aiPlayers);
+                expect(response.status).to.equal(StatusCodes.OK);
+                stubOnUpdate.restore();
+                done();
+            });
+    });
+
+    it('should handle an error while updating the ai players', (done) => {
+        const stubOnUpdate = Sinon.stub(administratorService, 'updateAiPlayer').returns(Promise.reject(new Error('fail')));
+        chai.request(expressApp)
+            .put('/api/admin/aiPlayers/2')
+            .end((err, response) => {
+                expect(stubOnUpdate.called).to.equal(true);
+                expect(response.status).to.equal(StatusCodes.NOT_MODIFIED);
+                stubOnUpdate.restore();
+                done();
+            });
+    });
+
+    it('should return the the dictionaries', (done) => {
+        const stubOnGet = Sinon.stub(administratorService, 'getDictionaries').returns(dictionaries);
+        chai.request(expressApp)
+            .get('/api/admin/dictionaries')
+            .end((err, response) => {
+                expect(stubOnGet.called).to.equal(true);
+                expect(response.status).to.equal(StatusCodes.OK);
+                expect(response.body).to.deep.equal(dictionaries);
+                stubOnGet.restore();
+                done();
+            });
+    });
+
+    it('should return the updated dictionaries', (done) => {
+        const stubOnUpdate = Sinon.stub(administratorService, 'updateDictionary').returns(dictionaries);
+        chai.request(expressApp)
+            .put('/api/admin/dictionaries')
+            .end((err, response) => {
+                expect(stubOnUpdate.called).to.equal(true);
+                expect(response.body).to.deep.equal(dictionaries);
+                expect(response.status).to.equal(StatusCodes.OK);
+                stubOnUpdate.restore();
+                done();
+            });
+    });
+
+    it('should return the new dictionaries', (done) => {
+        const stubOnDelete = Sinon.stub(administratorService, 'deleteDictionary').returns(dictionaries);
+        chai.request(expressApp)
+            .delete('/api/admin/dictionaries/dictionary.json')
+            .end((err, response) => {
+                expect(stubOnDelete.called).to.equal(true);
+                expect(response.body).to.deep.equal(dictionaries);
+                expect(response.status).to.equal(StatusCodes.OK);
+                stubOnDelete.restore();
+                done();
+            });
+    });
+
+    it('should return the asked dictionarie', (done) => {
+        const stubOnDelete = Sinon.stub(fileSystem, 'readFileSync').returns('fichier');
+        chai.request(expressApp)
+            .get('/api/admin/download/dictionary.json')
+            .end((err, response) => {
+                expect(stubOnDelete.called).to.equal(true);
+                // expect(response.body).to.deep.equal('fichier');
+                expect(response.status).to.equal(StatusCodes.OK);
+                stubOnDelete.restore();
+                done();
+            });
+    });
 });

@@ -1,7 +1,7 @@
-/* eslint-disable @typescript-eslint/no-magic-numbers */
-/* eslint-disable max-lines */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable dot-notation */
+// /* eslint-disable @typescript-eslint/no-magic-numbers */
+// /* eslint-disable max-lines */
+// /* eslint-disable @typescript-eslint/no-explicit-any */
+// /* eslint-disable dot-notation */
 // import { HttpClientTestingModule } from '@angular/common/http/testing';
 // import { TestBed } from '@angular/core/testing';
 // import { RouterTestingModule } from '@angular/router/testing';
@@ -12,7 +12,7 @@
 // import { Letter } from '@common/letter';
 // import { PlaceLetterStrategy } from './place-letter-strategy.model';
 
-// describe('Place Letter strategy', () => {
+// fdescribe('Place Letter strategy', () => {
 //     let playerAi: PlayerAI;
 //     let placeStrategy: PlaceLetterStrategy;
 //     let playerAiService: PlayerAIService;

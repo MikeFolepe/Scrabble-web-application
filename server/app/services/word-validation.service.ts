@@ -4,14 +4,12 @@ import { Service } from 'typedi';
 export class WordValidationService {
     gameDictionaries: Map<string, string[]>;
     currentDictionary: string[];
-    // TODO: Find a way to initialize the dictionary
     constructor() {
         this.initializeDictionaries();
         this.currentDictionary = [];
     }
 
     isValidInDictionary(words: string[], fileName: string): boolean {
-        console.log('arrived', words);
         this.currentDictionary = this.gameDictionaries.get(fileName) as string[];
         if (words.length === 0) return false;
         let validWordsCount = 0;
