@@ -40,13 +40,13 @@ export class PlayerAIService {
     skip(shouldDisplayMessage: boolean = true): void {
         setTimeout(() => {
             this.skipTurnService.switchTurn();
-            if (shouldDisplayMessage)
+            if (shouldDisplayMessage) {
                 this.sendMessageService.displayMessageByType(
                     this.playerService.players[PLAYER_AI_INDEX].name + ' : ' + '!passer ',
                     TypeMessage.Opponent,
                 );
-
-            this.endGameService.actionsLog.push('passer');
+                this.endGameService.actionsLog.push('passer');
+            }
         }, DELAY_TO_PASS_TURN);
     }
 

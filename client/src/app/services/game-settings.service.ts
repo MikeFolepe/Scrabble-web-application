@@ -16,6 +16,7 @@ export class GameSettingsService {
         randomBonus: 'Désactiver',
         bonusPositions: JSON.stringify(Array.from(BONUS_POSITIONS)),
         dictionary: '',
+        objectiveIds: [],
     };
     isSoloMode: boolean;
     gameDictionary: string[];

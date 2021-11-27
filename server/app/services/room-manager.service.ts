@@ -1,6 +1,7 @@
 import { OUT_BOUND_INDEX_OF_SOCKET } from '@app/classes/constants';
 import { GameSettings, StartingPlayer } from '@common/game-settings';
 import { GameType } from '@common/game-type';
+import { ObjectiveTypes } from '@common/objectives-type';
 import { PlayerIndex } from '@common/player-index';
 import { Room, State } from '@common/room';
 import { Service } from 'typedi';
@@ -57,6 +58,8 @@ export class RoomManagerService {
         const gameSettings = room.gameSettings;
         const playerNames: string[] = [gameSettings.playersNames[PlayerIndex.CUSTOMER], gameSettings.playersNames[PlayerIndex.OWNER]];
         const startingPlayer = gameSettings.startingPlayer ? StartingPlayer.Player1 : StartingPlayer.Player2;
+        let temp = gameSettings.objectiveIds[ObjectiveTypes.Private].slice(0, 2);
+        temp = [temp[1], temp[0]];
         const formattedGameSettings = new GameSettings(
             playerNames,
             startingPlayer,
@@ -66,6 +69,7 @@ export class RoomManagerService {
             gameSettings.randomBonus,
             gameSettings.bonusPositions,
             gameSettings.dictionary,
+            [gameSettings.objectiveIds[ObjectiveTypes.Public], temp],
         );
 
         return formattedGameSettings;
@@ -137,9 +141,9 @@ export class RoomManagerService {
 
     getNumberOfRoomInWaitingState(gameType: GameType): number {
         let numberOfRoom = 0;
-        // first  spécial case
+        // First  special case
         if (this.rooms[gameType] === undefined) return numberOfRoom;
-        // second spécial case
+        // Second special case
         if (this.rooms[gameType].length === 0) {
             return numberOfRoom;
         }

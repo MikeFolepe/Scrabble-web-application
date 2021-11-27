@@ -36,7 +36,6 @@ export class PlaceLetterStrategy {
         allPossibleWords = await playerAiService.calculatePoints(allPossibleWords);
         playerAiService.sortDecreasingPoints(allPossibleWords);
         matchingPointingRangeWords = playerAiService.filterByRange(allPossibleWords, this.pointingRange);
-
         if (level === 'Difficile') await this.computeResults(allPossibleWords, playerAiService);
         if (level === 'Facile') await this.computeResults(matchingPointingRangeWords, playerAiService, false);
 
@@ -49,8 +48,9 @@ export class PlaceLetterStrategy {
             return;
         }
 
+        const idx = 0;
         if (isDifficultMode) {
-            await playerAiService.place(possibilities[0]);
+            await playerAiService.place(possibilities[idx]);
             possibilities.splice(0, 1);
             return;
         }
@@ -90,7 +90,7 @@ export class PlaceLetterStrategy {
                 })
                 .toString();
             line = line.replace(regex2, '');
-            const radixes = this.board[word.orientation][word.line].toString().replace(regex1, '').match(regex3) as string[];
+            const radixes = this.board[word.orientation][word.line].toString().toLowerCase().replace(regex1, '').match(regex3) as string[];
             if (this.isWordFitting(line, word, radixes)) {
                 filteredWords.push(word);
             }

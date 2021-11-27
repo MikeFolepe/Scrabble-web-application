@@ -4,7 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { GameViewModule } from '@app/modules/game-view/game-view.module';
-import { InitializeSoloGameModule } from '@app/modules/initialize-solo-game/initialize-solo-game.module';
+import { InitializeGameModule } from '@app/modules/initialize-game/initialize-game.module';
 import { AppMaterialModule } from '@app/modules/material.module';
 import { SharedModule } from '@app/modules/shared/shared.module';
 import { AppComponent } from '@app/pages/app/app.component';
@@ -43,7 +43,7 @@ import { BestScoresComponent } from './pages/best-scores/best-scores.component';
         FormsModule,
         HttpClientModule,
         GameViewModule,
-        InitializeSoloGameModule,
+        InitializeGameModule,
         SharedModule,
         ClickOutsideModule,
         ReactiveFormsModule,
