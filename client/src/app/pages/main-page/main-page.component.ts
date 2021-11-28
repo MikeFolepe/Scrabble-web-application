@@ -34,6 +34,7 @@ export class MainPageComponent {
         this.gameModes = ['Jouer une partie en solo', 'Créer une partie multijoueur', 'Joindre une partie multijoueur'];
         this.letterService.ngOnDestroy();
         this.placeLetterService.ngOnDestroy();
+        this.gameSettingsService.ngOnDestroy();
     }
 
     routeToGameMode(): void {

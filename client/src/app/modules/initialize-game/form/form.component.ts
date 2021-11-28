@@ -30,7 +30,9 @@ export class FormComponent implements OnInit, OnDestroy {
         private router: Router,
         private randomBonusService: RandomBonusesService,
         private communicationService: CommunicationService,
-    ) {}
+    ) {
+        this.gameSettingsService.ngOnDestroy();
+    }
 
     async ngOnInit(): Promise<void> {
         await this.initializeDictionaries();
