@@ -1,6 +1,6 @@
 import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { EASEL_SIZE, PLAYER_ONE_INDEX } from '@app/classes/constants';
-import { TypeMessage } from '@app/classes/enum';
+import { MessageType } from '@app/classes/enum';
 import { BoardHandlerService } from '@app/services/board-handler.service';
 import { EndGameService } from '@app/services/end-game.service';
 import { LetterService } from '@app/services/letter.service';
@@ -90,7 +90,7 @@ export class LetterEaselComponent implements OnInit {
         }
         // Display the respective message into the chatBox and pass the turn
         const message = this.playerService.players[PLAYER_ONE_INDEX].name + ' : !échanger ' + lettersToSwap;
-        this.sendMessageService.displayMessageByType(message, TypeMessage.Player);
+        this.sendMessageService.displayMessageByType(message, MessageType.Player);
         this.endGameService.addActionsLog('echanger');
         this.skipTurnService.switchTurn();
     }

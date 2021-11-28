@@ -6,6 +6,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { GameViewComponent } from '@app/modules/game-view/game-view/game-view.component';
 import { ClientSocketService } from '@app/services/client-socket.service';
 import { GameSettings } from '@common/game-settings';
+import { Level } from '@common/level';
 import { Socket } from 'socket.io-client';
 
 describe('ClientSocketService', () => {
@@ -54,11 +55,10 @@ describe('ClientSocketService', () => {
             1,
             '00',
             '30',
-            'facile',
+            Level.Beginner,
             'Désactiver',
             "[['A1', 'doubleLetter'], ['A8', 'tripleLetter']]",
-            [[], []],
-            [],
+            '',
         );
         service.socket = {
             on: (eventName: string, callback: (gameSettings: GameSettings) => void) => {

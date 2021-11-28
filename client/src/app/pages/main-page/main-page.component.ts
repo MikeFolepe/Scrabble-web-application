@@ -1,8 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { BestScoresComponent } from '@app/pages/best-scores/best-scores.component';
 import { ClientSocketService } from '@app/services/client-socket.service';
-import { EndGameService } from '@app/services/end-game.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
+import { LetterService } from '@app/services/letter.service';
+import { PlaceLetterService } from '@app/services/place-letter.service';
 import { GameType } from '@common/game-type';
 
 @Component({
@@ -10,7 +13,7 @@ import { GameType } from '@common/game-type';
     templateUrl: './main-page.component.html',
     styleUrls: ['./main-page.component.scss'],
 })
-export class MainPageComponent implements OnInit {
+export class MainPageComponent {
     selectedGameTypeIndex: number;
     selectedGameType: string | GameType;
     selectedGameMode?: string;
@@ -20,21 +23,21 @@ export class MainPageComponent implements OnInit {
     constructor(
         public gameSettingsService: GameSettingsService,
         private router: Router,
+        public bestScoresDialog: MatDialog,
         private clientSocketService: ClientSocketService,
-        private endGameService: EndGameService,
+        private letterService: LetterService,
+        private placeLetterService: PlaceLetterService,
     ) {
         this.selectedGameTypeIndex = 0;
         this.gameType = ['Scrabble classique', 'Scrabble LOG2990'];
         this.gameModes = ['Jouer une partie en solo', 'Créer une partie multijoueur', 'Joindre une partie multijoueur'];
-    }
-
-    ngOnInit() {
-        // this.clientSocketService.socket.disconnect();
-        this.endGameService.clearAllData();
+        this.letterService.ngOnDestroy();
+        this.placeLetterService.ngOnDestroy();
+        this.gameSettingsService.ngOnDestroy();
     }
 
     routeToGameMode(): void {
-        // update game type and game mode, then route
+        // Update game type and game mode, then route
         this.selectedGameType = this.gameType[this.selectedGameTypeIndex];
         const gameTypeIndex = this.gameType[0] === this.selectedGameType ? 0 : 1;
         this.gameSettingsService.gameType = gameTypeIndex;
@@ -55,5 +58,9 @@ export class MainPageComponent implements OnInit {
                 break;
             }
         }
+    }
+
+    openBestScoresDialog() {
+        this.bestScoresDialog.open(BestScoresComponent, { disableClose: true });
     }
 }

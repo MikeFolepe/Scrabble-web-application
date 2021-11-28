@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
+import { Level } from '@common/level';
 
 @Component({
     selector: 'app-level-field',
@@ -8,7 +9,7 @@ import { FormGroup, Validators } from '@angular/forms';
 })
 export class LevelFieldComponent implements OnInit {
     @Input() parentForm: FormGroup;
-    difficultySelectionList: string[] = ['Facile', 'Difficile'];
+    difficultySelectionList: string[] = [Level.Beginner, Level.Expert];
 
     ngOnInit(): void {
         this.parentForm.controls.levelInput.setValidators([Validators.required]);

@@ -20,17 +20,12 @@ export class CommunicationService {
         this.wordsToValidate = [];
     }
 
-    validationPost(newPlayedWords: Map<string, string[]>, dictionary: string[]): Observable<boolean> {
+    validationPost(newPlayedWords: Map<string, string[]>, fileName: string): Observable<boolean> {
         this.wordsToValidate = [];
         for (const word of newPlayedWords.keys()) {
             this.wordsToValidate.push(word);
         }
-        // TODO: Modify the logic to get a game id from server and use it in the request
-        const object = {
-            words: this.wordsToValidate,
-            dico: dictionary,
-        };
-        return this.http.post<boolean>(`${this.baseUrl}/game/validateWords`, object);
+        return this.http.post<boolean>(`${this.baseUrl}/game/validateWords/${fileName}`, this.wordsToValidate);
     }
 
     getGameDictionary(fileName: string): Observable<string[]> {
@@ -39,21 +34,17 @@ export class CommunicationService {
 
     addPlayersScores(players: PlayerScore[], gameType: GameType): Observable<void> {
         if (gameType === GameType.Classic)
-            return this.http
-                .post<void>(`${this.baseUrl}/multiplayer/best-scores-classic`, players)
-                .pipe(catchError(this.handleError<void>('addPlayers')));
-        return this.http
-            .post<void>(`${this.baseUrl}/multiplayer/best-scores-log2990`, players)
-            .pipe(catchError(this.handleError<void>('addPlayers')));
+            return this.http.post<void>(`${this.baseUrl}/game/best-scores-classic`, players).pipe(catchError(this.handleError<void>('addPlayers')));
+        return this.http.post<void>(`${this.baseUrl}/game/best-scores-log2990`, players).pipe(catchError(this.handleError<void>('addPlayers')));
     }
 
     getBestPlayers(gameType: GameType): Observable<PlayerScore[]> {
         if (gameType === GameType.Classic)
             return this.http
-                .get<PlayerScore[]>(`${this.baseUrl}/multiplayer/best-scores-classic`)
+                .get<PlayerScore[]>(`${this.baseUrl}/game/best-scores-classic`)
                 .pipe(catchError(this.handleError<PlayerScore[]>('getbestPlayers')));
         return this.http
-            .get<PlayerScore[]>(`${this.baseUrl}/multiplayer/best-scores-log2990`)
+            .get<PlayerScore[]>(`${this.baseUrl}/game/best-scores-log2990`)
             .pipe(catchError(this.handleError<PlayerScore[]>('getbestPlayers')));
     }
 

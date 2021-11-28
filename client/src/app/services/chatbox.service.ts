@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MAX_NUMBER_OF_POSSIBILITY, PLAYER_ONE_INDEX } from '@app/classes/constants';
-import { TypeMessage } from '@app/classes/enum';
+import { MessageType } from '@app/classes/enum';
 import { Orientation } from '@app/classes/scrabble-board-pattern';
 import { DebugService } from '@app/services/debug.service';
 import { EndGameService } from '@app/services/end-game.service';
@@ -17,7 +17,7 @@ import { Vec2 } from '@common/vec2';
 })
 export class ChatboxService {
     private message: string;
-    private typeMessage: TypeMessage;
+    private messageType: MessageType;
     private command: string;
     private endGameEasel: string;
 
@@ -40,10 +40,10 @@ export class ChatboxService {
     }
 
     sendPlayerMessage(message: string): void {
-        this.typeMessage = TypeMessage.Player;
+        this.messageType = MessageType.Player;
         this.message = message;
         if (!this.isValid()) {
-            this.sendMessageService.displayMessageByType(this.message, TypeMessage.Error);
+            this.sendMessageService.displayMessageByType(this.message, MessageType.Error);
         }
         switch (this.command) {
             case 'debug': {
@@ -78,11 +78,11 @@ export class ChatboxService {
     }
 
     displayFinalMessage(indexPlayer: number): void {
-        this.sendMessageService.displayMessageByType('Fin de partie - lettres restantes', TypeMessage.System);
+        this.sendMessageService.displayMessageByType('Fin de partie - lettres restantes', MessageType.System);
         for (const letter of this.playerService.players[indexPlayer].letterTable) {
             this.endGameEasel += letter.value;
         }
-        this.sendMessageService.displayMessageByType(this.playerService.players[indexPlayer].name + ' : ' + this.endGameEasel, TypeMessage.System);
+        this.sendMessageService.displayMessageByType(this.playerService.players[indexPlayer].name + ' : ' + this.endGameEasel, MessageType.System);
         // Clear the string
         this.endGameEasel = '';
     }
@@ -90,10 +90,10 @@ export class ChatboxService {
     private executeDebug(): void {
         this.debugService.switchDebugMode();
         if (this.debugService.isDebugActive) {
-            this.sendMessageService.displayMessageByType('Affichages de débogage activés', TypeMessage.System);
+            this.sendMessageService.displayMessageByType('Affichages de débogage activés', MessageType.System);
             this.displayDebugMessage();
         } else {
-            this.sendMessageService.displayMessageByType('Affichages de débogage désactivés', TypeMessage.System);
+            this.sendMessageService.displayMessageByType('Affichages de débogage désactivés', MessageType.System);
         }
     }
 
@@ -103,21 +103,21 @@ export class ChatboxService {
 
             if (this.swapLetterService.swapCommand(messageSplitted[1], PLAYER_ONE_INDEX)) {
                 this.message = this.playerService.players[PLAYER_ONE_INDEX].name + ' : ' + this.message;
-                this.sendMessageService.displayMessageByType(this.message, this.typeMessage);
+                this.sendMessageService.displayMessageByType(this.message, this.messageType);
                 this.skipTurnService.switchTurn();
             }
         } else {
-            this.sendMessageService.displayMessageByType(this.notTurnErrorMessage, TypeMessage.Error);
+            this.sendMessageService.displayMessageByType(this.notTurnErrorMessage, MessageType.Error);
         }
     }
 
     private executeSkipTurn(): void {
         if (this.skipTurnService.isTurn) {
             this.endGameService.addActionsLog('passer');
-            this.sendMessageService.displayMessageByType(this.message, this.typeMessage);
+            this.sendMessageService.displayMessageByType(this.message, this.messageType);
             this.skipTurnService.switchTurn();
         } else {
-            this.sendMessageService.displayMessageByType(this.notTurnErrorMessage, TypeMessage.Error);
+            this.sendMessageService.displayMessageByType(this.notTurnErrorMessage, MessageType.Error);
         }
     }
 
@@ -134,20 +134,20 @@ export class ChatboxService {
             const orientation = positionSplitted[2] === 'h' ? Orientation.Horizontal : Orientation.Vertical;
 
             if (await this.placeLetterService.placeCommand(position, orientation, messageSplitted[2], PLAYER_ONE_INDEX)) {
-                this.sendMessageService.displayMessageByType(this.message, this.typeMessage);
+                this.sendMessageService.displayMessageByType(this.message, this.messageType);
             }
         } else {
-            this.sendMessageService.displayMessageByType(this.notTurnErrorMessage, TypeMessage.Error);
+            this.sendMessageService.displayMessageByType(this.notTurnErrorMessage, MessageType.Error);
         }
     }
 
     private executeReserve(): void {
         if (!this.debugService.isDebugActive) {
-            this.sendMessageService.displayMessageByType('Commande non réalisable', TypeMessage.Error);
+            this.sendMessageService.displayMessageByType('Commande non réalisable', MessageType.Error);
             return;
         }
         for (const letter of this.letterService.reserve) {
-            this.sendMessageService.displayMessageByType(letter.value + ':' + letter.quantity.toString(), TypeMessage.System);
+            this.sendMessageService.displayMessageByType(letter.value + ':' + letter.quantity.toString(), MessageType.System);
         }
     }
 
@@ -178,12 +178,12 @@ export class ChatboxService {
         }
         const LAST_TWO_SKIP_LINES = 2;
         finalMessage = finalMessage.substring(0, finalMessage.length - LAST_TWO_SKIP_LINES);
-        this.sendMessageService.displayMessageByType(finalMessage, TypeMessage.System);
+        this.sendMessageService.displayMessageByType(finalMessage, MessageType.System);
     }
 
     private isValid(): boolean {
         if (this.message[0] !== '!') {
-            this.sendMessageService.displayMessageByType(this.message, this.typeMessage);
+            this.sendMessageService.displayMessageByType(this.message, this.messageType);
             return true; // If it's a normal message, it's always valid
         }
         // If it's a command, we call the validation
@@ -223,11 +223,11 @@ export class ChatboxService {
     private displayDebugMessage(): void {
         const nbPossibilities = this.debugService.debugServiceMessage.length;
         if (nbPossibilities === 0) {
-            this.sendMessageService.displayMessageByType('Aucune possibilité de placement trouvée!', TypeMessage.System);
+            this.sendMessageService.displayMessageByType('Aucune possibilité de placement trouvée!', MessageType.System);
         } else {
             for (let i = 0; i < Math.min(MAX_NUMBER_OF_POSSIBILITY, nbPossibilities); i++) {
                 this.message = this.debugService.debugServiceMessage[i].word + ': -- ' + this.debugService.debugServiceMessage[i].point.toString();
-                this.sendMessageService.displayMessageByType(this.message, TypeMessage.System);
+                this.sendMessageService.displayMessageByType(this.message, MessageType.System);
             }
         }
         this.debugService.clearDebugMessage();

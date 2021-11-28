@@ -68,8 +68,8 @@ export class RoomManagerService {
             gameSettings.level,
             gameSettings.randomBonus,
             gameSettings.bonusPositions,
-            [gameSettings.objectiveIds[ObjectiveTypes.Public], temp],
             gameSettings.dictionary,
+            [gameSettings.objectiveIds[ObjectiveTypes.Public], temp],
         );
 
         return formattedGameSettings;

@@ -4,7 +4,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { PLAYER_ONE_INDEX, RESERVE } from '@app/classes/constants';
-import { TypeMessage } from '@app/classes/enum';
+import { MessageType } from '@app/classes/enum';
 import { Orientation, PossibleWords } from '@app/classes/scrabble-board-pattern';
 import { Player } from '@app/models/player.model';
 import { ChatboxService } from '@app/services/chatbox.service';
@@ -46,14 +46,14 @@ describe('ChatboxService', () => {
 
         service['message'] = '';
         service.sendPlayerMessage(service['message']);
-        expect(service['typeMessage']).toEqual(TypeMessage.Player);
+        expect(service['messageType']).toEqual(MessageType.Player);
     });
 
     it('should have type player if command is valid', () => {
         spyOn<any>(service, 'isValid').and.returnValue(true);
 
         service.sendPlayerMessage(service['message']);
-        expect(service['typeMessage']).toEqual(TypeMessage.Player);
+        expect(service['messageType']).toEqual(MessageType.Player);
         expect(service['command']).toEqual('');
     });
 
@@ -108,7 +108,7 @@ describe('ChatboxService', () => {
         service.sendPlayerMessage('!debug');
         expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith(
             'Aucune possibilité de placement trouvée!',
-            TypeMessage.System,
+            MessageType.System,
         );
     });
 
@@ -126,9 +126,9 @@ describe('ChatboxService', () => {
         spyOn(service['placeLetterService'], 'placeCommand').and.returnValue(Promise.resolve(true));
         service['command'] = 'placer';
         service['message'] = '!placer h8h hello';
-        service['typeMessage'] = TypeMessage.Player;
+        service['messageType'] = MessageType.Player;
         await service['executePlace']();
-        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('!placer h8h hello', TypeMessage.Player);
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('!placer h8h hello', MessageType.Player);
     });
 
     it('using a valid command !échanger should display the respective message', () => {
@@ -152,28 +152,28 @@ describe('ChatboxService', () => {
         service['debugService'].isDebugActive = true;
 
         service.sendPlayerMessage('!debug');
-        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('Affichages de débogage désactivés', TypeMessage.System);
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('Affichages de débogage désactivés', MessageType.System);
     });
 
     it('using command !passer while it is not your turn should display an error', () => {
         service['skipTurnService'].isTurn = false;
         service['command'] = 'passer';
         service.sendPlayerMessage('!passer');
-        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith("ERREUR : Ce n'est pas ton tour", TypeMessage.Error);
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith("ERREUR : Ce n'est pas ton tour", MessageType.Error);
     });
 
     it('using command !échanger while it is not your turn should display an error', () => {
         service['skipTurnService'].isTurn = false;
         service['command'] = 'echanger';
         service.sendPlayerMessage('!échanger');
-        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith("ERREUR : Ce n'est pas ton tour", TypeMessage.Error);
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith("ERREUR : Ce n'est pas ton tour", MessageType.Error);
     });
 
     it('using command !placer while it is not your turn should display an error', async () => {
         service['skipTurnService'].isTurn = false;
         service['command'] = 'placer';
         await service['executePlace']();
-        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith("ERREUR : Ce n'est pas ton tour", TypeMessage.Error);
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith("ERREUR : Ce n'est pas ton tour", MessageType.Error);
     });
 
     it('should display the right debug message if no possibility has been found', () => {
@@ -181,7 +181,7 @@ describe('ChatboxService', () => {
         service['displayDebugMessage']();
         expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith(
             'Aucune possibilité de placement trouvée!',
-            TypeMessage.System,
+            MessageType.System,
         );
     });
 
@@ -194,7 +194,7 @@ describe('ChatboxService', () => {
     it('calling displayFinalMessage should send the respective message to the chatbox', () => {
         service['endGameService'].isEndGame = true;
         service.displayFinalMessage(PLAYER_ONE_INDEX);
-        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('Player 1 : AABBCCA', TypeMessage.System);
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('Player 1 : AABBCCA', MessageType.System);
     });
 
     it('should not write a message if swapCommand is false in executeSwap()', () => {
@@ -205,12 +205,6 @@ describe('ChatboxService', () => {
         service['executeSwap']();
         expect(spy).not.toHaveBeenCalled();
     });
-
-    // it('should return immediately if it is not the end of the game when displayFinalMessage() is called', () => {
-    //     service.endGameService.isEndGame = false;
-    //     service.displayFinalMessage(0);
-    //     expect(service['sendMessageService'].displayMessageByType).not.toHaveBeenCalled();
-    // });
 
     it('should not display message if place is false when executePlace() is called', async () => {
         service['skipTurnService'].isTurn = true;
@@ -240,7 +234,7 @@ describe('ChatboxService', () => {
         service['command'] = 'reserve';
         service['debugService'].isDebugActive = false;
         service.sendPlayerMessage('!reserve');
-        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('Commande non réalisable', TypeMessage.Error);
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('Commande non réalisable', MessageType.Error);
     });
 
     it('should call executeHelp() when !aide is written by player', () => {
@@ -262,6 +256,6 @@ describe('ChatboxService', () => {
 
         service['command'] = 'aide';
         service.sendPlayerMessage('!aide');
-        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith(expected, TypeMessage.System);
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith(expected, MessageType.System);
     });
 });

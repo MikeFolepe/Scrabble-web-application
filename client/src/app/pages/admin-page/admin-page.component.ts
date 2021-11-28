@@ -38,16 +38,14 @@ export class AdminPageComponent implements OnInit {
             .open(EditDictionaryDialogComponent, {
                 disableClose: true,
                 data: {
-                    title: '',
-                    description: '',
+                    title: dictionary.title,
+                    description: dictionary.description,
                 },
             })
             .afterClosed()
             .subscribe((response) => {
                 if (!response) return;
                 if (!response.titleInput || !response.descriptionInput) return;
-                // TODO Verifier si titre existe déjà
-                // TODO ajouter fonction update dico
                 this.adminService.updateDictionary(dictionary, response);
             });
     }

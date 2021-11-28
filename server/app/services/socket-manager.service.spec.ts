@@ -8,6 +8,7 @@
 /* eslint-disable dot-notation */
 import { GameSettings } from '@common/game-settings';
 import { GameType } from '@common/game-type';
+import { Level } from '@common/level';
 import { Room, State } from '@common/room';
 import { expect } from 'chai';
 import * as http from 'http';
@@ -23,7 +24,7 @@ describe('SocketManagerService', () => {
     let service: SocketManagerService;
     let sio: SinonStubbedInstance<io.Server>;
     const socketId = 'socket1';
-    const settings: GameSettings = new GameSettings(['mi', 'ma'], 1, '01', '00', 'Facile', 'Activer', 'francais', [[], []], ['00']);
+    const settings: GameSettings = new GameSettings(['mi', 'ma'], 1, '01', '00', Level.Beginner, 'Activer', 'francais', '00');
     const scrabbleBoard: string[][] = [[]];
 
     const fakeIn = {
@@ -280,7 +281,6 @@ describe('SocketManagerService', () => {
                 return;
             },
         };
-
         service['sio'] = {
             on: (eventName: string, callback: (socket: any) => void) => {
                 if (eventName === 'connection') {

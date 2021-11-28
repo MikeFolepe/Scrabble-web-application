@@ -27,6 +27,8 @@
                         <mat-panel-description>
                             {{ dictionary.description }}
                         </mat-panel-description>
+                        <!-- TODO demander chargés quelle méthode est la meilleure pour UX -->
+                        <!-- <mat-icon *ngIf="dictionary.isDefault">lock</mat-icon> -->
                     </mat-expansion-panel-header>
                     <button (click)="adminService.deleteDictionary(dictionary)">
                         <mat-icon color="warn">delete_forever</mat-icon>
@@ -39,11 +41,13 @@
                     </button>
                 </mat-expansion-panel>
             </mat-accordion>
-            <div class="center">
-                <!-- TODO changer couleur (vert si possible) -->
-                <button mat-raised-button class="fill" (click)="fileInput.click()">
-                    {{ adminService.file ? adminService.file.name : 'Choisir un fichier' }}
-                    <div class="accepted-file" [ngClass]="{ invisible: adminService.file !== null }">(.json Seulement)</div>
+            <div class="center upload">
+                <button mat-raised-button [ngClass]="{ selectedFileButton: adminService.file, fill: !adminService.file }" (click)="fileInput.click()">
+                    <div class="content">
+                        <p *ngIf="adminService.file === null" class="text">Choisir un fichier</p>
+                        <p *ngIf="adminService.file === null" class="text description">(.json seulement)</p>
+                        <p *ngIf="adminService.file !== null" class="file">{{ adminService.file.name }}</p>
+                    </div>
                 </button>
                 <input hidden type="file" accept=".json" #fileInput (change)="adminService.onFileInput(fileInput.files)" />
 
@@ -77,7 +81,8 @@
             </h2>
             <div class="window-content">
                 <div class="list">
-                    <!-- TODO afficher les noms par ordre d'ajout/alphabétique ? -->
+                    <!-- TODO Afficher les noms par ordre d'ajout/alphabétique ? -->
+                    <!-- TODO CSS on hover stp -->
                     <div class="beginner">
                         <p class="name-title">Noms débutants</p>
                         <hr />
@@ -93,7 +98,6 @@
                             </span>
                         </div>
                         <div class="center">
-                            <!-- TODO changer couleur (vert si possible) -->
                             <button mat-mini-fab id="add" color="" (click)="adminService.addAiToDatabase(0, true)">
                                 <mat-icon>add</mat-icon>
                             </button>
@@ -115,7 +119,6 @@
                             </span>
                         </div>
                         <div class="center">
-                            <!-- TODO changer couleur (vert si possible) -->
                             <button mat-mini-fab id="add" color="" (click)="adminService.addAiToDatabase(1, true)">
                                 <mat-icon>add</mat-icon>
                             </button>

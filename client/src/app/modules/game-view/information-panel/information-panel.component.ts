@@ -9,6 +9,7 @@ import { LetterService } from '@app/services/letter.service';
 import { PlayerAIService } from '@app/services/player-ai.service';
 import { PlayerService } from '@app/services/player.service';
 import { SkipTurnService } from '@app/services/skip-turn.service';
+import { WordValidationService } from '@app/services/word-validation.service';
 import { GameSettings } from '@common/game-settings';
 import { Letter } from '@common/letter';
 
@@ -27,12 +28,14 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
         public endGameService: EndGameService,
         private clientSocketService: ClientSocketService,
         public playerAiService: PlayerAIService,
+        private wordValidation: WordValidationService,
     ) {
         this.gameSettings = gameSettingsService.gameSettings;
     }
 
     ngOnInit(): void {
-        this.endGameService.clearAllData();
+        // this.endGameService.clearAllData();
+        this.wordValidation.fileName = this.gameSettings.dictionary;
         this.initializePlayers();
         this.receivePlayerTwo();
         this.initializeFirstTurn();

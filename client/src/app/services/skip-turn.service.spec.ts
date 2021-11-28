@@ -248,7 +248,7 @@ describe('SkipTurnService', () => {
         expect(service['objectivesService'].activeTimeRemaining[0]).toEqual(60);
     });
 
-    it('should udpate the active time if the turn is true', () => {
+    it('should  udpate the active time if the turn is true', () => {
         service['objectivesService'].activeTimeRemaining[0] = 60;
         service.isTurn = true;
         service.updateActiveTime();

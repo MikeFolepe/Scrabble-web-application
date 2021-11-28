@@ -91,8 +91,8 @@ export class AdministratorController {
         this.router.post('/aiPlayers', async (req: Request, res: Response) => {
             await this.administratorService
                 .addAiPlayer(req.body.aiPlayer, req.body.aiType)
-                .then((aiBeginner) => {
-                    res.status(StatusCodes.OK).send(aiBeginner);
+                .then((aiPlayer) => {
+                    res.status(StatusCodes.OK).send(aiPlayer);
                 })
                 .catch((error: Error) => {
                     res.status(StatusCodes.NOT_ACCEPTABLE).send('An error occurred while saving the ai beginner ' + error.message);

@@ -12,7 +12,7 @@
 // import { Letter } from '@common/letter';
 // import { PlaceLetterStrategy } from './place-letter-strategy.model';
 
-// describe('Place Letter strategy', () => {
+// fdescribe('Place Letter strategy', () => {
 //     let playerAi: PlayerAI;
 //     let placeStrategy: PlaceLetterStrategy;
 //     let playerAiService: PlayerAIService;
@@ -185,7 +185,7 @@
 //         expectedMatching.push(word2);
 
 //         spyOn<any>(playerAiService, 'calculatePoints').and.returnValue(expectedMatching);
-//         playerAiService.gameSettingsService.gameSettings.level = 'Difficile';
+//         playerAiService.gameSettingsService.gameSettings.level = 'Expert';
 
 //         await placeStrategy.execute(playerAiService);
 //         expect(spyOnPlace).toHaveBeenCalledWith(word1);
@@ -270,7 +270,7 @@
 //         placeStrategy.dictionary = myDictionary;
 //         playerAiService.placeLetterService.isFirstRound = false;
 //         playerAiService.placeLetterService.scrabbleBoard = scrabbleBoard;
-//         playerAiService.gameSettingsService.gameSettings.level = 'Difficile';
+//         playerAiService.gameSettingsService.gameSettings.level = 'Expert';
 
 //         const spyOnCompute = spyOn<any>(placeStrategy, 'computeResults');
 //         spyOn<any>(playerAiService.wordValidation, 'validateAllWordsOnBoard').and.returnValues(
@@ -321,7 +321,7 @@
 //         placeStrategy.pointingRange = { min: 1, max: 18 };
 //         playerAiService.placeLetterService.isFirstRound = false;
 //         playerAiService.placeLetterService.scrabbleBoard = scrabbleBoard;
-//         playerAiService.gameSettingsService.gameSettings.level = 'Facile';
+//         playerAiService.gameSettingsService.gameSettings.level = Level.Beginner;
 
 //         const spyOnCompute = spyOn<any>(placeStrategy, 'computeResults');
 //         spyOn<any>(playerAiService.wordValidation, 'validateAllWordsOnBoard').and.returnValues(

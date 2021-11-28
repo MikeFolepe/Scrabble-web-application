@@ -10,6 +10,7 @@ import { Player } from '@app/models/player.model';
 import { SkipTurnService } from '@app/services/skip-turn.service';
 import { GameSettings } from '@common/game-settings';
 import { Letter } from '@common/letter';
+import { Level } from '@common/level';
 import { Socket } from 'socket.io-client';
 import { InformationPanelComponent } from './information-panel.component';
 describe('InformationPanelComponent', () => {
@@ -38,11 +39,10 @@ describe('InformationPanelComponent', () => {
             1,
             '00',
             '30',
-            'facile',
+            Level.Beginner,
             'Désactiver',
             "[['A1', 'doubleLetter'], ['A4', 'tripleLetter']]",
-            [[], []],
-            [],
+            '',
         );
         fixture.detectChanges();
         component['playerService'].players = [];

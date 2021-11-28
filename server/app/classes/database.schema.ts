@@ -1,7 +1,7 @@
 import { AiType } from '@common/ai-name';
-import * as mongoose from 'mongoose';
 import { GameType } from '@common/game-type';
 import { PlayerScore } from '@common/player';
+import * as mongoose from 'mongoose';
 // JUSTIFICATION : Required as we need this to use our map with the mongoose.Model type
 // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types
 export type DbModel = mongoose.Model<any, {}, {}, {}>;

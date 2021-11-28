@@ -7,6 +7,7 @@ import { OUT_BOUND_INDEX_OF_SOCKET } from '@app/classes/constants';
 import { RoomManagerService } from '@app/services/room-manager.service';
 import { GameSettings, StartingPlayer } from '@common/game-settings';
 import { GameType } from '@common/game-type';
+import { Level } from '@common/level';
 import { State } from '@common/room';
 import { expect } from 'chai';
 
@@ -19,11 +20,10 @@ describe('RoomManagerService', () => {
         StartingPlayer.Player1,
         '00',
         '30',
-        'facile',
+        Level.Beginner,
         'Désactiver',
         'français',
-        [[], []],
-        ['00'],
+        '00',
     );
 
     const id1 = 'LOG2991';
@@ -33,11 +33,10 @@ describe('RoomManagerService', () => {
         StartingPlayer.Player1,
         '00',
         '30',
-        'facile',
+        Level.Beginner,
         'Désactiver',
         'français',
-        [[], []],
-        ['00'],
+        '00',
     );
 
     const id4 = 'LOG2992';
@@ -47,11 +46,10 @@ describe('RoomManagerService', () => {
         StartingPlayer.Player1,
         '00',
         '30',
-        'facile',
+        Level.Beginner,
         'Désactiver',
         'français',
-        [[], []],
-        ['00'],
+        '00',
     );
 
     beforeEach(() => {
@@ -183,7 +181,7 @@ describe('RoomManagerService', () => {
         expect(roomManagerService.findLooserIndex(fakeSocket)).to.equal(OUT_BOUND_INDEX_OF_SOCKET);
     });
 
-    it('should return 1 the winner name depend of the index  the player who give up the game ', () => {
+    it('should return the winner name depend of the index  the player who give up the game ', () => {
         roomManagerService.createRoom(socketId1, id, settings, GameType.Classic);
         const socketId2 = 'socket2';
         roomManagerService.setSocket(roomManagerService.rooms[0][0], socketId2);

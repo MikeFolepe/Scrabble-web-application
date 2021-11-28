@@ -6,27 +6,27 @@ export const DELAY_OF_DISCONNECT = 5000;
 export const DATABASE_URL = 'mongodb+srv://Team107:xxtyU48kHQ4ZqDW@cluster0.i7hu4.mongodb.net/database?retryWrites=true&w=majority';
 export const DEFAULT_SCORES: PlayerScore[] = [
     {
-        score: 15,
+        score: 5,
         playerName: 'Abba',
         isDefault: true,
     },
     {
-        score: 20,
+        score: 7,
         playerName: 'Abbe',
         isDefault: true,
     },
     {
-        score: 25,
+        score: 9,
         playerName: 'Abbi',
         isDefault: true,
     },
     {
-        score: 30,
+        score: 11,
         playerName: 'Abbo',
         isDefault: true,
     },
     {
-        score: 35,
+        score: 13,
         playerName: 'Abby',
         isDefault: true,
     },

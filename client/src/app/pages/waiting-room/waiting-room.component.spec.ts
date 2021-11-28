@@ -5,6 +5,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { GameSettings } from '@common/game-settings';
+import { Level } from '@common/level';
 import { WaitingRoomComponent } from './waiting-room.component';
 
 describe('WaitingRoomComponent', () => {
@@ -31,7 +32,7 @@ describe('WaitingRoomComponent', () => {
     it('should redirect to home page if the Owner name is empty', () => {
         jasmine.clock().install();
 
-        component['gameSettingsService'].gameSettings = new GameSettings(['', ''], 1, '01', '00', 'Facile', 'Activer', 'francais', [[], []], []);
+        component['gameSettingsService'].gameSettings = new GameSettings(['', ''], 1, '01', '00', Level.Beginner, 'Activer', 'francais', '');
         component.handleReloadErrors();
         jasmine.clock().tick(6000);
         expect(component.status).toEqual('Une erreur est survenue');
@@ -42,7 +43,7 @@ describe('WaitingRoomComponent', () => {
     it('should not redirect to home page if the Owner name is not empty', () => {
         jasmine.clock().install();
         component.status = 'test';
-        component['gameSettingsService'].gameSettings = new GameSettings(['Mike', ''], 1, '01', '00', 'Facile', 'Activer', 'francais', [[], []], []);
+        component['gameSettingsService'].gameSettings = new GameSettings(['Mike', ''], 1, '01', '00', Level.Beginner, 'Activer', 'francais', '');
         component.handleReloadErrors();
         jasmine.clock().tick(4000);
         expect(component.status).toEqual('test');
@@ -59,7 +60,7 @@ describe('WaitingRoomComponent', () => {
 
     it('should route the user a the view on init', () => {
         jasmine.clock().install();
-        component['gameSettingsService'].gameSettings = new GameSettings(['Mike', ''], 1, '01', '00', 'Facile', 'Activer', 'null', [[], []], []);
+        component['gameSettingsService'].gameSettings = new GameSettings(['Mike', ''], 1, '01', '00', Level.Beginner, 'Activer', 'null', '');
         component['gameSettingsService'].isRedirectedFromMultiplayerGame = false;
         component['gameSettingsService'].isSoloMode = false;
         component.routeToGameView();

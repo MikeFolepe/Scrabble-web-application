@@ -10,7 +10,6 @@ describe('CommunicationService', () => {
     let service: CommunicationService;
     let baseUrl: string;
     const newPlayedWords: Map<string, string[]> = new Map<string, string[]>([['ma', ['H8', 'H9']]]);
-    const dictionary: string[] = ['ma', 'maman', 'manger'];
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [HttpClientTestingModule, HttpClientModule],
@@ -39,9 +38,9 @@ describe('CommunicationService', () => {
     // });
 
     it('should return the result of a validation request', () => {
-        service.validationPost(newPlayedWords, dictionary).subscribe(() => {}, fail);
+        service.validationPost(newPlayedWords, 'dictionary.json').subscribe(() => {}, fail);
         expect(service['wordsToValidate']).toEqual(['ma']);
-        const req = httpMock.expectOne(`${baseUrl}/game/validateWords`);
+        const req = httpMock.expectOne(`${baseUrl}/game/validateWords/dictionary.json`);
         expect(req.request.method).toBe('POST');
         req.flush(newPlayedWords);
     });
