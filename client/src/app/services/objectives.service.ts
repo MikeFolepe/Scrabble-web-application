@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { ONE_MINUTE } from '@app/classes/constants';
 import {
     CORNER_POSITIONS,
@@ -24,7 +24,7 @@ import { WordValidationService } from './word-validation.service';
 @Injectable({
     providedIn: 'root',
 })
-export class ObjectivesService {
+export class ObjectivesService implements OnDestroy {
     objectives: Objective[][];
     playerIndex: number;
     activeTimeRemaining: number[];
@@ -218,5 +218,14 @@ export class ObjectivesService {
             }
         }
         return undefined;
+    }
+
+    ngOnDestroy(): void {
+        this.objectives = [[], []];
+        this.activeTimeRemaining = [ONE_MINUTE, ONE_MINUTE];
+        this.obj1LastAttempt = [0, 0];
+        this.obj1Counter = [0, 0];
+        this.obj1ActionTracker = [[], []];
+        this.receiveObjectives();
     }
 }
