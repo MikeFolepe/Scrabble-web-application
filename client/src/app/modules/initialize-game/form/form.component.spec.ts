@@ -4,6 +4,8 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl, FormGroup } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { StartingPlayer } from '@common/game-settings';
@@ -18,7 +20,17 @@ describe('FormComponent', () => {
         router = jasmine.createSpyObj('Router', ['navigate']);
         await TestBed.configureTestingModule({
             declarations: [FormComponent],
-            providers: [{ provide: Router, useValue: router }],
+            providers: [
+                { provide: Router, useValue: router },
+                {
+                    provide: MatDialog,
+                    useValue: {},
+                },
+                {
+                    provide: MatSnackBar,
+                    useValue: {},
+                },
+            ],
             imports: [HttpClientTestingModule, RouterTestingModule],
             schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
@@ -39,7 +51,7 @@ describe('FormComponent', () => {
 
         component.gameSettingsService.gameSettings.playersNames[0] = 'player 1';
         component.gameSettingsService.isSoloMode = true;
-        component.expertsAi = [
+        component.adminService.expertNames = [
             {
                 _id: '1',
                 aiName: 'Mister_Felix',
@@ -57,7 +69,7 @@ describe('FormComponent', () => {
             },
         ];
 
-        component.beginnersAi = [
+        component.adminService.beginnerNames = [
             {
                 _id: '1',
                 aiName: 'Mister_Bucky',

@@ -305,12 +305,22 @@ describe('AdminController', () => {
     });
 
     it('should return the asked dictionarie', (done) => {
+        // const jsonDictionary = `{
+        //     "title": "Mon dictionnaire",
+        //     "description": "Description de base",
+        //     "words": [
+        //         "aa",
+        //         "aalenien",
+        //         "aalenienne",
+        //         "aaleniennes",
+        //         "aaleniens"
+        //     ]
+        // }`;
         const stubOnDelete = Sinon.stub(fileSystem, 'readFileSync').returns('fichier');
         chai.request(expressApp)
             .get('/api/admin/download/dictionary.json')
             .end((err, response) => {
                 expect(stubOnDelete.called).to.equal(true);
-                // expect(response.body).to.deep.equal('fichier');
                 expect(response.status).to.equal(StatusCodes.OK);
                 stubOnDelete.restore();
                 done();

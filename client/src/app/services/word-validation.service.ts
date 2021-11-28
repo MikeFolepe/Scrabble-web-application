@@ -81,15 +81,18 @@ export class WordValidationService {
     }
 
     getWordHorizontalOrVerticalPositions(word: string, indexLine: number, indexColumn: number, isRow: boolean): string[] {
+        let startIndex = 0;
         const positions: string[] = new Array<string>();
         for (const char of word) {
             if (isRow) {
-                const indexChar = this.newWords.indexOf(char) + 1;
+                const indexChar = this.newWords.indexOf(char, startIndex) + 1;
                 positions.push(this.getCharPosition(indexLine) + indexChar.toString());
+                startIndex = indexChar;
             } else {
-                const indexChar = this.newWords.indexOf(char);
+                const indexChar = this.newWords.indexOf(char, startIndex);
                 const column = indexColumn + 1;
                 positions.push(this.getCharPosition(indexChar) + column.toString());
+                startIndex = indexChar + 1;
             }
         }
 
@@ -221,6 +224,7 @@ export class WordValidationService {
         for (const word of this.newPlayedWords.keys()) {
             this.lastPlayedWords.set(word, this.newPlayedWords.get(word) as string[]);
         }
+
         this.priorPlayedWords.clear();
         for (const word of this.playedWords.keys()) {
             this.priorPlayedWords.set(word, this.playedWords.get(word) as string[]);

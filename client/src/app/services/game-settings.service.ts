@@ -7,19 +7,26 @@ import { GameType } from '@common/game-type';
     providedIn: 'root',
 })
 export class GameSettingsService {
-    gameSettings: GameSettings = {
-        playersNames: ['', ''],
-        startingPlayer: StartingPlayer.Player1,
-        timeMinute: '01',
-        timeSecond: '00',
-        level: 'Débutant', // TODO changer partout pour Débutant / Expert voire faire enum directement
-        randomBonus: 'Désactiver',
-        bonusPositions: JSON.stringify(Array.from(BONUS_POSITIONS)),
-        dictionary: '',
-        objectiveIds: [],
-    };
+    gameSettings: GameSettings;
     isSoloMode: boolean;
     gameDictionary: string[];
     gameType: GameType;
     isRedirectedFromMultiplayerGame: boolean;
+    constructor() {
+        this.gameSettings = {
+            playersNames: ['', ''],
+            startingPlayer: StartingPlayer.Player1,
+            timeMinute: '01',
+            timeSecond: '00',
+            level: 'Débutant', // TODO changer partout pour Débutant / Expert voire faire enum directement
+            randomBonus: 'Désactiver',
+            bonusPositions: JSON.stringify(Array.from(BONUS_POSITIONS)),
+            dictionary: '',
+            objectiveIds: [],
+        };
+        this.isSoloMode = true;
+        this.gameDictionary = [];
+        this.gameType = GameType.Classic;
+        this.isRedirectedFromMultiplayerGame = false;
+    }
 }
