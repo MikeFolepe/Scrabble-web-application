@@ -50,7 +50,6 @@ export class FormComponent implements OnInit, OnDestroy {
     }
 
     async initializeGame(): Promise<void> {
-        debugger;
         await this.selectGameDictionary(this.selectedDictionary);
         if (this.isDictionaryDeleted) return;
         this.snapshotSettings();
@@ -73,6 +72,10 @@ export class FormComponent implements OnInit, OnDestroy {
         this.selectedDictionary = dictionary;
         this.gameSettingsService.gameDictionary = await this.communicationService.getGameDictionary(dictionary.fileName).toPromise();
         this.fileName = dictionary.fileName;
+    }
+
+    keyPressSubmit(event: KeyboardEvent) {
+        if (event.key === 'Enter' && this.form.valid) this.initializeGame();
     }
 
     ngOnDestroy(): void {
