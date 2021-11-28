@@ -231,6 +231,7 @@ export class WordValidationService {
         }
         this.clientSocketService.socket.emit('updatePlayedWords', JSON.stringify(Array.from(this.playedWords)), this.clientSocketService.roomId);
 
+        debugger;
         this.newPlayedWords.clear();
         return { validation: this.validationState, score: scoreTotal };
     }

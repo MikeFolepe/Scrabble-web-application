@@ -221,5 +221,8 @@ export class ObjectivesService implements OnDestroy {
         this.obj1LastAttempt = [0, 0];
         this.obj1Counter = [0, 0];
         this.obj1ActionTracker = [[], []];
+        for (const objective of OBJECTIVES) {
+            objective.isCompleted = false;
+        }
     }
 }

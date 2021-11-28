@@ -11,7 +11,7 @@ import { GameType } from '@common/game-type';
 import { Socket } from 'socket.io-client';
 import { ObjectivesService } from './objectives.service';
 
-fdescribe('ObjectivesService', () => {
+describe('ObjectivesService', () => {
     let service: ObjectivesService;
 
     beforeEach(() => {
@@ -19,6 +19,10 @@ fdescribe('ObjectivesService', () => {
             imports: [HttpClientTestingModule, RouterTestingModule],
         });
         service = TestBed.inject(ObjectivesService);
+
+        for (const objective of OBJECTIVES) {
+            objective.isCompleted = false;
+        }
     });
 
     it('should be created', () => {
@@ -53,15 +57,36 @@ fdescribe('ObjectivesService', () => {
             [OBJECTIVES[2], OBJECTIVES[3]],
         ];
         service.playerIndex = 1;
+        service.objectives[0][0].isCompleted = true;
         const spyOnPublic1 = spyOn<any>(service.objectives[0][0], 'validate');
         const spyOnPublic2 = spyOn<any>(service.objectives[0][1], 'validate');
         const spyOnPrivate = spyOn<any>(service.objectives[1][1], 'validate');
 
+        service['gameSettingsService'].gameType = GameType.Log2990;
         service.checkObjectivesCompletion();
 
-        expect(spyOnPublic1).toHaveBeenCalledOnceWith(service);
+        expect(spyOnPublic1).toHaveBeenCalledTimes(0);
         expect(spyOnPublic2).toHaveBeenCalledOnceWith(service);
         expect(spyOnPrivate).toHaveBeenCalledOnceWith(service);
+    });
+
+    it('checkObjectivesCompletion should only look at the public objectives if private is completed', () => {
+        service.objectives = [
+            [OBJECTIVES[0], OBJECTIVES[1]],
+            [OBJECTIVES[2], OBJECTIVES[3]],
+        ];
+        service.playerIndex = 1;
+        service.objectives[1][1].isCompleted = true;
+        const spyOnPublic1 = spyOn<any>(service.objectives[0][0], 'validate');
+        const spyOnPublic2 = spyOn<any>(service.objectives[0][1], 'validate');
+        const spyOnPrivate = spyOn<any>(service.objectives[1][1], 'validate');
+
+        service['gameSettingsService'].gameType = GameType.Log2990;
+        service.checkObjectivesCompletion();
+
+        expect(spyOnPrivate).toHaveBeenCalledTimes(0);
+        expect(spyOnPublic1).toHaveBeenCalledOnceWith(service);
+        expect(spyOnPublic2).toHaveBeenCalledOnceWith(service);
     });
 
     it('checkObjectivesCompletion should not look at the objectives when classic mode', () => {
@@ -132,11 +157,14 @@ fdescribe('ObjectivesService', () => {
         const spyOnEmit = spyOn(service['clientSocketService'].socket, 'emit');
         const roomId = 'NoMatter';
         const idOfObjectiveAccomplished = 2;
-        service['gameSettingsService'].gameType = GameType.Log2990;
+        service['gameSettingsService'].isSoloMode = true;
         service['clientSocketService'].roomId = roomId;
 
         service.updateOpponentObjectives(idOfObjectiveAccomplished);
+        expect(spyOnEmit).toHaveBeenCalledTimes(0);
 
+        service['gameSettingsService'].isSoloMode = false;
+        service.updateOpponentObjectives(idOfObjectiveAccomplished);
         expect(spyOnEmit).toHaveBeenCalledOnceWith('objectiveAccomplished', idOfObjectiveAccomplished, roomId);
     });
 
@@ -385,27 +413,66 @@ fdescribe('ObjectivesService', () => {
         expect(spyOnObjectiveCompleted).toHaveBeenCalledTimes(1);
     });
 
-    it('OBJ#3 Former un mot qui coupe au moins deux mots déjà placés', () => {
+    it('OBJ#3 Former un mot qui coupe au moins deux mots déjà placés sample1', () => {
         const lastPlayedWordsMap = new Map<string, string[]>();
         const priorPlayedWordsMap = new Map<string, string[]>();
-        const playedWords = new Map<string, string[]>();
+        const playedWordsMap = new Map<string, string[]>();
         const spyOnObjectiveCompleted = spyOn<any>(service, 'addObjectiveScore');
 
-        service['wordValidationService'].lastPlayedWords = lastPlayedWordsMap.set('abcd', ['A1', 'A2', 'A3', 'A4']);
-        service['wordValidationService'].playedWords = playedWords.set('abcd', ['A1', 'A2', 'A3', 'A4', 'C1', 'C2', 'C3', 'C4']);
-        service['validateObjectiveTwo'](1);
+        service['wordValidationService'].lastPlayedWords = lastPlayedWordsMap.set('word1', ['C1', 'C2', 'C3', 'C4']);
+        service['wordValidationService'].playedWords = playedWordsMap.set('word1', ['C1', 'C2', 'C3', 'C4']);
+        service['validateObjectiveThree'](2);
         lastPlayedWordsMap.clear();
 
-        service['wordValidationService'].lastPlayedWords = lastPlayedWordsMap.set('efg', ['A13', 'A14', 'A15']);
-        service['wordValidationService'].playedWords = playedWords.set('efg', ['A13', 'A14', 'A15', 'H8', 'H9', 'H10']);
-        service['validateObjectiveTwo'](1);
+        service['wordValidationService'].lastPlayedWords = lastPlayedWordsMap.set('word2', ['E1', 'E2', 'E2']);
+        service['wordValidationService'].playedWords = playedWordsMap.set('word2', ['E1', 'E2', 'E2']);
+        service['wordValidationService'].priorPlayedWords = priorPlayedWordsMap.set('word1', ['C1', 'C2', 'C3', 'C4']);
+        service['validateObjectiveThree'](2);
         lastPlayedWordsMap.clear();
 
-        service['wordValidationService'].lastPlayedWords = lastPlayedWordsMap.set('hij', ['B13', 'B14', 'B15']);
-        service['wordValidationService'].playedWords = playedWords.set('hij', ['B13', 'B14', 'B15']);
-        service['validateObjectiveTwo'](1);
+        service['wordValidationService'].lastPlayedWords = lastPlayedWordsMap.set('word3', ['C2', 'D2', 'E2']);
+        service['wordValidationService'].playedWords = playedWordsMap.set('word3', ['C2', 'D2', 'E2']);
+        service['wordValidationService'].priorPlayedWords = priorPlayedWordsMap.set('word2', ['E1', 'E2', 'E3']);
+        service['validateObjectiveThree'](2);
         lastPlayedWordsMap.clear();
 
+        expect(spyOnObjectiveCompleted).toHaveBeenCalledTimes(1);
+    });
+
+    it('OBJ#3 Former un mot qui coupe au moins deux mots déjà placés sample2', () => {
+        const lastPlayedWordsMap = new Map<string, string[]>();
+        const priorPlayedWordsMap = new Map<string, string[]>();
+        const playedWordsMap = new Map<string, string[]>();
+        const spyOnObjectiveCompleted = spyOn<any>(service, 'addObjectiveScore');
+
+        service['wordValidationService'].lastPlayedWords = lastPlayedWordsMap.set('word1', ['C1', 'C2', 'C3']);
+        service['wordValidationService'].playedWords = playedWordsMap.set('word1', ['C1', 'C2', 'C3']);
+        service['validateObjectiveThree'](2);
+        lastPlayedWordsMap.clear();
+
+        service['wordValidationService'].lastPlayedWords = lastPlayedWordsMap.set('word2', ['C1', 'C2', 'C3', 'C4']);
+        service['wordValidationService'].playedWords = playedWordsMap.set('word2', ['C1', 'C2', 'C3', 'C4']);
+        service['wordValidationService'].priorPlayedWords = priorPlayedWordsMap.set('word1', ['C1', 'C2', 'C3']);
+        service['validateObjectiveThree'](2);
+        lastPlayedWordsMap.clear();
+
+        expect(spyOnObjectiveCompleted).toHaveBeenCalledTimes(0);
+    });
+
+    it("OBJ#6 Former un mot sur une case bonus à partir d'un mot déjà placé", () => {
+        const spyOnObjectiveCompleted = spyOn<any>(service, 'addObjectiveScore');
+        service['extendedWords'] = [];
+        service['validateObjectiveSix'](5);
+        expect(spyOnObjectiveCompleted).toHaveBeenCalledTimes(0);
+
+        service['extendedWords'] = ['someWordExtended'];
+        service['placementsService'].extendingPositions = ['F10', 'F11', 'F12'];
+        service['validateObjectiveSix'](5);
+        expect(spyOnObjectiveCompleted).toHaveBeenCalledTimes(1);
+
+        service['extendedWords'] = ['someWordExtended'];
+        service['placementsService'].extendingPositions = ['H9', 'H10', 'H11'];
+        service['validateObjectiveSix'](5);
         expect(spyOnObjectiveCompleted).toHaveBeenCalledTimes(1);
     });
 });
