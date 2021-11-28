@@ -38,8 +38,8 @@ export class AdminPageComponent implements OnInit {
             .open(EditDictionaryDialogComponent, {
                 disableClose: true,
                 data: {
-                    title: '',
-                    description: '',
+                    title: dictionary.title,
+                    description: dictionary.description,
                 },
             })
             .afterClosed()

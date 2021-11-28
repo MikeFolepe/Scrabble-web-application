@@ -1,7 +1,10 @@
 import { StartingPlayer } from '@common/game-settings';
 import { Letter } from '@common/letter';
+import { Level } from '@common/level';
 import { Vec2 } from '@common/vec2';
 import { CustomRange } from './range';
+
+// TODO avant remise vérifier que toutes les constantes sont utilisées au moins une fois
 
 export const DEFAULT_WIDTH = 750;
 export const DEFAULT_HEIGHT = 750;
@@ -115,7 +118,7 @@ export const DEFAULT_GAME_SETTINGS = {
     startingPlayer: StartingPlayer.Player1,
     timeMinute: '01',
     timeSecond: '00',
-    level: 'Débutant', // TODO changer partout pour Débutant / Expert voire faire enum directement
+    level: Level.Beginner,
     randomBonus: 'Désactiver',
     bonusPositions: JSON.stringify(Array.from(BONUS_POSITIONS)),
     dictionary: '',

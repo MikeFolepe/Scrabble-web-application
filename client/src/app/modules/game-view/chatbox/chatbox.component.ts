@@ -1,12 +1,12 @@
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { DEFAULT_CHAT_HEIGHT, LOG2990_CHAT_HEIGHT, ONE_SECOND_DELAY, PLAYER_ONE_INDEX, PLAYER_TWO_INDEX } from '@app/classes/constants';
-import { TypeMessage } from '@app/classes/enum';
+import { MessageType } from '@app/classes/enum';
 import { BoardHandlerService } from '@app/services/board-handler.service';
 import { ChatboxService } from '@app/services/chatbox.service';
 import { EndGameService } from '@app/services/end-game.service';
+import { GameSettingsService } from '@app/services/game-settings.service';
 import { SendMessageService } from '@app/services/send-message.service';
 import { SkipTurnService } from '@app/services/skip-turn.service';
-import { GameSettingsService } from '@app/services/game-settings.service';
 
 @Component({
     selector: 'app-chatbox',
@@ -18,12 +18,12 @@ export class ChatboxComponent implements OnInit, AfterViewInit {
 
     message: string;
     listMessages: string[];
-    listTypes: TypeMessage[];
+    listTypes: MessageType[];
 
-    // Used to access TypeMessage enum in the HTML
-    htmlTypeMessage = TypeMessage;
+    // Used to access MessageType enum in the HTML
+    htmlTypeMessage = MessageType;
 
-    private typeMessage: TypeMessage;
+    private messageType: MessageType;
 
     constructor(
         private chatBoxService: ChatboxService,
@@ -61,18 +61,18 @@ export class ChatboxComponent implements OnInit, AfterViewInit {
     }
 
     displayMessageByType(): void {
-        if (this.sendMessageService.typeMessage === TypeMessage.Error) {
-            this.listTypes.push(this.sendMessageService.typeMessage);
+        if (this.sendMessageService.messageType === MessageType.Error) {
+            this.listTypes.push(this.sendMessageService.messageType);
             this.listMessages.push(this.message);
         }
-        this.listTypes.push(this.sendMessageService.typeMessage);
+        this.listTypes.push(this.sendMessageService.messageType);
         this.listMessages.push(this.sendMessageService.message);
         this.scrollToBottom();
     }
 
     sendSystemMessage(systemMessage: string): void {
-        this.typeMessage = TypeMessage.System;
-        this.listTypes.push(this.typeMessage);
+        this.messageType = MessageType.System;
+        this.listTypes.push(this.messageType);
         this.listMessages.push(systemMessage);
     }
 

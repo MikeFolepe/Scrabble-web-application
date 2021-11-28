@@ -1,4 +1,4 @@
-// TODO ajouter attribut words: string[]
+// TODO renommer DictionaryMetadata
 export interface Dictionary {
     fileName: string,
     title: string;

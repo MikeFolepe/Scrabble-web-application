@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BOARD_COLUMNS, BOARD_ROWS, GRID_CASE_SIZE, INVALID_INDEX, LAST_INDEX, PLAYER_ONE_INDEX } from '@app/classes/constants';
-import { MouseButton, TypeMessage } from '@app/classes/enum';
+import { MessageType, MouseButton } from '@app/classes/enum';
 import { Orientation } from '@app/classes/scrabble-board-pattern';
 import { Vec2 } from '@common/vec2';
 import { GridService } from './grid.service';
@@ -89,7 +89,7 @@ export class BoardHandlerService {
             const column = (this.firstCase.x + 1).toString();
             const row: string = String.fromCharCode(this.firstCase.y + 'a'.charCodeAt(0));
             const charOrientation = this.orientation === Orientation.Horizontal ? 'h' : 'v';
-            this.sendMessageService.displayMessageByType('!placer ' + row + column + charOrientation + ' ' + this.word, TypeMessage.Player);
+            this.sendMessageService.displayMessageByType('!placer ' + row + column + charOrientation + ' ' + this.word, MessageType.Player);
             this.word = '';
             this.placedLetters = [];
             this.isFirstCasePicked = false;

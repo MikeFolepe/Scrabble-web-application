@@ -2,7 +2,7 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { TypeMessage } from '@app/classes/enum';
+import { MessageType } from '@app/classes/enum';
 import { SendMessageService } from '@app/services/send-message.service';
 import { Socket } from 'socket.io-client';
 
@@ -27,15 +27,15 @@ describe('SendMessageService', () => {
     });
 
     it('displaying a message should display the respective message and its type', () => {
-        service.displayMessageByType('I am the player', TypeMessage.Player);
+        service.displayMessageByType('I am the player', MessageType.Player);
         expect(service.message).toEqual('I am the player');
-        expect(service.typeMessage).toEqual(TypeMessage.Player);
+        expect(service.messageType).toEqual(MessageType.Player);
     });
 
     it('displaying a message should display the respective message and its type', () => {
-        service.displayMessageByType('I am the system', TypeMessage.System);
+        service.displayMessageByType('I am the system', MessageType.System);
         expect(service.message).toEqual('I am the system');
-        expect(service.typeMessage).toEqual(TypeMessage.System);
+        expect(service.messageType).toEqual(MessageType.System);
     });
 
     it('should sendOpponentMessage on receiveMessageFromOpponent', () => {
@@ -55,7 +55,7 @@ describe('SendMessageService', () => {
     it('should send message as opponent when sendOpponentMessage() is called', () => {
         service.sendOpponentMessage('Opponent message');
         expect(service.message).toEqual('Opponent message');
-        expect(service.typeMessage).toEqual(TypeMessage.Opponent);
+        expect(service.messageType).toEqual(MessageType.Opponent);
     });
 
     it('the emit sendGameConversionMessage should send the parametres of message of switchMode', () => {
@@ -75,7 +75,7 @@ describe('SendMessageService', () => {
         } as unknown as Socket;
         spyOn(service, 'displayMessageByType');
         service.receiveConversionMessage();
-        expect(service.displayMessageByType).toHaveBeenCalledWith('message', TypeMessage.System);
+        expect(service.displayMessageByType).toHaveBeenCalledWith('message', MessageType.System);
     });
 
     it('the emit sendGameConversionMessage should call sendOpponentMessage', () => {
@@ -101,8 +101,8 @@ describe('SendMessageService', () => {
     });
 
     it('displaying a message should display the respective message and its type', () => {
-        service.displayMessageByType('I am the system', TypeMessage.System);
+        service.displayMessageByType('I am the system', MessageType.System);
         expect(service.message).toEqual('I am the system');
-        expect(service.typeMessage).toEqual(TypeMessage.System);
+        expect(service.messageType).toEqual(MessageType.System);
     });
 });
