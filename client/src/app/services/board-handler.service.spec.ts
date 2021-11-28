@@ -5,7 +5,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { GRID_CASE_SIZE, INVALID_INDEX } from '@app/classes/constants';
-import { TypeMessage } from '@app/classes/enum';
+import { MessageType } from '@app/classes/enum';
 import { Orientation } from '@app/classes/scrabble-board-pattern';
 import { Vec2 } from '@common/vec2';
 import { BoardHandlerService } from './board-handler.service';
@@ -152,7 +152,7 @@ describe('BoardHandlerService', () => {
             service.buttonDetect(keyboardEvent);
         }
         await service.confirmPlacement();
-        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('!placer h8h Frite', TypeMessage.Player);
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('!placer h8h Frite', MessageType.Player);
     });
 
     it('pressing Enter with an invalid word placed should cancel the placement', async () => {
@@ -186,7 +186,7 @@ describe('BoardHandlerService', () => {
             await service['placeLetter'](letterToPlace);
         }
         await service.confirmPlacement();
-        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('!placer h7h elite', TypeMessage.Player);
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('!placer h7h elite', MessageType.Player);
     });
 
     it('placing horizontally out of bounds letters following already placed letters should not be placed', async () => {
@@ -208,7 +208,7 @@ describe('BoardHandlerService', () => {
         await service['placeLetter'](wordToPlace[2]);
 
         await service.confirmPlacement();
-        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('!placer h11h e', TypeMessage.Player);
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('!placer h11h e', MessageType.Player);
     });
 
     it('placing vertically out of bounds letters following already placed letters should not be placed', async () => {
@@ -231,7 +231,7 @@ describe('BoardHandlerService', () => {
         await service['placeLetter'](wordToPlace[2]);
 
         await service.confirmPlacement();
-        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('!placer k8v e', TypeMessage.Player);
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('!placer k8v e', MessageType.Player);
     });
 
     it('pressing the button enter with a word placed should call confirmPlacement', () => {

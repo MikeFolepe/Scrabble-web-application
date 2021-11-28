@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -37,8 +37,8 @@ import { TimerFieldComponent } from './timer-field/timer-field.component';
         MatButtonModule,
         AppRoutingModule,
         SharedModule,
-        MatFormFieldModule,
         MatDialogModule,
+        FormsModule,
     ],
     exports: [FormComponent],
     entryComponents: [JoinDialogComponent],

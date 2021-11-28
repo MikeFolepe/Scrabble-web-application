@@ -1,3 +1,4 @@
+// TODO renommer fichier
 export type AiPlayer = {
     aiName: string;
     isDefault: boolean;

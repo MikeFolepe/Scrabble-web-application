@@ -8,6 +8,7 @@ import { RESERVE } from '@app/classes/constants';
 import { PlayerAI } from '@app/models/player-ai.model';
 import { Player } from '@app/models/player.model';
 import { GameSettings } from '@common/game-settings';
+import { Level } from '@common/level';
 import { Socket } from 'socket.io-client';
 import { GiveUpHandlerService } from './give-up-handler.service';
 
@@ -32,7 +33,7 @@ describe('GiveUpHandlerService', () => {
             1,
             '00',
             '30',
-            'facile',
+            Level.Beginner,
             'Désactiver',
             "[['A1', 'doubleLetter'], ['A4', 'tripleLetter']]",
             '',
@@ -73,7 +74,7 @@ describe('GiveUpHandlerService', () => {
             1,
             '00',
             '30',
-            'facile',
+            Level.Beginner,
             'Désactiver',
             "[['A1', 'doubleLetter'], ['A4', 'tripleLetter']]",
             '',
@@ -115,7 +116,7 @@ describe('GiveUpHandlerService', () => {
             1,
             '00',
             '30',
-            'facile',
+            Level.Beginner,
             'Désactiver',
             "[['A1', 'doubleLetter'], ['A4', 'tripleLetter']]",
             '',

@@ -16,6 +16,7 @@ import * as io from 'socket.io';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 import { RoomManagerService } from './room-manager.service';
 import { SocketManagerService } from './socket-manager.service';
+import { Level } from '@common/level';
 import Sinon = require('sinon');
 
 describe('SocketManagerService', () => {
@@ -23,7 +24,7 @@ describe('SocketManagerService', () => {
     let service: SocketManagerService;
     let sio: SinonStubbedInstance<io.Server>;
     const socketId = 'socket1';
-    const settings: GameSettings = new GameSettings(['mi', 'ma'], 1, '01', '00', 'Débutant', 'Activer', 'francais', '00');
+    const settings: GameSettings = new GameSettings(['mi', 'ma'], 1, '01', '00', Level.Beginner, 'Activer', 'francais', '00');
     const scrabbleBoard: string[][] = [[]];
 
     const fakeIn = {

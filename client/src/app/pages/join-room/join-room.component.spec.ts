@@ -9,6 +9,7 @@ import { PageEvent } from '@angular/material/paginator';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ERROR_MESSAGE_DELAY } from '@app/classes/constants';
 import { GameSettings } from '@common/game-settings';
+import { Level } from '@common/level';
 import { Room, State } from '@common/room';
 import { of } from 'rxjs';
 import { Socket } from 'socket.io-client';
@@ -47,7 +48,7 @@ describe('JoinRoomComponent', () => {
     });
 
     it('should save rooms given in argument with their configurations', () => {
-        const settings: GameSettings = new GameSettings(['mi', 'ma'], 1, '01', '00', 'Débutant', 'Activer', 'francais', '');
+        const settings: GameSettings = new GameSettings(['mi', 'ma'], 1, '01', '00', Level.Beginner, 'Activer', 'francais', '');
         const expectedRooms = [new Room('room', 'socket', settings, State.Waiting)];
         component['clientSocketService'].socket = {
             on: (eventName: string, callback: (room: Room[]) => void) => {
@@ -86,7 +87,7 @@ describe('JoinRoomComponent', () => {
     });
 
     it('should return if the name', () => {
-        const settings: GameSettings = new GameSettings(['mi', ''], 1, '01', '00', 'Débutant', 'Activer', 'francais', '');
+        const settings: GameSettings = new GameSettings(['mi', ''], 1, '01', '00', Level.Beginner, 'Activer', 'francais', '');
         const expectedRooms = [new Room('room', 'socket', settings, State.Waiting)];
         const matDialogRefMock = jasmine.createSpyObj('MatDialogRef', ['afterClosed']);
         matDialogRefMock.afterClosed.and.callFake(() => {
@@ -103,7 +104,7 @@ describe('JoinRoomComponent', () => {
 
     it('should set display error message return if the customer name is equal OwnerName', () => {
         jasmine.clock().install();
-        const settings: GameSettings = new GameSettings(['mi', ''], 1, '01', '00', 'Débutant', 'Activer', 'francais', '');
+        const settings: GameSettings = new GameSettings(['mi', ''], 1, '01', '00', Level.Beginner, 'Activer', 'francais', '');
         const expectedRooms = [new Room('room', 'socket', settings, State.Waiting)];
         const matDialogRefMock = jasmine.createSpyObj('MatDialogRef', ['afterClosed']);
         matDialogRefMock.afterClosed.and.callFake(() => {
@@ -135,7 +136,7 @@ describe('JoinRoomComponent', () => {
         expect(spyEmit).not.toHaveBeenCalled();
     });
     it('should emit an event to add new Customer if his name is different of the  OwnerName', () => {
-        const settings: GameSettings = new GameSettings(['mi', ''], 1, '01', '00', 'Débutant', 'Activer', 'francais', '');
+        const settings: GameSettings = new GameSettings(['mi', ''], 1, '01', '00', Level.Beginner, 'Activer', 'francais', '');
         const expectedRooms = [new Room('room', 'socket', settings, State.Waiting)];
         const matDialogRefMock = jasmine.createSpyObj('MatDialogRef', ['afterClosed']);
         matDialogRefMock.afterClosed.and.callFake(() => {
@@ -152,7 +153,7 @@ describe('JoinRoomComponent', () => {
     });
 
     it('should not emit an event to place randomly a player in the room in the name is null', () => {
-        // const settings: GameSettings = new GameSettings(['mi', ''], 1, '01', '00', 'Débutant', 'Activer', 'francais', '00');
+        // const settings: GameSettings = new GameSettings(['mi', ''], 1, '01', '00', Level.Beginner, 'Activer', 'francais', '00');
         // const expectedRooms = [new Room('room', 'socket', settings, State.Waiting)];
         const matDialogRefMock = jasmine.createSpyObj('MatDialogRef', ['afterClosed']);
         matDialogRefMock.afterClosed.and.callFake(() => {

@@ -42,7 +42,7 @@
                 </mat-expansion-panel>
             </mat-accordion>
             <div class="center upload">
-                <button mat-raised-button class="fill" (click)="fileInput.click()">
+                <button mat-raised-button [ngClass]="{ selectedFileButton: adminService.file, fill: !adminService.file }" (click)="fileInput.click()">
                     <div class="content">
                         <p *ngIf="adminService.file === null" class="text">Choisir un fichier</p>
                         <p *ngIf="adminService.file === null" class="text description">(.json seulement)</p>
