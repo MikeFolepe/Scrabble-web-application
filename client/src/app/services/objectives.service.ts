@@ -42,10 +42,12 @@ export class ObjectivesService implements OnDestroy {
         private endGameService: EndGameService,
     ) {
         this.objectives = [[], []];
+        this.playerIndex = 0;
         this.activeTimeRemaining = [ONE_MINUTE, ONE_MINUTE];
-        this.obj1LastAttempt = [0, 0];
+        this.extendedWords = [];
         this.obj1Counter = [0, 0];
         this.obj1ActionTracker = [[], []];
+        this.obj1LastAttempt = [0, 0];
         this.receiveObjectives();
     }
 
@@ -105,10 +107,6 @@ export class ObjectivesService implements OnDestroy {
 
         const obj1ActionTrackerSize = this.obj1ActionTracker[this.playerIndex].length - 1;
         this.obj1ActionTracker[this.playerIndex][obj1ActionTrackerSize] += currentWordLength >= minLengthToValidate ? 'Valide' : 'Invalide';
-        this.obj1ActionTracker[this.playerIndex] = this.obj1ActionTracker[this.playerIndex].slice(
-            Math.max(obj1ActionTrackerSize - 1 - numberOfOccurrencesToValidate, 0),
-            obj1ActionTrackerSize + 1,
-        );
 
         for (let index = obj1ActionTrackerSize; index >= this.obj1LastAttempt[this.playerIndex]; index--) {
             if (this.obj1ActionTracker[this.playerIndex][index] === 'placerSuccesValide') {
@@ -121,10 +119,7 @@ export class ObjectivesService implements OnDestroy {
 
         this.obj1LastAttempt[this.playerIndex] = actionLog.length;
 
-        if (this.obj1Counter[this.playerIndex] === numberOfOccurrencesToValidate) {
-            this.addObjectiveScore(id);
-            this.obj1Counter[this.playerIndex] = 0;
-        }
+        if (this.obj1Counter[this.playerIndex] === numberOfOccurrencesToValidate) this.addObjectiveScore(id);
     }
 
     validateObjectiveTwo(id: number) {
@@ -160,7 +155,7 @@ export class ObjectivesService implements OnDestroy {
         let specificLettersUsed = 0;
         for (const word of this.wordValidationService.lastPlayedWords.keys()) {
             for (const letter of word) {
-                if (LETTERS_FOR_OBJ5.includes(letter.toUpperCase())) specificLettersUsed++;
+                if (LETTERS_FOR_OBJ5.includes(letter) || letter.toLocaleUpperCase() === letter) specificLettersUsed++;
             }
             if (specificLettersUsed > 1) {
                 this.addObjectiveScore(id);
@@ -226,6 +221,5 @@ export class ObjectivesService implements OnDestroy {
         this.obj1LastAttempt = [0, 0];
         this.obj1Counter = [0, 0];
         this.obj1ActionTracker = [[], []];
-        this.receiveObjectives();
     }
 }
