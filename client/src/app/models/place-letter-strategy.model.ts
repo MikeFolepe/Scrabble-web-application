@@ -2,6 +2,7 @@ import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSITION, INVALID_INDEX, PLAYER
 import { CustomRange } from '@app/classes/range';
 import { BoardPattern, Orientation, PatternInfo, PossibleWords } from '@app/classes/scrabble-board-pattern';
 import { PlayerAIService } from '@app/services/player-ai.service';
+import { Level } from '@common/level';
 import { PlayerAI } from './player-ai.model';
 
 export class PlaceLetterStrategy {
@@ -36,8 +37,8 @@ export class PlaceLetterStrategy {
         allPossibleWords = await playerAiService.calculatePoints(allPossibleWords);
         playerAiService.sortDecreasingPoints(allPossibleWords);
         matchingPointingRangeWords = playerAiService.filterByRange(allPossibleWords, this.pointingRange);
-        if (level === 'Expert') await this.computeResults(allPossibleWords, playerAiService);
-        if (level === 'Débutant') await this.computeResults(matchingPointingRangeWords, playerAiService, false);
+        if (level === Level.Expert) await this.computeResults(allPossibleWords, playerAiService);
+        if (level === Level.Beginner) await this.computeResults(matchingPointingRangeWords, playerAiService, false);
 
         playerAiService.debugService.receiveAIDebugPossibilities(allPossibleWords);
     }
@@ -177,6 +178,9 @@ export class PlaceLetterStrategy {
         return filteredWords;
     }
 
+    // TODO : creating console errors
+    // Unhandled Promise rejection: dictionaryToLookAt is not iterable ; Zone: ProxyZone ; Task: jasmine.onComplete ;
+    // Value: TypeError: dictionaryToLookAt is not iterable
     private generateAllWords(dictionaryToLookAt: string[], patterns: BoardPattern): PossibleWords[] {
         // Generate all words satisfying the patterns found
         const allWords: PossibleWords[] = [];
@@ -197,7 +201,6 @@ export class PlaceLetterStrategy {
                 }
             }
         }
-
         return allWords;
     }
 

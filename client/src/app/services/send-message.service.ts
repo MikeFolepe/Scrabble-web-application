@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { PLAYER_ONE_INDEX } from '@app/classes/constants';
-import { TypeMessage } from '@app/classes/enum';
+import { MessageType } from '@app/classes/enum';
 import { ClientSocketService } from './client-socket.service';
 import { GameSettingsService } from './game-settings.service';
 
@@ -9,7 +9,7 @@ import { GameSettingsService } from './game-settings.service';
 })
 export class SendMessageService {
     message: string = '';
-    typeMessage: TypeMessage;
+    messageType: MessageType;
     private displayMessage: () => void;
 
     constructor(private clientSocketService: ClientSocketService, private gameSettingsService: GameSettingsService) {
@@ -23,10 +23,10 @@ export class SendMessageService {
         this.displayMessage = fn;
     }
 
-    displayMessageByType(message: string, typeMessage: TypeMessage): void {
+    displayMessageByType(message: string, messageType: MessageType): void {
         this.message = message;
-        this.typeMessage = typeMessage;
-        if (this.typeMessage === TypeMessage.Player) {
+        this.messageType = messageType;
+        if (this.messageType === MessageType.Player) {
             this.sendMessageToOpponent(this.message, this.gameSettingsService.gameSettings.playersNames[PLAYER_ONE_INDEX]);
         }
         this.displayMessage();
@@ -47,11 +47,11 @@ export class SendMessageService {
     // Function to receive the conversion Message to the players which is the room
     receiveConversionMessage(): void {
         this.clientSocketService.socket.on('receiveGameConversionMessage', (message: string) => {
-            this.displayMessageByType(message, TypeMessage.System);
+            this.displayMessageByType(message, MessageType.System);
         });
     }
     sendOpponentMessage(opponentMessage: string): void {
-        this.typeMessage = TypeMessage.Opponent;
+        this.messageType = MessageType.Opponent;
         this.message = opponentMessage;
         this.displayMessage();
     }

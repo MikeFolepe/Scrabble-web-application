@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 import { Injectable } from '@angular/core';
 import { ONE_MINUTE } from '@app/classes/constants';
-import { GameType } from '@common/game-type';
 import {
     CORNER_POSITIONS,
     LETTERS_FOR_OBJ5,
@@ -12,6 +11,7 @@ import {
     Objective,
     OBJECTIVES,
 } from '@app/classes/objectives';
+import { GameType } from '@common/game-type';
 import { ObjectiveTypes } from '@common/objectives-type';
 import { ClientSocketService } from './client-socket.service';
 import { EndGameService } from './end-game.service';

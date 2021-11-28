@@ -9,6 +9,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { StartingPlayer } from '@common/game-settings';
+import { Level } from '@common/level';
 import { FormComponent } from './form.component';
 
 describe('FormComponent', () => {
@@ -45,7 +46,7 @@ describe('FormComponent', () => {
             playerName: new FormControl(''),
             minuteInput: new FormControl('70'),
             secondInput: new FormControl('00'),
-            levelInput: new FormControl('Débutant'),
+            levelInput: new FormControl(Level.Beginner),
             randomBonus: new FormControl('Désactiver'),
         });
 
@@ -93,16 +94,16 @@ describe('FormComponent', () => {
     });
 
     // it('should have a predefined name for AI', () => {
-    //     const result = component['chooseRandomAIName']('Débutant');
+    //     const result = component['chooseRandomAIName'](Level.Beginner);
     //     expect(component.expertsAi.values).toContain(result);
     // });
 
     it('should have a different name from the player', () => {
-        component.form.controls.playerName.setValue(component['chooseRandomAIName']('Débutant'));
+        component.form.controls.playerName.setValue(component['chooseRandomAIName'](Level.Beginner));
         // To consider randomness, we simulate three times the AI name
-        const firstAiName = component['chooseRandomAIName']('Débutant');
-        const secondAiName = component['chooseRandomAIName']('Débutant');
-        const thirdAiName = component['chooseRandomAIName']('Débutant');
+        const firstAiName = component['chooseRandomAIName'](Level.Beginner);
+        const secondAiName = component['chooseRandomAIName'](Level.Beginner);
+        const thirdAiName = component['chooseRandomAIName'](Level.Beginner);
         expect(firstAiName).not.toEqual(component.form.controls.playerName.value);
         expect(secondAiName).not.toEqual(component.form.controls.playerName.value);
         expect(thirdAiName).not.toEqual(component.form.controls.playerName.value);
@@ -146,7 +147,7 @@ describe('FormComponent', () => {
             playerName: new FormControl(''),
             minuteInput: new FormControl('01'),
             secondInput: new FormControl('00'),
-            levelInput: new FormControl('Débutant'),
+            levelInput: new FormControl(Level.Beginner),
             randomBonus: new FormControl('Activer'),
         });
         const bonus = component['getRightBonusPositions']();

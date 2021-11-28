@@ -6,7 +6,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ONE_SECOND_DELAY } from '@app/classes/constants';
-import { TypeMessage } from '@app/classes/enum';
+import { MessageType } from '@app/classes/enum';
 import { ChatboxComponent } from '@app/modules/game-view//chatbox/chatbox.component';
 
 describe('ChatBoxComponent', () => {
@@ -76,15 +76,15 @@ describe('ChatBoxComponent', () => {
         component.sendSystemMessage('Second system message');
         expect(component.listTypes).toHaveSize(2);
         expect(component.listMessages).toHaveSize(2);
-        expect(component.listTypes[0]).toEqual(TypeMessage.System);
+        expect(component.listTypes[0]).toEqual(MessageType.System);
     });
 
     it('should use the message and the type from sendMessageService when we display a message', () => {
         component['sendMessageService'].message = 'Service message';
-        component['sendMessageService'].typeMessage = TypeMessage.System;
+        component['sendMessageService'].messageType = MessageType.System;
         component.displayMessageByType();
         expect(component.listMessages.pop()).toEqual(component['sendMessageService'].message);
-        expect(component.listTypes.pop()).toEqual(component['sendMessageService'].typeMessage);
+        expect(component.listTypes.pop()).toEqual(component['sendMessageService'].messageType);
     });
 
     it('Clicking in the chatbox should call cancelPlacement from BoardHandlerService', () => {

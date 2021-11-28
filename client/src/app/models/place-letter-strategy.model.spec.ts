@@ -321,7 +321,7 @@
 //         placeStrategy.pointingRange = { min: 1, max: 18 };
 //         playerAiService.placeLetterService.isFirstRound = false;
 //         playerAiService.placeLetterService.scrabbleBoard = scrabbleBoard;
-//         playerAiService.gameSettingsService.gameSettings.level = 'Débutant';
+//         playerAiService.gameSettingsService.gameSettings.level = Level.Beginner;
 
 //         const spyOnCompute = spyOn<any>(placeStrategy, 'computeResults');
 //         spyOn<any>(playerAiService.wordValidation, 'validateAllWordsOnBoard').and.returnValues(

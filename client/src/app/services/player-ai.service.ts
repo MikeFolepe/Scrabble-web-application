@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { DELAY_TO_PASS_TURN, EASEL_SIZE, INVALID_INDEX, MIN_RESERVE_SIZE_TO_SWAP, ONE_SECOND_DELAY, PLAYER_AI_INDEX } from '@app/classes/constants';
-import { TypeMessage } from '@app/classes/enum';
+import { MessageType } from '@app/classes/enum';
 import { CustomRange } from '@app/classes/range';
 import { Orientation, PossibleWords } from '@app/classes/scrabble-board-pattern';
 import { PlayerAI } from '@app/models/player-ai.model';
@@ -43,7 +43,7 @@ export class PlayerAIService {
             if (shouldDisplayMessage) {
                 this.sendMessageService.displayMessageByType(
                     this.playerService.players[PLAYER_AI_INDEX].name + ' : ' + '!passer ',
-                    TypeMessage.Opponent,
+                    MessageType.Opponent,
                 );
                 this.endGameService.actionsLog.push('passer');
             }
@@ -100,7 +100,7 @@ export class PlayerAIService {
         // Alert the context about the operation performed
         this.sendMessageService.displayMessageByType(
             this.playerService.players[PLAYER_AI_INDEX].name + ' : ' + '!échanger ' + lettersToSwap,
-            TypeMessage.Opponent,
+            MessageType.Opponent,
         );
 
         // Switch turn
@@ -119,7 +119,7 @@ export class PlayerAIService {
             setTimeout(() => {
                 this.sendMessageService.displayMessageByType(
                     this.playerService.players[PLAYER_AI_INDEX].name + ' : ' + '!placer ' + row + column + charOrientation + ' ' + word.word,
-                    TypeMessage.Opponent,
+                    MessageType.Opponent,
                 );
             }, ONE_SECOND_DELAY);
             return;

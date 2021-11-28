@@ -11,7 +11,7 @@ import {
     PLAYER_ONE_INDEX,
     THREE_SECONDS_DELAY,
 } from '@app/classes/constants';
-import { TypeMessage } from '@app/classes/enum';
+import { MessageType } from '@app/classes/enum';
 import { Orientation } from '@app/classes/scrabble-board-pattern';
 import { ScoreValidation } from '@app/classes/validation-score';
 import { GridService } from '@app/services/grid.service';
@@ -83,7 +83,7 @@ export class PlaceLetterService implements OnDestroy {
         this.numLettersUsedFromEasel = 0; // Reset the number of letters used from the easel for next placement
 
         if (!this.isPossible(position, orientation, wordNoAccents, indexPlayer)) {
-            this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', TypeMessage.Error);
+            this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', MessageType.Error);
             return false;
         }
 
@@ -92,7 +92,7 @@ export class PlaceLetterService implements OnDestroy {
             if (!this.placeLetter(currentPosition, wordNoAccents[i], orientation, i, indexPlayer)) {
                 // If the placement of one letter is invalid, we erase all letters placed
                 this.handleInvalidPlacement(position, orientation, wordNoAccents, indexPlayer);
-                this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', TypeMessage.Error);
+                this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', MessageType.Error);
                 return false;
             }
             this.placementsService.goToNextPosition(currentPosition, orientation);
@@ -165,7 +165,7 @@ export class PlaceLetterService implements OnDestroy {
         this.endGameService.addActionsLog('placerEchec');
         this.clientSocketService.socket.emit('sendActions', this.endGameService.actionsLog, this.clientSocketService.roomId);
         this.handleInvalidPlacement(position, orientation, word, indexPlayer);
-        this.sendMessageService.displayMessageByType('ERREUR : Un ou des mots formés sont invalides', TypeMessage.Error);
+        this.sendMessageService.displayMessageByType('ERREUR : Un ou des mots formés sont invalides', MessageType.Error);
         setTimeout(() => {
             if (this.gameSettingsService.isSoloMode && indexPlayer === PLAYER_ONE_INDEX) this.skipTurnService.switchTurn();
             else if (!this.gameSettingsService.isSoloMode) this.skipTurnService.switchTurn();
@@ -183,14 +183,14 @@ export class PlaceLetterService implements OnDestroy {
                 return await this.validatePlacement(position, orientation, word, indexPlayer);
             }
             this.handleInvalidPlacement(position, orientation, word, indexPlayer);
-            this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', TypeMessage.Error);
+            this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', MessageType.Error);
             return false;
         } // Placing the following words
         if (this.isWordTouchingOthers(position, orientation, word)) {
             return await this.validatePlacement(position, orientation, word, indexPlayer);
         }
         this.handleInvalidPlacement(position, orientation, word, indexPlayer);
-        this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', TypeMessage.Error);
+        this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', MessageType.Error);
         return false;
     }
 

@@ -1,7 +1,10 @@
-import { PlacingStrategy } from '@app/classes/enum';
+import { StartingPlayer } from '@common/game-settings';
 import { Letter } from '@common/letter';
+import { Level } from '@common/level';
 import { Vec2 } from '@common/vec2';
 import { CustomRange } from './range';
+
+// TODO avant remise vérifier que toutes les constantes sont utilisées au moins une fois
 
 export const DEFAULT_WIDTH = 750;
 export const DEFAULT_HEIGHT = 750;
@@ -45,19 +48,6 @@ export const COLOR_BLACK = 'black';
 export const NAME_SIZE: CustomRange = { min: 4, max: 12 };
 export const SPECIAL_CHAR = '@#$%^&*_';
 export const VALIDATION_PATTERN = '^([A-Za-z][A-Za-z][A-Za-z][A-Za-z])[A-Za-z0-9' + SPECIAL_CHAR + ']*';
-
-export const PLACING_BALLOT_BOX: PlacingStrategy[] = [
-    PlacingStrategy.LessSix,
-    PlacingStrategy.SevenToTwelve,
-    PlacingStrategy.SevenToTwelve,
-    PlacingStrategy.LessSix,
-    PlacingStrategy.ThirteenToEighteen,
-    PlacingStrategy.LessSix,
-    PlacingStrategy.ThirteenToEighteen,
-    PlacingStrategy.ThirteenToEighteen,
-    PlacingStrategy.SevenToTwelve,
-    PlacingStrategy.LessSix,
-];
 
 // Positions are used for keys
 // Bonuses string are use for value
@@ -122,6 +112,18 @@ export const BONUS_POSITIONS: Map<string, string> = new Map<string, string>([
     ['O12', 'doubleLetter'],
     ['O15', 'tripleWord'],
 ]);
+
+export const DEFAULT_GAME_SETTINGS = {
+    playersNames: ['', ''],
+    startingPlayer: StartingPlayer.Player1,
+    timeMinute: '01',
+    timeSecond: '00',
+    level: Level.Beginner,
+    randomBonus: 'Désactiver',
+    bonusPositions: JSON.stringify(Array.from(BONUS_POSITIONS)),
+    dictionary: '',
+    objectiveIds: [],
+};
 
 export const RESERVE: Letter[] = [
     {

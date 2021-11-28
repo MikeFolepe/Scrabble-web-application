@@ -1,16 +1,17 @@
+.centered {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
 #logo-scrabble {
     margin-top: 10px;
-    margin-left: auto;
-    margin-right: auto;
     width: 400px;
     height: 80px;
 }
 
 #main-form-box {
     margin-top: 10px;
-    width: 32%;
-    margin-left: auto;
-    margin-right: auto;
 }
 
 #main-form-name {
@@ -28,8 +29,6 @@
 #submit-button {
     text-align: center;
     display: block;
-    margin-left: auto;
-    margin-right: auto;
     margin-top: 10px;
     margin-bottom: 10px;
 }
