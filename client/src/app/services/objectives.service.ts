@@ -124,10 +124,7 @@ export class ObjectivesService implements OnDestroy {
 
     validateObjectiveTwo(id: number) {
         for (const word of this.wordValidationService.lastPlayedWords.keys()) {
-            const position = this.wordValidationService.playedWords.get(word) as string[];
-            const nbOfOccurrences = position.length / word.length;
-
-            if (word.length >= MIN_SIZE_FOR_OBJ2 && nbOfOccurrences > 1) this.addObjectiveScore(id);
+            if (word.length >= MIN_SIZE_FOR_OBJ2 && this.wordValidationService.priorPlayedWords.has(word)) this.addObjectiveScore(id);
         }
     }
 

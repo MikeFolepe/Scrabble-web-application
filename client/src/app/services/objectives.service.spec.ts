@@ -262,17 +262,17 @@ describe('ObjectivesService', () => {
         const spyOnObjectiveCompleted = spyOn<any>(service, 'addObjectiveScore');
 
         service['wordValidationService'].lastPlayedWords = lastPlayedWordsMap.set('abcd', ['A1', 'A2', 'A3', 'A4']);
-        service['wordValidationService'].playedWords = playedWords.set('abcd', ['A1', 'A2', 'A3', 'A4', 'C1', 'C2', 'C3', 'C4']);
+        service['wordValidationService'].priorPlayedWords = playedWords.set('abcd', ['A1', 'A2', 'A3', 'A4', 'C1', 'C2', 'C3', 'C4']);
         service['validateObjectiveTwo'](1);
         lastPlayedWordsMap.clear();
 
         service['wordValidationService'].lastPlayedWords = lastPlayedWordsMap.set('efg', ['A13', 'A14', 'A15']);
-        service['wordValidationService'].playedWords = playedWords.set('efg', ['A13', 'A14', 'A15', 'H8', 'H9', 'H10']);
+        service['wordValidationService'].priorPlayedWords = playedWords.set('efg', ['A13', 'A14', 'A15', 'H8', 'H9', 'H10']);
         service['validateObjectiveTwo'](1);
         lastPlayedWordsMap.clear();
 
         service['wordValidationService'].lastPlayedWords = lastPlayedWordsMap.set('hij', ['B13', 'B14', 'B15']);
-        service['wordValidationService'].playedWords = playedWords.set('hij', ['B13', 'B14', 'B15']);
+        service['wordValidationService'].priorPlayedWords = playedWords.set('hij', ['B13', 'B14', 'B15']);
         service['validateObjectiveTwo'](1);
         lastPlayedWordsMap.clear();
 
