@@ -23,9 +23,9 @@ describe('Database service', () => {
         mongoUri = mongoServer.getUri();
     });
     afterEach(async () => {
-        sinon.restore();
-        await mongoServer.stop();
-        await service.closeConnection();
+        if (databaseService.database.connection.readyState) {
+            await databaseService.closeConnection();
+        }
     });
 
     it('start(): should connect to the database when start is called', async () => {
