@@ -23,7 +23,7 @@ import { WordValidationService } from './word-validation.service';
 })
 export class PlayerAIService {
     constructor(
-        // All services needed for AI Player functionnalities
+        // All services needed for AI Player functionalities
         public placeLetterService: PlaceLetterService,
         public wordValidation: WordValidationService,
         public skipTurnService: SkipTurnService,
