@@ -4,6 +4,7 @@ import { Direction } from '@app/classes/enum';
 import { Orientation } from '@app/classes/scrabble-board-pattern';
 import { Vec2 } from '@common/vec2';
 import { WordValidationService } from './word-validation.service';
+import { ClientSocketService } from './client-socket.service';
 
 @Injectable({
     providedIn: 'root',
@@ -13,9 +14,17 @@ export class PlacementsHandlerService {
     extendingPositions: string[];
     extendedWords: string[];
 
-    constructor(private wordValidationService: WordValidationService) {
+    constructor(private wordValidationService: WordValidationService, private clientSocketService: ClientSocketService) {
         this.lastLettersPlaced = new Map<string, Vec2>();
         this.extendingPositions = [];
+        this.receiveCurrentWords();
+    }
+
+    receiveCurrentWords(): void {
+        this.clientSocketService.socket.on('receiveCurrentWords', (currentWords: string, priorCurrentWords: string) => {
+            this.wordValidationService.currentWords = new Map<string, string[]>(JSON.parse(currentWords));
+            this.wordValidationService.priorCurrentWords = new Map<string, string[]>(JSON.parse(priorCurrentWords));
+        });
     }
 
     getExtendedWords(orientation: Orientation, scrabbleBoard: string[][], lastLettersPlaced: Map<string, Vec2>): string[] {
@@ -30,6 +39,12 @@ export class PlacementsHandlerService {
             )
                 this.extendingPositions.push(this.getCharPosition(position));
         }
+        this.clientSocketService.socket.emit(
+            'updateCurrentWords',
+            JSON.stringify(Array.from(this.wordValidationService.currentWords)),
+            JSON.stringify(Array.from(this.wordValidationService.priorCurrentWords)),
+            this.clientSocketService.roomId,
+        );
         return this.extendedWords;
     }
 
@@ -47,13 +62,18 @@ export class PlacementsHandlerService {
             extendedWordPositions = extendedWordPositions.reverse();
             extendedWord = this.reverseString(extendedWord);
         }
-        if (
-            // If the extended word found was already played at the same position
-            this.wordValidationService.playedWords.has(extendedWord) &&
-            this.arePositionsEqual(extendedWordPositions, this.wordValidationService.playedWords.get(extendedWord) as string[])
-        ) {
-            this.extendedWords.push(extendedWord);
-            return true;
+        // If the extended word found was already played at the same position
+        if (this.wordValidationService.priorCurrentWords.has(extendedWord)) {
+            if (
+                this.arePositionsEqual(
+                    extendedWordPositions,
+                    this.wordValidationService.priorCurrentWords.get(extendedWord) as string[],
+                    extendedWord,
+                )
+            ) {
+                this.extendedWords.push(extendedWord);
+                return true;
+            }
         }
         return false;
     }
@@ -100,17 +120,27 @@ export class PlacementsHandlerService {
         return string.split('').reverse().join('');
     }
 
-    arePositionsEqual(extentedPositions: string[], playedPositions: string[]): boolean {
-        // TODO: Etienne prendre une decision puis effacer ce todo
-        // Slice et compare les 2 tab ?
+    arePositionsEqual(extendedPositions: string[], playedPositions: string[], extendedWord: string): boolean {
         let arePositionsEqual = false;
-        for (let i = 0; i < playedPositions.length / extentedPositions.length; i++) {
-            for (let j = 0; j < extentedPositions.length; j++) {
-                if (playedPositions[i * extentedPositions.length + j] === extentedPositions[j]) arePositionsEqual = true;
+        for (let i = 0; i < playedPositions.length / extendedPositions.length; i++) {
+            for (let j = 0; j < extendedPositions.length; j++) {
+                if (playedPositions[i * extendedPositions.length + j] === extendedPositions[j]) arePositionsEqual = true;
                 else arePositionsEqual = false;
             }
-            if (arePositionsEqual) return true;
+            if (arePositionsEqual) {
+                this.removeExtendedWords(extendedWord, i, extendedPositions, playedPositions);
+                return true;
+            }
         }
         return false;
+    }
+
+    removeExtendedWords(extendedWord: string, index: number, extendedPositions: string[], playedPositions: string[]): void {
+        this.wordValidationService.currentWords.get(extendedWord)?.splice(index * extendedPositions.length, extendedPositions.length);
+        this.wordValidationService.priorCurrentWords.get(extendedWord)?.splice(index * extendedPositions.length, extendedPositions.length);
+        if (playedPositions.length === 0) {
+            this.wordValidationService.currentWords.delete(extendedWord);
+            this.wordValidationService.priorCurrentWords.delete(extendedWord);
+        }
     }
 }

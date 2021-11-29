@@ -123,8 +123,12 @@ export class ObjectivesService implements OnDestroy {
     }
 
     validateObjectiveTwo(id: number) {
+        const lowerCasePlayedWords: string[] = [];
+        for (const word of this.wordValidationService.priorPlayedWords.keys()) {
+            lowerCasePlayedWords.push(word.toLowerCase());
+        }
         for (const word of this.wordValidationService.lastPlayedWords.keys()) {
-            if (word.length >= MIN_SIZE_FOR_OBJ2 && this.wordValidationService.priorPlayedWords.has(word)) this.addObjectiveScore(id);
+            if (word.length >= MIN_SIZE_FOR_OBJ2 && lowerCasePlayedWords.includes(word.toLowerCase())) this.addObjectiveScore(id);
         }
     }
 
@@ -132,10 +136,8 @@ export class ObjectivesService implements OnDestroy {
         for (const positions of this.wordValidationService.lastPlayedWords.values()) {
             const playedPositionsUsed: string[][] = [];
             for (const position of positions) {
-                this.isPositionInPlayedWords(position, playedPositionsUsed);
+                this.findPositionInPlayedWords(position, playedPositionsUsed);
             }
-            // TODO: supprimer cette ligne lorsque satisfait
-            // console.log('MOTS INTERSECTIONS : ', playedPositionsUsed);
             if (playedPositionsUsed.length > 1) {
                 this.addObjectiveScore(id);
                 return;
@@ -188,8 +190,8 @@ export class ObjectivesService implements OnDestroy {
     }
 
     // TODO: nom de fonction peut etre amelioré eventuellement
-    isPositionInPlayedWords(position: string, playedPositionsUsed: string[][]) {
-        for (const playedPositions of this.wordValidationService.priorPlayedWords.values()) {
+    findPositionInPlayedWords(position: string, playedPositionsUsed: string[][]) {
+        for (const playedPositions of this.wordValidationService.priorCurrentWords.values()) {
             if (playedPositions.includes(position) && !playedPositionsUsed.includes(playedPositions)) {
                 playedPositionsUsed.push(playedPositions);
             }

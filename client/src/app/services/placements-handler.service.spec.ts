@@ -7,6 +7,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { Orientation } from '@app/classes/scrabble-board-pattern';
 import { BOARD_COLUMNS, BOARD_ROWS } from '@app/classes/constants';
 import { Vec2 } from '@common/vec2';
+import { Socket } from 'socket.io-client';
 
 describe('PlacementsHandlerService', () => {
     let service: PlacementsHandlerService;
@@ -28,9 +29,30 @@ describe('PlacementsHandlerService', () => {
         expect(service).toBeTruthy();
     });
 
+    it('receiveCurrentWords should update currentWords and priorCurrentWords', () => {
+        const words = new Map<string, string[]>();
+        const priorWords = new Map<string, string[]>();
+
+        words.set('test', ['H8', 'H9', 'H10', 'H11']);
+        priorWords.set('test', ['H8', 'H9', 'H10', 'H11']);
+
+        service['clientSocketService'].socket = {
+            on: (eventName: string, callback: (currentWords: string, priorCurrentWords: string) => void) => {
+                if (eventName === 'receiveCurrentWords') {
+                    callback(JSON.stringify(Array.from(words)), JSON.stringify(Array.from(priorWords)));
+                }
+            },
+        } as unknown as Socket;
+
+        service.receiveCurrentWords();
+
+        expect(service['wordValidationService'].currentWords.has('test')).toEqual(true);
+        expect(service['wordValidationService'].priorCurrentWords.has('test')).toEqual(true);
+    });
+
     it('getExtendedWords should find the respective word when we horizontally prolong an already placed word', () => {
         const word = 'labo';
-        service['wordValidationService'].playedWords.set('la', ['H8', 'H9']);
+        service['wordValidationService'].priorCurrentWords.set('la', ['H8', 'H9']);
         const orientation = Orientation.Horizontal;
         for (let i = 0; i < word.length; i++) {
             scrabbleBoard[7][7 + i] = word[i];
@@ -44,7 +66,7 @@ describe('PlacementsHandlerService', () => {
 
     it('getExtendedWords should find the respective word when we vertically prolong an already placed word', () => {
         const word = 'plateau';
-        service['wordValidationService'].playedWords.set('plat', ['H8', 'I8', 'J8', 'K8']);
+        service['wordValidationService'].priorCurrentWords.set('plat', ['H8', 'I8', 'J8', 'K8', 'H8', 'H9', 'H10', 'H11']);
         const orientation = Orientation.Vertical;
         for (let i = 0; i < word.length; i++) {
             scrabbleBoard[7 + i][7] = word[i];
@@ -72,9 +94,10 @@ describe('PlacementsHandlerService', () => {
     });
 
     it('arePositionsEqual should return false when the arrays have different positions', () => {
+        const extendedWord = 'pi';
         const extendedPositions = ['H8', 'H9'];
         const playedPositions = ['H8', 'I8'];
-        expect(service.arePositionsEqual(extendedPositions, playedPositions)).toBeFalse();
+        expect(service.arePositionsEqual(extendedPositions, playedPositions, extendedWord)).toBeFalse();
     });
 
     it('isPositionFilled should return false if the position is out of bounds', () => {
