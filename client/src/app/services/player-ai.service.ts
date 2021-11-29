@@ -6,6 +6,7 @@ import { Orientation, PossibleWords } from '@app/classes/scrabble-board-pattern'
 import { PlayerAI } from '@app/models/player-ai.model';
 import { Vec2 } from '@common/vec2';
 import { ChatboxService } from './chatbox.service';
+import { CommunicationService } from './communication.service';
 import { DebugService } from './debug.service';
 import { EndGameService } from './end-game.service';
 import { GameSettingsService } from './game-settings.service';
@@ -35,6 +36,7 @@ export class PlayerAIService {
         public randomBonusService: RandomBonusesService,
         public wordValidationService: WordValidationService,
         public gameSettingsService: GameSettingsService,
+        public communicationService: CommunicationService,
     ) {}
 
     skip(shouldDisplayMessage: boolean = true): void {

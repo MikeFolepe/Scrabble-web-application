@@ -22,19 +22,16 @@ export class GiveUpHandlerService {
         private administratorService: AdministratorService,
     ) {
         this.isGivenUp = false;
+        this.administratorService.initializeAiPlayers();
     }
     receiveEndGameByGiveUp(): void {
         this.clientSocket.socket.on('receiveEndGameByGiveUp', (isGiveUp: boolean, winnerName: string) => {
             if (winnerName === this.gameSettingsService.gameSettings.playersNames[0]) {
                 this.gameSettingsService.isSoloMode = isGiveUp;
                 this.isGivenUp = isGiveUp;
-                this.gameSettingsService.gameSettings.playersNames[1] = this.administratorService.getAiBeginnerName();
-                const playerAi = new PlayerAI(
-                    2,
-                    this.gameSettingsService.gameSettings.playersNames[1],
-                    this.playerService.players[PLAYER_TWO_INDEX].letterTable,
-                    this.playerAIservice,
-                );
+                const randomName = this.administratorService.getAiBeginnerName();
+                this.gameSettingsService.gameSettings.playersNames[PLAYER_TWO_INDEX] = randomName;
+                const playerAi = new PlayerAI(2, randomName, this.playerService.players[PLAYER_TWO_INDEX].letterTable, this.playerAIservice);
                 this.playerService.players[PLAYER_TWO_INDEX] = playerAi;
                 if (!this.skipTurnService.isTurn) playerAi.play();
             }
