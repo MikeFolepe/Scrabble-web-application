@@ -42,10 +42,10 @@ export class CommunicationService {
         if (gameType === GameType.Classic)
             return this.http
                 .get<PlayerScore[]>(`${this.baseUrl}/game/best-scores-classic`)
-                .pipe(catchError(this.handleError<PlayerScore[]>('getbestPlayers')));
+                .pipe(catchError(this.handleError<PlayerScore[]>('getBestPlayers')));
         return this.http
             .get<PlayerScore[]>(`${this.baseUrl}/game/best-scores-log2990`)
-            .pipe(catchError(this.handleError<PlayerScore[]>('getbestPlayers')));
+            .pipe(catchError(this.handleError<PlayerScore[]>('getBestPlayers')));
     }
 
     getAiBeginners(): Observable<AiPlayerDB[]> {

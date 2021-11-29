@@ -4,7 +4,6 @@ import { TestBed } from '@angular/core/testing';
 
 describe('DebugService', () => {
     let service: DebugService;
-    // Fichier de test
 
     beforeEach(() => {
         TestBed.configureTestingModule({});

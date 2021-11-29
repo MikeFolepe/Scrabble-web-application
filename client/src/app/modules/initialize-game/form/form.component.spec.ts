@@ -8,14 +8,19 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
+import { AiPlayerDB } from '@common/ai-name';
+import { Dictionary } from '@common/dictionary';
 import { StartingPlayer } from '@common/game-settings';
 import { Level } from '@common/level';
+import { of } from 'rxjs';
 import { FormComponent } from './form.component';
 
-describe('FormComponent', () => {
+fdescribe('FormComponent', () => {
     let component: FormComponent;
     let fixture: ComponentFixture<FormComponent>;
     let router: jasmine.SpyObj<Router>;
+    let emptyDictionary: Dictionary;
+    // let getDictionaries: jasmine.Spy<() => Observable<Dictionary[]>>;
 
     beforeEach(async () => {
         router = jasmine.createSpyObj('Router', ['navigate']);
@@ -41,17 +46,24 @@ describe('FormComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(FormComponent);
         component = fixture.componentInstance;
-        fixture.detectChanges();
+        emptyDictionary = {
+            fileName: 'empty.json',
+            title: 'empty',
+            description: 'empty dictionary',
+            isDefault: true,
+        };
         component.form = new FormGroup({
             playerName: new FormControl(''),
             minuteInput: new FormControl('70'),
             secondInput: new FormControl('00'),
             levelInput: new FormControl(Level.Beginner),
+            dictionaryInput: new FormControl(emptyDictionary),
             randomBonus: new FormControl('Désactiver'),
         });
 
         component.gameSettingsService.gameSettings.playersNames[0] = 'player 1';
         component.gameSettingsService.isSoloMode = true;
+        component.gameSettingsService.gameSettings.randomBonus = 'Désactiver';
         component.adminService.expertNames = [
             {
                 _id: '1',
@@ -87,16 +99,21 @@ describe('FormComponent', () => {
                 isDefault: true,
             },
         ];
+
+        spyOn(component['communicationService'], 'getDictionaries').and.returnValue(of([emptyDictionary]));
+        fixture.detectChanges();
     });
 
     it('should create', () => {
         expect(component).toBeTruthy();
     });
 
-    // it('should have a predefined name for AI', () => {
-    //     const result = component['chooseRandomAIName'](Level.Beginner);
-    //     expect(component.expertsAi.values).toContain(result);
-    // });
+    it('should have a predefined name for AI', () => {
+        let result = component['chooseRandomAIName'](Level.Beginner);
+        expect(component.adminService.beginnerNames.find((aiPlayer: AiPlayerDB) => aiPlayer.aiName === result)).toBeDefined();
+        result = component['chooseRandomAIName'](Level.Expert);
+        expect(component.adminService.expertNames.find((aiPlayer: AiPlayerDB) => aiPlayer.aiName === result)).toBeDefined();
+    });
 
     it('should have a different name from the player', () => {
         component.form.controls.playerName.setValue(component['chooseRandomAIName'](Level.Beginner));
@@ -115,11 +132,14 @@ describe('FormComponent', () => {
         expect(players).toContain(result.toString());
     });
 
-    // it('should call chooseRandomAIName()', async () => {
-    //     const chooseRandomAINameSpy = spyOn<any>(component, 'chooseRandomAIName');
-    //     component.initializeGame();
-    //     expect(chooseRandomAINameSpy).toHaveBeenCalled();
-    // });
+    it('should initialize all attributes in ngOnInit()', async () => {
+        const initializeAiPlayers = spyOn(component.adminService, 'initializeAiPlayers');
+        await component.ngOnInit();
+        expect(component.dictionaries).toEqual([emptyDictionary]);
+        expect(component.selectedDictionary).toEqual(emptyDictionary);
+        expect(component.form).toBeDefined();
+        expect(initializeAiPlayers);
+    });
 
     // it('should call chooseStartingPlayer()', () => {
     //     const chooseStartingPlayerSpy = spyOn<any>(component, 'chooseStartingPlayer');
@@ -127,17 +147,23 @@ describe('FormComponent', () => {
     //     expect(chooseStartingPlayerSpy).toHaveBeenCalled();
     // });
 
-    // it('should route to game if it is soloGame', () => {
-    //     component.gameSettingsService.isSoloMode = true;
-    //     component.initializeGame();
-    //     expect(router.navigate).toHaveBeenCalledWith(['game']);
-    // });
+    it('should route to game if it is soloGame', async () => {
+        spyOn(component, 'selectGameDictionary');
+        component.isDictionaryDeleted = false;
+        spyOn<any>(component, 'snapshotSettings');
+        component.gameSettingsService.isSoloMode = true;
+        await component.initializeGame();
+        expect(router.navigate).toHaveBeenCalledWith(['game']);
+    });
 
-    // it('should route to multiplayer-mode-waiting-room if it is not soloGame', () => {
-    //     component.gameSettingsService.isSoloMode = false;
-    //     component.initializeGame();
-    //     expect(router.navigate).toHaveBeenCalledWith(['multiplayer-mode-waiting-room']);
-    // });
+    it('should route to multiplayer-mode-waiting-room if it is not soloGame', async () => {
+        spyOn(component, 'selectGameDictionary');
+        component.isDictionaryDeleted = false;
+        spyOn<any>(component, 'snapshotSettings');
+        component.gameSettingsService.isSoloMode = false;
+        await component.initializeGame();
+        expect(router.navigate).toHaveBeenCalledWith(['multiplayer-mode-waiting-room']);
+    });
 
     it('should call shuffleBonusPositons of randomBonusService if randomBonus are activated in the form', () => {
         const shuffleBonusPositionsSpy = spyOn(component['randomBonusService'], 'shuffleBonusPositions').and.returnValue(

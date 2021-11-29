@@ -43,7 +43,7 @@ export class FormComponent implements OnInit, OnDestroy {
             secondInput: new FormControl(this.gameSettingsService.gameSettings.timeSecond),
             levelInput: new FormControl(this.gameSettingsService.gameSettings.level),
             dictionaryInput: new FormControl(this.selectedDictionary.title, [Validators.required]),
-            randomBonus: new FormControl(this.gameSettingsService.gameSettings.randomBonus),
+            randomBonus: new FormControl(this.gameSettingsService.gameSettings.randomBonus), // TODO boolean pour randomBonus ?
         });
         this.adminService.initializeAiPlayers();
     }
