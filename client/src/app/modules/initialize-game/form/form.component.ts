@@ -68,7 +68,6 @@ export class FormComponent implements OnInit, OnDestroy {
         this.isDictionaryDeleted = false;
         if (this.form) this.form.controls.dictionaryInput.setErrors(null);
         this.selectedDictionary = dictionary;
-        this.gameSettingsService.gameDictionary = await this.communicationService.getGameDictionary(dictionary.fileName).toPromise();
         this.fileName = this.selectedDictionary.fileName;
     }
 

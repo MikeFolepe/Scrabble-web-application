@@ -19,7 +19,9 @@ export class PlaceLetterStrategy {
         const level = playerAiService.gameSettingsService.gameSettings.level;
         const isFirstRound = playerAiService.placeLetterService.isFirstRound;
         const scrabbleBoard = playerAiService.placeLetterService.scrabbleBoard;
-        this.dictionary = playerAiService.gameSettingsService.gameDictionary;
+        this.dictionary = await playerAiService.communicationService
+            .getGameDictionary(playerAiService.gameSettingsService.gameSettings.dictionary)
+            .toPromise();
         let allPossibleWords: PossibleWords[];
         let matchingPointingRangeWords: PossibleWords[] = [];
 
