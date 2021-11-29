@@ -3,6 +3,8 @@
 /* eslint-disable dot-notation */
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { RouterTestingModule } from '@angular/router/testing';
 import { RESERVE } from '@app/classes/constants';
 import { PlayerAI } from '@app/models/player-ai.model';
@@ -18,8 +20,36 @@ describe('GiveUpHandlerService', () => {
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [HttpClientTestingModule, RouterTestingModule],
+            providers: [
+                {
+                    provide: MatSnackBar,
+                    useValue: {},
+                },
+                {
+                    provide: MatDialog,
+                    useValue: {},
+                },
+            ],
         });
         service = TestBed.inject(GiveUpHandlerService);
+
+        service['administratorService'].beginnerNames = [
+            {
+                _id: '1',
+                aiName: 'Mister_Bucky',
+                isDefault: true,
+            },
+            {
+                _id: '2',
+                aiName: 'Miss_Betty',
+                isDefault: true,
+            },
+            {
+                _id: '3',
+                aiName: 'Mister_Samy',
+                isDefault: true,
+            },
+        ];
     });
 
     it('should be created', () => {
@@ -99,12 +129,14 @@ describe('GiveUpHandlerService', () => {
         // Function Call
         service.receiveEndGameByGiveUp();
         const spyPlay = spyOn<any>(service['playerService'].players[1], 'play');
+        const spyGetAiName = spyOn<any>(service['administratorService'], 'getAiBeginnerName');
         // Expectation
         expect(service.isGivenUp).toEqual(true);
         expect(service['gameSettingsService'].isSoloMode).toEqual(true);
         expect(service['playerService'].players[1].name).toEqual('Miss_Betty');
         expect(service['playerService'].players[1]).toBeInstanceOf(PlayerAI);
         expect(spyPlay).not.toHaveBeenCalled();
+        expect(spyGetAiName).not.toHaveBeenCalled();
         expect(service['gameSettingsService'].gameSettings.playersNames[1]).toEqual('Miss_Betty');
     });
 
@@ -141,12 +173,14 @@ describe('GiveUpHandlerService', () => {
         // Function Call
         service.receiveEndGameByGiveUp();
         const spyPlay = spyOn<any>(service['playerService'].players[1], 'play');
+        const spyGetAiName = spyOn<any>(service['administratorService'], 'getAiBeginnerName');
         // Expectation
         expect(service.isGivenUp).toEqual(true);
         expect(service['gameSettingsService'].isSoloMode).toEqual(true);
         expect(service['playerService'].players[1].name).toEqual('Miss_Betty');
         expect(service['playerService'].players[1]).toBeInstanceOf(PlayerAI);
         expect(spyPlay).not.toHaveBeenCalled();
-        expect(service['gameSettingsService'].gameSettings.playersNames[1]).toEqual('Miss_Betty');
+        expect(spyGetAiName).not.toHaveBeenCalled();
+        expect(service['gameSettingsService'].gameSettings.playersNames[1]).not.toEqual('');
     });
 });

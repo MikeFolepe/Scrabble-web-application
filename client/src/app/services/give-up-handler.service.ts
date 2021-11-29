@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { PLAYER_TWO_INDEX } from '@app/classes/constants';
 import { PlayerAI } from '@app/models/player-ai.model';
 import { ClientSocketService } from '@app/services/client-socket.service';
+import { AdministratorService } from './administrator.service';
 import { GameSettingsService } from './game-settings.service';
 import { PlayerAIService } from './player-ai.service';
 import { PlayerService } from './player.service';
@@ -18,6 +19,7 @@ export class GiveUpHandlerService {
         public playerService: PlayerService,
         public skipTurnService: SkipTurnService,
         private playerAIservice: PlayerAIService,
+        private administratorService: AdministratorService,
     ) {
         this.isGivenUp = false;
     }
@@ -26,9 +28,13 @@ export class GiveUpHandlerService {
             if (winnerName === this.gameSettingsService.gameSettings.playersNames[0]) {
                 this.gameSettingsService.isSoloMode = isGiveUp;
                 this.isGivenUp = isGiveUp;
-                this.playerService.players[PLAYER_TWO_INDEX].name = 'Miss_Betty';
-                this.gameSettingsService.gameSettings.playersNames[1] = 'Miss_Betty';
-                const playerAi = new PlayerAI(2, 'Miss_Betty', this.playerService.players[PLAYER_TWO_INDEX].letterTable, this.playerAIservice);
+                this.gameSettingsService.gameSettings.playersNames[1] = this.administratorService.getAiBeginnerName();
+                const playerAi = new PlayerAI(
+                    2,
+                    this.gameSettingsService.gameSettings.playersNames[1],
+                    this.playerService.players[PLAYER_TWO_INDEX].letterTable,
+                    this.playerAIservice,
+                );
                 this.playerService.players[PLAYER_TWO_INDEX] = playerAi;
                 if (!this.skipTurnService.isTurn) playerAi.play();
             }

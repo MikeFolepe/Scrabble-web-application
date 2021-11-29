@@ -199,6 +199,11 @@ export class AdministratorService {
         });
     }
 
+    getAiBeginnerName(): string {
+        const randomAiBeginnerIndex = Math.floor(Math.random() * this.beginnerNames.length);
+        return this.beginnerNames[randomAiBeginnerIndex].aiName;
+    }
+
     async resetData(): Promise<void> {
         this.isResetting = true;
 
