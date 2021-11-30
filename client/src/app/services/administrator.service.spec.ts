@@ -50,7 +50,7 @@ describe('AdministratorService', () => {
         expect(service).toBeTruthy();
     });
 
-    it('should return a random name of begginer Ai name', () => {
+    it('should return a random name of beginner Ai name', () => {
         service.getAiBeginnerName();
         expect(service.getAiBeginnerName()).not.toEqual('');
     });

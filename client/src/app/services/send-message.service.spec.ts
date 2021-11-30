@@ -58,7 +58,7 @@ describe('SendMessageService', () => {
         expect(service.messageType).toEqual(MessageType.Opponent);
     });
 
-    it('the emit sendGameConversionMessage should send the parametres of message of switchMode', () => {
+    it('the emit sendGameConversionMessage should send the parameters of message of switchMode', () => {
         const spyEmit = spyOn(service['clientSocketService'].socket, 'emit');
         service.sendConversionMessage();
         expect(spyEmit).toHaveBeenCalled();

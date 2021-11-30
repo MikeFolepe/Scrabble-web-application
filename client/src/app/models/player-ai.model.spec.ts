@@ -44,8 +44,8 @@ describe('PlayerAI', () => {
     });
 
     it('should return playerHand formatted', () => {
-        const playerHandFormated = '[ABCEEEG]';
-        expect(playerAi.getHand()).toEqual(playerHandFormated);
+        const playerHandFormatted = '[ABCEEEG]';
+        expect(playerAi.getHand()).toEqual(playerHandFormatted);
     });
 
     it('should return quantity of present letter', () => {
@@ -60,7 +60,7 @@ describe('PlayerAI', () => {
         expect(playerAi.playerQuantityOf('E')).toEqual(3);
     });
 
-    it('should return quantity of letter with case insentivity', () => {
+    it('should return quantity of letter with case insensitivity', () => {
         expect(playerAi.playerQuantityOf('e')).toEqual(3);
     });
 });
