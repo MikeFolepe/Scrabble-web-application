@@ -83,26 +83,5 @@ export class GameController {
                     res.status(StatusCodes.NOT_FOUND).send('An error occurred while trying to get players scores ' + error.message);
                 });
         });
-
-        // this.router.post('/uploadDictionary', (req, res) => {
-        //     let uploadedFile;
-        //     if (!req['files']) return res.sendStatus(StatusCodes.NOT_FOUND).send(JSON.stringify('File not found'));
-
-        //     if (Array.isArray(req['files'].file)) {
-        //         // It must be an array of UploadedFile objects
-        //         for (const fic of req['files'].file) {
-        //             fic.mv('./dictionaries' + fic.name, (err: boolean) => {
-        //                 if (err) res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(JSON.stringify('Upload error'));
-        //             });
-        //         }
-        //     } else {
-        //         // It must be a single UploadedFile object
-        //         uploadedFile = req['files'].file;
-        //         uploadedFile.mv('./dictionaries/' + uploadedFile.name, (err: boolean) => {
-        //             if (err) res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(JSON.stringify('Upload error'));
-        //         });
-        //     }
-        //     return res.status(StatusCodes.OK).send(JSON.stringify('Uploaded'));
-        // });
     }
 }

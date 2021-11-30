@@ -58,6 +58,7 @@ export class ChatboxComponent implements OnInit, AfterViewInit {
         }
     }
 
+    // TODO revoir cette fonction avec Étienne
     displayMessageByType(): void {
         if (this.sendMessageService.messageType === MessageType.Error && this.message.length) {
             this.listTypes.push(this.sendMessageService.messageType);

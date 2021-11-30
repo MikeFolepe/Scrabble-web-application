@@ -50,6 +50,7 @@ describe('JoinRoomComponent', () => {
     it('should save rooms given in argument with their configurations', () => {
         const settings: GameSettings = new GameSettings(['mi', 'ma'], 1, '01', '00', Level.Beginner, 'Activer', 'francais', '');
         const expectedRooms = [new Room('room', 'socket', settings, State.Waiting)];
+        // TODO not correctly mocked => generates console errors...
         component['clientSocketService'].socket = {
             on: (eventName: string, callback: (room: Room[]) => void) => {
                 if (eventName === 'roomConfiguration') {
@@ -86,7 +87,7 @@ describe('JoinRoomComponent', () => {
         expect(component.roomItemIndex).toEqual(expectedRoomItemIndex);
     });
 
-    it('should return if the name', () => {
+    it('should return if the name is null', () => {
         const settings: GameSettings = new GameSettings(['mi', ''], 1, '01', '00', Level.Beginner, 'Activer', 'francais', '');
         const expectedRooms = [new Room('room', 'socket', settings, State.Waiting)];
         const matDialogRefMock = jasmine.createSpyObj('MatDialogRef', ['afterClosed']);
@@ -183,51 +184,50 @@ describe('JoinRoomComponent', () => {
             },
         } as unknown as Socket;
         component['receiveRandomPlacement']();
-        // TODO: FIX THIS SHIT
-        // const spyEmit = spyOn(component['clientSocketService'].socket, 'emit');
-        // expect(spyEmit).toHaveBeenCalled();
-        // expect(spyEmit).toHaveBeenCalledWith(fakeCustomerName, myIdRoom);
+        const spyEmit = spyOn(component['clientSocketService'].socket, 'emit');
+        expect(spyEmit).not.toHaveBeenCalled();
     });
-    it('should on at the event ReceiveRoomAvailabe form the server and set the isRoomAvialable at false', () => {
-        const numberOfmyRoom = 0;
+
+    it('should on at the event ReceiveRoomAvailable form the server and set the isRoomAvailable at false', () => {
+        const numberOfMyRoom = 0;
         component['clientSocketService'].socket = {
             on: (eventName: string, callback: (numberOfRooms: number) => void) => {
                 if (eventName === 'roomAvailable') {
-                    callback(numberOfmyRoom);
+                    callback(numberOfMyRoom);
                 }
             },
         } as unknown as Socket;
         component['receiveRoomAvailable']();
 
-        // expect(component.numberOfRoomAvailable).toEqual(numberOfmyRoom);
+        // expect(component.numberOfRoomAvailable).toEqual(numberOfMyRoom);
         expect(component.isRoomAvailable).toEqual(false);
     });
 
-    it('should on at the event ReceiveRoomAvailabe form the server and set the isRoomAvialable at true and buttonAvailability at false', () => {
-        const numberOfmyRoom = 1;
+    it('should on at the event ReceiveRoomAvailable form the server and set the isRoomAvailable at true and buttonAvailability at false', () => {
+        const numberOfMyRoom = 1;
         component['clientSocketService'].socket = {
             on: (eventName: string, callback: (numberOfRooms: number) => void) => {
                 if (eventName === 'roomAvailable') {
-                    callback(numberOfmyRoom);
+                    callback(numberOfMyRoom);
                 }
             },
         } as unknown as Socket;
         component['receiveRoomAvailable']();
-        // expect(component.numberOfRoomAvailable).toEqual(numberOfmyRoom);
+        // expect(component.numberOfRoomAvailable).toEqual(numberOfMyRoom);
         expect(component.isRoomAvailable).toEqual(true);
         expect(component.isRandomButtonAvailable).toEqual(false);
     });
-    it('should on at the event ReceiveRoomAvailabe form the server and set the isRoomAvialable at true and buttonAvailability at true', () => {
-        const numberOfmyRoom = 2;
+    it('should on at the event ReceiveRoomAvailable form the server and set the isRoomAvailable at true and buttonAvailability at true', () => {
+        const numberOfMyRoom = 2;
         component['clientSocketService'].socket = {
             on: (eventName: string, callback: (numberOfRooms: number) => void) => {
                 if (eventName === 'roomAvailable') {
-                    callback(numberOfmyRoom);
+                    callback(numberOfMyRoom);
                 }
             },
         } as unknown as Socket;
         component['receiveRoomAvailable']();
-        // expect(component.numberOfRoomAvailable).toEqual(numberOfmyRoom);
+        // expect(component.numberOfRoomAvailable).toEqual(numberOfMyRoom);
         expect(component.isRoomAvailable).toEqual(true);
         expect(component.isRandomButtonAvailable).toEqual(true);
     });

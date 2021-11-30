@@ -1,5 +1,5 @@
 /* eslint-disable max-lines */
-// TODO JUSTIFICATION : À confirmer  avec Ethienne
+// TODO JUSTIFICATION : À confirmer  avec Étienne
 import { Injectable, OnDestroy } from '@angular/core';
 import {
     BOARD_COLUMNS,

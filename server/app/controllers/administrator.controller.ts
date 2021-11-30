@@ -80,12 +80,14 @@ export class AdministratorController {
             await this.administratorService.resetScores(GameType.Classic).catch((error) => {
                 res.status(StatusCodes.NOT_MODIFIED).send('An error occurred while trying to delete classic scores ' + error.message);
             });
+            res.send(StatusCodes.OK);
         });
 
         this.router.delete('/scores/Log2990', async (req: Request, res: Response) => {
             await this.administratorService.resetScores(GameType.Log2990).catch((error) => {
                 res.status(StatusCodes.NOT_MODIFIED).send('An error occurred while trying to delete Log2990 scores ' + error.message);
             });
+            res.send(StatusCodes.OK);
         });
 
         this.router.post('/aiPlayers', async (req: Request, res: Response) => {

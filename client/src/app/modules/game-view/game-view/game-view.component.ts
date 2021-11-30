@@ -70,9 +70,10 @@ export class GameViewComponent implements OnInit {
     }
 
     leaveGame(): void {
-        this.endGameService.clearAllData();
+        this.skipTurnService.stopTimer();
         this.placeLetterService.ngOnDestroy();
         this.gridService.ngOnDestroy();
+        this.endGameService.clearAllData();
         if (this.giveUpHandlerService.isGivenUp)
             this.clientSocketService.socket.emit('deleteGame', this.clientSocketService.roomId, this.clientSocketService.gameType);
     }
