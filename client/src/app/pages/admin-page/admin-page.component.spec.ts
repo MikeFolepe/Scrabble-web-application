@@ -9,7 +9,7 @@ import { Dictionary } from '@common/dictionary';
 import { of } from 'rxjs';
 import { AdminPageComponent } from './admin-page.component';
 
-fdescribe('AdminPageComponent', () => {
+describe('AdminPageComponent', () => {
     let component: AdminPageComponent;
     let fixture: ComponentFixture<AdminPageComponent>;
     let emptyDictionary: Dictionary;
