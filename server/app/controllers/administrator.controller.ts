@@ -76,18 +76,14 @@ export class AdministratorController {
                 });
         });
 
-        this.router.delete('/scores/Classic', async (req: Request, res: Response) => {
+        this.router.delete('/scores', async (req: Request, res: Response) => {
             await this.administratorService.resetScores(GameType.Classic).catch((error) => {
                 res.status(StatusCodes.NOT_MODIFIED).send('An error occurred while trying to delete classic scores ' + error.message);
             });
-            res.send(StatusCodes.OK);
-        });
-
-        this.router.delete('/scores/Log2990', async (req: Request, res: Response) => {
             await this.administratorService.resetScores(GameType.Log2990).catch((error) => {
-                res.status(StatusCodes.NOT_MODIFIED).send('An error occurred while trying to delete Log2990 scores ' + error.message);
+                res.status(StatusCodes.NOT_MODIFIED).send('An error occurred while trying to delete classic scores ' + error.message);
             });
-            res.send(StatusCodes.OK);
+            res.sendStatus(StatusCodes.OK);
         });
 
         this.router.post('/aiPlayers', async (req: Request, res: Response) => {
@@ -125,13 +121,14 @@ export class AdministratorController {
         });
 
         this.router.get('/download/:fileName', (req: Request, res: Response) => {
-            res.send(fileSystem.readFileSync(`./dictionaries/${req.params.fileName}`, 'utf8'));
+            res.send(JSON.parse(fileSystem.readFileSync(`./dictionaries/${req.params.fileName}`, 'utf8')));
         });
 
-        this.router.post('/uploadDictionary', (req, res) => {
+        this.router.post('/uploadDictionary', (req: Request, res: Response) => {
             let uploadedFile;
-            if (!req['files']) return res.sendStatus(StatusCodes.NOT_FOUND).send(JSON.stringify('File not found'));
-
+            if (!req['files']) {
+                return res.sendStatus(StatusCodes.NOT_FOUND).send('Fichier introuvable');
+            }
             if (Array.isArray(req['files'].file)) {
                 // It must be an array of UploadedFile objects
                 for (const fic of req['files'].file) {
