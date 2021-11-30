@@ -136,7 +136,6 @@ describe('Admin service', () => {
         for (const item of result) {
             expect(item.title).to.equal(expectedResult.title);
             expect(item.description).to.equal(expectedResult.description);
-            expect(item.isDefault).to.equal(true);
         }
 
         stubOnReadFile.restore();
