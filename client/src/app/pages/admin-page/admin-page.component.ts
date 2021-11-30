@@ -34,6 +34,7 @@ export class AdminPageComponent implements OnInit {
     }
 
     editDictionary(dictionary: Dictionary): void {
+        if (!this.adminService.isDictionaryDeletable(dictionary)) return;
         this.dialog
             .open(EditDictionaryDialogComponent, {
                 disableClose: true,
