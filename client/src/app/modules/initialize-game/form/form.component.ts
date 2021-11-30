@@ -3,10 +3,10 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BONUS_POSITIONS, DEFAULT_DICTIONARY_INDEX, INVALID_INDEX, PLAYER_ONE_INDEX } from '@app/classes/constants';
 import { NUMBER_OF_OBJECTIVES, OBJECTIVES } from '@app/classes/objectives';
+import { AdministratorService } from '@app/services/administrator.service';
 import { CommunicationService } from '@app/services/communication.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { RandomBonusesService } from '@app/services/random-bonuses.service';
-import { AiPlayerDB, AiType } from '@common/ai-name';
 import { Dictionary } from '@common/dictionary';
 import { GameSettings, StartingPlayer } from '@common/game-settings';
 import { Level } from '@common/level';
@@ -20,8 +20,6 @@ import { ObjectiveTypes } from '@common/objectives-type';
 export class FormComponent implements OnInit, OnDestroy {
     form: FormGroup;
     dictionaries: Dictionary[];
-    beginnersAi: AiPlayerDB[];
-    expertsAi: AiPlayerDB[];
     selectedDictionary: Dictionary;
     isDictionaryDeleted: boolean;
     fileName: string;
@@ -31,6 +29,7 @@ export class FormComponent implements OnInit, OnDestroy {
         private router: Router,
         private randomBonusService: RandomBonusesService,
         private communicationService: CommunicationService,
+        public adminService: AdministratorService,
     ) {
         this.gameSettingsService.ngOnDestroy();
     }
@@ -44,9 +43,9 @@ export class FormComponent implements OnInit, OnDestroy {
             secondInput: new FormControl(this.gameSettingsService.gameSettings.timeSecond),
             levelInput: new FormControl(this.gameSettingsService.gameSettings.level),
             dictionaryInput: new FormControl(this.selectedDictionary.title, [Validators.required]),
-            randomBonus: new FormControl(this.gameSettingsService.gameSettings.randomBonus),
+            randomBonus: new FormControl(this.gameSettingsService.gameSettings.randomBonus), // TODO boolean pour randomBonus ?
         });
-        this.initializeAiPlayers();
+        this.adminService.initializeAiPlayers();
     }
 
     async initializeGame(): Promise<void> {
@@ -70,8 +69,7 @@ export class FormComponent implements OnInit, OnDestroy {
         this.isDictionaryDeleted = false;
         if (this.form) this.form.controls.dictionaryInput.setErrors(null);
         this.selectedDictionary = dictionary;
-        this.gameSettingsService.gameDictionary = await this.communicationService.getGameDictionary(dictionary.fileName).toPromise();
-        this.fileName = dictionary.fileName;
+        this.fileName = this.selectedDictionary.fileName;
     }
 
     keyPressSubmit(event: KeyboardEvent) {
@@ -80,16 +78,6 @@ export class FormComponent implements OnInit, OnDestroy {
 
     ngOnDestroy(): void {
         this.gameSettingsService.isRedirectedFromMultiplayerGame = false;
-    }
-
-    private initializeAiPlayers(): void {
-        this.communicationService.getAiPlayers(AiType.beginner).subscribe((aiBeginners: AiPlayerDB[]) => {
-            this.beginnersAi = aiBeginners;
-        });
-
-        this.communicationService.getAiPlayers(AiType.expert).subscribe((aiExperts: AiPlayerDB[]) => {
-            this.expertsAi = aiExperts;
-        });
     }
 
     private async initializeDictionaries(): Promise<void> {
@@ -109,8 +97,11 @@ export class FormComponent implements OnInit, OnDestroy {
         let randomName = '';
         do {
             // Random value [0, AI_NAME_DATABASE.length[
-            const randomNumber = Math.floor(Math.random() * this.beginnersAi.length);
-            randomName = levelInput === Level.Beginner ? this.beginnersAi[randomNumber].aiName : this.expertsAi[randomNumber].aiName;
+            const randomNumber = Math.floor(Math.random() * this.adminService.beginnerNames.length);
+            randomName =
+                levelInput === Level.Beginner
+                    ? this.adminService.beginnerNames[randomNumber].aiName
+                    : this.adminService.expertNames[randomNumber].aiName;
         } while (randomName === this.form.controls.playerName.value);
         return randomName;
     }
@@ -126,21 +117,21 @@ export class FormComponent implements OnInit, OnDestroy {
             this.form.controls.randomBonus.value,
             this.getRightBonusPositions(),
             this.fileName,
-            this.initializeObjective([[], []]),
+            this.initializeObjective(),
         );
     }
 
-    private initializeObjective(forceValue: number[][] = [[], []]): number[][] {
-        // TODO: ligne suivante uniquement à des fins de débogage
-        if (forceValue[0].length === 2 && forceValue[1].length === 2) return forceValue;
+    private initializeObjective(): number[][] {
         const objectiveIds: number[] = [];
-        const objectiveByType: number[][] = [[], []];
 
         while (objectiveIds.length < NUMBER_OF_OBJECTIVES) {
             const candidate = Math.floor(Number(Math.random()) * OBJECTIVES.length);
             if (objectiveIds.indexOf(candidate) === INVALID_INDEX) objectiveIds.push(candidate);
         }
-        objectiveByType[ObjectiveTypes.Public] = objectiveIds.slice(0, 2);
+
+        const objectiveByType: number[][] = [[], []];
+
+        objectiveByType[ObjectiveTypes.Public] = objectiveIds.slice(0, 2); // TODO const NUMBER_OF_PUBLIC_OBJ
         objectiveByType[ObjectiveTypes.Private] = objectiveIds.slice(2, objectiveIds.length);
 
         return objectiveByType;

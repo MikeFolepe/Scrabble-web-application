@@ -5,6 +5,7 @@ import { Player } from './player.model';
 
 export class PlayerAI extends Player {
     private strategy: PlaceLetterStrategy;
+    // TODO créer une constante pour le id ou utiliser les memes valeurs que les index
     constructor(id: number, name: string, letterTable: Letter[], public playerAiService: PlayerAIService) {
         super(id, name, letterTable);
         this.strategy = new PlaceLetterStrategy();

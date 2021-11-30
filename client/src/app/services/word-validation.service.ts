@@ -232,6 +232,7 @@ export class WordValidationService {
             this.lastPlayedWords.set(word, this.newPlayedWords.get(word) as string[]);
             this.currentWords.set(word, this.newPlayedWords.get(word) as string[]);
         }
+
         this.priorPlayedWords.clear();
         for (const word of this.playedWords.keys()) {
             this.priorPlayedWords.set(word, this.playedWords.get(word) as string[]);

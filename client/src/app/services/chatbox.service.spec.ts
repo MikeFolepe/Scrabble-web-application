@@ -125,6 +125,17 @@ describe('ChatboxService', () => {
         service['skipTurnService'].isTurn = true;
         spyOn(service['placeLetterService'], 'placeCommand').and.returnValue(Promise.resolve(true));
         service['command'] = 'placer';
+        service['message'] = '!placer h8v hello';
+        service['messageType'] = MessageType.Player;
+        await service['executePlace']();
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('!placer h8v hello', MessageType.Player);
+    });
+
+    it('using a valid command !placer vertical should display the respective message', async () => {
+        spyOn(service['skipTurnService'], 'switchTurn');
+        service['skipTurnService'].isTurn = true;
+        spyOn(service['placeLetterService'], 'placeCommand').and.returnValue(Promise.resolve(true));
+        service['command'] = 'placer';
         service['message'] = '!placer h8h hello';
         service['messageType'] = MessageType.Player;
         await service['executePlace']();

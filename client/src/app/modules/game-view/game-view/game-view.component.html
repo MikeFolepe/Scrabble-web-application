@@ -29,6 +29,20 @@
                 <div *ngIf="!endGameService.isEndGame && !gameSettingsService.isSoloMode && !giveUpHandlerService.isGivenUp">
                     <button mat-raised-button color="primary" id="regular-button" (click)="confirmGiveUpGame()">Abandonner</button>
                 </div>
+                <div *ngIf="endGameService.isEndGame && !gameSettingsService.isSoloMode && !giveUpHandlerService.isGivenUp">
+                    <button
+                        mat-raised-button
+                        color="primary"
+                        id="regular-button"
+                        (click)="
+                            this.clientSocketService.socket.emit('deleteGame', this.clientSocketService.roomId, this.clientSocketService.gameType);
+                            leaveGame()
+                        "
+                        routerLink="/home"
+                    >
+                        Quitter
+                    </button>
+                </div>
             </div>
             <app-font-size id="font-size" [fontSize]="fontSize" (sizeChange)="handleFontSizeEvent($event)"></app-font-size>
         </div>

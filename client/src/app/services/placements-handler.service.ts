@@ -3,8 +3,8 @@ import { BOARD_COLUMNS, BOARD_ROWS } from '@app/classes/constants';
 import { Direction } from '@app/classes/enum';
 import { Orientation } from '@app/classes/scrabble-board-pattern';
 import { Vec2 } from '@common/vec2';
-import { WordValidationService } from './word-validation.service';
 import { ClientSocketService } from './client-socket.service';
+import { WordValidationService } from './word-validation.service';
 
 @Injectable({
     providedIn: 'root',
