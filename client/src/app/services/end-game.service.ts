@@ -69,9 +69,7 @@ export class EndGameService {
     }
 
     getFinalScore(indexPlayer: number): void {
-        if (this.playerService.players[indexPlayer].score === 0) {
-            return;
-        }
+        if (this.playerService.players[indexPlayer].score === 0) return;
 
         for (const letter of this.playerService.players[indexPlayer].letterTable) {
             this.playerService.players[indexPlayer].score -= letter.points;
@@ -91,9 +89,7 @@ export class EndGameService {
             playerName: this.playerService.players[indexPlayer].name,
             isDefault: false,
         };
-        this.httpServer.addPlayersScores(players, this.gameSettingsService.gameType).subscribe(() => {
-            // TODO:voir si supprimer ce subscribe
-        });
+        this.httpServer.addPlayersScores(players, this.gameSettingsService.gameType).subscribe();
     }
 
     clearAllData(): void {
