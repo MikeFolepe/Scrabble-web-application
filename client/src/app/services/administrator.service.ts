@@ -216,6 +216,11 @@ export class AdministratorService {
         this.displayMessage('La base de données à été réinitialisée');
     }
 
+    isDictionaryDeletable(dictionary: Dictionary): boolean {
+        if (dictionary.isDefault) this.displayMessage('Vous ne pouvez pas modifier le dictionnaire par défaut');
+        return !dictionary.isDefault;
+    }
+
     private addAiPlayer(aiPlayer: AiPlayer, aiType: AiType): void {
         this.communicationService.addAiPlayer(aiPlayer, aiType).subscribe(
             (aiFromDB: AiPlayerDB) => {
