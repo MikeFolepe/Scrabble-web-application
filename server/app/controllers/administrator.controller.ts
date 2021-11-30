@@ -128,10 +128,11 @@ export class AdministratorController {
             res.send(fileSystem.readFileSync(`./dictionaries/${req.params.fileName}`, 'utf8'));
         });
 
-        this.router.post('/uploadDictionary', (req, res) => {
+        this.router.post('/uploadDictionary', (req: Request, res: Response) => {
             let uploadedFile;
-            if (!req['files']) return res.sendStatus(StatusCodes.NOT_FOUND).send(JSON.stringify('File not found'));
-
+            if (!req['files']) {
+                return res.sendStatus(StatusCodes.NOT_FOUND).send('Fichier introuvable');
+            }
             if (Array.isArray(req['files'].file)) {
                 // It must be an array of UploadedFile objects
                 for (const fic of req['files'].file) {

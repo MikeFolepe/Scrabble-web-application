@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-require-imports */
 import { Application } from '@app/app';
 import { AdministratorService } from '@app/services/administrator.service';
@@ -323,6 +325,49 @@ describe('AdminController', () => {
                 expect(stubOnDelete.called).to.equal(true);
                 expect(response.status).to.equal(StatusCodes.OK);
                 stubOnDelete.restore();
+                done();
+            });
+    });
+
+    it('should return the respective status from an invalid dictionary upload', (done) => {
+        const fileName = 'test_dictionary.json';
+        chai.request(expressApp)
+            .post('/api/admin/uploadDictionary')
+            .field('Content-Type', 'multipart/form-data')
+            .field('Content-Disposition', 'form-data; name="file", filename="' + fileName + '"\r\n')
+            .field('Content-Type', 'file/json\r\n')
+            .end((err, response) => {
+                expect(response.status).to.equal(StatusCodes.NOT_FOUND);
+                done();
+            });
+    });
+
+    it('should return the respective status from a successful dictionary upload', (done) => {
+        const fileName = 'test_dictionary.json';
+        chai.request(expressApp)
+            .post('/api/admin/uploadDictionary')
+            .field('Content-Type', 'multipart/form-data')
+            .field('Content-Disposition', 'form-data; name="file", filename="' + fileName + '"\r\n')
+            .field('Content-Type', 'file/json\r\n')
+            .attach('file', process.cwd() + '/tests_data/' + fileName)
+            .end((err, response) => {
+                expect(response.status).to.equal(StatusCodes.OK);
+                done();
+            });
+    });
+
+    it('should return the respective status from a successful upload of an array of dictionaries', (done) => {
+        const fileName = 'test_dictionary.json';
+        chai.request(expressApp)
+            .post('/api/admin/uploadDictionary')
+            .field('Content-Type', 'multipart/form-data')
+            .field('Content-Disposition', 'form-data; name="file[]", filename="' + fileName + '"\r\n')
+            .field('Content-Type', 'file/json\r\n')
+            .attach('file', process.cwd() + '/tests_data/' + fileName)
+            .attach('file', process.cwd() + '/tests_data/test_dictionary.json')
+            .attach('file', process.cwd() + '/tests_data/test_dictionary.json')
+            .end((err, response) => {
+                expect(response.status).to.equal(StatusCodes.OK);
                 done();
             });
     });
