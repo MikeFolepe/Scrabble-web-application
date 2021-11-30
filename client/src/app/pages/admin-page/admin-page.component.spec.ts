@@ -39,7 +39,7 @@ describe('AdminPageComponent', () => {
             fileName: 'empty.json',
             title: 'empty',
             description: 'empty dictionary',
-            isDefault: true,
+            isDefault: false,
         };
         fixture.detectChanges();
     });
@@ -74,6 +74,7 @@ describe('AdminPageComponent', () => {
         matDialogMock.open.and.returnValue(matDialogRefMock);
         component.dialog = matDialogMock;
         const updateDictionary = spyOn(component.adminService, 'updateDictionary');
+        spyOn(component.adminService, 'isDictionaryDeletable').and.returnValue(true);
         component.editDictionary(emptyDictionary);
         expect(updateDictionary).not.toHaveBeenCalled();
     });
@@ -90,6 +91,7 @@ describe('AdminPageComponent', () => {
         matDialogMock.open.and.returnValue(matDialogRefMock);
         component.dialog = matDialogMock;
         const updateDictionary = spyOn(component.adminService, 'updateDictionary');
+        spyOn(component.adminService, 'isDictionaryDeletable').and.returnValue(true);
         component.editDictionary(emptyDictionary);
         expect(updateDictionary).not.toHaveBeenCalled();
     });
@@ -106,6 +108,7 @@ describe('AdminPageComponent', () => {
         matDialogMock.open.and.returnValue(matDialogRefMock);
         component.dialog = matDialogMock;
         const updateDictionary = spyOn(component.adminService, 'updateDictionary');
+        spyOn(component.adminService, 'isDictionaryDeletable').and.returnValue(true);
         component.editDictionary(emptyDictionary);
         expect(updateDictionary).toHaveBeenCalled();
     });
