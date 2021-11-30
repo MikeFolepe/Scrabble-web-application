@@ -45,7 +45,7 @@ export class AdminPageComponent implements OnInit {
             .afterClosed()
             .subscribe((response) => {
                 if (!response) return;
-                if (!response.titleInput || !response.descriptionInput) return;
+                if (!response.title || !response.description) return;
                 this.adminService.updateDictionary(dictionary, response);
             });
     }
