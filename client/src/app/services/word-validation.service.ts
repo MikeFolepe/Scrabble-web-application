@@ -241,6 +241,7 @@ export class WordValidationService {
         for (const word of this.newPlayedWords.keys()) {
             this.addToPlayedWords(word, this.newPlayedWords.get(word) as string[], this.playedWords);
         }
+
         this.clientSocketService.socket.emit('updatePlayedWords', JSON.stringify(Array.from(this.playedWords)), this.clientSocketService.roomId);
 
         this.newPlayedWords.clear();

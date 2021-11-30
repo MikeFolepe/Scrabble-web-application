@@ -189,9 +189,9 @@ export class ObjectivesService implements OnDestroy {
         }
     }
 
-    // TODO: nom de fonction peut etre amelioré eventuellement
     findPositionInPlayedWords(position: string, playedPositionsUsed: string[][]) {
-        for (const playedPositions of this.wordValidationService.priorCurrentWords.values()) {
+        for (const playedPositions of this.wordValidationService.priorPlayedWords.values()) {
+            // TODO: verifier avec Etienne
             if (playedPositions.includes(position) && !playedPositionsUsed.includes(playedPositions)) {
                 playedPositionsUsed.push(playedPositions);
             }
