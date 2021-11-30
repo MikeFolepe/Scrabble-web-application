@@ -54,19 +54,18 @@ export class ChatboxComponent implements OnInit, AfterViewInit {
         if (event.key === 'Enter') {
             event.preventDefault();
             this.chatBoxService.sendPlayerMessage(this.message);
-            this.message = ''; // Clear input
-
             this.scrollToBottom();
         }
     }
 
     displayMessageByType(): void {
-        if (this.sendMessageService.messageType === MessageType.Error) {
+        if (this.sendMessageService.messageType === MessageType.Error && this.message.length) {
             this.listTypes.push(this.sendMessageService.messageType);
             this.listMessages.push(this.message);
         }
         this.listTypes.push(this.sendMessageService.messageType);
         this.listMessages.push(this.sendMessageService.message);
+        this.message = ''; // Clear input
         this.scrollToBottom();
     }
 

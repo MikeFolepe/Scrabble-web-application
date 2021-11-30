@@ -105,4 +105,16 @@ describe('ChatBoxComponent', () => {
         expect(spy2).toHaveBeenCalled();
         expect(spy3).toHaveBeenCalled();
     });
+
+    it('should display the message and the error message if the command is invalid', () => {
+        component['sendMessageService'].message = 'Error message';
+        component['sendMessageService'].messageType = MessageType.Error;
+        const invalidCommand = '!placer';
+        component.message = invalidCommand;
+        component.displayMessageByType();
+        expect(component.listMessages.pop()).toEqual(component['sendMessageService'].message);
+        expect(component.listTypes.pop()).toEqual(component['sendMessageService'].messageType);
+        expect(component.listMessages.pop()).toEqual(invalidCommand);
+        expect(component.listTypes.pop()).toEqual(component['sendMessageService'].messageType);
+    });
 });
