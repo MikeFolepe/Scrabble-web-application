@@ -48,10 +48,6 @@ export class CommunicationService {
             .pipe(catchError(this.handleError<PlayerScore[]>('getbestPlayers')));
     }
 
-    getAiBeginners(): Observable<AiPlayerDB[]> {
-        return this.http.get<AiPlayerDB[]>(`${this.baseUrl}/admin/aiBeginners`).pipe(catchError(this.handleError<AiPlayerDB[]>('getAiBeginners')));
-    }
-
     getAiPlayers(aiType: AiType): Observable<AiPlayerDB[]> {
         return aiType === AiType.expert
             ? this.http.get<AiPlayerDB[]>(`${this.baseUrl}/admin/aiExperts`)
@@ -68,8 +64,8 @@ export class CommunicationService {
             : this.http.delete<AiPlayerDB[]>(`${this.baseUrl}/admin/aiBeginners/${id}`);
     }
 
-    deleteScores(gameType: GameType): Observable<void> {
-        return this.http.delete<void>(`${this.baseUrl}/admin/scores/${gameType}`);
+    deleteScores(): Observable<void> {
+        return this.http.delete<void>(`${this.baseUrl}/admin/scores`);
     }
 
     updateAiPlayer(id: string, aiBeginner: AiPlayer, aiType: AiType): Observable<AiPlayerDB[]> {

@@ -4,12 +4,14 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-disable dot-notation */
 // import { AI_MODELS } from '@app/classes/database.schema';
-import { AI_MODELS, DbModel } from '@app/classes/database.schema';
+import { AI_MODELS, DbModel, SCORES_MODEL } from '@app/classes/database.schema';
 import { AiType } from '@common/ai-name';
+import { GameType } from '@common/game-type';
 import * as chai from 'chai';
 import { expect } from 'chai';
 import * as spies from 'chai-spies';
 import { MongoMemoryServer } from 'mongodb-memory-server';
+import * as sinon from 'sinon';
 import { DatabaseService } from './database.service';
 
 describe('Database service', () => {
@@ -23,14 +25,9 @@ describe('Database service', () => {
         mongoUri = mongoServer.getUri();
     });
     afterEach(async () => {
-        sinon.restore();
-        await mongoServer.stop();
-        await service.closeConnection();
-    });
-
-    it('start(): should connect to the database when start is called', async () => {
-        await databaseService.start(mongoUri);
-        expect(databaseService.database.connection.readyState).to.equal(1);
+        if (databaseService.database.connection.readyState) {
+            await databaseService.closeConnection();
+        }
     });
 
     it('start(): should not connect to the database when start is called with wrong URL', async () => {
@@ -40,14 +37,58 @@ describe('Database service', () => {
         expect(databaseService.database.connection.readyState).to.equal(0);
     });
 
-    it('should set default data when starting', async () => {
-        const model = AI_MODELS.get(AiType.beginner) as DbModel;
-        chai.spy.on(model, 'deleteMany', () => {
-            return model.find({});
-        });
+    it('start(): should connect to the database when start is called', async () => {
+        const spy = sinon.stub(databaseService, 'setDefaultData').returns(Promise.resolve());
+        const spy2 = sinon.stub(databaseService, 'setDefaultScores').returns(Promise.resolve());
+        await databaseService.start();
+        expect(spy.called).to.equal(true);
+        expect(spy2.called).to.equal(true);
+        expect(databaseService.database.connection.readyState).to.equal(1);
+        spy.restore();
+        spy2.restore();
+    });
 
+    it('should set default data when starting', async () => {
+        const aiModel = AI_MODELS.get(AiType.beginner) as DbModel;
+        const player = new aiModel({
+            aiName: 'Mike',
+            isDefault: true,
+        });
+        player.save();
+        const spy = chai.spy.on(aiModel, 'deleteMany');
+        databaseService.start(mongoUri);
+        databaseService.setDefaultData(AiType.beginner).then();
+        expect(spy).to.have.been.called();
+        chai.spy.restore(aiModel);
+    });
+
+    it('should set default data when starting', async () => {
+        const aiModel = AI_MODELS.get(AiType.beginner) as DbModel;
+        const player = new aiModel({
+            aiName: 'Mike',
+            isDefault: true,
+        });
+        player.save();
+        const spy = chai.spy.on(aiModel, 'deleteMany');
         await databaseService.start(mongoUri);
         await databaseService.setDefaultData(AiType.beginner);
-        chai.spy.restore(model);
+        expect(spy).to.have.been.called();
+        chai.spy.restore(aiModel);
     });
+
+    it('should set default data when starting', async () => {
+        const scoresModel = SCORES_MODEL.get(GameType.Classic) as DbModel;
+        const scoreToAdd = new scoresModel({
+            score: 10,
+            playerName: 'mike',
+            isDefault: true,
+        });
+        scoreToAdd.save();
+        const spy = chai.spy.on(scoresModel, 'deleteMany');
+        await databaseService.start(mongoUri);
+        await databaseService.setDefaultScores(GameType.Classic);
+        expect(spy).to.have.been.called();
+        chai.spy.restore(scoresModel);
+    });
+
 });

@@ -20,7 +20,6 @@ const aiNameSchema = new mongoose.Schema({
 const beginnerNameModel = mongoose.model('AiBeginnerName', aiNameSchema);
 const expertNameModel = mongoose.model('AiExpertName', aiNameSchema);
 
-export const SCORE_MODEL = mongoose.model('Score', scoreSchema);
 const scoreModelClassic = mongoose.model('ScoresClassic', scoreSchema);
 const scoreModelLog2990 = mongoose.model('ScoresLog2990', scoreSchema);
 
