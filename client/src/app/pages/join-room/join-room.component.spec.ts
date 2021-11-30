@@ -154,8 +154,6 @@ describe('JoinRoomComponent', () => {
     });
 
     it('should not emit an event to place randomly a player in the room in the name is null', () => {
-        // const settings: GameSettings = new GameSettings(['mi', ''], 1, '01', '00', Level.Beginner, 'Activer', 'francais', '00');
-        // const expectedRooms = [new Room('room', 'socket', settings, State.Waiting)];
         const matDialogRefMock = jasmine.createSpyObj('MatDialogRef', ['afterClosed']);
         matDialogRefMock.afterClosed.and.callFake(() => {
             return of(null);
@@ -199,7 +197,6 @@ describe('JoinRoomComponent', () => {
         } as unknown as Socket;
         component['receiveRoomAvailable']();
 
-        // expect(component.numberOfRoomAvailable).toEqual(numberOfMyRoom);
         expect(component.isRoomAvailable).toEqual(false);
     });
 
@@ -213,7 +210,6 @@ describe('JoinRoomComponent', () => {
             },
         } as unknown as Socket;
         component['receiveRoomAvailable']();
-        // expect(component.numberOfRoomAvailable).toEqual(numberOfMyRoom);
         expect(component.isRoomAvailable).toEqual(true);
         expect(component.isRandomButtonAvailable).toEqual(false);
     });
@@ -227,7 +223,6 @@ describe('JoinRoomComponent', () => {
             },
         } as unknown as Socket;
         component['receiveRoomAvailable']();
-        // expect(component.numberOfRoomAvailable).toEqual(numberOfMyRoom);
         expect(component.isRoomAvailable).toEqual(true);
         expect(component.isRandomButtonAvailable).toEqual(true);
     });
