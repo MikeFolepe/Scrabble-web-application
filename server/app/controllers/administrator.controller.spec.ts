@@ -213,7 +213,7 @@ describe('AdminController', () => {
     it('should handle an error while resetting the scores', (done) => {
         const stubOnReset = Sinon.stub(administratorService, 'resetScores').returns(Promise.reject(new Error('fail')));
         chai.request(expressApp)
-            .delete('/api/admin/scores/Classic')
+            .delete('/api/admin/scores')
             .end((err, response) => {
                 expect(stubOnReset.called).to.equal(true);
                 expect(response.status).to.equal(StatusCodes.NOT_MODIFIED);
@@ -222,13 +222,13 @@ describe('AdminController', () => {
             });
     });
 
-    it('should handle an error while resetting the scores', (done) => {
-        const stubOnReset = Sinon.stub(administratorService, 'resetScores').returns(Promise.reject(new Error('fail')));
+    it('should reset the scores', (done) => {
+        const stubOnReset = Sinon.stub(administratorService, 'resetScores').returns(Promise.resolve());
         chai.request(expressApp)
-            .delete('/api/admin/scores/Log2990')
+            .delete('/api/admin/scores')
             .end((err, response) => {
                 expect(stubOnReset.called).to.equal(true);
-                expect(response.status).to.equal(StatusCodes.NOT_MODIFIED);
+                expect(response.status).to.equal(StatusCodes.OK);
                 stubOnReset.restore();
                 done();
             });
@@ -306,24 +306,25 @@ describe('AdminController', () => {
             });
     });
 
-    it('should return the asked dictionarie', (done) => {
-        // const jsonDictionary = `{
-        //     "title": "Mon dictionnaire",
-        //     "description": "Description de base",
-        //     "words": [
-        //         "aa",
-        //         "aalenien",
-        //         "aalenienne",
-        //         "aaleniennes",
-        //         "aaleniens"
-        //     ]
-        // }`;
-        const stubOnDelete = Sinon.stub(fileSystem, 'readFileSync').returns('fichier');
+    it('should return the asked dictionary', (done) => {
+        const jsonDictionary = `{
+            "title": "Mon dictionnaire",
+            "description": "Description de base",
+            "words": [
+                "aa",
+                "aalenien",
+                "aalenienne",
+                "aaleniennes",
+                "aaleniens"
+            ]
+        }`;
+        const stubOnDelete = Sinon.stub(fileSystem, 'readFileSync').returns(jsonDictionary);
         chai.request(expressApp)
             .get('/api/admin/download/dictionary.json')
             .end((err, response) => {
                 expect(stubOnDelete.called).to.equal(true);
                 expect(response.status).to.equal(StatusCodes.OK);
+                expect(response.body).to.deep.equal(JSON.parse(jsonDictionary));
                 stubOnDelete.restore();
                 done();
             });

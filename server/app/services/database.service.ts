@@ -9,12 +9,15 @@ import { Service } from 'typedi';
 
 @Service()
 export class DatabaseService {
-    database: mongoose.Mongoose = mongoose;
+    database: mongoose.Mongoose;
     private options = {
         useNewUrlParser: true,
         useUnifiedTopology: true,
     } as mongoose.ConnectOptions;
 
+    constructor() {
+        this.database = mongoose;
+    }
     async start(url: string = DATABASE_URL): Promise<void> {
         await this.database
             .connect(url, this.options)

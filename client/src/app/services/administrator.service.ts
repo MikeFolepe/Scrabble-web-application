@@ -8,7 +8,6 @@ import { CommunicationService } from '@app/services/communication.service';
 import { AiPlayer, AiPlayerDB, AiType } from '@common/ai-name';
 import { Dictionary } from '@common/dictionary';
 import dictionarySchema from '@common/dictionarySchema.json';
-import { GameType } from '@common/game-type';
 import Ajv from 'ajv';
 import { saveAs } from 'file-saver';
 
@@ -317,7 +316,6 @@ export class AdministratorService {
     }
 
     private resetScores(): void {
-        this.communicationService.deleteScores(GameType.Classic).subscribe();
-        this.communicationService.deleteScores(GameType.Log2990).subscribe();
+        this.communicationService.deleteScores().subscribe();
     }
 }
