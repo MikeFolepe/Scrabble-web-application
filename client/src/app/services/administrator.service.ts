@@ -198,6 +198,11 @@ export class AdministratorService {
         });
     }
 
+    getAiBeginnerName(): string {
+        const randomAiBeginnerIndex = Math.floor(Math.random() * this.beginnerNames.length);
+        return this.beginnerNames[randomAiBeginnerIndex].aiName;
+    }
+
     async resetData(): Promise<void> {
         this.isResetting = true;
 
@@ -208,6 +213,11 @@ export class AdministratorService {
         this.isResetting = false;
         // TODO fix envoie message reset
         this.displayMessage('La base de données à été réinitialisée');
+    }
+
+    isDictionaryDeletable(dictionary: Dictionary): boolean {
+        if (dictionary.isDefault) this.displayMessage('Vous ne pouvez pas modifier le dictionnaire par défaut');
+        return !dictionary.isDefault;
     }
 
     private addAiPlayer(aiPlayer: AiPlayer, aiType: AiType): void {

@@ -3,6 +3,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Player } from '@app/models/player.model';
 import { of } from 'rxjs';
@@ -19,6 +20,10 @@ describe('GameViewComponent', () => {
             providers: [
                 {
                     provide: MatDialog,
+                    useValue: {},
+                },
+                {
+                    provide: MatSnackBar,
                     useValue: {},
                 },
             ],
@@ -82,7 +87,6 @@ describe('GameViewComponent', () => {
     });
 
     it('should clear all Data and emit deleteGame is isSolomode is true ', () => {
-        component.gameSettingsService.isSoloMode = true;
         component.giveUpHandlerService.isGivenUp = true;
         const spyEmit = spyOn(component['clientSocketService'].socket, 'emit');
         const spyClear = spyOn(component.endGameService, 'clearAllData');
@@ -95,7 +99,6 @@ describe('GameViewComponent', () => {
         expect(spyLetter).toHaveBeenCalled();
     });
     it('should clear all Data and not emit deleteGame is isSolomode is true  and isGvenUp  is false', () => {
-        component.gameSettingsService.isSoloMode = true;
         component.giveUpHandlerService.isGivenUp = false;
         const spyEmit = spyOn(component['clientSocketService'].socket, 'emit');
         const spyClear = spyOn(component.endGameService, 'clearAllData');
@@ -106,18 +109,5 @@ describe('GameViewComponent', () => {
         expect(spyEmit).not.toHaveBeenCalled();
         expect(spyGrid).toHaveBeenCalled();
         expect(spyLetter).toHaveBeenCalled();
-    });
-    it('should not clear all Data and not emit deleteGame is isSolomode is true  and isGvenUp  is false', () => {
-        component.gameSettingsService.isSoloMode = false;
-        component.giveUpHandlerService.isGivenUp = false;
-        const spyEmit = spyOn(component['clientSocketService'].socket, 'emit');
-        const spyClear = spyOn(component.endGameService, 'clearAllData');
-        const spyGrid = spyOn(component['placeLetterService'], 'ngOnDestroy');
-        const spyLetter = spyOn(component['gridService'], 'ngOnDestroy');
-        component.leaveGame();
-        expect(spyClear).not.toHaveBeenCalled();
-        expect(spyEmit).not.toHaveBeenCalled();
-        expect(spyGrid).not.toHaveBeenCalled();
-        expect(spyLetter).not.toHaveBeenCalled();
     });
 });

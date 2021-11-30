@@ -105,4 +105,14 @@ describe('ChatBoxComponent', () => {
         expect(spy2).toHaveBeenCalled();
         expect(spy3).toHaveBeenCalled();
     });
+
+    it('should use the message and the type if Type message is Error', () => {
+        component['sendMessageService'].message = 'Service message';
+        component['sendMessageService'].messageType = MessageType.Error;
+        component.displayMessageByType();
+        expect(component.listMessages.pop()).toEqual(component['sendMessageService'].message);
+        expect(component.listTypes.pop()).toEqual(component['sendMessageService'].messageType);
+    });
+
+    // TODO voir le test sur initializeChatHeigth
 });

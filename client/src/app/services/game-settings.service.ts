@@ -12,11 +12,6 @@ export class GameSettingsService implements OnDestroy {
     gameType: GameType;
     isRedirectedFromMultiplayerGame: boolean;
     constructor() {
-        this.isSoloMode = true;
-        this.gameDictionary = [];
-        this.gameType = GameType.Classic;
-        this.isRedirectedFromMultiplayerGame = false;
-
         this.gameSettings = DEFAULT_GAME_SETTINGS;
     }
 

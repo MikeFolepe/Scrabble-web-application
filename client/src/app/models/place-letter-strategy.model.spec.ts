@@ -10,9 +10,11 @@
 // import { PlayerAI } from '@app/models/player-ai.model';
 // import { PlayerAIService } from '@app/services/player-ai.service';
 // import { Letter } from '@common/letter';
+// import { Level } from '@common/level';
+// import { of } from 'rxjs';
 // import { PlaceLetterStrategy } from './place-letter-strategy.model';
 
-// fdescribe('Place Letter strategy', () => {
+// describe('Place Letter strategy', () => {
 //     let playerAi: PlayerAI;
 //     let placeStrategy: PlaceLetterStrategy;
 //     let playerAiService: PlayerAIService;
@@ -165,6 +167,7 @@
 
 //     it('should play from the center at first round', async () => {
 //         const myDictionary: string[] = ['maths', 'math', 'lundi', 'mardi', 'on'];
+//         const spyAi = spyOn(playerAiService.communicationService, 'getGameDictionary').and.returnValue(of(myDictionary));
 //         playerAi.letterTable = [
 //             { value: 'H', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
 //             { value: 'O', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
@@ -174,7 +177,6 @@
 //             { value: 'A', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
 //             { value: 'R', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
 //         ];
-//         placeStrategy.dictionary = myDictionary;
 //         placeStrategy.pointingRange = { min: 1, max: 4 };
 //         const spyOnPlace = spyOn<any>(playerAiService, 'place');
 //         const word1: PossibleWords = { word: 'on', orientation: Orientation.Horizontal, line: 7, startIndex: 7, point: 2 };
@@ -185,9 +187,10 @@
 //         expectedMatching.push(word2);
 
 //         spyOn<any>(playerAiService, 'calculatePoints').and.returnValue(expectedMatching);
-//         playerAiService.gameSettingsService.gameSettings.level = 'Expert';
+//         playerAiService.gameSettingsService.gameSettings.level = Level.Beginner;
 
 //         await placeStrategy.execute(playerAiService);
+//         expect(spyAi).toHaveBeenCalled();
 //         expect(spyOnPlace).toHaveBeenCalledWith(word1);
 //     });
 
@@ -239,6 +242,8 @@
 
 //     it('regression test sample1', async () => {
 //         const myDictionary: string[] = ['thon', 'maths', 'rond', 'math', 'art', 'lundi', 'mardi'];
+//         const spyAi = spyOn(playerAiService.communicationService, 'getGameDictionary').and.returnValue(of(myDictionary));
+
 //         scrabbleBoard[3][1] = 'm';
 //         scrabbleBoard[3][2] = 'a';
 //         scrabbleBoard[3][3] = 't';
@@ -270,7 +275,7 @@
 //         placeStrategy.dictionary = myDictionary;
 //         playerAiService.placeLetterService.isFirstRound = false;
 //         playerAiService.placeLetterService.scrabbleBoard = scrabbleBoard;
-//         playerAiService.gameSettingsService.gameSettings.level = 'Expert';
+//         playerAiService.gameSettingsService.gameSettings.level = Level.Expert;
 
 //         const spyOnCompute = spyOn<any>(placeStrategy, 'computeResults');
 //         spyOn<any>(playerAiService.wordValidation, 'validateAllWordsOnBoard').and.returnValues(
@@ -282,11 +287,14 @@
 //             { validation: true, score: 1 },
 //         );
 //         await placeStrategy.execute(playerAiService);
+//         expect(spyAi).toHaveBeenCalled();
 //         expect(spyOnCompute).toHaveBeenCalledWith(expectedPoss, playerAiService);
 //     });
 
 //     it('regression test sample2', async () => {
 //         const myDictionary: string[] = ['thon', 'maths', 'rond', 'math', 'art', 'lundi', 'mardi'];
+//         const spyAi = spyOn(playerAiService.communicationService, 'getGameDictionary').and.returnValue(of(myDictionary));
+
 //         scrabbleBoard[3][1] = 'm';
 //         scrabbleBoard[3][2] = 'a';
 //         scrabbleBoard[3][3] = 't';
@@ -317,7 +325,6 @@
 //         expectedPoss.push(word6);
 //         expectedPoss.push(word4);
 //         expectedPoss.push(word5);
-//         placeStrategy.dictionary = myDictionary;
 //         placeStrategy.pointingRange = { min: 1, max: 18 };
 //         playerAiService.placeLetterService.isFirstRound = false;
 //         playerAiService.placeLetterService.scrabbleBoard = scrabbleBoard;
@@ -333,6 +340,7 @@
 //             { validation: true, score: 1 },
 //         );
 //         await placeStrategy.execute(playerAiService);
+//         expect(spyAi).toHaveBeenCalled();
 //         expect(spyOnCompute).toHaveBeenCalledOnceWith(expectedPoss, playerAiService, false);
 //     });
 // });
