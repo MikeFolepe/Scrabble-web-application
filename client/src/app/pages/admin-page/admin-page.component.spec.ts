@@ -112,4 +112,22 @@ describe('AdminPageComponent', () => {
         component.editDictionary(emptyDictionary);
         expect(updateDictionary).toHaveBeenCalled();
     });
+
+    it('should not update dictionary if dictionary is default', () => {
+        const matDialogRefMock = jasmine.createSpyObj('MatDialogRef', ['afterClosed']);
+        matDialogRefMock.afterClosed.and.returnValue(
+            of({
+                title: 'dictionary.title',
+                description: 'dictionary.description',
+            }),
+        );
+        const matDialogMock = jasmine.createSpyObj('MatDialog', ['open']);
+        matDialogMock.open.and.returnValue(matDialogRefMock);
+        component.dialog = matDialogMock;
+        const updateDictionary = spyOn(component.adminService, 'updateDictionary');
+        emptyDictionary.isDefault = true;
+        spyOn(component.adminService, 'isDictionaryDeletable').and.returnValue(false);
+        component.editDictionary(emptyDictionary);
+        expect(updateDictionary).not.toHaveBeenCalled();
+    });
 });
