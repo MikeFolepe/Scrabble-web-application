@@ -112,21 +112,21 @@ export class FormComponent implements OnInit, OnDestroy {
             this.form.controls.randomBonus.value,
             this.getRightBonusPositions(),
             this.fileName,
-            this.initializeObjective([[], []]),
+            this.initializeObjective(),
         );
     }
 
-    private initializeObjective(forceValue: number[][] = [[], []]): number[][] {
-        // TODO: ligne suivante uniquement à des fins de débogage
-        if (forceValue[0].length === 2 && forceValue[1].length === 2) return forceValue;
+    private initializeObjective(): number[][] {
         const objectiveIds: number[] = [];
-        const objectiveByType: number[][] = [[], []];
 
         while (objectiveIds.length < NUMBER_OF_OBJECTIVES) {
             const candidate = Math.floor(Number(Math.random()) * OBJECTIVES.length);
             if (objectiveIds.indexOf(candidate) === INVALID_INDEX) objectiveIds.push(candidate);
         }
-        objectiveByType[ObjectiveTypes.Public] = objectiveIds.slice(0, 2);
+
+        const objectiveByType: number[][] = [[], []];
+
+        objectiveByType[ObjectiveTypes.Public] = objectiveIds.slice(0, 2); // TODO const NUMBER_OF_PUBLIC_OBJ
         objectiveByType[ObjectiveTypes.Private] = objectiveIds.slice(2, objectiveIds.length);
 
         return objectiveByType;
