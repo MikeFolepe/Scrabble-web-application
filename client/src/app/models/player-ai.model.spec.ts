@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
+import { MockLocationStrategy } from '@angular/common/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { PlayerAIService } from '@app/services/player-ai.service';
 import { PlayerAI } from './player-ai.model';
+import { LocationStrategy } from '@angular/common';
 
 describe('PlayerAI', () => {
     const letterTable = [
@@ -23,6 +25,7 @@ describe('PlayerAI', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [HttpClientTestingModule, RouterTestingModule],
+            providers: [{ provide: LocationStrategy, useClass: MockLocationStrategy }],
         }).compileComponents();
     });
 

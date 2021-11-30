@@ -90,5 +90,4 @@ describe('Database service', () => {
         expect(spy).to.have.been.called();
         chai.spy.restore(scoresModel);
     });
-
 });
