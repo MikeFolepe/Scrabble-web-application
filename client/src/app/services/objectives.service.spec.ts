@@ -414,10 +414,13 @@ describe('ObjectivesService', () => {
     });
 
     it('OBJ#3 Former un mot qui coupe au moins deux mots déjà placés sample1', () => {
+        service['gameSettingsService'].gameType = GameType.Log2990;
         const lastPlayedWordsMap = new Map<string, string[]>();
         const priorCurrentWordsMap = new Map<string, string[]>();
         const currentWordsMap = new Map<string, string[]>();
         const spyOnObjectiveCompleted = spyOn<any>(service, 'addObjectiveScore');
+        service['wordValidationService'].currentWords.clear();
+        service['wordValidationService'].priorCurrentWords.clear();
 
         service['wordValidationService'].lastPlayedWords = lastPlayedWordsMap.set('word1', ['C1', 'C2', 'C3', 'C4']);
         service['wordValidationService'].currentWords = currentWordsMap.set('word1', ['C1', 'C2', 'C3', 'C4']);
@@ -440,19 +443,22 @@ describe('ObjectivesService', () => {
     });
 
     it('OBJ#3 Former un mot qui coupe au moins deux mots déjà placés sample2', () => {
+        service['gameSettingsService'].gameType = GameType.Log2990;
         const lastPlayedWordsMap = new Map<string, string[]>();
-        const priorPlayedWordsMap = new Map<string, string[]>();
-        const playedWordsMap = new Map<string, string[]>();
+        const currentWordsMap = new Map<string, string[]>();
+        const priorCurrentWordsMap = new Map<string, string[]>();
         const spyOnObjectiveCompleted = spyOn<any>(service, 'addObjectiveScore');
+        service['wordValidationService'].currentWords.clear();
+        service['wordValidationService'].priorCurrentWords.clear();
 
-        service['wordValidationService'].lastPlayedWords = lastPlayedWordsMap.set('word1', ['C1', 'C2', 'C3']);
-        service['wordValidationService'].playedWords = playedWordsMap.set('word1', ['C1', 'C2', 'C3']);
+        service['wordValidationService'].lastPlayedWords = lastPlayedWordsMap.set('sac', ['C1', 'C2', 'C3']);
+        service['wordValidationService'].currentWords = currentWordsMap.set('sac', ['C1', 'C2', 'C3']);
         service['validateObjectiveThree'](2);
         lastPlayedWordsMap.clear();
 
-        service['wordValidationService'].lastPlayedWords = lastPlayedWordsMap.set('word2', ['C1', 'C2', 'C3', 'C4']);
-        service['wordValidationService'].playedWords = playedWordsMap.set('word2', ['C1', 'C2', 'C3', 'C4']);
-        service['wordValidationService'].priorPlayedWords = priorPlayedWordsMap.set('word1', ['C1', 'C2', 'C3']);
+        service['wordValidationService'].lastPlayedWords = lastPlayedWordsMap.set('bleu', ['C1', 'C2', 'C3', 'C4']);
+        service['wordValidationService'].currentWords = currentWordsMap.set('bleu', ['C1', 'C2', 'C3', 'C4']);
+        service['wordValidationService'].priorCurrentWords = priorCurrentWordsMap.set('sac', ['C1', 'C2', 'C3']);
         service['validateObjectiveThree'](2);
         lastPlayedWordsMap.clear();
 

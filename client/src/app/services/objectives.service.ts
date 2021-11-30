@@ -194,11 +194,23 @@ export class ObjectivesService implements OnDestroy {
             const playedPositions = this.wordValidationService.priorCurrentWords.get(word) as string[];
             for (let i = 0; i < playedPositions.length / word.length; i++) {
                 const wordPositions = playedPositions.slice(i * word.length, i + word.length);
-                if (wordPositions.includes(position) && !playedPositionsUsed.includes(wordPositions)) {
+                if (wordPositions.includes(position) && !this.includesArray(playedPositionsUsed, wordPositions)) {
                     playedPositionsUsed.push(wordPositions);
                 }
             }
         }
+    }
+
+    includesArray<T>(container: T[][], arrayToFind: T[]): boolean {
+        let included = false;
+        for (const array of container) {
+            for (let i = 0; i < array.length; i++) {
+                if (array[i] === arrayToFind[i]) included = true;
+                else included = false;
+            }
+            if (included && array.length === arrayToFind.length) return true;
+        }
+        return false;
     }
 
     addObjectiveScore(id: number): void {
