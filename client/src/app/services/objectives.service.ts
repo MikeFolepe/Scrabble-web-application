@@ -189,11 +189,14 @@ export class ObjectivesService implements OnDestroy {
         }
     }
 
-    // TODO: nom de fonction peut etre amelioré eventuellement
     findPositionInPlayedWords(position: string, playedPositionsUsed: string[][]) {
-        for (const playedPositions of this.wordValidationService.priorCurrentWords.values()) {
-            if (playedPositions.includes(position) && !playedPositionsUsed.includes(playedPositions)) {
-                playedPositionsUsed.push(playedPositions);
+        for (const word of this.wordValidationService.priorCurrentWords.keys()) {
+            const playedPositions = this.wordValidationService.priorCurrentWords.get(word) as string[];
+            for (let i = 0; i < playedPositions.length / word.length; i++) {
+                const wordPositions = playedPositions.slice(i * word.length, i + word.length);
+                if (wordPositions.includes(position) && !playedPositionsUsed.includes(wordPositions)) {
+                    playedPositionsUsed.push(wordPositions);
+                }
             }
         }
     }
