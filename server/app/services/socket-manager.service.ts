@@ -57,12 +57,16 @@ export class SocketManagerService {
                 socket.to(roomId).emit('receivePlayedWords', playedWords);
             });
 
+            socket.on('updateCurrentWords', (currentWords: string, priorCurrentWords: string, roomId: string) => {
+                socket.to(roomId).emit('receiveCurrentWords', currentWords, priorCurrentWords);
+            });
+
             socket.on('updateScoreInfo', (score: number, indexPlayer: number, roomId: string) => {
                 socket.to(roomId).emit('receiveScoreInfo', score, indexPlayer);
             });
 
             socket.on('objectiveAccomplished', (id: number, roomId: string) => {
-                socket.to(roomId).emit('receiveObjectives', id);
+                socket.to(roomId).emit('receiveObjectiveCompleted', id);
             });
 
             socket.on('sendActions', (actions: string[], roomId: string) => {

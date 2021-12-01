@@ -53,6 +53,7 @@ export class FormComponent implements OnInit, OnDestroy {
         if (this.isDictionaryDeleted) return;
         this.snapshotSettings();
         // TODO juste waiting-room suffit comme URL ?
+        // TODO: ça suffira
         const nextUrl = this.gameSettingsService.isSoloMode ? 'game' : 'multiplayer-mode-waiting-room';
         this.router.navigate([nextUrl]);
     }
@@ -69,6 +70,10 @@ export class FormComponent implements OnInit, OnDestroy {
         if (this.form) this.form.controls.dictionaryInput.setErrors(null);
         this.selectedDictionary = dictionary;
         this.fileName = this.selectedDictionary.fileName;
+    }
+
+    keyPressSubmit(event: KeyboardEvent) {
+        if (event.key === 'Enter' && this.form.valid) this.initializeGame();
     }
 
     ngOnDestroy(): void {

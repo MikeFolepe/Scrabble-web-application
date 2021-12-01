@@ -8,6 +8,7 @@
 /* eslint-disable dot-notation */
 import { GameSettings } from '@common/game-settings';
 import { GameType } from '@common/game-type';
+import { Level } from '@common/level';
 import { Room, State } from '@common/room';
 import { expect } from 'chai';
 import * as http from 'http';
@@ -16,7 +17,6 @@ import * as io from 'socket.io';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 import { RoomManagerService } from './room-manager.service';
 import { SocketManagerService } from './socket-manager.service';
-import { Level } from '@common/level';
 import Sinon = require('sinon');
 
 describe('SocketManagerService', () => {

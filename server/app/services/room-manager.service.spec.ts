@@ -236,7 +236,6 @@ describe('RoomManagerService', () => {
         roomManagerService.rooms = [];
         expect(roomManagerService.getNumberOfRoomInWaitingState(GameType.Classic)).to.equal(0);
     });
-
     it('should return a empty string if the room is undefined ', () => {
         roomManagerService.createRoom(socketId1, id, settings, GameType.Classic);
         const socketId2 = 'socket2';
