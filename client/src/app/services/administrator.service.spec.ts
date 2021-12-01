@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
+import { HttpErrorResponse } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -9,7 +10,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AiPlayerDB } from '@common/ai-name';
 import { Dictionary } from '@common/dictionary';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { AdministratorService } from './administrator.service';
 
 interface DictionaryTest {
@@ -133,8 +134,23 @@ fdescribe('AdministratorService', () => {
         expect(service.getAiBeginnerName()).not.toEqual('');
     });
 
-    it('should reset all data (dictionaries, scores and AI names)', async () => {
-        const resetScores = spyOn(service['communicationService'], 'deleteScores').and.returnValue(of());
+    it('should reset all dictionaries', () => {
+        const deleteDictionary = spyOn(service, 'deleteDictionary');
+
+        const dictionary1: Dictionary = { fileName: 'test 1 name', title: 'test 1', description: 'test 1 descr', isDefault: true };
+        const dictionary2: Dictionary = { fileName: 'test 2 name', title: 'test 2', description: 'test 2 descr', isDefault: false };
+        const dictionary3: Dictionary = { fileName: 'test 3 name', title: 'test 3', description: 'test 3 descr', isDefault: false };
+
+        service.dictionaries.push(dictionary1, dictionary2, dictionary3);
+
+        service['resetDictionaries']();
+
+        expect(deleteDictionary).toHaveBeenCalledTimes(2);
+    });
+
+    it('should reset all AI names', () => {
+        const deletePlayer = spyOn<any>(service, 'deleteAiPlayer');
+
         const player4: AiPlayerDB = {
             _id: '4',
             aiName: 'Mister_Test',
@@ -146,19 +162,63 @@ fdescribe('AdministratorService', () => {
             isDefault: false,
         };
 
-        const dictionary1: Dictionary = { fileName: 'test 1 name', title: 'test 1', description: 'test 1 descr', isDefault: true };
-        const dictionary2: Dictionary = { fileName: 'test 2 name', title: 'test 2', description: 'test 2 descr', isDefault: false };
-        const dictionary3: Dictionary = { fileName: 'test 3 name', title: 'test 3', description: 'test 3 descr', isDefault: false };
-
         service.beginnerNames.push(player4, player5);
         service.expertNames.push(player4, player5);
-        service.dictionaries.push(dictionary1, dictionary2, dictionary3);
+
+        service['resetAiPlayers']();
+
+        expect(deletePlayer).toHaveBeenCalledTimes(2 + 2);
+    });
+
+    it('should reset all scores', () => {
+        const resetScores = spyOn(service['communicationService'], 'deleteScores').and.returnValue(of());
+
+        service['resetScores']();
+        expect(resetScores).toHaveBeenCalledTimes(1);
+    });
+
+    it('should call the right functions when calling resetData', async () => {
+        const resetPlayers = spyOn<any>(service, 'resetAiPlayers');
+        const resetDictionaries = spyOn<any>(service, 'resetDictionaries');
+        const resetScores = spyOn<any>(service, 'resetScores');
+        const displayMessage = spyOn<any>(service, 'displayMessage');
 
         await service.resetData();
 
-        expect(service.beginnerNames).toEqual([player1, player2, player3]);
-        expect(service.expertNames).toEqual([player1, player2, player3]);
+        expect(resetPlayers).toHaveBeenCalledTimes(1);
+        expect(resetDictionaries).toHaveBeenCalledTimes(1);
         expect(resetScores).toHaveBeenCalledTimes(1);
-        expect(service.dictionaries).toEqual([dictionary1]);
+        expect(displayMessage).toHaveBeenCalledOnceWith('La base de données à été réinitialisée');
+    });
+
+    it('should initialize AI players', () => {
+        const player4: AiPlayerDB = {
+            _id: '4',
+            aiName: 'Mister_Test',
+            isDefault: false,
+        };
+        const player5: AiPlayerDB = {
+            _id: '5',
+            aiName: 'Miss_Test',
+            isDefault: false,
+        };
+        const getPlayers = spyOn(service['communicationService'], 'getAiPlayers').and.returnValue(of([player4, player5]));
+        service.initializeAiPlayers();
+        expect(getPlayers).toHaveBeenCalledTimes(2);
+        expect(service.beginnerNames).toEqual([player4, player5]);
+        expect(service.expertNames).toEqual([player4, player5]);
+    });
+
+    it('should call handleRequestError if players returned have an error', () => {
+        const errorResponse = new HttpErrorResponse({
+            error: { code: 'some code', message: 'some message.' },
+            status: 400,
+            statusText: 'Bad Request',
+        });
+        const getPlayers = spyOn(service['communicationService'], 'getAiPlayers').and.returnValue(throwError(errorResponse));
+        const handleError = spyOn<any>(service, 'handleRequestError');
+        service.initializeAiPlayers();
+        expect(getPlayers).toHaveBeenCalledTimes(2);
+        expect(handleError).toHaveBeenCalledTimes(2);
     });
 });

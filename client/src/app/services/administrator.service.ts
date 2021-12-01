@@ -210,17 +210,10 @@ export class AdministratorService {
 
     async resetData(): Promise<void> {
         this.isResetting = true;
-        console.log('here');
 
         this.resetAiPlayers();
-        console.log('here');
-
         this.resetDictionaries();
-        console.log('here');
-
         this.resetScores();
-        console.log('here');
-
 
         this.isResetting = false;
         // TODO fix envoie message reset
