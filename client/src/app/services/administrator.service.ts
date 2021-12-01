@@ -8,7 +8,6 @@ import { CommunicationService } from '@app/services/communication.service';
 import { AiPlayer, AiPlayerDB, AiType } from '@common/ai-name';
 import { Dictionary } from '@common/dictionary';
 import dictionarySchema from '@common/dictionarySchema.json';
-import { GameType } from '@common/game-type';
 import Ajv from 'ajv';
 import { saveAs } from 'file-saver';
 
@@ -117,7 +116,6 @@ export class AdministratorService {
     }
 
     async isDictionaryValid(): Promise<boolean> {
-        // TODO ajouter un try catch pour le JSON.parse afin d'éviter les erreurs de syntaxes qui crash
         return new Promise((resolve) => {
             const reader = new FileReader();
             if (this.file) {
@@ -130,7 +128,13 @@ export class AdministratorService {
             }
             reader.onloadend = () => {
                 // Validate the dictionary with a schema
-                if (typeof reader.result === 'string') this.currentDictionary = JSON.parse(reader.result);
+                if (typeof reader.result === 'string') {
+                    try {
+                        this.currentDictionary = JSON.parse(reader.result);
+                    } catch (e) {
+                        resolve(false);
+                    }
+                }
                 resolve(this.ajv.validate(dictionarySchema, this.currentDictionary));
             };
         });
@@ -319,7 +323,6 @@ export class AdministratorService {
     }
 
     private resetScores(): void {
-        this.communicationService.deleteScores(GameType.Classic).subscribe();
-        this.communicationService.deleteScores(GameType.Log2990).subscribe();
+        this.communicationService.deleteScores().subscribe();
     }
 }

@@ -1,6 +1,6 @@
 <app-background></app-background>
 <!-- TODO rendre non-sélectionnable -->
-<div class="centered">
+<div class="centered" (keydown)="keyPressSubmit($event)">
     <div id="logo-scrabble"><img src="https://bit.ly/3m206ss" width="400" height="80" class="img-title" alt="Logo Scrabble" /></div>
     <div *ngIf="!this.form" class="loading">Chargement...</div>
     <form id="main-form-box" *ngIf="this.form">
@@ -40,7 +40,6 @@
             </fieldset>
         </fieldset>
     </form>
-    <!-- TODO Bonus : press enter on that page = clicks on this button -->
     <button
         mat-raised-button
         *ngIf="this.form"

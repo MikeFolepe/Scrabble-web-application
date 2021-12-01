@@ -8,6 +8,7 @@
 /* eslint-disable dot-notation */
 import { GameSettings } from '@common/game-settings';
 import { GameType } from '@common/game-type';
+import { Level } from '@common/level';
 import { Room, State } from '@common/room';
 import { expect } from 'chai';
 import * as http from 'http';
@@ -16,7 +17,6 @@ import * as io from 'socket.io';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 import { RoomManagerService } from './room-manager.service';
 import { SocketManagerService } from './socket-manager.service';
-import { Level } from '@common/level';
 import Sinon = require('sinon');
 
 describe('SocketManagerService', () => {
@@ -236,7 +236,7 @@ describe('SocketManagerService', () => {
         service.handleSockets();
         expect(spy.called).to.equal(true);
     });
-    it('should emit the roomAvailbale ', () => {
+    it('should emit the roomAvailable', () => {
         const typeOfGame = GameType.Classic;
         const fakeSocket = {
             // eslint-disable-next-line no-unused-vars
@@ -293,7 +293,7 @@ describe('SocketManagerService', () => {
         expect(spy.called).to.equal(true);
     });
 
-    it('should update the PlayeWords', () => {
+    it('should update the PlayedWords', () => {
         const fakeSocket = {
             // eslint-disable-next-line no-unused-vars
             on: (eventName: string, callback: (playedWords: string, roomId: string) => void) => {
@@ -323,6 +323,41 @@ describe('SocketManagerService', () => {
         service.handleSockets();
         expect(spy.calledWith('1')).to.equal(true);
     });
+
+    it('should update CurrentWords', () => {
+        const fakeCurrentWord = 'fakeCurrent';
+        const fakePriorCurrentWords = 'fakePrior';
+        const fakeRoomId = 'fakeId';
+        const fakeSocket = {
+            // eslint-disable-next-line no-unused-vars
+            on: (eventName: string, callback: (currentWords: string, priorCurrentWords: string, roomId: string) => void) => {
+                if (eventName === 'updateCurrentWords') {
+                    callback(fakeCurrentWord, fakePriorCurrentWords, fakeRoomId);
+                    // return;
+                }
+            },
+            emit: (eventName: string, args: any[] | any) => {
+                return;
+            },
+            to: (roomId: string) => {
+                return fakeIn;
+            },
+        };
+        const spy = Sinon.spy(fakeSocket, 'to');
+        service['sio'] = {
+            on: (eventName: string, callback: (socket: any) => void) => {
+                if (eventName === 'connection') {
+                    callback(fakeSocket);
+                }
+            },
+            emit: (eventName: string, args: any[] | any) => {
+                return;
+            },
+        } as unknown as io.Server;
+        service.handleSockets();
+        expect(spy.called).to.equal(true);
+    });
+
     it('should handle a new customer', () => {
         const typeMode = GameType.Classic;
         const fakeSocket = {
@@ -584,7 +619,7 @@ describe('SocketManagerService', () => {
         expect(spy.calledWith('mike1234')).to.equal(true);
     });
 
-    it('should send Gameconversion a message', () => {
+    it('should send GameConversion a message', () => {
         const fakeSocket = {
             on: (eventName: string, callback: (message: string, roomId: string) => void) => {
                 if (eventName === 'sendGameConversionMessage') {

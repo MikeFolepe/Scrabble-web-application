@@ -62,7 +62,7 @@
                     <mat-icon>cloud_upload</mat-icon>
                 </button>
             </div>
-            <div class="alert" [ngClass]="{ visible: adminService.uploadMessage.length, success: adminService.uploadMessage === 'Uploaded' }">
+            <div class="alert" *ngIf="adminService.uploadMessage.length" [ngClass]="{ success: adminService.uploadMessage === 'Uploaded' }">
                 {{ adminService.uploadMessage }}
             </div>
         </div>

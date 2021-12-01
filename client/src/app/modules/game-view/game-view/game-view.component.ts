@@ -40,6 +40,7 @@ export class GameViewComponent implements OnInit {
     ) {
         this.fontSize = DEFAULT_FONT_SIZE;
         this.giveUpHandlerService.receiveEndGameByGiveUp();
+        this.objectiveService.ngOnDestroy();
     }
 
     ngOnInit(): void {

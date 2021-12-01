@@ -1,5 +1,4 @@
-/* eslint-disable prettier/prettier */
-/* eslint-disable max-len */
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
 import { HttpClientTestingModule } from '@angular/common/http/testing';
@@ -48,6 +47,10 @@ fdescribe('AdministratorService', () => {
         };
         service.beginnerNames = [player1, player2, player3];
         service.expertNames = [player1, player2, player3];
+    });
+
+    afterEach(() => {
+        jasmine.clock().uninstall();
     });
 
     it('should be created', () => {
