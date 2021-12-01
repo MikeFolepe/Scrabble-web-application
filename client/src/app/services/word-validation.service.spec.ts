@@ -234,10 +234,12 @@ describe('WordValidationService', () => {
         const isRow = true;
         const expectedResult: ScoreValidation = { validation: true, score: 18 };
         spyOn(service['httpServer'], 'validationPost').and.returnValue(of(true));
-        const spyPrioritySet = spyOn(service['priorPlayedWords'], 'set');
+        const spyPrioritySet = spyOn(service['priorCurrentWords'], 'set');
+        service.currentWords.set('nrteu', ['A1', 'A2', 'A3', 'A4', 'A5']);
         const validation = await service.validateAllWordsOnBoard(scrabbleBoard, isEaselSize, isRow);
         expect(spyPrioritySet).toHaveBeenCalled();
         expect(validation).toEqual(expectedResult);
         expect(service['playedWords'].size).not.toEqual(0);
+        expect(service.currentWords.size).not.toEqual(0);
     });
 });
