@@ -365,8 +365,8 @@ describe('AdminController', () => {
             .field('Content-Disposition', 'form-data; name="file[]", filename="' + fileName + '"\r\n')
             .field('Content-Type', 'file/json\r\n')
             .attach('file', process.cwd() + '/tests_data/' + fileName)
-            .attach('file', process.cwd() + '/tests_data/test_dictionary.json')
-            .attach('file', process.cwd() + '/tests_data/test_dictionary.json')
+            .attach('file', process.cwd() + '/tests_data/' + fileName)
+            .attach('file', process.cwd() + '/tests_data/' + fileName)
             .end((err, response) => {
                 expect(response.status).to.equal(StatusCodes.OK);
                 done();
