@@ -14,7 +14,7 @@ import { Level } from '@common/level';
 import { of } from 'rxjs';
 import { PlaceLetterStrategy } from './place-letter-strategy.model';
 
-fdescribe('Place Letter strategy', () => {
+describe('Place Letter strategy', () => {
     let playerAi: PlayerAI;
     let placeStrategy: PlaceLetterStrategy;
     let playerAiService: PlayerAIService;
