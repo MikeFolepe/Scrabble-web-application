@@ -1,11 +1,11 @@
+import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { FormComponent } from './initialize-solo-game/form/form.component';
-import { GameViewComponent } from './game-view/game-view/game-view.component';
 import { JoinRoomComponent } from '@app/pages/join-room/join-room.component';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
-import { NgModule } from '@angular/core';
 import { PageNotFoundComponent } from '@app/pages/page-not-found/page-not-found.component';
 import { WaitingRoomComponent } from '@app/pages/waiting-room/waiting-room.component';
+import { GameViewComponent } from './game-view/game-view/game-view.component';
+import { FormComponent } from './initialize-solo-game/form/form.component';
 
 const routes: Routes = [
     { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -20,7 +20,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-    imports: [RouterModule.forRoot(routes)],
+    imports: [RouterModule.forRoot(routes, { useHash: true })],
     exports: [RouterModule],
 })
 export class AppRoutingModule {}
