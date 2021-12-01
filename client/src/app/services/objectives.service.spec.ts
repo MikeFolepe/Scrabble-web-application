@@ -168,7 +168,7 @@ describe('ObjectivesService', () => {
         expect(spyOnEmit).toHaveBeenCalledOnceWith('objectiveAccomplished', idOfObjectiveAccomplished, roomId);
     });
 
-    it('OBJ#5 Placer un mot avec au moins 2 lettres parmi J,K,Q,W,X,Y,Z,*', () => {
+    it('OBJ#5 Place a word with at least 2 letters in [J, K, Q, W, X, Y, Z, *]', () => {
         const lastPlayedWordsMap = new Map<string, string[]>();
         const spyOnObjectiveCompleted = spyOn<any>(service, 'addObjectiveScore');
 
@@ -190,7 +190,7 @@ describe('ObjectivesService', () => {
         expect(spyOnObjectiveCompleted).toHaveBeenCalledTimes(3);
     });
 
-    it('OBJ#8 La première personne à toucher un des 4 coins de la grille obtient un bonus', () => {
+    it("OBJ#8 Form a word on one of the 4 board's corners", () => {
         const lastPlayedWordsMap = new Map<string, string[]>();
         const spyOnObjectiveCompleted = spyOn<any>(service, 'addObjectiveScore');
 
@@ -217,7 +217,7 @@ describe('ObjectivesService', () => {
         expect(spyOnObjectiveCompleted).toHaveBeenCalledTimes(4);
     });
 
-    it('OBJ#7 Former un mot de plus de 7 lettres', () => {
+    it('OBJ#7 Form a word of at least 8 letters', () => {
         const lastPlayedWordsMap = new Map<string, string[]>();
         const spyOnObjectiveCompleted = spyOn<any>(service, 'addObjectiveScore');
 
@@ -236,7 +236,7 @@ describe('ObjectivesService', () => {
         expect(spyOnObjectiveCompleted).toHaveBeenCalledTimes(1);
     });
 
-    it('OBJ#4 Obtenir 60 points en une minute de jeu actif (incluant les bonus)', () => {
+    it('OBJ#4 Obtain 60 points in one minute of active play (including bonuses)', () => {
         const spyOnObjectiveCompleted = spyOn<any>(service, 'addObjectiveScore');
         const player = new Player(0, 'no matter', []);
         service['playerService'].players[0] = player;
@@ -256,7 +256,7 @@ describe('ObjectivesService', () => {
         expect(spyOnObjectiveCompleted).toHaveBeenCalledTimes(1);
     });
 
-    it("OBJ#2 Former un mot d'au moins 4 lettres identique à un mot déjà placé", () => {
+    it('OBJ#2 Form a word of at least 4 letters identical to a word already placed', () => {
         const lastPlayedWordsMap = new Map<string, string[]>();
         const playedWords = new Map<string, string[]>();
         const spyOnObjectiveCompleted = spyOn<any>(service, 'addObjectiveScore');
@@ -279,7 +279,7 @@ describe('ObjectivesService', () => {
         expect(spyOnObjectiveCompleted).toHaveBeenCalledTimes(1);
     });
 
-    it("OBJ#1 Former un mot d'au moins 4 lettres sur 3 tours consécutifs sample1", () => {
+    it('OBJ#1 Form a word of at least 4 letters over 3 consecutive turns sample1', () => {
         const spyOnObjectiveCompleted = spyOn<any>(service, 'addObjectiveScore');
         const lastPlayedWordsMap = new Map<string, string[]>();
 
@@ -316,7 +316,7 @@ describe('ObjectivesService', () => {
         expect(service['obj1Counter'][0]).toEqual(1);
     });
 
-    it("OBJ#1 Former un mot d'au moins 4 lettres sur 3 tours consécutifs sample2", () => {
+    it('OBJ#1 Form a word of at least 4 letters over 3 consecutive turns sample2', () => {
         const spyOnObjectiveCompleted = spyOn<any>(service, 'addObjectiveScore');
         const lastPlayedWordsMap = new Map<string, string[]>();
 
@@ -353,7 +353,7 @@ describe('ObjectivesService', () => {
         expect(service['obj1Counter'][0]).toEqual(2);
     });
 
-    it("OBJ#1 Former un mot d'au moins 4 lettres sur 3 tours consécutifs sample3", () => {
+    it('OBJ#1 Form a word of at least 4 letters over 3 consecutive turns sample3', () => {
         const spyOnObjectiveCompleted = spyOn<any>(service, 'addObjectiveScore');
         const lastPlayedWordsMap = new Map<string, string[]>();
 
@@ -413,7 +413,7 @@ describe('ObjectivesService', () => {
         expect(spyOnObjectiveCompleted).toHaveBeenCalledTimes(1);
     });
 
-    it('OBJ#3 Former un mot qui coupe au moins deux mots déjà placés sample1', () => {
+    it('OBJ#3 Form a word that intersects at least two already placed words sample1', () => {
         service['gameSettingsService'].gameType = GameType.Log2990;
         const lastPlayedWordsMap = new Map<string, string[]>();
         const priorCurrentWordsMap = new Map<string, string[]>();
@@ -442,7 +442,7 @@ describe('ObjectivesService', () => {
         expect(spyOnObjectiveCompleted).toHaveBeenCalledTimes(1);
     });
 
-    it('OBJ#3 Former un mot qui coupe au moins deux mots déjà placés sample2', () => {
+    it('OBJ#3 Form a word that intersects at least two already placed words sample2', () => {
         service['gameSettingsService'].gameType = GameType.Log2990;
         const lastPlayedWordsMap = new Map<string, string[]>();
         const currentWordsMap = new Map<string, string[]>();
@@ -451,21 +451,28 @@ describe('ObjectivesService', () => {
         service['wordValidationService'].currentWords.clear();
         service['wordValidationService'].priorCurrentWords.clear();
 
-        service['wordValidationService'].lastPlayedWords = lastPlayedWordsMap.set('sac', ['C1', 'C2', 'C3']);
+        service['wordValidationService'].lastPlayedWords = lastPlayedWordsMap.set('pur', ['C1', 'C2', 'C3']);
         service['wordValidationService'].currentWords = currentWordsMap.set('sac', ['C1', 'C2', 'C3']);
         service['validateObjectiveThree'](2);
         lastPlayedWordsMap.clear();
 
-        service['wordValidationService'].lastPlayedWords = lastPlayedWordsMap.set('bleu', ['C1', 'C2', 'C3', 'C4']);
-        service['wordValidationService'].currentWords = currentWordsMap.set('bleu', ['C1', 'C2', 'C3', 'C4']);
+        service['wordValidationService'].lastPlayedWords = lastPlayedWordsMap.set('purs', ['C1', 'C2', 'C3', 'C4']);
+        service['wordValidationService'].currentWords = currentWordsMap.set('purs', ['C1', 'C2', 'C3', 'C4']);
         service['wordValidationService'].priorCurrentWords = priorCurrentWordsMap.set('sac', ['C1', 'C2', 'C3']);
         service['validateObjectiveThree'](2);
         lastPlayedWordsMap.clear();
 
-        expect(spyOnObjectiveCompleted).toHaveBeenCalledTimes(0);
+        service['wordValidationService'].priorCurrentWords = priorCurrentWordsMap.set('purs', ['C1', 'C2', 'C3', 'C4']);
+        service['wordValidationService'].priorCurrentWords = priorCurrentWordsMap.set('par', ['C1', 'D1', 'E1']);
+        service['wordValidationService'].lastPlayedWords = lastPlayedWordsMap.set('rouge', ['C1', 'D1', 'E1', 'F1']);
+        service['wordValidationService'].currentWords = currentWordsMap.set('rouge', ['C1', 'D1', 'E1', 'F1']);
+        service['validateObjectiveThree'](2);
+        lastPlayedWordsMap.clear();
+
+        expect(spyOnObjectiveCompleted).toHaveBeenCalledTimes(1);
     });
 
-    it("OBJ#6 Former un mot sur une case bonus à partir d'un mot déjà placé", () => {
+    it('OBJ#6 Prolong an already placed word while touching a bonus case', () => {
         const spyOnObjectiveCompleted = spyOn<any>(service, 'addObjectiveScore');
         service['extendedWords'] = [];
         service['validateObjectiveSix'](5);

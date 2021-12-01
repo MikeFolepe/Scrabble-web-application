@@ -204,11 +204,13 @@ export class ObjectivesService implements OnDestroy {
     includesArray<T>(container: T[][], arrayToFind: T[]): boolean {
         let included = false;
         for (const array of container) {
-            for (let i = 0; i < array.length; i++) {
-                if (array[i] === arrayToFind[i]) included = true;
-                else included = false;
+            if (array.length === arrayToFind.length) {
+                for (let i = 0; i < array.length; i++) {
+                    if (array[i] === arrayToFind[i]) included = true;
+                    else included = false;
+                }
+                if (included) return true;
             }
-            if (included && array.length === arrayToFind.length) return true;
         }
         return false;
     }
