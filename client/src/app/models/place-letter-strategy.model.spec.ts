@@ -2,7 +2,6 @@
 /* eslint-disable max-lines */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
-/*
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -15,25 +14,23 @@ import { Level } from '@common/level';
 import { of } from 'rxjs';
 import { PlaceLetterStrategy } from './place-letter-strategy.model';
 
-describe('Place Letter strategy', () => {
+fdescribe('Place Letter strategy', () => {
     let playerAi: PlayerAI;
     let placeStrategy: PlaceLetterStrategy;
     let playerAiService: PlayerAIService;
     const scrabbleBoard: string[][] = [];
     let letterTable: Letter[] = [];
+
     beforeEach(async () => {
         // Faire jasmine create spy object
         // Mock bien tout les appels du .ts
         await TestBed.configureTestingModule({
             imports: [HttpClientTestingModule, RouterTestingModule],
-            providers: [{ provide: PlaceLetterStrategy, useValue: placeStrategy }],
         }).compileComponents();
-        placeStrategy = TestBed.inject(PlaceLetterStrategy);
+        // placeStrategy = TestBed.inject(PlaceLetterStrategy);
     });
 
     beforeEach(() => {
-        const id = 1;
-        const name = 'PlayerAI';
         letterTable = [
             { value: 'A', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
             { value: 'B', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
@@ -43,7 +40,8 @@ describe('Place Letter strategy', () => {
             { value: 'F', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
             { value: 'G', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
         ];
-        playerAi = new PlayerAI(id, name, letterTable, playerAiService);
+        placeStrategy = new PlaceLetterStrategy();
+        playerAi = new PlayerAI(1, 'PlayerAI', letterTable, playerAiService);
         playerAiService = TestBed.inject(PlayerAIService);
         playerAiService.playerService.players[1] = playerAi;
         for (let i = 0; i < BOARD_COLUMNS; i++) {
@@ -55,11 +53,9 @@ describe('Place Letter strategy', () => {
     });
 
     it('should create an instance', () => {
-        expect(playerAi).toBeTruthy();
-        expect(playerAiService).toBeTruthy();
-        expect(scrabbleBoard).toBeTruthy();
+        expect(placeStrategy).toBeTruthy();
     });
-    
+
     it('should create all patterns by replacing empty cases by playerHand letters pattern', () => {
         scrabbleBoard[0][3] = 'p';
         scrabbleBoard[1][3] = 'a';
@@ -88,7 +84,6 @@ describe('Place Letter strategy', () => {
         vertical.push({ line: 5, pattern: '^[abcdefg]*o[abcdefg]*$' });
         vertical.push({ line: 6, pattern: '^[abcdefg]*ours[abcdefg]*$' });
         const expected: BoardPattern = { horizontal, vertical };
-        placeStrategy = new PlaceLetterStrategy();
         placeStrategy['initializeArray'](scrabbleBoard);
         expect(placeStrategy['generateAllPatterns']('[ABCDEFG]', isFirstRound)).toEqual(expected);
     });
@@ -98,7 +93,6 @@ describe('Place Letter strategy', () => {
         const horizontal: PatternInfo[] = [{ line: 7, pattern: '^[abcdefg]*$' }];
         const vertical: PatternInfo[] = [{ line: 7, pattern: '^[abcdefg]*$' }];
         const expected: BoardPattern = { horizontal, vertical };
-        placeStrategy = new PlaceLetterStrategy();
         placeStrategy['initializeArray'](scrabbleBoard);
         expect(placeStrategy['generateAllPatterns']('[ABCDEFG]', isFirstRound)).toEqual(expected);
     });
@@ -114,7 +108,6 @@ describe('Place Letter strategy', () => {
         expected.push({ word: 'canada', orientation: Orientation.Horizontal, line: 0, startIndex: 0, point: 0 });
         expected.push({ word: 'moi', orientation: Orientation.Vertical, line: 0, startIndex: 0, point: 0 });
         expected.push({ word: 'moins', orientation: Orientation.Vertical, line: 0, startIndex: 0, point: 0 });
-        placeStrategy = new PlaceLetterStrategy();
         expect(placeStrategy['generateAllWords'](randomDictionary, patterns)).toEqual(expected);
     });
 
@@ -130,7 +123,6 @@ describe('Place Letter strategy', () => {
         expected.push(word1);
         expected.push(word3);
         scrabbleBoard[4][0] = 'z';
-        placeStrategy = new PlaceLetterStrategy();
         placeStrategy['initializeArray'](scrabbleBoard);
         expect(placeStrategy['removeIfNotEnoughLetter'](possibleWords, playerAi)).toEqual(expected);
     });
@@ -149,53 +141,14 @@ describe('Place Letter strategy', () => {
         const word6: PossibleWords = { word: 'maree', orientation: Orientation.Vertical, line: 0, startIndex: 0, point: 0 };
         const word7: PossibleWords = { word: 'martin', orientation: Orientation.Vertical, line: 0, startIndex: 0, point: 0 };
         const word8: PossibleWords = { word: 'mare', orientation: Orientation.Vertical, line: 0, startIndex: 0, point: 0 };
-        const possibleWord: PossibleWords[] = [];
-        possibleWord.push(word1);
-        possibleWord.push(word2);
-        possibleWord.push(word3);
-        possibleWord.push(word4);
-        possibleWord.push(word5);
-        possibleWord.push(word6);
-        possibleWord.push(word7);
-        possibleWord.push(word8);
-        const expected: PossibleWords[] = [];
-        expected.push(word3);
-        expected.push(word4);
-        expected.push(word7);
-        expected.push(word8);
-        placeStrategy = new PlaceLetterStrategy();
+        const possibleWord: PossibleWords[] = [word1, word2, word3, word4, word5, word6, word7, word8];
+        const expected: PossibleWords[] = [word3, word4, word7, word8];
         placeStrategy['initializeArray'](scrabbleBoard);
         expect(placeStrategy['removeIfNotDisposable'](possibleWord)).toEqual(expected);
     });
 
-    it('should play from the center at first round', async () => {
-        const myDictionary: string[] = ['maths', 'math', 'lundi', 'mardi', 'on'];
-        const spyAi = spyOn(playerAiService.communicationService, 'getGameDictionary').and.returnValue(of(myDictionary));
-        placeStrategy.dictionary = myDictionary;
-        playerAi.letterTable = [
-            { value: 'H', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
-            { value: 'O', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
-            { value: 'N', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
-            { value: 'T', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
-            { value: 'D', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
-            { value: 'A', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
-            { value: 'R', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
-        ];
-        placeStrategy.pointingRange = { min: 1, max: 4 };
-        const spyOnPlace = spyOn<any>(playerAiService, 'place');
-        const word1: PossibleWords = { word: 'on', orientation: Orientation.Horizontal, line: 7, startIndex: 7, point: 2 };
-        const word2: PossibleWords = { word: 'on', orientation: Orientation.Vertical, line: 7, startIndex: 7, point: 2 };
-
-        const expectedMatching: PossibleWords[] = [];
-        expectedMatching.push(word1);
-        expectedMatching.push(word2);
-
-        spyOn<any>(playerAiService, 'calculatePoints').and.returnValue(expectedMatching);
-        playerAiService.gameSettingsService.gameSettings.level = Level.Beginner;
-
-        await placeStrategy.execute(playerAiService);
-        expect(spyAi).toHaveBeenCalled();
-        expect(spyOnPlace).toHaveBeenCalledWith(word1);
+    it('should return false if word length is the size of the board', () => {
+        expect(placeStrategy['isWordOverWriting']('lineTest', 0, 15, 15)).toBeFalse();
     });
 
     it('computeResult should swap if no possibilities', async () => {
@@ -206,12 +159,10 @@ describe('Place Letter strategy', () => {
     });
 
     it('computeResult should place if mode is difficult', async () => {
-        const spyOnPlace = spyOn<any>(playerAiService, 'place');
+        const spyOnPlace = spyOn<any>(playerAiService, 'place').and.returnValue(of());
         const word1: PossibleWords = { word: 'bon', orientation: Orientation.Horizontal, line: 7, startIndex: 7, point: 3 };
         const word2: PossibleWords = { word: 'on', orientation: Orientation.Vertical, line: 7, startIndex: 7, point: 2 };
-        const words: PossibleWords[] = [];
-        words.push(word1);
-        words.push(word2);
+        const words: PossibleWords[] = [word1, word2];
 
         await placeStrategy['computeResults'](words, playerAiService, true);
         expect(spyOnPlace).toHaveBeenCalledWith(word1);
@@ -219,14 +170,14 @@ describe('Place Letter strategy', () => {
 
     it('computeResult should place if mode is easy', async () => {
         const spyOnPlace = spyOn<any>(playerAiService, 'place');
+        const spyOnRandom = spyOn(playerAiService, 'generateRandomNumber').and.returnValue(1);
         const word1: PossibleWords = { word: 'bon', orientation: Orientation.Horizontal, line: 7, startIndex: 7, point: 3 };
         const word2: PossibleWords = { word: 'on', orientation: Orientation.Vertical, line: 7, startIndex: 7, point: 2 };
-        const words: PossibleWords[] = [];
-        words.push(word1);
-        words.push(word2);
+        const words: PossibleWords[] = [word1, word2];
 
         await placeStrategy['computeResults'](words, playerAiService, false);
         expect(spyOnPlace).toHaveBeenCalledTimes(1);
+        expect(spyOnRandom).toHaveBeenCalledTimes(1);
     });
 
     it('isWordOverwriting test sample', () => {
@@ -243,8 +194,8 @@ describe('Place Letter strategy', () => {
             { word: '', orientation: Orientation.Horizontal, line: 0, startIndex: 0, point: 0 },
         ]);
     });
-    
-    it('regression test sample1', async () => {
+
+    it('should execute place letter by calling the right functions if it is not first round', async () => {
         const myDictionary: string[] = ['thon', 'maths', 'rond', 'math', 'art', 'lundi', 'mardi'];
         const spyAi = spyOn(playerAiService.communicationService, 'getGameDictionary').and.returnValue(of(myDictionary));
 
@@ -269,33 +220,28 @@ describe('Place Letter strategy', () => {
         const word4: PossibleWords = { word: 'thon', orientation: Orientation.Vertical, line: 3, startIndex: 3, point: 3 };
         const word5: PossibleWords = { word: 'art', orientation: Orientation.Vertical, line: 3, startIndex: 1, point: 1 };
         const word6: PossibleWords = { word: 'art', orientation: Orientation.Horizontal, line: 5, startIndex: 0, point: 5 };
-        const expectedPoss: PossibleWords[] = [];
-        expectedPoss.push(word1);
-        expectedPoss.push(word2);
-        expectedPoss.push(word3);
-        expectedPoss.push(word6);
-        expectedPoss.push(word4);
-        expectedPoss.push(word5);
-        placeStrategy.dictionary = myDictionary;
+        const expectedPoss: PossibleWords[] = [word1, word2, word3, word6, word4, word5];
         playerAiService.placeLetterService.isFirstRound = false;
         playerAiService.placeLetterService.scrabbleBoard = scrabbleBoard;
         playerAiService.gameSettingsService.gameSettings.level = Level.Expert;
 
         const spyOnCompute = spyOn<any>(placeStrategy, 'computeResults');
-        spyOn<any>(playerAiService.wordValidation, 'validateAllWordsOnBoard').and.returnValues(
-            { validation: true, score: 10 },
-            { validation: true, score: 9 },
-            { validation: true, score: 6 },
-            { validation: true, score: 5 },
-            { validation: true, score: 3 },
-            { validation: true, score: 1 },
-        );
+        const spyCalculate = spyOn(playerAiService, 'calculatePoints').and.returnValue(Promise.resolve([word1, word2, word3, word4, word5, word6]));
+        const spyFilter = spyOn(playerAiService, 'filterByRange').and.returnValue([word1, word2, word3, word6, word4, word5]);
+        const spyReceivePossibilities = spyOn(playerAiService.debugService, 'receiveAIDebugPossibilities');
+        const spyRemove = spyOn<any>(placeStrategy, 'removeIfNotDisposable');
+
         await placeStrategy.execute(playerAiService);
+
         expect(spyAi).toHaveBeenCalled();
         expect(spyOnCompute).toHaveBeenCalledWith(expectedPoss, playerAiService);
+        expect(spyCalculate).toHaveBeenCalled();
+        expect(spyFilter).toHaveBeenCalled();
+        expect(spyReceivePossibilities).toHaveBeenCalled();
+        expect(spyRemove).toHaveBeenCalled();
     });
 
-    it('regression test sample2', async () => {
+    it('should execute place letter by calling the right functions if it is first round', async () => {
         const myDictionary: string[] = ['thon', 'maths', 'rond', 'math', 'art', 'lundi', 'mardi'];
         const spyAi = spyOn(playerAiService.communicationService, 'getGameDictionary').and.returnValue(of(myDictionary));
 
@@ -305,7 +251,6 @@ describe('Place Letter strategy', () => {
         scrabbleBoard[3][4] = 'h';
         scrabbleBoard[4][2] = 'r';
         scrabbleBoard[5][2] = 't';
-
         playerAi.letterTable = [
             { value: 'H', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
             { value: 'O', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
@@ -315,37 +260,76 @@ describe('Place Letter strategy', () => {
             { value: 'A', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
             { value: 'R', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
         ];
-
         const word1: PossibleWords = { word: 'maths', orientation: Orientation.Horizontal, line: 3, startIndex: 1, point: 10 };
         const word2: PossibleWords = { word: 'rond', orientation: Orientation.Horizontal, line: 4, startIndex: 2, point: 9 };
         const word3: PossibleWords = { word: 'thon', orientation: Orientation.Horizontal, line: 5, startIndex: 2, point: 6 };
         const word4: PossibleWords = { word: 'thon', orientation: Orientation.Vertical, line: 3, startIndex: 3, point: 3 };
         const word5: PossibleWords = { word: 'art', orientation: Orientation.Vertical, line: 3, startIndex: 1, point: 1 };
         const word6: PossibleWords = { word: 'art', orientation: Orientation.Horizontal, line: 5, startIndex: 0, point: 5 };
-        const expectedPoss: PossibleWords[] = [];
-        expectedPoss.push(word1);
-        expectedPoss.push(word2);
-        expectedPoss.push(word3);
-        expectedPoss.push(word6);
-        expectedPoss.push(word4);
-        expectedPoss.push(word5);
-        placeStrategy.pointingRange = { min: 1, max: 18 };
-        playerAiService.placeLetterService.isFirstRound = false;
+        const expectedPoss: PossibleWords[] = [word1, word2, word3, word6, word4, word5];
+        playerAiService.placeLetterService.isFirstRound = true;
+        playerAiService.placeLetterService.scrabbleBoard = scrabbleBoard;
+        playerAiService.gameSettingsService.gameSettings.level = Level.Expert;
+
+        const spyOnCompute = spyOn<any>(placeStrategy, 'computeResults');
+        const spyCalculate = spyOn(playerAiService, 'calculatePoints').and.returnValue(Promise.resolve([word1, word2, word3, word4, word5, word6]));
+        const spyFilter = spyOn(playerAiService, 'filterByRange').and.returnValue([word1, word2, word3, word6, word4, word5]);
+        const spyReceivePossibilities = spyOn(playerAiService.debugService, 'receiveAIDebugPossibilities');
+        const spyRemove = spyOn<any>(placeStrategy, 'removeIfNotDisposable');
+
+        await placeStrategy.execute(playerAiService);
+
+        expect(spyAi).toHaveBeenCalled();
+        expect(spyOnCompute).toHaveBeenCalledWith(expectedPoss, playerAiService);
+        expect(spyCalculate).toHaveBeenCalled();
+        expect(spyFilter).toHaveBeenCalled();
+        expect(spyReceivePossibilities).toHaveBeenCalled();
+        expect(spyRemove).not.toHaveBeenCalled();
+    });
+
+    it('should execute place letter by calling the right functions if it is first round', async () => {
+        const myDictionary: string[] = ['thon', 'maths', 'rond', 'math', 'art', 'lundi', 'mardi'];
+        const spyAi = spyOn(playerAiService.communicationService, 'getGameDictionary').and.returnValue(of(myDictionary));
+
+        scrabbleBoard[3][1] = 'm';
+        scrabbleBoard[3][2] = 'a';
+        scrabbleBoard[3][3] = 't';
+        scrabbleBoard[3][4] = 'h';
+        scrabbleBoard[4][2] = 'r';
+        scrabbleBoard[5][2] = 't';
+        playerAi.letterTable = [
+            { value: 'H', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
+            { value: 'O', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
+            { value: 'N', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
+            { value: 'S', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
+            { value: 'D', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
+            { value: 'A', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
+            { value: 'R', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
+        ];
+        const word1: PossibleWords = { word: 'maths', orientation: Orientation.Horizontal, line: 3, startIndex: 1, point: 10 };
+        const word2: PossibleWords = { word: 'rond', orientation: Orientation.Horizontal, line: 4, startIndex: 2, point: 9 };
+        const word3: PossibleWords = { word: 'thon', orientation: Orientation.Horizontal, line: 5, startIndex: 2, point: 6 };
+        const word4: PossibleWords = { word: 'thon', orientation: Orientation.Vertical, line: 3, startIndex: 3, point: 3 };
+        const word5: PossibleWords = { word: 'art', orientation: Orientation.Vertical, line: 3, startIndex: 1, point: 1 };
+        const word6: PossibleWords = { word: 'art', orientation: Orientation.Horizontal, line: 5, startIndex: 0, point: 5 };
+        const expectedPoss: PossibleWords[] = [word1, word2, word3, word6, word4, word5];
+        playerAiService.placeLetterService.isFirstRound = true;
         playerAiService.placeLetterService.scrabbleBoard = scrabbleBoard;
         playerAiService.gameSettingsService.gameSettings.level = Level.Beginner;
 
         const spyOnCompute = spyOn<any>(placeStrategy, 'computeResults');
-        spyOn<any>(playerAiService.wordValidation, 'validateAllWordsOnBoard').and.returnValues(
-            { validation: true, score: 10 },
-            { validation: true, score: 9 },
-            { validation: true, score: 6 },
-            { validation: true, score: 5 },
-            { validation: true, score: 3 },
-            { validation: true, score: 1 },
-        );
+        const spyCalculate = spyOn(playerAiService, 'calculatePoints').and.returnValue(Promise.resolve([word1, word2, word3, word4, word5, word6]));
+        const spyFilter = spyOn(playerAiService, 'filterByRange').and.returnValue([word1, word2, word3, word6, word4, word5]);
+        const spyReceivePossibilities = spyOn(playerAiService.debugService, 'receiveAIDebugPossibilities');
+        const spyRemove = spyOn<any>(placeStrategy, 'removeIfNotDisposable');
+
         await placeStrategy.execute(playerAiService);
+
         expect(spyAi).toHaveBeenCalled();
-        expect(spyOnCompute).toHaveBeenCalledOnceWith(expectedPoss, playerAiService, false);
+        expect(spyOnCompute).toHaveBeenCalledWith(expectedPoss, playerAiService, false);
+        expect(spyCalculate).toHaveBeenCalled();
+        expect(spyFilter).toHaveBeenCalled();
+        expect(spyReceivePossibilities).toHaveBeenCalled();
+        expect(spyRemove).not.toHaveBeenCalled();
     });
 });
-*/
