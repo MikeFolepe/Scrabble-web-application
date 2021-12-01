@@ -4,11 +4,14 @@
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
+
+// TODO réduire un peu ce fichier la (Anthony)
 /*
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { BOARD_COLUMNS, BOARD_ROWS, DELAY_TO_PASS_TURN, RESERVE } from '@app/classes/constants';
+import { MessageType } from '@app/classes/enum';
 import { Orientation, PossibleWords } from '@app/classes/scrabble-board-pattern';
 import { PlayerAI } from '@app/models/player-ai.model';
 import { Player } from '@app/models/player.model';
@@ -17,6 +20,7 @@ import { PlayerAIService } from '@app/services/player-ai.service';
 describe('PlayerAIService', () => {
     let service: PlayerAIService;
     const scrabbleBoard: string[][] = [];
+    let spyOnDisplayMessage: jasmine.Spy<(message: string, messageType: MessageType) => void>;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
@@ -41,6 +45,7 @@ describe('PlayerAIService', () => {
         const playerAi = new Player(2, 'Player 2', [letterA, letterB, letterC, letterD, letterA, letterB, letterC]);
         service.playerService.addPlayer(player);
         service.playerService.addPlayer(playerAi);
+        spyOnDisplayMessage = spyOn(service.sendMessageService, 'displayMessageByType');
     });
 
     it('should be created', () => {
@@ -50,7 +55,6 @@ describe('PlayerAIService', () => {
     it('skip should call switchTurn and display message', async () => {
         jasmine.clock().install();
         const spyOnSwitchTurn = spyOn(service.skipTurnService, 'switchTurn');
-        const spyOnDisplayMessage = spyOn(service.sendMessageService, 'displayMessageByType');
         await service.skip();
         jasmine.clock().tick(DELAY_TO_PASS_TURN);
         expect(spyOnSwitchTurn).toHaveBeenCalled();
@@ -61,7 +65,6 @@ describe('PlayerAIService', () => {
     it('skip should call switchTurn', async () => {
         jasmine.clock().install();
         const spyOnSwitchTurn = spyOn(service.skipTurnService, 'switchTurn');
-        const spyOnDisplayMessage = spyOn(service.sendMessageService, 'displayMessageByType');
         await service.skip(false);
         jasmine.clock().tick(DELAY_TO_PASS_TURN + 500);
         expect(spyOnSwitchTurn).toHaveBeenCalled();
@@ -220,10 +223,6 @@ describe('PlayerAIService', () => {
             { value: 'G', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
         ];
 
-        const spyOnDisplayMessage = spyOn<any>(service.sendMessageService, 'displayMessageByType').and.callFake(() => {
-            return;
-        });
-
         const copy = JSON.parse(JSON.stringify(letterTable));
         const playerAi = new PlayerAI(0, 'name', letterTable, service);
         service.playerService.players[1] = playerAi;
@@ -232,7 +231,7 @@ describe('PlayerAIService', () => {
         const isDifficultMode = false;
 
         expect(service.swap(isDifficultMode)).toBeTrue();
-        expect(spyOnDisplayMessage).toHaveBeenCalledTimes(1);
+        expect(spyOnDisplayMessage).toHaveBeenCalled();
         expect(service.playerService.players[1].letterTable === copy).toEqual(false);
         expect(service.letterService.reserveSize === reserveLengthBeforeSwap).toEqual(true);
     });
@@ -248,10 +247,6 @@ describe('PlayerAIService', () => {
             { value: 'G', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
         ];
 
-        const spyOnDisplayMessage = spyOn<any>(service.sendMessageService, 'displayMessageByType').and.callFake(() => {
-            return;
-        });
-
         const copy = JSON.parse(JSON.stringify(letterTable));
         const playerAi = new PlayerAI(0, 'name', letterTable, service);
         service.playerService.players[1] = playerAi;
@@ -260,7 +255,7 @@ describe('PlayerAIService', () => {
         const isDifficultMode = false;
 
         expect(service.swap(isDifficultMode)).toBeFalse();
-        expect(spyOnDisplayMessage).toHaveBeenCalledTimes(0);
+        expect(spyOnDisplayMessage).not.toHaveBeenCalled();
         expect(service.playerService.players[1].letterTable).toEqual(copy);
         expect(service.letterService.reserveSize === reserveLengthBeforeSwap).toEqual(true);
     });
@@ -276,10 +271,6 @@ describe('PlayerAIService', () => {
             { value: 'G', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
         ];
 
-        const spyOnDisplayMessage = spyOn<any>(service.sendMessageService, 'displayMessageByType').and.callFake(() => {
-            return;
-        });
-
         const copy = JSON.parse(JSON.stringify(letterTable));
         const playerAi = new PlayerAI(0, 'name', letterTable, service);
         service.playerService.players[1] = playerAi;
@@ -288,7 +279,7 @@ describe('PlayerAIService', () => {
         const isDifficultMode = true;
 
         expect(service.swap(isDifficultMode)).toBeTrue();
-        expect(spyOnDisplayMessage).toHaveBeenCalledTimes(1);
+        expect(spyOnDisplayMessage).toHaveBeenCalled();
         expect(service.playerService.players[1].letterTable === copy).toEqual(false);
         expect(service.letterService.reserveSize === reserveLengthBeforeSwap).toEqual(true);
     });
@@ -304,10 +295,6 @@ describe('PlayerAIService', () => {
             { value: 'G', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
         ];
 
-        const spyOnDisplayMessage = spyOn<any>(service.sendMessageService, 'displayMessageByType').and.callFake(() => {
-            return;
-        });
-
         const copy = JSON.parse(JSON.stringify(letterTable));
         const playerAi = new PlayerAI(0, 'name', letterTable, service);
         service.playerService.players[1] = playerAi;
@@ -316,7 +303,7 @@ describe('PlayerAIService', () => {
         const isDifficultMode = true;
 
         expect(service.swap(isDifficultMode)).toBeTrue();
-        expect(spyOnDisplayMessage).toHaveBeenCalledTimes(1);
+        expect(spyOnDisplayMessage).toHaveBeenCalled();
         expect(service.playerService.players[1].letterTable === copy).toEqual(false);
         expect(service.letterService.reserveSize === reserveLengthBeforeSwap).toEqual(true);
     });
@@ -330,10 +317,6 @@ describe('PlayerAIService', () => {
             { value: 'E', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
         ];
 
-        const spyOnDisplayMessage = spyOn<any>(service.sendMessageService, 'displayMessageByType').and.callFake(() => {
-            return;
-        });
-
         const copy = JSON.parse(JSON.stringify(letterTable));
         const playerAi = new PlayerAI(0, 'name', letterTable, service);
         service.playerService.players[1] = playerAi;
@@ -342,7 +325,7 @@ describe('PlayerAIService', () => {
         const isDifficultMode = true;
 
         expect(service.swap(isDifficultMode)).toBeTrue();
-        expect(spyOnDisplayMessage).toHaveBeenCalledTimes(1);
+        expect(spyOnDisplayMessage).toHaveBeenCalled();
         expect(service.playerService.players[1].letterTable === copy).toEqual(false);
         expect(service.letterService.reserveSize === reserveLengthBeforeSwap).toEqual(true);
     });
@@ -358,15 +341,7 @@ describe('PlayerAIService', () => {
         const word7: PossibleWords = { word: 'martin', orientation: Orientation.Vertical, line: 0, startIndex: 0, point: 0 };
         const word8: PossibleWords = { word: 'mare', orientation: Orientation.Vertical, line: 0, startIndex: 0, point: 0 };
 
-        const possibleWord: PossibleWords[] = [];
-        possibleWord.push(word1);
-        possibleWord.push(word2);
-        possibleWord.push(word3);
-        possibleWord.push(word4);
-        possibleWord.push(word5);
-        possibleWord.push(word6);
-        possibleWord.push(word7);
-        possibleWord.push(word8);
+        const possibleWord: PossibleWords[] = [word1, word2, word3, word4, word5, word6, word7, word8];
 
         const expected: PossibleWords[] = [];
         expected.push(word1);
