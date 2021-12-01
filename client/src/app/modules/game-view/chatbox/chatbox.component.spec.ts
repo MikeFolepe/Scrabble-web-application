@@ -10,7 +10,7 @@ import { MessageType } from '@app/classes/enum';
 import { ChatboxComponent } from '@app/modules/game-view//chatbox/chatbox.component';
 import { GameType } from '@common/game-type';
 
-fdescribe('ChatBoxComponent', () => {
+describe('ChatBoxComponent', () => {
     let component: ChatboxComponent;
     let fixture: ComponentFixture<ChatboxComponent>;
 
