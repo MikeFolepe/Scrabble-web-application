@@ -1,48 +1,24 @@
-/* eslint-disable no-invalid-this */
-import { Injectable } from '@angular/core';
-import { BOARD_SIZE, DEFAULT_HEIGHT, DEFAULT_WIDTH, RESERVE } from '@app/classes/constants';
-import { Vec2 } from '@app/classes/vec2';
-
-// TODO : Avoir un fichier séparé pour les constantes et ne pas les répéter!
-
+// JUSTIFICATION : We use  magic numbers to generate correct positions of the cases
+/* eslint-disable @typescript-eslint/no-magic-numbers */
+import { Injectable, OnDestroy } from '@angular/core';
+import { BOARD_ROWS, COLOR_BLACK, DEFAULT_HEIGHT, DEFAULT_WIDTH, GRID_CASE_SIZE, RESERVE } from '@app/classes/constants';
+import { Orientation } from '@app/classes/scrabble-board-pattern';
+import { Vec2 } from '@common/vec2';
 @Injectable({
     providedIn: 'root',
 })
-export class GridService {
-    gridContext: CanvasRenderingContext2D;
-    gridContextLayer: CanvasRenderingContext2D;
-    private canvasSize: Vec2 = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
-    private caseWidth = DEFAULT_WIDTH / BOARD_SIZE;
-    private doubleLetters: Vec2[] = [
-        { x: 4, y: 0 },
-        { x: 5, y: 1 },
-        { x: 1, y: 1 },
-        { x: 7, y: 4 },
-        { x: 4, y: 7 },
-        { x: 1, y: 5 },
-        { x: 0, y: 4 },
-    ];
-    private tripleLetters: Vec2[] = [
-        { x: 2, y: 2 },
-        { x: 6, y: 2 },
-        { x: 2, y: 6 },
-    ];
-    private doubleWords: Vec2[] = [
-        { x: 3, y: 3 },
-        { x: 4, y: 4 },
-        { x: 5, y: 5 },
-        { x: 6, y: 6 },
-    ];
-    private tripleWords: Vec2[] = [
-        { x: 7, y: 0 },
-        { x: 7, y: 7 },
-        { x: 0, y: 7 },
-    ];
-    // TODO : pas de valeurs magiques!! Faudrait avoir une meilleure manière de le faire
-    /* eslint-disable @typescript-eslint/no-magic-numbers */
+export class GridService implements OnDestroy {
+    gridContextBoardLayer: CanvasRenderingContext2D;
+    gridContextLettersLayer: CanvasRenderingContext2D;
+    gridContextPlacementLayer: CanvasRenderingContext2D;
+    bonusPositions: Map<string, string>;
+    private canvasSize: Vec2;
+    private readonly gridLength;
 
-    setGridContext(gridContext: CanvasRenderingContext2D) {
-        this.gridContext = gridContext;
+    constructor() {
+        this.canvasSize = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
+        this.bonusPositions = new Map<string, string>();
+        this.gridLength = BOARD_ROWS;
     }
 
     get width(): number {
@@ -53,201 +29,208 @@ export class GridService {
         return this.canvasSize.y;
     }
 
-    drawGrid() {
-        this.writeColumnsIndex(this.gridContext, 15);
-        this.writeLinesIndex(this.gridContext, 15);
-        this.gridContext.translate(DEFAULT_WIDTH / 2 + this.caseWidth / 2, DEFAULT_HEIGHT / 2 + this.caseWidth / 2);
-        for (let i = 0; i < 4; i++) {
-            this.drawSymetricGrid(this.gridContext);
-            this.gridContext.rotate((Math.PI / 180) * 90);
-        }
-        this.drawStar(0, 0, 5, this.caseWidth / 2 - 9, 6);
-        this.writeBonuses();
+    setGridContext(gridContext: CanvasRenderingContext2D): void {
+        this.gridContextBoardLayer = gridContext;
     }
 
-    writeWord(ctx: CanvasRenderingContext2D, word: string, startPosition: Vec2) {
-        ctx.font = '12px system-ui';
-        ctx.fillStyle = 'black';
-        const lineheight = 12;
-        const lines = word.split(' ');
-        for (let i = 0; i < lines.length; i++)
-            ctx.fillText(lines[i], startPosition.x + this.caseWidth / 8 + i * lineheight, startPosition.y + this.caseWidth / 2 + i * lineheight);
+    drawGrid(): void {
+        this.writeGridIndexes(this.gridContextBoardLayer, this.gridLength);
+        this.drawSimpleGrid(this.gridContextBoardLayer);
+        this.drawBonusBoxes(this.bonusPositions);
+        this.drawCenterBox();
     }
 
-    drawLetter(ctx: CanvasRenderingContext2D, letter: string, position: Vec2, fontSize: number) {
+    drawBorder(context: CanvasRenderingContext2D, positionTab: Vec2): void {
+        const gridPosition = this.positionTabToPositionGrid(positionTab.x, positionTab.y);
+        context.strokeStyle = 'purple';
+        context.lineWidth = 5;
+        context.strokeRect(gridPosition.x, gridPosition.y, GRID_CASE_SIZE, GRID_CASE_SIZE);
+    }
+
+    eraseLayer(context: CanvasRenderingContext2D): void {
+        // Clear all the elements drawn on a layer
+        context.clearRect(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+    }
+
+    drawLetter(context: CanvasRenderingContext2D, letter: string, positionTab: Vec2, fontSize: number): void {
+        const gridPosition = this.positionTabToPositionGrid(positionTab.x, positionTab.y);
         // Grid case style
-        ctx.fillStyle = 'tan';
-        ctx.fillRect(position.x + DEFAULT_HEIGHT / 2, position.y + DEFAULT_HEIGHT / 2, this.caseWidth, this.caseWidth);
-        ctx.strokeStyle = 'black';
-        ctx.strokeRect(position.x + DEFAULT_HEIGHT / 2, position.y + DEFAULT_HEIGHT / 2, this.caseWidth, this.caseWidth);
+        const borderOffSet = 2;
+        context.fillStyle = COLOR_BLACK;
+        context.fillRect(gridPosition.x, gridPosition.y, GRID_CASE_SIZE, GRID_CASE_SIZE);
+        context.fillStyle = 'tan';
+        context.fillRect(
+            gridPosition.x + borderOffSet,
+            gridPosition.y + borderOffSet,
+            GRID_CASE_SIZE - borderOffSet * 2,
+            GRID_CASE_SIZE - borderOffSet * 2,
+        );
 
         // Score of the letter placed
-        let letterScore = 0;
+        let letterScore = '';
         for (const letterReserve of RESERVE) {
             if (letter.toUpperCase() === letterReserve.value) {
-                letterScore = letterReserve.points;
+                letterScore = letterReserve.points.toString();
             }
         }
         // Placing the respective letter
-        ctx.font = fontSize * 1.5 + 'px system-ui';
-        ctx.fillStyle = 'black';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(
-            letter.toUpperCase(),
-            position.x + DEFAULT_HEIGHT / 2 + this.caseWidth / 2,
-            position.y + DEFAULT_HEIGHT / 2 + this.caseWidth / 2,
-        );
+        context.font = fontSize * 1.5 + 'px system-ui';
+        context.fillStyle = COLOR_BLACK;
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        context.fillText(letter.toUpperCase(), gridPosition.x + GRID_CASE_SIZE / 2, gridPosition.y + GRID_CASE_SIZE / 2);
         // Placing the letter's score
-        ctx.font = (fontSize / 2) * 1.5 + 'px system-ui';
-        ctx.fillText(
-            letterScore.toString(),
-            position.x + DEFAULT_HEIGHT / 2 + this.caseWidth / 2 + this.caseWidth / 3,
-            position.y + DEFAULT_HEIGHT / 2 + this.caseWidth / 2 + this.caseWidth / 3,
+        context.font = (fontSize / 2) * 1.5 + 'px system-ui';
+        context.fillText(
+            letterScore,
+            gridPosition.x + GRID_CASE_SIZE / 2 + GRID_CASE_SIZE / 3,
+            gridPosition.y + GRID_CASE_SIZE / 2 + GRID_CASE_SIZE / 3,
         );
     }
 
-    eraseLetter(ctx: CanvasRenderingContext2D, position: Vec2) {
-        ctx.clearRect(position.x + DEFAULT_HEIGHT / 2, position.y + DEFAULT_HEIGHT / 2, this.caseWidth, this.caseWidth);
+    eraseLetter(context: CanvasRenderingContext2D, positionTab: Vec2): void {
+        const gridPosition = this.positionTabToPositionGrid(positionTab.x, positionTab.y);
+        context.clearRect(gridPosition.x, gridPosition.y, GRID_CASE_SIZE, GRID_CASE_SIZE);
     }
 
-    writeBonuses() {
+    drawArrow(context: CanvasRenderingContext2D, positionTab: Vec2, orientation: Orientation): void {
+        const gridPosition = this.positionTabToPositionGrid(positionTab.x, positionTab.y);
+        context.beginPath();
+        if (orientation === Orientation.Horizontal) {
+            context.moveTo(gridPosition.x + GRID_CASE_SIZE / 2, gridPosition.y + GRID_CASE_SIZE / 4);
+            context.lineTo(gridPosition.x + GRID_CASE_SIZE / 2, gridPosition.y + (3 * GRID_CASE_SIZE) / 4);
+            context.lineTo(gridPosition.x + (5 * GRID_CASE_SIZE) / 6, gridPosition.y + GRID_CASE_SIZE / 2);
+            context.lineTo(gridPosition.x + GRID_CASE_SIZE / 2, gridPosition.y + GRID_CASE_SIZE / 4);
+            context.lineTo(gridPosition.x + GRID_CASE_SIZE / 2, gridPosition.y + (3 * GRID_CASE_SIZE) / 4);
+        } else {
+            context.moveTo(gridPosition.x + GRID_CASE_SIZE / 4, gridPosition.y + GRID_CASE_SIZE / 2);
+            context.lineTo(gridPosition.x + (3 * GRID_CASE_SIZE) / 4, gridPosition.y + GRID_CASE_SIZE / 2);
+            context.lineTo(gridPosition.x + GRID_CASE_SIZE / 2, gridPosition.y + (5 * GRID_CASE_SIZE) / 6);
+            context.lineTo(gridPosition.x + GRID_CASE_SIZE / 4, gridPosition.y + GRID_CASE_SIZE / 2);
+            context.lineTo(gridPosition.x + (3 * GRID_CASE_SIZE) / 4, gridPosition.y + GRID_CASE_SIZE / 2);
+        }
+        context.fillStyle = 'orange';
+        context.lineWidth = 4;
+        context.strokeStyle = COLOR_BLACK;
+        context.stroke();
+        context.fill();
+    }
+    ngOnDestroy(): void {
+        this.eraseLayer(this.gridContextLettersLayer);
+    }
+    // Transpose the positions from 15x15 array to 750x750 grid
+    private positionTabToPositionGrid(positionTabX: number, positionTabY: number): Vec2 {
+        return {
+            x: positionTabX * GRID_CASE_SIZE + GRID_CASE_SIZE,
+            y: positionTabY * GRID_CASE_SIZE + GRID_CASE_SIZE,
+        };
+    }
+
+    // draw the game grid without any bonus on it
+    private drawSimpleGrid(context: CanvasRenderingContext2D): void {
         const startPosition: Vec2 = { x: 0, y: 0 };
-        for (let i = 0; i < 8; i++) {
-            startPosition.x = i * this.caseWidth - this.caseWidth / 2;
-            for (let j = 0; j < 8; j++) {
-                startPosition.y = j * this.caseWidth - this.caseWidth / 2;
-                if (this.doubleLetters.some((element) => element.x === i && element.y === j)) {
-                    this.writeWord(this.gridContext, 'Lettre x2', startPosition);
-                    this.writeWord(this.gridContext, 'Lettre x2', { x: startPosition.x - 2 * i * this.caseWidth, y: startPosition.y });
-                    this.writeWord(this.gridContext, 'Lettre x2', { x: startPosition.x, y: startPosition.y - 2 * j * this.caseWidth });
-                    this.writeWord(this.gridContext, 'Lettre x2', {
-                        x: startPosition.x - 2 * i * this.caseWidth,
-                        y: startPosition.y - 2 * j * this.caseWidth,
-                    });
-                } else if (this.tripleLetters.some((element) => element.x === i && element.y === j)) {
-                    this.writeWord(this.gridContext, 'Lettre x3', startPosition);
-                    this.writeWord(this.gridContext, 'Lettre x3', { x: startPosition.x - 2 * i * this.caseWidth, y: startPosition.y });
-                    this.writeWord(this.gridContext, 'Lettre x3', { x: startPosition.x, y: startPosition.y - 2 * j * this.caseWidth });
-                    this.writeWord(this.gridContext, 'Lettre x3', {
-                        x: startPosition.x - 2 * i * this.caseWidth,
-                        y: startPosition.y - 2 * j * this.caseWidth,
-                    });
-                } else if (this.doubleWords.some((element) => element.x === i && element.y === j)) {
-                    this.writeWord(this.gridContext, 'Mot x2', startPosition);
-                    this.writeWord(this.gridContext, 'Mot x2', { x: startPosition.x - 2 * i * this.caseWidth, y: startPosition.y });
-                    this.writeWord(this.gridContext, 'Mot x2', { x: startPosition.x, y: startPosition.y - 2 * j * this.caseWidth });
-                    this.writeWord(this.gridContext, 'Mot x2', {
-                        x: startPosition.x - 2 * i * this.caseWidth,
-                        y: startPosition.y - 2 * j * this.caseWidth,
-                    });
-                } else if (this.tripleWords.some((element) => element.x === i && element.y === j)) {
-                    this.writeWord(this.gridContext, 'Mot x3', startPosition);
-                    this.writeWord(this.gridContext, 'Mot x3', { x: startPosition.x - 2 * i * this.caseWidth, y: startPosition.y });
-                    this.writeWord(this.gridContext, 'Mot x3', { x: startPosition.x, y: startPosition.y - 2 * j * this.caseWidth });
-                    this.writeWord(this.gridContext, 'Mot x3', {
-                        x: startPosition.x - 2 * i * this.caseWidth,
-                        y: startPosition.y - 2 * j * this.caseWidth,
-                    });
-                }
+        for (let i = 1; i <= this.gridLength; i++) {
+            startPosition.x = i * GRID_CASE_SIZE;
+            for (let j = 1; j <= this.gridLength; j++) {
+                startPosition.y = j * GRID_CASE_SIZE;
+                context.fillStyle = 'lightGrey';
+                context.fillRect(startPosition.x, startPosition.y, GRID_CASE_SIZE, GRID_CASE_SIZE);
+                context.strokeRect(startPosition.x, startPosition.y, GRID_CASE_SIZE, GRID_CASE_SIZE);
             }
         }
     }
 
-    drawSymetricGrid(gridContext: CanvasRenderingContext2D) {
-        const startPosition: Vec2 = { x: 0, y: 0 };
-        for (let i = 0; i < 8; i++) {
-            startPosition.x = i * this.caseWidth - this.caseWidth / 2;
-            for (let j = 0; j < 8; j++) {
-                startPosition.y = j * this.caseWidth - this.caseWidth / 2;
-                if (this.doubleLetters.some((element) => element.x === i && element.y === j)) {
-                    this.doubleLetter(gridContext, startPosition);
-                } else if (this.tripleLetters.some((element) => element.x === i && element.y === j)) {
-                    this.tripleLetter(gridContext, startPosition);
-                } else if (this.doubleWords.some((element) => element.x === i && element.y === j)) {
-                    this.doubleWord(gridContext, startPosition);
-                } else if (this.tripleWords.some((element) => element.x === i && element.y === j)) {
-                    this.tripleWord(gridContext, startPosition);
-                } else {
-                    gridContext.fillStyle = 'lightGrey';
-                    gridContext.fillRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
-                    gridContext.strokeRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
-                }
-            }
+    private writeGridIndexes(context: CanvasRenderingContext2D, columnsNumber: number): void {
+        context.font = '18px system-ui';
+        context.fillStyle = COLOR_BLACK;
+        // We have same number of columns and rows
+        for (let i = 0; i < columnsNumber; i++) {
+            const indexForColumns = i + 1;
+            let indexForLines = 'A'.charCodeAt(0);
+            indexForLines = indexForLines + i;
+            context.fillText(indexForColumns.toString(), (5 * GRID_CASE_SIZE) / 4 + i * GRID_CASE_SIZE, (3 * GRID_CASE_SIZE) / 4);
+            context.fillText(String.fromCharCode(indexForLines), GRID_CASE_SIZE / 2, (7 * GRID_CASE_SIZE) / 4 + i * GRID_CASE_SIZE);
         }
-        gridContext.fillStyle = 'pink';
-        gridContext.fillRect(-this.caseWidth / 2, -this.caseWidth / 2, this.caseWidth, this.caseWidth);
-        gridContext.strokeRect(-this.caseWidth / 2, -this.caseWidth / 2, this.caseWidth, this.caseWidth);
     }
 
-    drawStar(cx: number, cy: number, spikes: number, outerRadius: number, innerRadius: number) {
+    private colorBonusBox(context: CanvasRenderingContext2D, color: string, startPosition: Vec2): void {
+        context.fillStyle = color;
+        context.fillRect(startPosition.x, startPosition.y, GRID_CASE_SIZE, GRID_CASE_SIZE);
+        context.strokeRect(startPosition.x, startPosition.y, GRID_CASE_SIZE, GRID_CASE_SIZE);
+    }
+
+    private writeBonusName(context: CanvasRenderingContext2D, text: string, startPosition: Vec2): void {
+        context.font = '12px system-ui';
+        context.fillStyle = COLOR_BLACK;
+        context.textBaseline = 'middle';
+        context.textAlign = 'center';
+        const lines = text.split(' ');
+        text = lines[0] + '\n' + lines[1];
+        context.fillText(text, startPosition.x + GRID_CASE_SIZE / 2, startPosition.y + GRID_CASE_SIZE / 2);
+    }
+
+    // specify bonuses boxes on the grid by adding colors and bonuses names
+    private drawBonusBoxes(bonusPositions: Map<string, string>): void {
+        const COLOR_INDEX = 0;
+        const TEXT_INDEX = 1;
+        const tilesFormat = new Map<string, string[]>([
+            ['doubleLetter', ['lightblue', 'Lettre x2']],
+            ['tripleLetter', ['cadetBlue', 'Lettre x3']],
+            ['doubleWord', ['pink', 'Mot x2']],
+            ['tripleWord', ['red', 'Mot x3']],
+        ]);
+
+        bonusPositions.forEach((bonus: string, position: string) => {
+            const positionSplitted = position.split(/([0-9]+)/);
+            const convertedPositon = {
+                x: (positionSplitted[0].charCodeAt(0) - 'A'.charCodeAt(0) + 1) * GRID_CASE_SIZE,
+                y: Number(positionSplitted[1]) * GRID_CASE_SIZE,
+            };
+            const tileFormat = tilesFormat.get(bonus);
+            if (tileFormat) {
+                this.colorBonusBox(this.gridContextBoardLayer, tileFormat[COLOR_INDEX], convertedPositon);
+                this.writeBonusName(this.gridContextBoardLayer, tileFormat[TEXT_INDEX], convertedPositon);
+            }
+        });
+    }
+
+    // color the center box of the grid then draw a star on it
+    private drawCenterBox(): void {
+        const centerPosition: Vec2 = { x: 8 * GRID_CASE_SIZE, y: 8 * GRID_CASE_SIZE };
+        // coloring the box
+        this.gridContextBoardLayer.fillStyle = 'pink';
+        this.gridContextBoardLayer.fillRect(centerPosition.x, centerPosition.y, GRID_CASE_SIZE, GRID_CASE_SIZE);
+        this.gridContextBoardLayer.strokeRect(centerPosition.x, centerPosition.y, GRID_CASE_SIZE, GRID_CASE_SIZE);
+        // drawing star
+        const NB_SPIKES = 5;
+        this.drawStar(centerPosition.x + GRID_CASE_SIZE / 2, centerPosition.y + GRID_CASE_SIZE / 2, NB_SPIKES, GRID_CASE_SIZE / 2.5, 8);
+    }
+
+    private drawStar(cx: number, cy: number, spikes: number, outerRadius: number, innerRadius: number): void {
         let rot = (Math.PI / 2) * 3;
         let x = cx;
         let y = cy;
         const step = Math.PI / spikes;
 
-        this.gridContext.beginPath();
-        this.gridContext.moveTo(cx, cy - outerRadius);
+        this.gridContextBoardLayer.beginPath();
+        this.gridContextBoardLayer.moveTo(cx, cy - outerRadius);
         for (let i = 0; i < spikes; i++) {
             x = cx + Math.cos(rot) * outerRadius;
             y = cy + Math.sin(rot) * outerRadius;
-            this.gridContext.lineTo(x, y);
+            this.gridContextBoardLayer.lineTo(x, y);
             rot += step;
 
             x = cx + Math.cos(rot) * innerRadius;
             y = cy + Math.sin(rot) * innerRadius;
-            this.gridContext.lineTo(x, y);
+            this.gridContextBoardLayer.lineTo(x, y);
             rot += step;
         }
-        this.gridContext.lineTo(cx, cy - outerRadius);
-        this.gridContext.closePath();
-        this.gridContext.lineWidth = 5;
-        this.gridContext.strokeStyle = 'darkSlateGrey';
-        this.gridContext.stroke();
-        this.gridContext.fillStyle = 'darkSlateGrey';
-        this.gridContext.fill();
+        this.gridContextBoardLayer.lineTo(cx, cy - outerRadius);
+        this.gridContextBoardLayer.closePath();
+        this.gridContextBoardLayer.lineWidth = 5;
+        this.gridContextBoardLayer.strokeStyle = 'darkSlateGrey';
+        this.gridContextBoardLayer.stroke();
+        this.gridContextBoardLayer.fillStyle = 'darkSlateGrey';
+        this.gridContextBoardLayer.fill();
     }
-
-    writeColumnsIndex(ctx: CanvasRenderingContext2D, columnsNumber: number) {
-        for (let i = 0; i < columnsNumber; i++) {
-            const index = i + 1;
-            ctx.font = '18px system-ui';
-            ctx.fillStyle = 'black';
-            ctx.fillText(index.toString(), (5 * this.caseWidth) / 4 + i * this.caseWidth, (3 * this.caseWidth) / 4);
-        }
-    }
-
-    writeLinesIndex(ctx: CanvasRenderingContext2D, linesNumber: number) {
-        for (let i = 0; i < linesNumber; i++) {
-            let index = 'A'.charCodeAt(0);
-            index = index + i;
-            ctx.font = '18px system-ui';
-            ctx.fillStyle = 'black';
-            ctx.fillText(String.fromCharCode(index), this.caseWidth / 2, (7 * this.caseWidth) / 4 + i * this.caseWidth);
-        }
-    }
-
-    doubleLetter(ctx: CanvasRenderingContext2D, startPosition: Vec2): void {
-        ctx.fillStyle = 'lightBlue';
-        ctx.fillRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
-        ctx.strokeRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
-    }
-
-    private tripleLetter = (ctx: CanvasRenderingContext2D, startPosition: Vec2): void => {
-        ctx.fillStyle = 'cadetBlue';
-        ctx.fillRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
-        ctx.strokeRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
-    };
-
-    private doubleWord = (ctx: CanvasRenderingContext2D, startPosition: Vec2): void => {
-        ctx.fillStyle = 'pink';
-        ctx.fillRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
-        ctx.strokeRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
-    };
-
-    private tripleWord = (ctx: CanvasRenderingContext2D, startPosition: Vec2): void => {
-        ctx.fillStyle = 'red';
-        ctx.fillRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
-        ctx.strokeRect(startPosition.x, startPosition.y, this.caseWidth, this.caseWidth);
-    };
 }

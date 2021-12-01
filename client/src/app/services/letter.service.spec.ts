@@ -1,14 +1,18 @@
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable dot-notation */
-import { TestBed } from '@angular/core/testing';
 import { EASEL_SIZE, RESERVE } from '@app/classes/constants';
-import { Letter } from '@app/classes/letter';
+import { Letter } from '@common/letter';
 import { LetterService } from './letter.service';
+import { RouterTestingModule } from '@angular/router/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { TestBed } from '@angular/core/testing';
+import { Socket } from 'socket.io-client';
 
 describe('LetterService', () => {
     let service: LetterService;
 
     beforeEach(() => {
-        TestBed.configureTestingModule({ providers: [LetterService] });
+        TestBed.configureTestingModule({ providers: [LetterService], imports: [HttpClientTestingModule, RouterTestingModule] });
         service = TestBed.inject(LetterService);
     });
 
@@ -24,35 +28,16 @@ describe('LetterService', () => {
 
     it('should add a letter to the reserve', () => {
         const letterTest = service.reserve[0].value;
-        const initialQuantity = service.reserve[0].quantity;
+        const initialSize = service.reserveSize;
         service.addLetterToReserve(letterTest);
-        expect(service.reserve[0].quantity).toEqual(initialQuantity + 1);
+        expect(service.reserveSize).toEqual(initialSize + 1);
     });
 
     it('should not add a letter to the reserve if this one does not exists', () => {
+        const initialSize = service.reserveSize;
         const letterTest = '-';
         service.addLetterToReserve(letterTest);
-        expect(service.reserve).toEqual(RESERVE);
-    });
-
-    it('should return an empty letter if reserve is empty', () => {
-        // Empty reserve
-        service.reserve = [];
-        const letterEmpty: Letter = {
-            value: '',
-            quantity: 0,
-            points: 0,
-        };
-        expect(service.getRandomLetter()).toEqual(letterEmpty);
-    });
-
-    it('should know wether the reserve is empty or not', () => {
-        expect(service.isReserveEmpty()).toBeFalsy();
-        // Empty reserve
-        for (const letter of service.reserve) {
-            letter.quantity = 0;
-        }
-        expect(service.isReserveEmpty()).toBeTruthy();
+        expect(service.reserveSize).toEqual(initialSize);
     });
 
     it('should returns enough letters to fill the easel', () => {
@@ -62,36 +47,42 @@ describe('LetterService', () => {
         expect(letters).toHaveSize(EASEL_SIZE);
     });
 
-    it('should return right reserve size', () => {
-        const REAL_TOTAL_NUMBER = 102;
-        expect(service.getReserveSize()).toEqual(REAL_TOTAL_NUMBER);
-        service.reserve[0].quantity--;
-        expect(service.getReserveSize()).toEqual(REAL_TOTAL_NUMBER - 1);
+    it('should return an empty letter when getRandomLetter() is called and reserve is empty', () => {
         service.reserve = [];
-        const emptyQuantity = 0;
-        expect(service.getReserveSize()).toEqual(emptyQuantity);
+        service.reserveSize = 0;
+        const letterEmpty: Letter = {
+            value: '',
+            quantity: 0,
+            points: 0,
+            isSelectedForSwap: false,
+            isSelectedForManipulation: false,
+        };
+        expect(service.getRandomLetter()).toEqual(letterEmpty);
     });
 
-    it('should change function when updateReserve() is called', () => {
-        let number = 1;
-        const fn = () => {
-            number = number *= 2;
-            return;
-        };
-        service.updateView(fn);
-        expect(service['func']).toBe(fn);
+    it('removing letters from the reserve should update the size', () => {
+        const letterA = service.reserve[0];
+        const letterB = service.reserve[1];
+        const letterC = service.reserve[2];
+        const letterD = service.reserve[3];
+        const letterE = service.reserve[4];
+        const lettersToRemove: Letter[] = [letterA, letterB, letterC, letterD, letterE, letterE];
+        const initialSize = service.reserveSize;
+        service.removeLettersFromReserve(lettersToRemove);
+        expect(service.reserveSize).toEqual(initialSize - lettersToRemove.length);
     });
 
-    it('should write message when writeMessage() is called', () => {
-        let number = 1;
-        const message = 'test message';
-        service['func'] = () => {
-            number = number *= 2;
-            return;
-        };
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const funcSpy = spyOn<any>(service, 'func');
-        service.writeMessage(message);
-        expect(funcSpy).toHaveBeenCalled();
+    it('the emit receiveRoomMessage should call sendOpponentMessage', () => {
+        service['clientSocketService'].socket = {
+            // eslint-disable-next-line no-unused-vars
+            on: (eventName: string, callback: (reserve: Letter[], reserveSize: number) => void) => {
+                if (eventName === 'receiveReserve') {
+                    callback(RESERVE, 100);
+                }
+            },
+        } as unknown as Socket;
+        service.receiveReserve();
+        expect(service.reserve).toEqual(RESERVE);
+        expect(service.reserveSize).toEqual(100);
     });
 });

@@ -1,17 +1,21 @@
-import { Injectable } from '@angular/core';
-import { GameSettings } from '@app/classes/game-settings';
-
+import { Injectable, OnDestroy } from '@angular/core';
+import { DEFAULT_GAME_SETTINGS } from '@app/classes/constants';
+import { GameSettings } from '@common/game-settings';
+import { GameType } from '@common/game-type';
 @Injectable({
     providedIn: 'root',
 })
-export class GameSettingsService {
+export class GameSettingsService implements OnDestroy {
     gameSettings: GameSettings;
-
-    initializeSettings(settings: GameSettings) {
-        this.gameSettings = settings;
+    isSoloMode: boolean;
+    gameDictionary: string[];
+    gameType: GameType;
+    isRedirectedFromMultiplayerGame: boolean;
+    constructor() {
+        this.gameSettings = DEFAULT_GAME_SETTINGS;
     }
 
-    getSettings(): GameSettings {
-        return this.gameSettings;
+    ngOnDestroy(): void {
+        this.gameSettings = DEFAULT_GAME_SETTINGS;
     }
 }

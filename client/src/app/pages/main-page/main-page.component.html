@@ -1,27 +1,37 @@
 <app-background></app-background>
+<div></div>
 <div class="justified">
-    <img src="https://bit.ly/3m206ss" class="img-title" width="400" height="80" alt="Logo Scrabble" />
+    <img src="https://bit.ly/3m206ss" class="img-title" alt="Logo Scrabble" />
 
-    <mat-tab-group class="tab-group" animationDuration="1000ms" [(selectedIndex)]="selectedGameIndex">
-        <mat-tab label="{{ games[0] }}">
-            <mat-radio-group class="radio-group" [(ngModel)]="selectedMode">
-                <mat-radio-button class="radio-button" value="solo" *ngFor="let mode of modes" [value]="mode">{{ mode }}</mat-radio-button>
+    <mat-tab-group class="tab-group" animationDuration="1000ms" [(selectedIndex)]="selectedGameTypeIndex">
+        <mat-tab label="{{ gameType[0] }}">
+            <mat-radio-group class="radio-group" [(ngModel)]="selectedGameMode">
+                <mat-radio-button class="radio-button" value="solo" *ngFor="let mode of gameModes" [value]="mode">{{ mode }} </mat-radio-button>
             </mat-radio-group>
         </mat-tab>
-        <mat-tab label="{{ games[1] }}">
-            <mat-radio-group class="radio-group" [(ngModel)]="selectedMode">
-                <mat-radio-button class="radio-button" value="soloLOG" *ngFor="let mode of modes" [value]="mode">{{ mode }}</mat-radio-button>
+        <mat-tab label="{{ gameType[1] }}">
+            <mat-radio-group class="radio-group" [(ngModel)]="selectedGameMode">
+                <mat-radio-button class="radio-button" value="soloLOG" *ngFor="let mode of gameModes" [value]="mode">{{ mode }}</mat-radio-button>
             </mat-radio-group>
         </mat-tab>
     </mat-tab-group>
-    <button class="button" id="playButton" mat-raised-button [disabled]="!selectedMode" color="warn" routerLink="/solo-game-ia">Jouer!</button>
+    <button class="button" id="playButton" mat-raised-button [disabled]="!selectedGameMode" color="warn" (click)="routeToGameMode()">Jouer!</button>
     <p>
-        {{ games[selectedGameIndex] }}<br />
-        {{ selectedMode }}
+        {{ gameType[selectedGameTypeIndex] }}<br />
+        {{ selectedGameMode }}
     </p>
-    <button class="button" id="resetButton" mat-raised-button [disabled]="!selectedMode" color="primary" (click)="resetRadios()">Effacer mon choix</button>
+    <button
+        class="button"
+        id="resetButton"
+        mat-raised-button
+        [disabled]="!selectedGameMode"
+        color="primary"
+        (click)="this.selectedGameMode = undefined"
+    >
+        Effacer mon choix
+    </button>
     <br />
     <div class="justified">
-        <button class="button" mat-raised-button color="primary" routerLink="/material">Meilleurs scores</button>
+        <button class="button" mat-raised-button color="primary" (click)="openBestScoresDialog()">Meilleurs scores</button>
     </div>
 </div>
