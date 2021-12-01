@@ -1,3 +1,4 @@
+import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -5,15 +6,17 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSliderModule } from '@angular/material/slider';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { NgModule } from '@angular/core';
 
 const modules = [
     MatButtonModule,
@@ -32,6 +35,15 @@ const modules = [
     MatToolbarModule,
     MatTooltipModule,
     MatTabsModule,
+    MatDialogModule,
+    MatSnackBarModule,
+    MatExpansionModule,
+    MatProgressSpinnerModule,
+    MatCardModule,
+    MatPaginatorModule,
+    MatInputModule,
+    MatSelectModule,
+    MatFormFieldModule,
 ];
 
 /**

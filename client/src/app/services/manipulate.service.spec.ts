@@ -3,7 +3,7 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { EASEL_SIZE, INDEX_INVALID } from '@app/classes/constants';
+import { EASEL_SIZE, INVALID_INDEX } from '@app/classes/constants';
 import { Player } from '@app/models/player.model';
 import { Letter } from '@common/letter';
 import { ManipulateService } from './manipulate.service';
@@ -31,6 +31,11 @@ describe('ManipulateService', () => {
 
     it('should be created', () => {
         expect(service).toBeTruthy();
+    });
+
+    it('sending an easel should update the current one', () => {
+        service.sendEasel(service['playerService'].getEasel(0));
+        expect(service.letterEaselTab).toEqual(service['playerService'].getEasel(0));
     });
 
     it('pressing a key not present in the easel should unselect all letters', () => {
@@ -93,6 +98,15 @@ describe('ManipulateService', () => {
         expect(service.shiftDown).toHaveBeenCalled();
     });
 
+    it('not scrolling should not call shiftUp or shiftDown', () => {
+        spyOn(service, 'shiftUp');
+        spyOn(service, 'shiftDown');
+        const event = new WheelEvent('wheel', { deltaY: 0 });
+        service.onMouseWheelTick(event);
+        expect(service.shiftDown).toHaveBeenCalledTimes(0);
+        expect(service.shiftUp).toHaveBeenCalledTimes(0);
+    });
+
     it('pressing the left arrow key should shift up the letter selected', () => {
         const keyboardEvent = new KeyboardEvent('keydown', { key: 'ArrowLeft' });
         service.letterEaselTab[3].isSelectedForManipulation = true;
@@ -129,7 +143,21 @@ describe('ManipulateService', () => {
         expect(service.usedLetters[0]).toBeTrue();
     });
 
-    it('calling findIndexSelected while there is no selection made should return INDEX_INVALID', () => {
-        expect(service.findIndexSelected()).toEqual(INDEX_INVALID);
+    it('calling findIndexSelected while there is no selection made should return INVALID_INDEX', () => {
+        expect(service.findIndexSelected()).toEqual(INVALID_INDEX);
+    });
+
+    it('shifting up or down while no letter is selected should not call swapPositions', () => {
+        spyOn(service, 'swapPositions');
+        service.shiftDown();
+        service.shiftUp();
+        expect(service.swapPositions).toHaveBeenCalledTimes(0);
+    });
+
+    it('pressing Shift should not unselect all letters', () => {
+        spyOn(service, 'unselectAll');
+        const keyboardEvent = new KeyboardEvent('keydown', { key: 'Shift' });
+        service.onKeyPress(keyboardEvent);
+        expect(service.unselectAll).toHaveBeenCalledTimes(0);
     });
 });

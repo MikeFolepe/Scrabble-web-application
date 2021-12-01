@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
+import { MockLocationStrategy } from '@angular/common/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { PlayerAIService } from '@app/services/player-ia.service';
+import { PlayerAIService } from '@app/services/player-ai.service';
 import { PlayerAI } from './player-ai.model';
+import { LocationStrategy } from '@angular/common';
 
 describe('PlayerAI', () => {
     const letterTable = [
@@ -23,6 +25,7 @@ describe('PlayerAI', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [HttpClientTestingModule, RouterTestingModule],
+            providers: [{ provide: LocationStrategy, useClass: MockLocationStrategy }],
         }).compileComponents();
     });
 
@@ -37,29 +40,6 @@ describe('PlayerAI', () => {
         expect(playerAi['strategy']).toBeTruthy();
     });
 
-    it('should have a scoring range', () => {
-        spyOn<any>(playerAi, 'generateRandomNumber').and.returnValues(0, 1, 4, 22);
-        expect(playerAi['pointingRange']()).toEqual({ min: 1, max: 6 });
-        expect(playerAi['pointingRange']()).toEqual({ min: 7, max: 12 });
-        expect(playerAi['pointingRange']()).toEqual({ min: 13, max: 18 });
-        expect(playerAi['pointingRange']()).toEqual({ min: 0, max: 0 });
-    });
-
-    it('should return a random number between 0 and a given number', () => {
-        let MAX_VALUE = 3;
-        for (let i = 0; i < 10; i++) {
-            const result = playerAi['generateRandomNumber'](MAX_VALUE);
-            expect(result).toBeGreaterThanOrEqual(0);
-            expect(result).toBeLessThan(MAX_VALUE);
-        }
-        MAX_VALUE = 10;
-        for (let i = 0; i < 10; i++) {
-            const result = playerAi['generateRandomNumber'](MAX_VALUE);
-            expect(result).toBeGreaterThanOrEqual(0);
-            expect(result).toBeLessThan(MAX_VALUE);
-        }
-    });
-
     it('should call the right functions when calling play()', () => {
         const spyOnExecute = spyOn(playerAi['strategy'], 'execute');
         playerAi.play();
@@ -67,8 +47,8 @@ describe('PlayerAI', () => {
     });
 
     it('should return playerHand formatted', () => {
-        const playerHandFormated = '[ABCEEEG]';
-        expect(playerAi.getHand()).toEqual(playerHandFormated);
+        const playerHandFormatted = '[ABCEEEG]';
+        expect(playerAi.getHand()).toEqual(playerHandFormatted);
     });
 
     it('should return quantity of present letter', () => {
@@ -83,7 +63,7 @@ describe('PlayerAI', () => {
         expect(playerAi.playerQuantityOf('E')).toEqual(3);
     });
 
-    it('should return quantity of letter with case insentivity', () => {
+    it('should return quantity of letter with case insensitivity', () => {
         expect(playerAi.playerQuantityOf('e')).toEqual(3);
     });
 });

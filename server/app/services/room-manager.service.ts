@@ -1,22 +1,24 @@
 import { OUT_BOUND_INDEX_OF_SOCKET } from '@app/classes/constants';
 import { GameSettings, StartingPlayer } from '@common/game-settings';
-import { PlayerIndex } from '@common/PlayerIndex';
+import { GameType } from '@common/game-type';
+import { ObjectiveTypes } from '@common/objectives-type';
+import { PlayerIndex } from '@common/player-index';
 import { Room, State } from '@common/room';
 import { Service } from 'typedi';
 
 @Service()
 export class RoomManagerService {
-    rooms: Room[];
+    rooms: Room[][];
 
     constructor() {
-        this.rooms = [];
+        this.rooms = [[], []];
     }
 
-    createRoom(socketId: string, roomId: string, gameSettings: GameSettings) {
-        this.rooms.push(new Room(roomId, socketId, gameSettings));
+    createRoom(socketId: string, roomId: string, gameSettings: GameSettings, gameType: GameType) {
+        this.rooms[gameType].push(new Room(roomId, socketId, gameSettings));
     }
 
-    createRoomId(playerName: string) {
+    createRoomId(playerName: string, socketId: string) {
         return (
             new Date().getFullYear().toString() +
             new Date().getMonth().toString() +
@@ -24,16 +26,15 @@ export class RoomManagerService {
             new Date().getMinutes().toString() +
             new Date().getSeconds().toString() +
             new Date().getMilliseconds().toString() +
+            socketId +
             playerName
         );
     }
 
     addCustomer(customerName: string, roomId: string): boolean {
-        const room = this.find(roomId) as Room;
-        if (room === undefined) {
-            return false;
-        }
-        room.gameSettings.playersName[PlayerIndex.CUSTOMER] = customerName;
+        const room = this.find(roomId);
+        if (room === undefined) return false;
+        room.gameSettings.playersNames[PlayerIndex.CUSTOMER] = customerName;
 
         return true;
     }
@@ -55,8 +56,10 @@ export class RoomManagerService {
     formatGameSettingsForCustomerIn(roomId: string): GameSettings {
         const room = this.find(roomId) as Room;
         const gameSettings = room.gameSettings;
-        const playerNames: string[] = [gameSettings.playersName[PlayerIndex.CUSTOMER], gameSettings.playersName[PlayerIndex.OWNER]];
+        const playerNames: string[] = [gameSettings.playersNames[PlayerIndex.CUSTOMER], gameSettings.playersNames[PlayerIndex.OWNER]];
         const startingPlayer = gameSettings.startingPlayer ? StartingPlayer.Player1 : StartingPlayer.Player2;
+        let temp = gameSettings.objectiveIds[ObjectiveTypes.Private].slice(0, 2);
+        temp = [temp[1], temp[0]];
         const formattedGameSettings = new GameSettings(
             playerNames,
             startingPlayer,
@@ -66,35 +69,39 @@ export class RoomManagerService {
             gameSettings.randomBonus,
             gameSettings.bonusPositions,
             gameSettings.dictionary,
+            [gameSettings.objectiveIds[ObjectiveTypes.Public], temp],
         );
 
         return formattedGameSettings;
     }
 
     deleteRoom(roomId: string): void {
-        this.rooms.forEach((room, roomIndex) => {
-            if (room.id === roomId) this.rooms.splice(roomIndex, 1);
-        });
+        // JUSTIFICATION : We use it for use splice method of Array for (i,j) 2D array of Rooms
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
+        for (let i = 0; i < this.rooms.length; i++) {
+            for (let j = 0; j < this.rooms[i].length; j++) {
+                if (this.rooms[i][j].id === roomId) this.rooms[i].splice(j, 1);
+            }
+        }
     }
 
-    findRoomIdOf(socketId: string): string {
-        const room = this.rooms.find((rooms) => {
-            for (const id of rooms.socketIds) {
-                if (socketId === id) return true;
+    findRoomIdOf(socketIdToCompare: string): string {
+        for (const roomMode of this.rooms) {
+            for (const room of roomMode) {
+                for (const socketId of room.socketIds) {
+                    if (socketId === socketIdToCompare) return room.id;
+                }
             }
-            return false;
-        });
-
-        if (room !== undefined) {
-            return room.id;
         }
         return '';
     }
 
-    findLoserIndex(socketId: string): number {
-        for (const room of this.rooms) {
-            for (const ids of room.socketIds) {
-                if (ids === socketId) return room.socketIds.indexOf(ids) as number;
+    findLooserIndex(socketIdToCompare: string): number {
+        for (const roomMode of this.rooms) {
+            for (const room of roomMode) {
+                for (const socketId of room.socketIds) {
+                    if (socketId === socketIdToCompare) return room.socketIds.indexOf(socketId) as number;
+                }
             }
         }
         return OUT_BOUND_INDEX_OF_SOCKET;
@@ -102,20 +109,47 @@ export class RoomManagerService {
 
     getWinnerName(roomId: string, indexOfLoser: number): string {
         const room = this.find(roomId) as Room;
-        if (indexOfLoser === 0) return room.gameSettings.playersName[1];
-        else return room.gameSettings.playersName[0];
+        if (room === undefined) return '';
+        return indexOfLoser === 0 ? room.gameSettings.playersNames[1] : room.gameSettings.playersNames[0];
     }
+
     isNotAvailable(roomId: string): boolean {
         const room = this.find(roomId);
-
-        if (room === undefined) {
-            return false;
-        }
-
-        return room.state === State.Playing;
+        return room === undefined ? false : room.state === State.Playing;
     }
 
     find(roomId: string): Room | undefined {
-        return this.rooms.find((room) => room.id === roomId);
+        for (const roomMode of this.rooms) {
+            for (const room of roomMode) {
+                if (room.id === roomId) return room;
+            }
+        }
+        return undefined;
+    }
+
+    findRoomInWaitingState(customerName: string, gameType: GameType): Room | undefined {
+        const roomWaiting: Room[] = [];
+        for (const room of this.rooms[gameType]) {
+            if (room.state === State.Waiting && room.gameSettings.playersNames[PlayerIndex.OWNER] !== customerName) {
+                roomWaiting.push(room);
+            }
+        }
+        if (roomWaiting.length === 0) return;
+        const roomIndex = Math.floor(Math.random() * roomWaiting.length);
+        return roomWaiting[roomIndex] as Room;
+    }
+
+    getNumberOfRoomInWaitingState(gameType: GameType): number {
+        let numberOfRoom = 0;
+        // First  special case
+        if (this.rooms[gameType] === undefined) return numberOfRoom;
+        // Second special case
+        if (this.rooms[gameType].length === 0) {
+            return numberOfRoom;
+        }
+        for (const room of this.rooms[gameType]) {
+            if (room.state === State.Waiting) numberOfRoom++;
+        }
+        return numberOfRoom;
     }
 }

@@ -3,29 +3,49 @@ import { ALL_EASEL_BONUS, BOARD_COLUMNS, BOARD_ROWS, RESERVE } from '@app/classe
 import { ScoreValidation } from '@app/classes/validation-score';
 import { CommunicationService } from '@app/services/communication.service';
 import { RandomBonusesService } from '@app/services/random-bonuses.service';
+import { ClientSocketService } from './client-socket.service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class WordValidationService {
+    fileName: string;
+    playedWords: Map<string, string[]>;
+    lastPlayedWords: Map<string, string[]>;
+    priorCurrentWords: Map<string, string[]>;
+    currentWords: Map<string, string[]>;
+    priorPlayedWords: Map<string, string[]>;
     private newWords: string[];
-    private playedWords: Map<string, string[]>;
     private newPlayedWords: Map<string, string[]>;
     private newPositions: string[];
     private bonusesPositions: Map<string, string>;
-    private validationState = false;
+    private validationState: boolean;
     private foundWords: string[];
 
-    constructor(private httpServer: CommunicationService, private randomBonusService: RandomBonusesService) {
+    constructor(
+        private httpServer: CommunicationService,
+        private randomBonusService: RandomBonusesService,
+        private clientSocketService: ClientSocketService,
+    ) {
         this.newWords = new Array<string>();
         this.playedWords = new Map<string, string[]>();
         this.newPlayedWords = new Map<string, string[]>();
+        this.lastPlayedWords = new Map<string, string[]>();
+        this.priorCurrentWords = new Map<string, string[]>();
+        this.currentWords = new Map<string, string[]>();
+        this.priorPlayedWords = new Map<string, string[]>();
         this.newPositions = new Array<string>();
         this.bonusesPositions = new Map<string, string>(this.randomBonusService.bonusPositions);
         this.validationState = false;
         this.foundWords = new Array<string>();
+        this.receivePlayedWords();
     }
 
+    receivePlayedWords(): void {
+        this.clientSocketService.socket.on('receivePlayedWords', (playedWords: string) => {
+            this.playedWords = new Map<string, string[]>(JSON.parse(playedWords));
+        });
+    }
     findWords(words: string[]): string[] {
         return words
             .toString()
@@ -65,15 +85,18 @@ export class WordValidationService {
     }
 
     getWordHorizontalOrVerticalPositions(word: string, indexLine: number, indexColumn: number, isRow: boolean): string[] {
+        let startIndex = 0;
         const positions: string[] = new Array<string>();
         for (const char of word) {
             if (isRow) {
-                const indexChar = this.newWords.indexOf(char) + 1;
+                const indexChar = this.newWords.indexOf(char, startIndex) + 1;
                 positions.push(this.getCharPosition(indexLine) + indexChar.toString());
+                startIndex = indexChar;
             } else {
-                const indexChar = this.newWords.indexOf(char);
+                const indexChar = this.newWords.indexOf(char, startIndex);
                 const column = indexColumn + 1;
                 positions.push(this.getCharPosition(indexChar) + column.toString());
+                startIndex = indexChar + 1;
             }
         }
 
@@ -178,30 +201,51 @@ export class WordValidationService {
         return score;
     }
 
-    async validateAllWordsOnBoard(scrabbleBoard: string[][], isEaselSize: boolean, isRow: boolean): Promise<ScoreValidation> {
+    async validateAllWordsOnBoard(scrabbleBoard: string[][], isEaselSize: boolean, isRow: boolean, isPermanent = true): Promise<ScoreValidation> {
         let scoreTotal = 0;
         this.passThroughAllRowsOrColumns(scrabbleBoard, isRow);
         this.passThroughAllRowsOrColumns(scrabbleBoard, !isRow);
-        this.validationState = await this.httpServer.validationPost(this.newPlayedWords).toPromise();
+
+        this.validationState = await this.httpServer.validationPost(this.newPlayedWords, this.fileName).toPromise();
         if (!this.validationState) {
             this.newPlayedWords.clear();
             return { validation: this.validationState, score: scoreTotal };
         }
-
         scoreTotal += this.calculateTotalScore(scoreTotal, this.newPlayedWords);
 
         if (isEaselSize) {
             scoreTotal += ALL_EASEL_BONUS;
         }
 
+        if (!isPermanent) {
+            this.newPlayedWords.clear();
+            return { validation: this.validationState, score: scoreTotal };
+        }
+
         this.removeBonuses(this.newPlayedWords);
+
+        for (const word of this.currentWords.keys()) {
+            this.priorCurrentWords.set(word, this.currentWords.get(word) as string[]);
+        }
+
+        this.lastPlayedWords.clear();
+        for (const word of this.newPlayedWords.keys()) {
+            this.lastPlayedWords.set(word, this.newPlayedWords.get(word) as string[]);
+            this.currentWords.set(word, this.newPlayedWords.get(word) as string[]);
+        }
+
+        this.priorPlayedWords.clear();
+        for (const word of this.playedWords.keys()) {
+            this.priorPlayedWords.set(word, this.playedWords.get(word) as string[]);
+        }
 
         for (const word of this.newPlayedWords.keys()) {
             this.addToPlayedWords(word, this.newPlayedWords.get(word) as string[], this.playedWords);
         }
 
-        this.newPlayedWords.clear();
+        this.clientSocketService.socket.emit('updatePlayedWords', JSON.stringify(Array.from(this.playedWords)), this.clientSocketService.roomId);
 
+        this.newPlayedWords.clear();
         return { validation: this.validationState, score: scoreTotal };
     }
 }

@@ -6,8 +6,9 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ONE_SECOND_DELAY } from '@app/classes/constants';
-import { TypeMessage } from '@app/classes/enum';
+import { MessageType } from '@app/classes/enum';
 import { ChatboxComponent } from '@app/modules/game-view//chatbox/chatbox.component';
+import { GameType } from '@common/game-type';
 
 describe('ChatBoxComponent', () => {
     let component: ChatboxComponent;
@@ -76,15 +77,15 @@ describe('ChatBoxComponent', () => {
         component.sendSystemMessage('Second system message');
         expect(component.listTypes).toHaveSize(2);
         expect(component.listMessages).toHaveSize(2);
-        expect(component.listTypes[0]).toEqual(TypeMessage.System);
+        expect(component.listTypes[0]).toEqual(MessageType.System);
     });
 
     it('should use the message and the type from sendMessageService when we display a message', () => {
         component['sendMessageService'].message = 'Service message';
-        component['sendMessageService'].typeMessage = TypeMessage.System;
+        component['sendMessageService'].messageType = MessageType.System;
         component.displayMessageByType();
         expect(component.listMessages.pop()).toEqual(component['sendMessageService'].message);
-        expect(component.listTypes.pop()).toEqual(component['sendMessageService'].typeMessage);
+        expect(component.listTypes.pop()).toEqual(component['sendMessageService'].messageType);
     });
 
     it('Clicking in the chatbox should call cancelPlacement from BoardHandlerService', () => {
@@ -104,5 +105,32 @@ describe('ChatBoxComponent', () => {
         expect(spy1).toHaveBeenCalled();
         expect(spy2).toHaveBeenCalled();
         expect(spy3).toHaveBeenCalled();
+    });
+
+    it('should display the message and the error message if the command is invalid', () => {
+        component['sendMessageService'].message = 'Error message';
+        component['sendMessageService'].messageType = MessageType.Error;
+        const invalidCommand = '!placer';
+        component.message = invalidCommand;
+        component.displayMessageByType();
+        expect(component.listMessages.pop()).toEqual(component['sendMessageService'].message);
+        expect(component.listTypes.pop()).toEqual(component['sendMessageService'].messageType);
+        expect(component.listMessages.pop()).toEqual(invalidCommand);
+        expect(component.listTypes.pop()).toEqual(component['sendMessageService'].messageType);
+    });
+
+    it('tests initialize chat height in log2990 mode', () => {
+        const dummyElement = document.createElement('div');
+        document.getElementById = jasmine.createSpy('HTML Element').and.returnValue(dummyElement);
+        component['gameSettingsService'].gameType = GameType.Log2990;
+        component.initializeChatHeight();
+        expect(document.getElementById).toHaveBeenCalled();
+    });
+
+    it('should not initialize chat height in classic mode when not finding the element', () => {
+        document.getElementById = jasmine.createSpy('HTML Element').and.returnValue(undefined);
+        component['gameSettingsService'].gameType = GameType.Classic;
+        component.initializeChatHeight();
+        expect(document.getElementById).toHaveBeenCalled();
     });
 });

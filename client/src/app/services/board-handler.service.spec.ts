@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { GRID_CASE_SIZE, INDEX_INVALID } from '@app/classes/constants';
-import { TypeMessage } from '@app/classes/enum';
+import { GRID_CASE_SIZE, INVALID_INDEX } from '@app/classes/constants';
+import { MessageType } from '@app/classes/enum';
 import { Orientation } from '@app/classes/scrabble-board-pattern';
 import { Vec2 } from '@common/vec2';
 import { BoardHandlerService } from './board-handler.service';
@@ -71,7 +72,7 @@ describe('BoardHandlerService', () => {
         service['isFirstCasePicked'] = true;
         const wordToPlace = 'Frite';
         for (const letterToPlace of wordToPlace) {
-            await service.placeLetter(letterToPlace);
+            await service['placeLetter'](letterToPlace);
         }
 
         expect(service.word).toEqual('Frite');
@@ -85,12 +86,12 @@ describe('BoardHandlerService', () => {
         service.buttonDetect(keyboardEvent);
 
         service['placeLetterService'].placeWithKeyboard = jasmine.createSpy().and.returnValue(Promise.resolve(false));
-        await service.placeLetter('z');
+        await service['placeLetter']('z');
         expect(service.word).toEqual('a');
     });
 
     it('pressing Backspace should remove the last letter placed', () => {
-        const spy = spyOn(service, 'removePlacedLetter').and.callThrough();
+        const spy = spyOn<any>(service, 'removePlacedLetter').and.callThrough();
         service['firstCase'] = { x: 7, y: 7 };
         service['currentCase'] = { x: 12, y: 7 };
         service['isFirstCasePicked'] = true;
@@ -133,7 +134,7 @@ describe('BoardHandlerService', () => {
         service.buttonDetect(keyboardEvent);
 
         expect(service.word).toEqual('');
-        expect(service['currentCase']).toEqual({ x: INDEX_INVALID, y: INDEX_INVALID });
+        expect(service['currentCase']).toEqual({ x: INVALID_INDEX, y: INVALID_INDEX });
         expect(service['isFirstCaseLocked']).toBeFalse();
         expect(service['isFirstCasePicked']).toBeFalse();
     });
@@ -151,10 +152,10 @@ describe('BoardHandlerService', () => {
             service.buttonDetect(keyboardEvent);
         }
         await service.confirmPlacement();
-        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('!placer h8h Frite', TypeMessage.Player);
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('!placer h8h Frite', MessageType.Player);
     });
 
-    it('pressing Enter with an unvalid word placed should cancel the placement', async () => {
+    it('pressing Enter with an invalid word placed should cancel the placement', async () => {
         service['placeLetterService'].validateKeyboardPlacement = jasmine.createSpy().and.returnValue(Promise.resolve(false));
         service['currentCase'] = { x: 7, y: 7 };
         service['isFirstCasePicked'] = true;
@@ -182,10 +183,10 @@ describe('BoardHandlerService', () => {
 
         const wordToPlace = 'ee';
         for (const letterToPlace of wordToPlace) {
-            await service.placeLetter(letterToPlace);
+            await service['placeLetter'](letterToPlace);
         }
         await service.confirmPlacement();
-        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('!placer h7h elite', TypeMessage.Player);
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('!placer h7h elite', MessageType.Player);
     });
 
     it('placing horizontally out of bounds letters following already placed letters should not be placed', async () => {
@@ -201,13 +202,13 @@ describe('BoardHandlerService', () => {
         service['isFirstCasePicked'] = true;
         const wordToPlace = 'ees';
 
-        await service.placeLetter(wordToPlace[0]);
+        await service['placeLetter'](wordToPlace[0]);
         service['placeLetterService'].placeWithKeyboard = jasmine.createSpy().and.returnValue(Promise.resolve(false));
-        await service.placeLetter(wordToPlace[1]);
-        await service.placeLetter(wordToPlace[2]);
+        await service['placeLetter'](wordToPlace[1]);
+        await service['placeLetter'](wordToPlace[2]);
 
         await service.confirmPlacement();
-        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('!placer h11h e', TypeMessage.Player);
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('!placer h11h e', MessageType.Player);
     });
 
     it('placing vertically out of bounds letters following already placed letters should not be placed', async () => {
@@ -224,13 +225,13 @@ describe('BoardHandlerService', () => {
         service['orientation'] = Orientation.Vertical;
         const wordToPlace = 'ees';
 
-        await service.placeLetter(wordToPlace[0]);
+        await service['placeLetter'](wordToPlace[0]);
         service['placeLetterService'].placeWithKeyboard = jasmine.createSpy().and.returnValue(Promise.resolve(false));
-        await service.placeLetter(wordToPlace[1]);
-        await service.placeLetter(wordToPlace[2]);
+        await service['placeLetter'](wordToPlace[1]);
+        await service['placeLetter'](wordToPlace[2]);
 
         await service.confirmPlacement();
-        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('!placer k8v e', TypeMessage.Player);
+        expect(service['sendMessageService'].displayMessageByType).toHaveBeenCalledWith('!placer k8v e', MessageType.Player);
     });
 
     it('pressing the button enter with a word placed should call confirmPlacement', () => {
@@ -239,5 +240,15 @@ describe('BoardHandlerService', () => {
         const keyboardEvent = new KeyboardEvent('keydown', { key: 'Enter' });
         service.buttonDetect(keyboardEvent);
         expect(service.confirmPlacement).toHaveBeenCalled();
+    });
+
+    it('pressing Enter while it is not your turn should call cancelPlacement', () => {
+        spyOn(service, 'cancelPlacement');
+        service.word = 'abc';
+        service['skipTurnService'].isTurn = false;
+
+        const keyboardEvent = new KeyboardEvent('keydown', { key: 'Enter' });
+        service.buttonDetect(keyboardEvent);
+        expect(service.cancelPlacement).toHaveBeenCalled();
     });
 });

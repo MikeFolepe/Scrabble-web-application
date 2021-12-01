@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { TypeMessage } from '@app/classes/enum';
+import { PLAYER_ONE_INDEX } from '@app/classes/constants';
+import { MessageType } from '@app/classes/enum';
 import { ClientSocketService } from './client-socket.service';
 import { GameSettingsService } from './game-settings.service';
 
@@ -8,11 +9,13 @@ import { GameSettingsService } from './game-settings.service';
 })
 export class SendMessageService {
     message: string = '';
-    typeMessage: TypeMessage;
+    messageType: MessageType;
     private displayMessage: () => void;
 
     constructor(private clientSocketService: ClientSocketService, private gameSettingsService: GameSettingsService) {
         this.receiveMessageFromOpponent();
+        // To display message in real time in chat box
+        this.receiveConversionMessage();
     }
 
     // displayMessage() will call the method from chatBoxComponent to display the message
@@ -20,11 +23,11 @@ export class SendMessageService {
         this.displayMessage = fn;
     }
 
-    displayMessageByType(message: string, typeMessage: TypeMessage): void {
+    displayMessageByType(message: string, messageType: MessageType): void {
         this.message = message;
-        this.typeMessage = typeMessage;
-        if (this.typeMessage === TypeMessage.Player) {
-            this.sendMessageToOpponent(this.message, this.gameSettingsService.gameSettings.playersName[0]);
+        this.messageType = messageType;
+        if (this.messageType === MessageType.Player) {
+            this.sendMessageToOpponent(this.message, this.gameSettingsService.gameSettings.playersNames[PLAYER_ONE_INDEX]);
         }
         this.displayMessage();
     }
@@ -33,8 +36,22 @@ export class SendMessageService {
         this.clientSocketService.socket.emit('sendRoomMessage', 'Message de ' + myName + ' : ' + message, this.clientSocketService.roomId);
     }
 
+    // Function to send message of conversion to all players in the room
+    sendConversionMessage(): void {
+        this.clientSocketService.socket.emit(
+            'sendGameConversionMessage',
+            'Attention la partie est sur le point de se faire convertir en partie Solo.',
+            this.clientSocketService.roomId,
+        );
+    }
+    // Function to receive the conversion Message to the players which is the room
+    receiveConversionMessage(): void {
+        this.clientSocketService.socket.on('receiveGameConversionMessage', (message: string) => {
+            this.displayMessageByType(message, MessageType.System);
+        });
+    }
     sendOpponentMessage(opponentMessage: string): void {
-        this.typeMessage = TypeMessage.Opponent;
+        this.messageType = MessageType.Opponent;
         this.message = opponentMessage;
         this.displayMessage();
     }

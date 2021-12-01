@@ -1,21 +1,22 @@
-import { AppComponent } from '@app/pages/app/app.component';
-import { AppMaterialModule } from '@app/modules/material.module';
 import { AppRoutingModule } from '@app/modules/app-routing.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
-import { GameViewModule } from '@app/modules/game-view/game-view.module';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { InitializeSoloGameModule } from '@app/modules/initialize-solo-game/initialize-solo-game.module';
+import { GameViewModule } from '@app/modules/game-view/game-view.module';
+import { InitializeGameModule } from '@app/modules/initialize-game/initialize-game.module';
+import { AppMaterialModule } from '@app/modules/material.module';
+import { SharedModule } from '@app/modules/shared/shared.module';
+import { AppComponent } from '@app/pages/app/app.component';
 import { JoinRoomComponent } from '@app/pages/join-room/join-room.component';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
-import { MatCardModule } from '@angular/material/card';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { NgModule } from '@angular/core';
 import { PageNotFoundComponent } from '@app/pages/page-not-found/page-not-found.component';
-import { SharedModule } from '@app/modules/shared/shared.module';
 import { WaitingRoomComponent } from '@app/pages/waiting-room/waiting-room.component';
+import { AdminPageComponent } from './pages/admin-page/admin-page.component';
+import { ClickOutsideModule } from 'ng-click-outside';
+import { EditDictionaryDialogComponent } from './pages/admin-page/edit-dictionary-dialog/edit-dictionary-dialog.component';
+import { BestScoresComponent } from './pages/best-scores/best-scores.component';
 
 /**
  * Main module that is used in main.ts.
@@ -24,7 +25,16 @@ import { WaitingRoomComponent } from '@app/pages/waiting-room/waiting-room.compo
  * Otherwise Angular Cli will not know in which module to put new component
  */
 @NgModule({
-    declarations: [AppComponent, MainPageComponent, PageNotFoundComponent, WaitingRoomComponent, JoinRoomComponent],
+    declarations: [
+        AppComponent,
+        MainPageComponent,
+        PageNotFoundComponent,
+        WaitingRoomComponent,
+        JoinRoomComponent,
+        AdminPageComponent,
+        EditDictionaryDialogComponent,
+        BestScoresComponent,
+    ],
     imports: [
         AppMaterialModule,
         AppRoutingModule,
@@ -33,11 +43,10 @@ import { WaitingRoomComponent } from '@app/pages/waiting-room/waiting-room.compo
         FormsModule,
         HttpClientModule,
         GameViewModule,
-        InitializeSoloGameModule,
+        InitializeGameModule,
         SharedModule,
-        MatProgressSpinnerModule,
-        MatPaginatorModule,
-        MatCardModule,
+        ClickOutsideModule,
+        ReactiveFormsModule,
     ],
     providers: [],
     bootstrap: [AppComponent],

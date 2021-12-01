@@ -1,9 +1,10 @@
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
-import { INDEX_PLAYER_ONE, INDEX_PLAYER_TWO, ONE_SECOND_DELAY } from '@app/classes/constants';
-import { TypeMessage } from '@app/classes/enum';
+import { DEFAULT_CHAT_HEIGHT, LOG2990_CHAT_HEIGHT, ONE_SECOND_DELAY, PLAYER_ONE_INDEX, PLAYER_TWO_INDEX } from '@app/classes/constants';
+import { MessageType } from '@app/classes/enum';
 import { BoardHandlerService } from '@app/services/board-handler.service';
 import { ChatboxService } from '@app/services/chatbox.service';
 import { EndGameService } from '@app/services/end-game.service';
+import { GameSettingsService } from '@app/services/game-settings.service';
 import { SendMessageService } from '@app/services/send-message.service';
 import { SkipTurnService } from '@app/services/skip-turn.service';
 
@@ -17,12 +18,12 @@ export class ChatboxComponent implements OnInit, AfterViewInit {
 
     message: string;
     listMessages: string[];
-    listTypes: TypeMessage[];
+    listTypes: MessageType[];
 
-    // Used to access TypeMessage enum in the HTML
-    htmlTypeMessage = TypeMessage;
+    // Used to access MessageType enum in the HTML
+    htmlTypeMessage = MessageType;
 
-    private typeMessage: TypeMessage;
+    private messageType: MessageType;
 
     constructor(
         private chatBoxService: ChatboxService,
@@ -30,6 +31,7 @@ export class ChatboxComponent implements OnInit, AfterViewInit {
         public endGameService: EndGameService,
         private boardHandlerService: BoardHandlerService,
         private skipTurnService: SkipTurnService,
+        private gameSettingsService: GameSettingsService,
     ) {
         this.message = '';
         this.listMessages = [];
@@ -45,27 +47,32 @@ export class ChatboxComponent implements OnInit, AfterViewInit {
 
     ngOnInit(): void {
         this.sendMessageService.displayBound(this.displayMessageByType.bind(this));
+        this.initializeChatHeight();
     }
 
     handleKeyEvent(event: KeyboardEvent): void {
         if (event.key === 'Enter') {
             event.preventDefault();
             this.chatBoxService.sendPlayerMessage(this.message);
-            this.message = ''; // Clear input
-
             this.scrollToBottom();
         }
     }
 
+    // TODO revoir cette fonction avec Étienne
     displayMessageByType(): void {
-        this.listTypes.push(this.sendMessageService.typeMessage);
+        if (this.sendMessageService.messageType === MessageType.Error && this.message.length) {
+            this.listTypes.push(this.sendMessageService.messageType);
+            this.listMessages.push(this.message);
+        }
+        this.listTypes.push(this.sendMessageService.messageType);
         this.listMessages.push(this.sendMessageService.message);
+        this.message = ''; // Clear input
         this.scrollToBottom();
     }
 
     sendSystemMessage(systemMessage: string): void {
-        this.typeMessage = TypeMessage.System;
-        this.listTypes.push(this.typeMessage);
+        this.messageType = MessageType.System;
+        this.listTypes.push(this.messageType);
         this.listMessages.push(systemMessage);
     }
 
@@ -76,14 +83,22 @@ export class ChatboxComponent implements OnInit, AfterViewInit {
         }, 1);
     }
 
+    initializeChatHeight(): void {
+        const chatBox = document.getElementById('chat-box');
+        if (chatBox) {
+            if (this.gameSettingsService.gameType) chatBox.style.height = LOG2990_CHAT_HEIGHT + 'vh';
+            else chatBox.style.height = DEFAULT_CHAT_HEIGHT + 'vh';
+        }
+    }
+
     ngAfterViewInit(): void {
         const findEnd = setInterval(() => {
             this.endGameService.checkEndGame();
-            this.chatBoxService.displayFinalMessage(INDEX_PLAYER_ONE);
-            this.chatBoxService.displayFinalMessage(INDEX_PLAYER_TWO);
-            this.endGameService.getFinalScore(INDEX_PLAYER_ONE);
-            this.endGameService.getFinalScore(INDEX_PLAYER_TWO);
             if (this.endGameService.isEndGame) {
+                this.chatBoxService.displayFinalMessage(PLAYER_ONE_INDEX);
+                this.chatBoxService.displayFinalMessage(PLAYER_TWO_INDEX);
+                this.endGameService.getFinalScore(PLAYER_ONE_INDEX);
+                this.endGameService.getFinalScore(PLAYER_TWO_INDEX);
                 this.skipTurnService.stopTimer();
                 clearInterval(findEnd);
             }

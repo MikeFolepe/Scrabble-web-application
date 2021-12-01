@@ -12,23 +12,32 @@
     "eslint.validate": ["javascript", "typescript", "html", "vue", "markdown"],
     "cSpell.words": [
         "affichages",
+        "Bucky",
+        "callout",
         "Chatbox",
         "débogage",
         "debugMessage",
+        "décommenter",
+        "Deletable",
         "Désactiver",
         "dictionnary",
         "displaymessage",
         "échanger",
         "ERREUR",
+        "fileupload",
         "invalide",
         "Joindre",
+        "Konqueror",
         "lightyellow",
         "mais",
         "notok",
         "nrteu",
         "ONESECOND",
         "POSX",
+        "selectionnable",
+        "substraction",
         "syntaxe",
+        "typedi",
         "Validationservice",
         "vrai"
     ],
@@ -36,9 +45,9 @@
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
     "[html]": {
-        "editor.defaultFormatter": "vscode.html-language-features"
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
     "[scss]": {
-        "editor.defaultFormatter": "sibiraj-s.vscode-scss-formatter"
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
     }
 }

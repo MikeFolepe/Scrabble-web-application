@@ -3,11 +3,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 import { ALL_EASEL_BONUS, BOARD_COLUMNS, BOARD_ROWS } from '@app/classes/constants';
 import { ScoreValidation } from '@app/classes/validation-score';
 import { CommunicationService } from '@app/services/communication.service';
 import { WordValidationService } from '@app/services/word-validation.service';
 import { of } from 'rxjs';
+import { Socket } from 'socket.io-client';
 
 describe('WordValidationService', () => {
     let httpMock: HttpTestingController;
@@ -15,7 +17,7 @@ describe('WordValidationService', () => {
     const scrabbleBoard: string[][] = [];
     beforeEach(() => {
         TestBed.configureTestingModule({
-            imports: [HttpClientTestingModule],
+            imports: [HttpClientTestingModule, RouterTestingModule],
             providers: [CommunicationService],
         });
         service = TestBed.inject(WordValidationService);
@@ -47,14 +49,16 @@ describe('WordValidationService', () => {
         expect(service['httpServer'].validationPost).toBeTruthy();
     });
 
-    it('should return the correct state and score to the player when validation is true', async () => {
+    it('should on at event of receivePlayedWords', async () => {
         const easelSize = false;
         const isRow = true;
         service['newPlayedWords'].set('mAison', ['H8', 'H9', 'H10', 'H11', 'H12', 'H13']);
         const expectedResult: ScoreValidation = { validation: true, score: 7 };
         spyOn(service['httpServer'], 'validationPost').and.returnValue(of(true));
+        const spyClear = spyOn(service['newPlayedWords'], 'clear');
         const validation = await service.validateAllWordsOnBoard(scrabbleBoard, easelSize, isRow);
         expect(validation.score).toEqual(expectedResult.score);
+        expect(spyClear).toHaveBeenCalled();
         expect(validation.validation).toEqual(expectedResult.validation);
     });
 
@@ -76,7 +80,9 @@ describe('WordValidationService', () => {
         const initialScore = 100;
         spyOn(service, 'calculateTotalScore').and.returnValue(initialScore);
         spyOn(service['httpServer'], 'validationPost').and.returnValue(of(true));
+        const spyClear = spyOn(service['newPlayedWords'], 'clear');
         const validation = await service.validateAllWordsOnBoard(scrabbleBoard, true, true);
+        expect(spyClear).toHaveBeenCalled();
         expect(validation.score).toEqual(initialScore + ALL_EASEL_BONUS);
     });
 
@@ -102,7 +108,9 @@ describe('WordValidationService', () => {
         const isRow = true;
         const expectedResult: ScoreValidation = { validation: false, score: 0 };
         spyOn(service['httpServer'], 'validationPost').and.returnValue(of(false));
+        const spyClear = spyOn(service['newPlayedWords'], 'clear');
         const validation = await service.validateAllWordsOnBoard(scrabbleBoard, isEaselSize, isRow);
+        expect(spyClear).toHaveBeenCalled();
         expect(validation).toEqual(expectedResult);
     });
 
@@ -177,13 +185,61 @@ describe('WordValidationService', () => {
         service['newPositions'] = ['B2', 'B3', 'B4', 'B5', 'B6', 'B7'];
         service['playedWords'].set('ma', ['C1', 'C2']);
         service['playedWords'].set('humour', ['B2', 'B3', 'B4', 'B5', 'B6', 'B7']);
+        service['fileName'] = 'dictionary.json';
         spyOn(service, 'checkIfPlayed').and.returnValue(true);
         const isEaselSize = true;
         const isRow = true;
         const passThroughAllRowsOrColumnsSpy = spyOn(service, 'passThroughAllRowsOrColumns').and.callThrough();
         service.validateAllWordsOnBoard(scrabbleBoard, isEaselSize, isRow);
-        const req = httpMock.expectOne(`${service['httpServer']['baseUrl']}/multiplayer/validateWords`);
+        const req = httpMock.expectOne(`${service['httpServer']['baseUrl']}/game/validateWords/dictionary.json`);
         expect(req.request.method).toBe('POST');
         expect(passThroughAllRowsOrColumnsSpy).toHaveBeenCalledTimes(2);
+    });
+
+    it('should on at receivePlayedWords event', () => {
+        const myMap = new Map<string, string[]>([['mAisonee', ['H8', 'H9', 'H10', 'H11', 'H12', 'H13', 'H14', 'H15']]]);
+        const spy = spyOn(JSON, 'parse').and.returnValue(myMap);
+        service['clientSocketService'].socket = {
+            on: (eventName: string, callback: (playedWords: string) => void) => {
+                if (eventName === 'receivePlayedWords') {
+                    callback('[[["mAisonee",["H8","H9","H10","H11","H12","H13","H14","H15"]]]]');
+                }
+            },
+        } as unknown as Socket;
+
+        service.receivePlayedWords();
+        expect(spy).toHaveBeenCalled();
+        expect(myMap.size).not.toEqual(0);
+        expect(service['playedWords'].has(Array.from(myMap.keys())[0]));
+    });
+
+    it('should return the correct state and score to the player when validation is true and isPemrmanent is false', async () => {
+        const easelSize = false;
+        const isPermanent = false;
+        const isRow = true;
+        service['newPlayedWords'].set('mAison', ['H8', 'H9', 'H10', 'H11', 'H12', 'H13']);
+        const expectedResult: ScoreValidation = { validation: true, score: 7 };
+        spyOn(service['httpServer'], 'validationPost').and.returnValue(of(true));
+        const spyClear = spyOn(service['newPlayedWords'], 'clear');
+        const validation = await service.validateAllWordsOnBoard(scrabbleBoard, easelSize, isRow, isPermanent);
+        expect(validation.score).toEqual(expectedResult.score);
+        expect(spyClear).toHaveBeenCalled();
+        expect(validation.validation).toEqual(expectedResult.validation);
+    });
+
+    it('third test Paul', async () => {
+        service['newPlayedWords'].set('nrteu', ['A1', 'A2', 'A3', 'A4', 'A5']);
+        service['playedWords'].set('ma', ['B1', 'B2']);
+        const isEaselSize = false;
+        const isRow = true;
+        const expectedResult: ScoreValidation = { validation: true, score: 18 };
+        spyOn(service['httpServer'], 'validationPost').and.returnValue(of(true));
+        const spyPrioritySet = spyOn(service['priorCurrentWords'], 'set');
+        service.currentWords.set('nrteu', ['A1', 'A2', 'A3', 'A4', 'A5']);
+        const validation = await service.validateAllWordsOnBoard(scrabbleBoard, isEaselSize, isRow);
+        expect(spyPrioritySet).toHaveBeenCalled();
+        expect(validation).toEqual(expectedResult);
+        expect(service['playedWords'].size).not.toEqual(0);
+        expect(service.currentWords.size).not.toEqual(0);
     });
 });

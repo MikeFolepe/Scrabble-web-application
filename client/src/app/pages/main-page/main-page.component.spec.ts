@@ -1,9 +1,10 @@
 /* eslint-disable dot-notation */
-import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientModule } from '@angular/common/http';
-import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialogModule } from '@angular/material/dialog';
 import { RouterTestingModule } from '@angular/router/testing';
+import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 
 describe('MainPageComponent', () => {
     let component: MainPageComponent;
@@ -11,7 +12,7 @@ describe('MainPageComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [HttpClientModule, RouterTestingModule],
+            imports: [HttpClientModule, RouterTestingModule, MatDialogModule],
             declarations: [MainPageComponent],
             schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
@@ -55,5 +56,26 @@ describe('MainPageComponent', () => {
         component.selectedGameMode = 'Joindre une partie multijoueur';
         component.routeToGameMode();
         expect(spyNavigate).toHaveBeenCalledWith(['join-room']);
+    });
+
+    it('should set the game type as scrabble classique', () => {
+        // Mode classique
+        component.selectedGameType = component.gameType[0];
+        component.routeToGameMode();
+        expect(component.gameSettingsService.gameType).toEqual(0);
+    });
+
+    it('should set the game type as scrabble Log2990', () => {
+        // Mode Log2990
+        component.selectedGameType = component.gameType[1];
+        component.selectedGameTypeIndex = 1;
+        component.routeToGameMode();
+        expect(component.gameSettingsService.gameType).toEqual(1);
+    });
+
+    it('should open dialog when openBestScoresDialog is called', () => {
+        const openDialog = spyOn(component.bestScoresDialog, 'open');
+        component.openBestScoresDialog();
+        expect(openDialog).toHaveBeenCalledTimes(1);
     });
 });

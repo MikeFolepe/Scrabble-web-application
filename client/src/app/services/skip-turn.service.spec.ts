@@ -1,19 +1,17 @@
 /* eslint-disable no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable dot-notation */
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { DELAY_BEFORE_PLAY, ONE_SECOND_DELAY, THREE_SECONDS_DELAY } from '@app/classes/constants';
+import { DELAY_BEFORE_PLAYING, ONE_SECOND_DELAY, THREE_SECONDS_DELAY } from '@app/classes/constants';
 import { PlayerAI } from '@app/models/player-ai.model';
 import { Player } from '@app/models/player.model';
 import { Letter } from '@common/letter';
 import { Socket } from 'socket.io-client';
 import { EndGameService } from './end-game.service';
 import { GameSettingsService } from './game-settings.service';
-import { PlayerAIService } from './player-ia.service';
+import { PlayerAIService } from './player-ai.service';
 import { SkipTurnService } from './skip-turn.service';
 
 describe('SkipTurnService', () => {
@@ -175,7 +173,7 @@ describe('SkipTurnService', () => {
         const spyStart = spyOn(service, 'startTimer');
         service.switchTurn();
         jasmine.clock().tick(THREE_SECONDS_DELAY + 1);
-        jasmine.clock().tick(DELAY_BEFORE_PLAY + 1);
+        jasmine.clock().tick(DELAY_BEFORE_PLAYING + 1);
         expect(service.isTurn).toEqual(newTurn);
         expect(spyStart).toHaveBeenCalled();
         expect(spyPlay).toHaveBeenCalledTimes(1);
@@ -210,12 +208,14 @@ describe('SkipTurnService', () => {
     it('should do nothing when it is an endgame', () => {
         endGameService.isEndGame = true;
         service.isTurn = false;
-        const newturn = false;
+        const newTurn = false;
         service.switchTurn();
-        expect(service.isTurn).toEqual(newturn);
+        expect(service.isTurn).toEqual(newTurn);
     });
 
     it('should stop the timer and then switch turn when the countdown is done ', () => {
+        spyOn(service, 'updateActiveTime');
+        service['endGameService'].actionsLog = [];
         service.gameSettingsService.gameSettings.timeMinute = '00';
         service.gameSettingsService.gameSettings.timeSecond = '00';
         endGameService.isEndGame = false;
@@ -239,5 +239,19 @@ describe('SkipTurnService', () => {
         jasmine.clock().tick(ONE_SECOND_DELAY + 1);
         expect(spyOnStop).toHaveBeenCalledTimes(0);
         expect(spyOnSwitch).toHaveBeenCalledTimes(0);
+    });
+
+    it('should not update the active time if the turn is false', () => {
+        service['objectivesService'].activeTimeRemaining[0] = 60;
+        service.isTurn = false;
+        service.updateActiveTime();
+        expect(service['objectivesService'].activeTimeRemaining[0]).toEqual(60);
+    });
+
+    it('should  update the active time if the turn is true', () => {
+        service['objectivesService'].activeTimeRemaining[0] = 60;
+        service.isTurn = true;
+        service.updateActiveTime();
+        expect(service['objectivesService'].activeTimeRemaining[0]).not.toEqual(60);
     });
 });

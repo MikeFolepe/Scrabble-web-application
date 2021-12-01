@@ -2,24 +2,20 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { GameSettings } from '@common/game-settings';
-import { Room } from '@common/room';
+import { GameType } from '@common/game-type';
 import { io, Socket } from 'socket.io-client';
+import { environment } from 'src/environments/environment';
+
 @Injectable({
     providedIn: 'root',
 })
 export class ClientSocketService {
     socket: Socket;
-    rooms: Room[];
     roomId: string;
-    private url: string;
+    gameType: GameType;
 
     constructor(private gameSettingsService: GameSettingsService, private router: Router) {
-        // the line below will connect the client to the deployed server
-        // this.url = 'https://ec2-35-183-103-185.ca-central-1.compute.amazonaws.com:3000';
-
-        // Decomment the line below to connect on the local server
-        this.url = `http://${window.location.hostname}:3000`;
-        this.socket = io(this.url);
+        this.socket = io(environment.serverUrl);
         this.initializeRoomId();
         this.initializeGameSettings();
         this.routeToGameView();

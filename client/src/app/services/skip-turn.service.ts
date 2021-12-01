@@ -1,9 +1,17 @@
 import { Injectable } from '@angular/core';
-import { DELAY_BEFORE_PLAY, INDEX_PLAYER_AI, ONE_SECOND_DELAY, THREE_SECONDS_DELAY } from '@app/classes/constants';
+import {
+    DELAY_BEFORE_PLAYING,
+    ONE_SECOND_DELAY,
+    PLAYER_AI_INDEX,
+    PLAYER_ONE_INDEX,
+    PLAYER_TWO_INDEX,
+    THREE_SECONDS_DELAY,
+} from '@app/classes/constants';
 import { PlayerAI } from '@app/models/player-ai.model';
 import { ClientSocketService } from '@app/services/client-socket.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { EndGameService } from './end-game.service';
+import { ObjectivesService } from './objectives.service';
 import { PlayerService } from './player.service';
 
 @Injectable({
@@ -22,6 +30,7 @@ export class SkipTurnService {
         private endGameService: EndGameService,
         private clientSocket: ClientSocketService,
         private playerService: PlayerService,
+        private objectivesService: ObjectivesService,
     ) {
         this.receiveNewTurn();
         this.receiveStartFromServer();
@@ -40,7 +49,6 @@ export class SkipTurnService {
             this.startTimer();
         });
     }
-
     receiveStopFromServer(): void {
         this.clientSocket.socket.on('stopTimer', () => {
             this.stopTimer();
@@ -57,10 +65,10 @@ export class SkipTurnService {
                 if (this.isTurn) {
                     this.isTurn = false;
                     this.startTimer();
-                    const playerAi = this.playerService.players[INDEX_PLAYER_AI] as PlayerAI;
+                    const playerAi = this.playerService.players[PLAYER_AI_INDEX] as PlayerAI;
                     setTimeout(() => {
                         playerAi.play();
-                    }, DELAY_BEFORE_PLAY);
+                    }, DELAY_BEFORE_PLAYING);
                 } else {
                     this.isTurn = true;
                     this.startTimer();
@@ -75,16 +83,21 @@ export class SkipTurnService {
     startTimer(): void {
         this.minutes = parseInt(this.gameSettingsService.gameSettings.timeMinute, 10);
         this.seconds = parseInt(this.gameSettingsService.gameSettings.timeSecond, 10);
+
         this.intervalID = setInterval(() => {
             if (this.seconds === 0 && this.minutes !== 0) {
                 this.minutes = this.minutes - 1;
                 this.seconds = 59;
+                this.updateActiveTime();
             } else if (this.seconds === 0 && this.minutes === 0) {
                 if (this.isTurn) {
+                    this.endGameService.actionsLog.push('AucuneAction');
+                    this.clientSocket.socket.emit('sendActions', this.endGameService.actionsLog, this.clientSocket.roomId);
                     this.switchTurn();
                 }
             } else {
                 this.seconds = this.seconds - 1;
+                this.updateActiveTime();
             }
         }, ONE_SECOND_DELAY);
     }
@@ -93,5 +106,13 @@ export class SkipTurnService {
         clearInterval(this.intervalID);
         this.minutes = 0;
         this.seconds = 0;
+    }
+
+    updateActiveTime() {
+        if (this.isTurn && this.objectivesService.activeTimeRemaining[PLAYER_ONE_INDEX] > 0)
+            this.objectivesService.activeTimeRemaining[PLAYER_ONE_INDEX]--;
+
+        if (this.isTurn === false && this.objectivesService.activeTimeRemaining[PLAYER_TWO_INDEX] > 0)
+            this.objectivesService.activeTimeRemaining[PLAYER_TWO_INDEX]--;
     }
 }

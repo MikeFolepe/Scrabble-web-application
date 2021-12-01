@@ -1,21 +1,21 @@
-import { GameSettings, StartingPlayer } from '@common/game-settings';
-import { BONUS_POSITIONS } from '@app/classes/constants';
-import { Injectable } from '@angular/core';
-
+import { Injectable, OnDestroy } from '@angular/core';
+import { DEFAULT_GAME_SETTINGS } from '@app/classes/constants';
+import { GameSettings } from '@common/game-settings';
+import { GameType } from '@common/game-type';
 @Injectable({
     providedIn: 'root',
 })
-export class GameSettingsService {
-    gameSettings: GameSettings = {
-        playersName: ['', ''],
-        startingPlayer: StartingPlayer.Player1,
-        timeMinute: '01',
-        timeSecond: '00',
-        level: 'Facile',
-        randomBonus: 'Désactiver',
-        bonusPositions: JSON.stringify(Array.from(BONUS_POSITIONS)),
-        dictionary: '',
-    };
+export class GameSettingsService implements OnDestroy {
+    gameSettings: GameSettings;
     isSoloMode: boolean;
+    gameDictionary: string[];
+    gameType: GameType;
     isRedirectedFromMultiplayerGame: boolean;
+    constructor() {
+        this.gameSettings = DEFAULT_GAME_SETTINGS;
+    }
+
+    ngOnDestroy(): void {
+        this.gameSettings = DEFAULT_GAME_SETTINGS;
+    }
 }

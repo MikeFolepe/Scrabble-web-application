@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { EASEL_SIZE, INDEX_INVALID, INDEX_PLAYER_ONE } from '@app/classes/constants';
+import { EASEL_SIZE, INVALID_INDEX, PLAYER_ONE_INDEX } from '@app/classes/constants';
 import { Letter } from '@common/letter';
 import { PlayerService } from '@app/services/player.service';
 
@@ -16,6 +16,7 @@ export class ManipulateService {
         this.usedLetters.fill(false, 0, EASEL_SIZE);
     }
 
+    // TODO changer le nom de la fonction
     onKeyPress(event: KeyboardEvent): void {
         switch (event.key) {
             case 'ArrowLeft': {
@@ -29,10 +30,12 @@ export class ManipulateService {
                 break;
             }
             default: {
-                // Shift + * ?
+                // TODO mettre le code de default dans une fonction privée
+                if (event.key === 'Shift') return; // Pressing Shift doesn't unselect all so we can press Shift + 8 to select a '*'
                 if (/([a-zA-Z]|[*])+/g.test(event.key) && event.key.length === 1) {
-                    const letterPressed = this.indexToSelect(event.key, INDEX_PLAYER_ONE);
-                    if (letterPressed === INDEX_INVALID) {
+                    // TODO letterPressed n'est pas le nom adéquat pour exprimer un index. Peut-être mieux letterPressedIndex
+                    const letterPressed = this.indexToSelect(event.key, PLAYER_ONE_INDEX);
+                    if (letterPressed === INVALID_INDEX) {
                         this.usedLetters.fill(false, 0, this.usedLetters.length);
                         this.unselectAll();
                         break;
@@ -80,22 +83,22 @@ export class ManipulateService {
         }
         indexCurrentLetter = this.playerService.indexLetterInEasel(letterToSelect, 0, indexPlayer);
         // If we select the same letter 2 times, we verify that we're not using the same index in the easel
-        while (this.usedLetters[indexCurrentLetter] && indexCurrentLetter !== INDEX_INVALID) {
+        while (this.usedLetters[indexCurrentLetter] && indexCurrentLetter !== INVALID_INDEX) {
             indexCurrentLetter = this.playerService.indexLetterInEasel(letterToSelect, indexCurrentLetter + 1, indexPlayer);
         }
-        if (indexCurrentLetter === INDEX_INVALID) {
+        if (indexCurrentLetter === INVALID_INDEX) {
             this.usedLetters.fill(false, 0, this.usedLetters.length);
             // We find the first occurrence of the respective letter
             indexCurrentLetter = this.playerService.indexLetterInEasel(letterToSelect, 0, indexPlayer);
         }
 
-        if (indexCurrentLetter !== INDEX_INVALID) this.usedLetters[indexCurrentLetter] = true;
+        if (indexCurrentLetter !== INVALID_INDEX) this.usedLetters[indexCurrentLetter] = true;
         return indexCurrentLetter;
     }
 
     shiftUp(): void {
         const indexSelected = this.findIndexSelected();
-        if (indexSelected === INDEX_INVALID) return;
+        if (indexSelected === INVALID_INDEX) return;
         if (indexSelected === 0) {
             // Manipulate 1st index
             if (this.letterEaselTab[indexSelected].value !== this.letterEaselTab[this.letterEaselTab.length - 1].value) {
@@ -119,7 +122,7 @@ export class ManipulateService {
 
     shiftDown(): void {
         const indexSelected = this.findIndexSelected();
-        if (indexSelected === INDEX_INVALID) return;
+        if (indexSelected === INVALID_INDEX) return;
         if (indexSelected === this.letterEaselTab.length - 1) {
             // Manipulate last index
             this.usedLetters[0] = true;
@@ -149,7 +152,7 @@ export class ManipulateService {
         for (let i = 0; i < this.letterEaselTab.length; i++) {
             if (this.letterEaselTab[i].isSelectedForManipulation) return i;
         }
-        return INDEX_INVALID;
+        return INVALID_INDEX;
     }
 
     handleManipulationSelection(indexLetter: number): void {

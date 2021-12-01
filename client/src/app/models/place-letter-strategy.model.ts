@@ -1,25 +1,27 @@
-/* eslint-disable sort-imports */
-import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSITION_X, INDEX_INVALID, INDEX_PLAYER_AI } from '@app/classes/constants';
-import { Range } from '@app/classes/range';
+import { BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSITION, INVALID_INDEX, PLAYER_AI_INDEX } from '@app/classes/constants';
+import { CustomRange } from '@app/classes/range';
 import { BoardPattern, Orientation, PatternInfo, PossibleWords } from '@app/classes/scrabble-board-pattern';
-import { Vec2 } from '@common/vec2';
-import { PlayerAIService } from '@app/services/player-ia.service';
+import { PlayerAIService } from '@app/services/player-ai.service';
+import { Level } from '@common/level';
 import { PlayerAI } from './player-ai.model';
-import * as dictionaryData from '@common/dictionary.json';
 
 export class PlaceLetterStrategy {
     dictionary: string[];
+    pointingRange: CustomRange;
     private board: string[][][];
-
-    constructor(public pointingRange: Range) {
-        this.dictionary = JSON.parse(JSON.stringify(dictionaryData)).words;
+    constructor() {
+        this.pointingRange = { min: 1, max: 18 }; // TODO constante ?
         this.board = [];
     }
 
     async execute(playerAiService: PlayerAIService): Promise<void> {
-        const playerAi = playerAiService.playerService.players[INDEX_PLAYER_AI] as PlayerAI;
+        const playerAi = playerAiService.playerService.players[PLAYER_AI_INDEX] as PlayerAI;
+        const level = playerAiService.gameSettingsService.gameSettings.level;
         const isFirstRound = playerAiService.placeLetterService.isFirstRound;
         const scrabbleBoard = playerAiService.placeLetterService.scrabbleBoard;
+        this.dictionary = await playerAiService.communicationService
+            .getGameDictionary(playerAiService.gameSettingsService.gameSettings.dictionary)
+            .toPromise();
         let allPossibleWords: PossibleWords[];
         let matchingPointingRangeWords: PossibleWords[] = [];
 
@@ -30,69 +32,35 @@ export class PlaceLetterStrategy {
         allPossibleWords = this.removeIfNotEnoughLetter(allPossibleWords, playerAi);
 
         if (isFirstRound) {
-            allPossibleWords.forEach((word) => (word.startIndex = CENTRAL_CASE_POSITION_X));
+            allPossibleWords.forEach((word) => (word.startIndex = CENTRAL_CASE_POSITION.x));
         } else {
             allPossibleWords = this.removeIfNotDisposable(allPossibleWords);
         }
-
-        playerAiService.calculatePoints(allPossibleWords, scrabbleBoard);
+        allPossibleWords = await playerAiService.calculatePoints(allPossibleWords);
         playerAiService.sortDecreasingPoints(allPossibleWords);
         matchingPointingRangeWords = playerAiService.filterByRange(allPossibleWords, this.pointingRange);
+        if (level === Level.Expert) await this.computeResults(allPossibleWords, playerAiService);
+        if (level === Level.Beginner) await this.computeResults(matchingPointingRangeWords, playerAiService, false);
 
-        await this.computeResults(allPossibleWords, matchingPointingRangeWords, playerAiService);
-        playerAiService.debugService.receiveAIDebugPossibilities(allPossibleWords.concat(matchingPointingRangeWords));
-        playerAiService.endGameService.actionsLog.push('placer');
+        playerAiService.debugService.receiveAIDebugPossibilities(allPossibleWords);
     }
 
-    private async computeResults(
-        allPossibleWords: PossibleWords[],
-        matchingPointingRangeWords: PossibleWords[],
-        playerAiService: PlayerAIService,
-    ): Promise<void> {
-        // First, try place word satisfying PointingRange.min < nbPt < PointingRange.max
-        let index: number = this.placementAttempt(matchingPointingRangeWords, playerAiService);
-        const noPlayableWord = -1;
-        if (index !== noPlayableWord) {
-            await playerAiService.place(matchingPointingRangeWords[index]);
-            matchingPointingRangeWords.splice(index, 1);
+    private async computeResults(possibilities: PossibleWords[], playerAiService: PlayerAIService, isDifficultMode = true): Promise<void> {
+        if (possibilities.length === 0) {
+            playerAiService.swap(isDifficultMode);
             return;
         }
 
-        // Second, try place the other words
-        index = this.placementAttempt(allPossibleWords, playerAiService);
-        if (index !== noPlayableWord) {
-            await playerAiService.place(allPossibleWords[index]);
-            allPossibleWords.splice(index, 1);
+        const idx = 0;
+        if (isDifficultMode) {
+            await playerAiService.place(possibilities[idx]);
+            possibilities.splice(0, 1);
             return;
         }
 
-        // No possibilities for this turn, player will swap for more possibilities on next turn
-        playerAiService.swap();
-    }
-
-    private placementAttempt(possibilities: PossibleWords[], playerAiService: PlayerAIService): number {
-        let i = 0;
-        const noPlayableWord = -1;
-        for (i = 0; i < possibilities.length; i++) {
-            const word = possibilities[i];
-            const start: Vec2 = word.orientation ? { x: word.startIndex, y: word.line } : { x: word.line, y: word.startIndex };
-            const orientation: Orientation = word.orientation;
-            // Deep copy of the game scrabble board because of hypotetical placement
-            let scrabbleBoard: string[][] = JSON.parse(JSON.stringify(playerAiService.placeLetterService.scrabbleBoard));
-            scrabbleBoard = playerAiService.placeWordOnBoard(
-                scrabbleBoard,
-                word.word,
-                start,
-                orientation ? Orientation.Vertical : Orientation.Horizontal,
-            );
-            const isValid = this.validateWord(scrabbleBoard);
-
-            if (isValid) {
-                return i;
-            }
-        }
-
-        return noPlayableWord;
+        const index = playerAiService.generateRandomNumber(possibilities.length);
+        await playerAiService.place(possibilities[index]);
+        possibilities.splice(index, 1);
     }
 
     private initializeArray(scrabbleBoard: string[][]): void {
@@ -125,7 +93,7 @@ export class PlaceLetterStrategy {
                 })
                 .toString();
             line = line.replace(regex2, '');
-            const radixes = this.board[word.orientation][word.line].toString().replace(regex1, '').match(regex3) as string[];
+            const radixes = this.board[word.orientation][word.line].toString().toLowerCase().replace(regex1, '').match(regex3) as string[];
             if (this.isWordFitting(line, word, radixes)) {
                 filteredWords.push(word);
             }
@@ -134,6 +102,7 @@ export class PlaceLetterStrategy {
         return filteredWords;
     }
 
+    // TODO vérifier cette fonction car perte de points au sprint 2 AQ
     private isWordFitting(line: string, wordToPlace: PossibleWords, radixes: string[]): boolean {
         const isEmptyCase = new Array<boolean>(wordToPlace.word.length);
         isEmptyCase.fill(true);
@@ -158,14 +127,14 @@ export class PlaceLetterStrategy {
         const start = line.search(pattern);
         const end = start + wordToPlace.word.length - 1;
 
-        if (start === INDEX_INVALID) {
+        if (start === INVALID_INDEX) {
             return false;
         }
 
         // If found set the starting positing for later placing
         wordToPlace.startIndex = start;
         // If found the word must not touch the adjacent words
-        return this.isWordOverWriting(line, start, end, wordToPlace.word.length) === false;
+        return this.isWordOverWriting(line, start, end, wordToPlace.word.length) ? false : true;
     }
 
     private isWordOverWriting(line: string, startIndex: number, endIdx: number, wordLength: number): boolean {
@@ -185,14 +154,15 @@ export class PlaceLetterStrategy {
     private removeIfNotEnoughLetter(allPossibleWords: PossibleWords[], player: PlayerAI): PossibleWords[] {
         const filteredWords: PossibleWords[] = [];
 
-        for (const word of allPossibleWords) {
+        for (const wordObject of allPossibleWords) {
             let isWordValid = true;
-            for (const letter of word.word) {
+            for (const letter of wordObject.word) {
                 const regex1 = new RegExp(letter, 'g');
                 const regex2 = new RegExp('[,]{1,}', 'g');
-                const amountOfLetterNeeded: number = (word.word.match(regex1) || []).length;
-                const amountOfLetterPresent: number = (this.board[word.orientation][word.line].toString().replace(regex2, '').match(regex1) || [])
-                    .length;
+                const amountOfLetterNeeded: number = (wordObject.word.match(regex1) as string[]).length;
+                const amountOfLetterPresent: number = (
+                    this.board[wordObject.orientation][wordObject.line].toString().replace(regex2, '').match(regex1) || []
+                ).length;
                 const playerAmount: number = player.playerQuantityOf(letter);
 
                 if (amountOfLetterNeeded > playerAmount + amountOfLetterPresent) {
@@ -203,13 +173,16 @@ export class PlaceLetterStrategy {
             }
 
             if (isWordValid) {
-                filteredWords.push(word);
+                filteredWords.push(wordObject);
             }
         }
 
         return filteredWords;
     }
 
+    // TODO : creating console errors
+    // Unhandled Promise rejection: dictionaryToLookAt is not iterable ; Zone: ProxyZone ; Task: jasmine.onComplete ;
+    // Value: TypeError: dictionaryToLookAt is not iterable
     private generateAllWords(dictionaryToLookAt: string[], patterns: BoardPattern): PossibleWords[] {
         // Generate all words satisfying the patterns found
         const allWords: PossibleWords[] = [];
@@ -230,7 +203,6 @@ export class PlaceLetterStrategy {
                 }
             }
         }
-
         return allWords;
     }
 
@@ -253,8 +225,8 @@ export class PlaceLetterStrategy {
 
         if (isFirstRound) {
             // At first round the only pattern is the letter in the player's easel
-            horizontal.push({ line: CENTRAL_CASE_POSITION_X, pattern: '^' + playerHand.toLowerCase() + '*$' });
-            vertical.push({ line: CENTRAL_CASE_POSITION_X, pattern: '^' + playerHand.toLowerCase() + '*$' });
+            horizontal.push({ line: CENTRAL_CASE_POSITION.x, pattern: '^' + playerHand.toLowerCase() + '*$' });
+            vertical.push({ line: CENTRAL_CASE_POSITION.y, pattern: '^' + playerHand.toLowerCase() + '*$' });
             return { horizontal, vertical };
         }
 
@@ -282,49 +254,6 @@ export class PlaceLetterStrategy {
                 patternArray.push({ line, pattern });
             }
         }
-
         return patternArray;
-    }
-
-    private validateWord(scrabbleBoard: string[][]): boolean {
-        const save = JSON.parse(JSON.stringify(this.board));
-
-        // Place the word on the scrabble board to check the situation it would cause
-        this.initializeArray(scrabbleBoard);
-        const wordsOnBoard: string[] = [];
-
-        const regex1 = new RegExp('[,]', 'g');
-        const regex2 = new RegExp('[ ]{1}', 'g');
-
-        // Capture all groups of 2 letters or more
-        const maxDimensions = Object.keys(Orientation).length / 2;
-
-        for (let dimension = 0; dimension < maxDimensions; dimension++) {
-            for (let i = 0; i < BOARD_COLUMNS; i++) {
-                this.board[dimension][i]
-                    .map((element: string) => {
-                        return element === '' ? ' ' : element;
-                    })
-                    .toString()
-                    .replace(regex1, '')
-                    .split(regex2)
-                    .forEach((word) => {
-                        if (word.length > 1 && word !== '') wordsOnBoard.push(word);
-                    });
-            }
-        }
-
-        // Check if all groups of at least 2 letters are in the dictionary
-        for (const word of wordsOnBoard) {
-            const found = this.dictionary.find((element) => element === word);
-            if (found === undefined) {
-                this.board = save;
-                return false;
-            }
-        }
-
-        // Restore the board
-        this.board = save;
-        return true;
     }
 }

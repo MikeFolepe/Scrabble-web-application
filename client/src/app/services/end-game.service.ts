@@ -1,9 +1,11 @@
-/* eslint-disable sort-imports */
 import { Injectable } from '@angular/core';
-import { INDEX_PLAYER_AI, INDEX_PLAYER_ONE, INDEX_PLAYER_TWO, NUMBER_OF_SKIP, RESERVE } from '@app/classes/constants';
+import { NUMBER_OF_SKIP, PLAYER_AI_INDEX, PLAYER_ONE_INDEX, PLAYER_TWO_INDEX } from '@app/classes/constants';
 import { DebugService } from '@app/services/debug.service';
+import { PlayerScore } from '@common/player';
 import { ClientSocketService } from './client-socket.service';
+import { CommunicationService } from './communication.service';
 import { GameSettingsService } from './game-settings.service';
+// import { GridService } from './grid.service';
 import { LetterService } from './letter.service';
 import { PlayerService } from './player.service';
 
@@ -17,30 +19,23 @@ export class EndGameService {
     winnerNameByGiveUp = '';
 
     constructor(
+        private httpServer: CommunicationService,
         public clientSocketService: ClientSocketService,
         public letterService: LetterService,
         public playerService: PlayerService,
         public debugService: DebugService,
-        public gameSettingsService: GameSettingsService,
+        public gameSettingsService: GameSettingsService, // private gridService: GridService,
     ) {
         this.clearAllData();
         this.actionsLog = [];
         this.isEndGame = false;
-
         this.receiveEndGameFromServer();
         this.receiveActionsFromServer();
-        this.receiveEndGameByGiveUp();
     }
 
     receiveEndGameFromServer(): void {
         this.clientSocketService.socket.on('receiveEndGame', (isEndGame: boolean) => {
             this.isEndGame = isEndGame;
-        });
-    }
-    receiveEndGameByGiveUp(): void {
-        this.clientSocketService.socket.on('receiveEndGameByGiveUp', (isEndGameByGiveUp: boolean, winnerName: string) => {
-            this.isEndGameByGiveUp = isEndGameByGiveUp;
-            this.winnerNameByGiveUp = winnerName;
         });
     }
 
@@ -51,13 +46,13 @@ export class EndGameService {
     }
 
     getWinnerName(): string {
-        if (this.playerService.players[INDEX_PLAYER_ONE].score > this.playerService.players[INDEX_PLAYER_TWO].score) {
-            return this.playerService.players[INDEX_PLAYER_ONE].name;
+        if (this.playerService.players[PLAYER_ONE_INDEX].score > this.playerService.players[PLAYER_TWO_INDEX].score) {
+            return this.playerService.players[PLAYER_ONE_INDEX].name;
         }
-        if (this.playerService.players[INDEX_PLAYER_ONE].score < this.playerService.players[INDEX_PLAYER_TWO].score) {
-            return this.playerService.players[INDEX_PLAYER_TWO].name;
+        if (this.playerService.players[PLAYER_ONE_INDEX].score < this.playerService.players[PLAYER_TWO_INDEX].score) {
+            return this.playerService.players[PLAYER_TWO_INDEX].name;
         }
-        return this.playerService.players[INDEX_PLAYER_ONE].name + '  ' + this.playerService.players[INDEX_PLAYER_TWO].name;
+        return this.playerService.players[PLAYER_ONE_INDEX].name + '  ' + this.playerService.players[PLAYER_TWO_INDEX].name;
     }
 
     addActionsLog(actionLog: string): void {
@@ -74,22 +69,33 @@ export class EndGameService {
     }
 
     getFinalScore(indexPlayer: number): void {
-        if (!this.isEndGame || this.playerService.players[indexPlayer].score === 0) {
-            return;
-        }
+        if (this.playerService.players[indexPlayer].score === 0) return;
+
         for (const letter of this.playerService.players[indexPlayer].letterTable) {
             this.playerService.players[indexPlayer].score -= letter.points;
-            // Check if score decrease under 0 after subtraction
+            // Check if score decrease under 0 after substraction
+
             if (this.playerService.players[indexPlayer].score < 0) {
                 this.playerService.players[indexPlayer].score = 0;
-                return;
+                break;
             }
         }
+        // TODO: décommenter la ligne suivante si jamais le JV apparaît dans les classements
+        // if (this.playerService.players[indexPlayer].name in AI_NAME_DATABASE) return;
+
+        const players: PlayerScore[] = [];
+        players[indexPlayer] = {
+            score: this.playerService.players[indexPlayer].score,
+            playerName: this.playerService.players[indexPlayer].name,
+            isDefault: false,
+        };
+        this.httpServer.addPlayersScores(players, this.gameSettingsService.gameType).subscribe();
     }
 
     clearAllData(): void {
         this.playerService.players = [];
-        this.letterService.reserve = JSON.parse(JSON.stringify(RESERVE));
+        // this.gridService.ngOnDestroy();
+        // this.letterService.reserve = JSON.parse(JSON.stringify(RESERVE));
         this.isEndGameByGiveUp = false;
         this.winnerNameByGiveUp = '';
         this.isEndGame = false;
@@ -113,7 +119,7 @@ export class EndGameService {
     isEndGameByEasel(): boolean {
         return (
             this.letterService.reserveSize === 0 &&
-            (this.playerService.isEaselEmpty(INDEX_PLAYER_ONE) || this.playerService.isEaselEmpty(INDEX_PLAYER_AI))
+            (this.playerService.isEaselEmpty(PLAYER_ONE_INDEX) || this.playerService.isEaselEmpty(PLAYER_AI_INDEX))
         );
     }
 }

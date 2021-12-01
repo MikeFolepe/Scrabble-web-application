@@ -1,20 +1,20 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { INDEX_PLAYER_ONE } from '@app/classes/constants';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { RouterTestingModule } from '@angular/router/testing';
+import { PLAYER_ONE_INDEX } from '@app/classes/constants';
+import { Player } from '@app/models/player.model';
 import { Letter } from '@common/letter';
 import { LetterEaselComponent } from './letter-easel.component';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { Player } from '@app/models/player.model';
-import { RouterTestingModule } from '@angular/router/testing';
 
 describe('LetterEaselComponent', () => {
     let component: LetterEaselComponent;
     let fixture: ComponentFixture<LetterEaselComponent>;
-    let getLettersSpy: any;
+    let getLettersSpy: jasmine.Spy<(indexPlayer: number) => Letter[]>;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
@@ -53,14 +53,6 @@ describe('LetterEaselComponent', () => {
         component.ngOnInit();
         expect(updateSpy).toHaveBeenCalled();
         expect(getLettersSpy).toHaveBeenCalled();
-    });
-
-    it('should update component fontSize and playerService fontSize with new fontSize', () => {
-        spyOn(component['playerService'], 'updateFontSize');
-        const fontSize = 10;
-        component.handleFontSizeEvent(fontSize);
-        expect(component.fontSize).toEqual(fontSize);
-        expect(component['playerService'].updateFontSize).toHaveBeenCalled();
     });
 
     it('left clicking on a letter in the easel should call onLeftClick()', () => {
@@ -110,7 +102,7 @@ describe('LetterEaselComponent', () => {
 
         component.letterEaselTab[0].isSelectedForSwap = true;
         component.swap();
-        expect(swapSpy).toHaveBeenCalledOnceWith(0, INDEX_PLAYER_ONE);
+        expect(swapSpy).toHaveBeenCalledOnceWith(0, PLAYER_ONE_INDEX);
     });
 
     it('cancelling selection should unselect all letters and disable cancel button', () => {
@@ -191,5 +183,28 @@ describe('LetterEaselComponent', () => {
         component.letterEaselTab[0].isSelectedForManipulation = true;
         component['handleSwapSelection'](0);
         expect(component.letterEaselTab[0].isSelectedForSwap).toBeFalse();
+    });
+
+    it('should returns if easel nativeElement contains(event.target)', () => {
+        const clickEvent = new MouseEvent('contextmenu');
+        spyOn(component.easel.nativeElement, 'contains').and.returnValue(MouseEvent);
+        const spyManipulate = spyOn(component['manipulateService'], 'enableScrolling');
+        component.clickEvent(clickEvent);
+        expect(spyManipulate).not.toHaveBeenCalled();
+    });
+    it('should not manipulate easel  if keyPress nativeElement', () => {
+        spyOn(component.easel.nativeElement, 'contains').and.returnValue(false);
+        spyOn(component['manipulateService'], 'onKeyPress');
+        const event = new Event('keydown');
+        fixture.nativeElement.dispatchEvent(event);
+        expect(component['manipulateService'].onKeyPress).not.toHaveBeenCalled();
+    });
+
+    it(' Do not scrolling one wheel tick while one letter is selected for manipulation should call onMouseWheelTick from manipulateService', () => {
+        spyOn(component['manipulateService'], 'onMouseWheelTick');
+        component.letterEaselTab[0].isSelectedForManipulation = false;
+        const event = new Event('wheel');
+        document.dispatchEvent(event);
+        expect(component['manipulateService'].onMouseWheelTick).not.toHaveBeenCalled();
     });
 });

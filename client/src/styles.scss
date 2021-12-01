@@ -61,6 +61,14 @@ $indigo-pink-theme: mat.define-light-theme(
 
 /* You can add global styles to this file, and also import other style files */
 
+html {
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+    scrollbar-width: none; /* Firefox */
+}
+html::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
+}
+
 body {
     height: 100vh;
     width: 100vw;
@@ -76,6 +84,11 @@ h1 {
     font-size: 30px;
 }
 
+h1::selection {
+    color: black;
+    background-color: #b3d9ca;
+}
+
 header {
     display: flex;
     justify-content: center;
@@ -85,4 +98,38 @@ header {
     background-color: #00804d;
     color: #f5fbf3;
     text-shadow: 1px 1px 1px #a9da9f;
+}
+
+.fake-buttons {
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+    border: 1px solid #000;
+    position: relative;
+    top: 0px;
+    left: 6px;
+    background-color: #ff3b47;
+    border-color: #9d252b;
+    display: inline-block;
+}
+
+.fake-minimize {
+    left: 11px;
+    background-color: #ffc100;
+    border-color: #9d802c;
+}
+
+.fake-zoom {
+    left: 16px;
+    background-color: #00d742;
+    border-color: #049931;
+}
+
+.fake-menu {
+    //width: 100%;
+    box-sizing: border-box;
+    height: 25px;
+    background-color: #bbb;
+    border-top-right-radius: 5px;
+    border-top-left-radius: 5px;
 }

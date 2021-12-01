@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { INDEX_INVALID, MIN_RESERVE_SIZE_TO_SWAP } from '@app/classes/constants';
-import { TypeMessage } from '@app/classes/enum';
+import { INVALID_INDEX, MIN_RESERVE_SIZE_TO_SWAP } from '@app/classes/constants';
+import { MessageType } from '@app/classes/enum';
 import { LetterService } from '@app/services/letter.service';
 import { PlayerService } from '@app/services/player.service';
 import { EndGameService } from './end-game.service';
@@ -20,7 +20,7 @@ export class SwapLetterService {
     // Swap all the letters selected from the easel with new ones from the reserve
     swapCommand(lettersToSwap: string, indexPlayer: number): boolean {
         if (!this.isPossible(lettersToSwap, indexPlayer)) {
-            this.sendMessageService.displayMessageByType('ERREUR : La commande est impossible à réaliser', TypeMessage.Error);
+            this.sendMessageService.displayMessageByType('ERREUR : La commande est impossible à réaliser', MessageType.Error);
             return false;
         }
 
@@ -37,41 +37,36 @@ export class SwapLetterService {
         this.playerService.swap(indexLetter, indexPlayer);
     }
 
-    lettersToSwapIntoIndexes(lettersToSwap: string, indexPlayer: number): number[] {
+    private lettersToSwapIntoIndexes(lettersToSwap: string, indexPlayer: number): number[] {
         const usedLetterIndexes: number[] = [];
-        let indexCurrentLetter = 0;
+        let currentLetterIndex = 0;
         for (const letterToSwap of lettersToSwap) {
-            indexCurrentLetter = this.playerService.indexLetterInEasel(letterToSwap, 0, indexPlayer);
+            currentLetterIndex = this.playerService.indexLetterInEasel(letterToSwap, 0, indexPlayer);
             // If we swap multiple times the same letter, we verify that we're not using the same index in the easel
             for (const index of usedLetterIndexes) {
-                while (indexCurrentLetter === index && indexCurrentLetter !== INDEX_INVALID) {
-                    indexCurrentLetter = this.playerService.indexLetterInEasel(letterToSwap, indexCurrentLetter + 1, indexPlayer);
+                while (currentLetterIndex === index && currentLetterIndex !== INVALID_INDEX) {
+                    currentLetterIndex = this.playerService.indexLetterInEasel(letterToSwap, currentLetterIndex + 1, indexPlayer);
                 }
             }
-            usedLetterIndexes.push(indexCurrentLetter);
+            usedLetterIndexes.push(currentLetterIndex);
         }
         return usedLetterIndexes;
     }
 
-    isPossible(lettersToSwap: string, indexPlayer: number): boolean {
+    private isPossible(lettersToSwap: string, indexPlayer: number): boolean {
         return this.reserveHasEnoughLetters() && this.areLettersInEasel(lettersToSwap, indexPlayer);
     }
 
-    areLettersInEasel(lettersToSwap: string, indexPlayer: number): boolean {
+    private areLettersInEasel(lettersToSwap: string, indexPlayer: number): boolean {
         const lettersToSwapIndexes: number[] = this.lettersToSwapIntoIndexes(lettersToSwap, indexPlayer);
         for (const indexLetter of lettersToSwapIndexes) {
-            if (indexLetter === INDEX_INVALID) {
-                return false;
-            }
+            if (indexLetter === INVALID_INDEX) return false;
         }
         return true;
     }
 
     // Reserve needs to have at least 7 letters to perform a swap
-    reserveHasEnoughLetters(): boolean {
-        if (this.letterService.reserveSize >= MIN_RESERVE_SIZE_TO_SWAP) {
-            return true;
-        }
-        return false;
+    private reserveHasEnoughLetters(): boolean {
+        return this.letterService.reserveSize >= MIN_RESERVE_SIZE_TO_SWAP;
     }
 }

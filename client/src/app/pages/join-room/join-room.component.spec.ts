@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
@@ -8,6 +9,7 @@ import { PageEvent } from '@angular/material/paginator';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ERROR_MESSAGE_DELAY } from '@app/classes/constants';
 import { GameSettings } from '@common/game-settings';
+import { Level } from '@common/level';
 import { Room, State } from '@common/room';
 import { of } from 'rxjs';
 import { Socket } from 'socket.io-client';
@@ -35,7 +37,6 @@ describe('JoinRoomComponent', () => {
         fixture = TestBed.createComponent(JoinRoomComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
-        // clientSocketServiceSpy = jasmine.createSpyObj('ClientSocketService', ['route']);
     });
 
     it('should return the state of room is the state is waiting', () => {
@@ -47,31 +48,30 @@ describe('JoinRoomComponent', () => {
     });
 
     it('should save rooms given in argument with their configurations', () => {
-        const settings: GameSettings = new GameSettings(['mi', 'ma'], 1, '01', '00', 'Facile', 'Activer', 'francais', '00');
+        const settings: GameSettings = new GameSettings(['mi', 'ma'], 1, '01', '00', Level.Beginner, 'Activer', 'francais', '');
         const expectedRooms = [new Room('room', 'socket', settings, State.Waiting)];
+        // TODO not correctly mocked => generates console errors...
         component['clientSocketService'].socket = {
-            // eslint-disable-next-line no-unused-vars
             on: (eventName: string, callback: (room: Room[]) => void) => {
                 if (eventName === 'roomConfiguration') {
                     callback(expectedRooms);
                 }
             },
         } as unknown as Socket;
-        component.configureRooms();
+        component['configureRooms']();
         expect(component.rooms).toEqual(expectedRooms);
     });
 
     it('should correctly handle room unavailability', () => {
         jasmine.clock().install();
         component['clientSocketService'].socket = {
-            // eslint-disable-next-line no-unused-vars
             on: (eventName: string, callback: () => void) => {
                 if (eventName === 'roomAlreadyToken') {
                     callback();
                 }
             },
         } as unknown as Socket;
-        component.handleRoomUnavailability();
+        component['handleRoomUnavailability']();
         expect(component.shouldDisplayJoinError).toEqual(true);
         jasmine.clock().tick(ERROR_MESSAGE_DELAY);
         expect(component.shouldDisplayJoinError).toEqual(false);
@@ -82,13 +82,13 @@ describe('JoinRoomComponent', () => {
         const event: PageEvent = new PageEvent();
         event.pageIndex = 2;
         event.pageSize = 1;
-        const expectedRoomItemindex = event.pageIndex * event.pageSize;
+        const expectedRoomItemIndex = event.pageIndex * event.pageSize;
         component.onPageChange(event);
-        expect(component.roomItemIndex).toEqual(expectedRoomItemindex);
+        expect(component.roomItemIndex).toEqual(expectedRoomItemIndex);
     });
 
-    it('should return if the name', () => {
-        const settings: GameSettings = new GameSettings(['mi', ''], 1, '01', '00', 'Facile', 'Activer', 'francais', '00');
+    it('should return if the name is null', () => {
+        const settings: GameSettings = new GameSettings(['mi', ''], 1, '01', '00', Level.Beginner, 'Activer', 'francais', '');
         const expectedRooms = [new Room('room', 'socket', settings, State.Waiting)];
         const matDialogRefMock = jasmine.createSpyObj('MatDialogRef', ['afterClosed']);
         matDialogRefMock.afterClosed.and.callFake(() => {
@@ -100,12 +100,12 @@ describe('JoinRoomComponent', () => {
         });
         component.dialog = matDialogMock;
         component.join(expectedRooms[0]);
-        expect(expectedRooms[0].gameSettings.playersName[1]).toEqual('');
+        expect(expectedRooms[0].gameSettings.playersNames[1]).toEqual('');
     });
 
     it('should set display error message return if the customer name is equal OwnerName', () => {
         jasmine.clock().install();
-        const settings: GameSettings = new GameSettings(['mi', ''], 1, '01', '00', 'Facile', 'Activer', 'francais', '00');
+        const settings: GameSettings = new GameSettings(['mi', ''], 1, '01', '00', Level.Beginner, 'Activer', 'francais', '');
         const expectedRooms = [new Room('room', 'socket', settings, State.Waiting)];
         const matDialogRefMock = jasmine.createSpyObj('MatDialogRef', ['afterClosed']);
         matDialogRefMock.afterClosed.and.callFake(() => {
@@ -118,13 +118,26 @@ describe('JoinRoomComponent', () => {
         component.dialog = matDialogMock;
         component.join(expectedRooms[0]);
         jasmine.clock().tick(5000);
-        expect(expectedRooms[0].gameSettings.playersName[1]).toEqual('');
+        expect(expectedRooms[0].gameSettings.playersNames[1]).toEqual('');
         expect(component.shouldDisplayJoinError).toEqual(false);
         jasmine.clock().uninstall();
     });
-
+    it('should not emit an event to place randomly a player in the room in the name is not null', () => {
+        const matDialogRefMock = jasmine.createSpyObj('MatDialogRef', ['afterClosed']);
+        matDialogRefMock.afterClosed.and.callFake(() => {
+            return of('Mike');
+        });
+        const matDialogMock = jasmine.createSpyObj('MatDialog', ['open']);
+        matDialogMock.open.and.callFake(() => {
+            return matDialogRefMock;
+        });
+        component.dialog = matDialogMock;
+        component.placeRandomly();
+        const spyEmit = spyOn(component['clientSocketService'].socket, 'emit');
+        expect(spyEmit).not.toHaveBeenCalled();
+    });
     it('should emit an event to add new Customer if his name is different of the  OwnerName', () => {
-        const settings: GameSettings = new GameSettings(['mi', ''], 1, '01', '00', 'Facile', 'Activer', 'francais', '00');
+        const settings: GameSettings = new GameSettings(['mi', ''], 1, '01', '00', Level.Beginner, 'Activer', 'francais', '');
         const expectedRooms = [new Room('room', 'socket', settings, State.Waiting)];
         const matDialogRefMock = jasmine.createSpyObj('MatDialogRef', ['afterClosed']);
         matDialogRefMock.afterClosed.and.callFake(() => {
@@ -136,7 +149,81 @@ describe('JoinRoomComponent', () => {
         });
         component.dialog = matDialogMock;
         component.join(expectedRooms[0]);
-        expect(expectedRooms[0].gameSettings.playersName[1]).toEqual('');
+        expect(expectedRooms[0].gameSettings.playersNames[1]).toEqual('');
         expect(expectedRooms[0].id).toEqual('room');
+    });
+
+    it('should not emit an event to place randomly a player in the room in the name is null', () => {
+        const matDialogRefMock = jasmine.createSpyObj('MatDialogRef', ['afterClosed']);
+        matDialogRefMock.afterClosed.and.callFake(() => {
+            return of(null);
+        });
+        const matDialogMock = jasmine.createSpyObj('MatDialog', ['open']);
+        matDialogMock.open.and.callFake(() => {
+            return matDialogRefMock;
+        });
+        component.dialog = matDialogMock;
+        component.placeRandomly();
+        const spyEmit = spyOn(component['clientSocketService'].socket, 'emit');
+        expect(spyEmit).not.toHaveBeenCalled();
+    });
+
+    it('should on at the event ReceiveRandomPlacement form the server', () => {
+        const fakeCustomerName = 'Mike';
+        const myIdRoom = '1';
+        component['clientSocketService'].socket = {
+            on: (eventName: string, callback: (customer: string, id: string) => void) => {
+                if (eventName === 'receiveCustomerOfRandomPlacement') {
+                    callback(fakeCustomerName, myIdRoom);
+                }
+            },
+            emit: (eventName: string, _args: any[] | any) => {
+                return;
+            },
+        } as unknown as Socket;
+        component['receiveRandomPlacement']();
+        const spyEmit = spyOn(component['clientSocketService'].socket, 'emit');
+        expect(spyEmit).not.toHaveBeenCalled();
+    });
+
+    it('should on at the event ReceiveRoomAvailable form the server and set the isRoomAvailable at false', () => {
+        const numberOfMyRoom = 0;
+        component['clientSocketService'].socket = {
+            on: (eventName: string, callback: (numberOfRooms: number) => void) => {
+                if (eventName === 'roomAvailable') {
+                    callback(numberOfMyRoom);
+                }
+            },
+        } as unknown as Socket;
+        component['receiveRoomAvailable']();
+
+        expect(component.isRoomAvailable).toEqual(false);
+    });
+
+    it('should on at the event ReceiveRoomAvailable form the server and set the isRoomAvailable at true and buttonAvailability at false', () => {
+        const numberOfMyRoom = 1;
+        component['clientSocketService'].socket = {
+            on: (eventName: string, callback: (numberOfRooms: number) => void) => {
+                if (eventName === 'roomAvailable') {
+                    callback(numberOfMyRoom);
+                }
+            },
+        } as unknown as Socket;
+        component['receiveRoomAvailable']();
+        expect(component.isRoomAvailable).toEqual(true);
+        expect(component.isRandomButtonAvailable).toEqual(false);
+    });
+    it('should on at the event ReceiveRoomAvailable form the server and set the isRoomAvailable at true and buttonAvailability at true', () => {
+        const numberOfMyRoom = 2;
+        component['clientSocketService'].socket = {
+            on: (eventName: string, callback: (numberOfRooms: number) => void) => {
+                if (eventName === 'roomAvailable') {
+                    callback(numberOfMyRoom);
+                }
+            },
+        } as unknown as Socket;
+        component['receiveRoomAvailable']();
+        expect(component.isRoomAvailable).toEqual(true);
+        expect(component.isRandomButtonAvailable).toEqual(true);
     });
 });

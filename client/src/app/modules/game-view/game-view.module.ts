@@ -7,11 +7,10 @@ import { FontSizeComponent } from '@app/modules/game-view/font-size/font-size.co
 import { GameViewComponent } from '@app/modules/game-view/game-view/game-view.component';
 import { InformationPanelComponent } from '@app/modules/game-view/information-panel/information-panel.component';
 import { LetterEaselComponent } from '@app/modules/game-view/letter-easel/letter-easel.component';
-import { PlayAreaComponent } from '@app/modules/game-view/play-area/play-area.component';
 import { ScrabbleBoardComponent } from '@app/modules/game-view/scrabble-board/scrabble-board.component';
-import { SidebarComponent } from '@app/modules/game-view/sidebar/sidebar.component';
 import { AppMaterialModule } from '@app/modules/material.module';
 import { SharedModule } from '@app/modules/shared/shared.module';
+import { ObjectivesComponent } from './objectives/objectives.component';
 
 @NgModule({
     declarations: [
@@ -19,12 +18,11 @@ import { SharedModule } from '@app/modules/shared/shared.module';
         ScrabbleBoardComponent,
         InformationPanelComponent,
         LetterEaselComponent,
-        PlayAreaComponent,
-        SidebarComponent,
         FontSizeComponent,
         ChatboxComponent,
+        ObjectivesComponent,
     ],
-    imports: [CommonModule, AppMaterialModule, AppRoutingModule, FormsModule, SharedModule],
+    imports: [CommonModule, AppRoutingModule, FormsModule, SharedModule, AppMaterialModule],
     exports: [GameViewComponent],
     bootstrap: [GameViewComponent],
 })

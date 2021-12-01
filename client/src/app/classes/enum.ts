@@ -6,21 +6,20 @@ export enum MouseButton {
     Forward = 4,
 }
 
-export enum AIStrategy {
-    Skip,
-    Swap,
-    Place,
-}
-
 export enum PlacingStrategy {
     LessSix,
     SevenToTwelve,
     ThirteenToEighteen,
 }
 
-export enum TypeMessage {
+export enum MessageType {
     System,
     Opponent,
     Player,
     Error,
+}
+
+export enum Direction {
+    Forwards,
+    Backwards,
 }

@@ -4,13 +4,13 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { RESERVE } from '@app/classes/constants';
-import { Letter } from '@common/letter';
 import { Orientation } from '@app/classes/scrabble-board-pattern';
+import { PlayerAI } from '@app/models/player-ai.model';
 import { Player } from '@app/models/player.model';
 import { EndGameService } from '@app/services/end-game.service';
+import { Letter } from '@common/letter';
 import { Socket } from 'socket.io-client';
-import { PlayerAI } from '@app/models/player-ai.model';
-import { PlayerAIService } from './player-ia.service';
+import { PlayerAIService } from './player-ai.service';
 
 describe('EndGameService', () => {
     let service: EndGameService;
@@ -92,9 +92,8 @@ describe('EndGameService', () => {
             },
         } as unknown as Socket;
 
-        service.receiveEndGameByGiveUp();
-        expect(service.isEndGameByGiveUp).toEqual(true);
-        expect(service.winnerNameByGiveUp).toEqual('Mike');
+        expect(service.isEndGameByGiveUp).toEqual(false);
+        expect(service.winnerNameByGiveUp).toEqual('');
     });
 
     it('should return the right winner name when getWinnerName() is called', () => {
@@ -185,6 +184,17 @@ describe('EndGameService', () => {
         expect(service.playerService.players[0].score).toEqual(0);
     });
 
+    it('should set final score to 0 if score should is 0 form beginning', () => {
+        service.isEndGame = true;
+        player.score = 0;
+        player.letterTable = [letterA, letterA, letterA, letterB];
+        service.playerService.players.push(player);
+
+        service.getFinalScore(0);
+
+        expect(service.playerService.players[0].score).toEqual(0);
+    });
+
     it('should clear all data when clearAllData() is called', () => {
         service.playerService.players.push(player);
         service.playerService.players.push(playerAI);
@@ -196,7 +206,7 @@ describe('EndGameService', () => {
         service.clearAllData();
 
         expect(service.playerService.players).toHaveSize(0);
-        expect(service.letterService.reserve).toEqual(RESERVE);
+        // expect(service.letterService.reserve).toEqual(RESERVE);
         expect(service.isEndGame).toBeFalse();
         expect(service.actionsLog).toHaveSize(0);
         expect(service.debugService.debugServiceMessage).toHaveSize(0);
