@@ -127,23 +127,23 @@ export class AdministratorController {
         this.router.post('/uploadDictionary', (req: Request, res: Response) => {
             let uploadedFile;
             if (!req['files']) {
-                return res.sendStatus(StatusCodes.NOT_FOUND).send('Fichier introuvable');
+                return res.status(StatusCodes.NOT_FOUND).send('Fichier introuvable');
             }
             if (Array.isArray(req['files'].file)) {
                 // It must be an array of UploadedFile objects
                 for (const fic of req['files'].file) {
                     fic.mv('./dictionaries' + fic.name, (err: boolean) => {
-                        if (err) res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(JSON.stringify('Upload error'));
+                        if (err) res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(JSON.stringify('Erreur de téléversement'));
                     });
                 }
             } else {
                 // It must be a single UploadedFile object
                 uploadedFile = req['files'].file;
                 uploadedFile.mv('./dictionaries/' + uploadedFile.name, (err: boolean) => {
-                    if (err) res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(JSON.stringify('Upload error'));
+                    if (err) res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(JSON.stringify('Erreur de téléversement'));
                 });
             }
-            return res.status(StatusCodes.OK).send(JSON.stringify('Uploaded'));
+            return res.status(StatusCodes.OK).send(JSON.stringify('Téléversé'));
         });
     }
 }
