@@ -243,4 +243,44 @@ describe('FormComponent', () => {
         await component.selectGameDictionary(emptyDictionary);
         expect(setError).not.toHaveBeenCalled();
     });
+
+    it('should call initializeGame when Enter key is pressed and form is valid', () => {
+        const spyInit = spyOn(component, 'initializeGame');
+        const enterEvent = new KeyboardEvent('keydown', {
+            code: 'Enter',
+            key: 'Enter',
+            charCode: 13,
+            keyCode: 13,
+            view: window,
+            bubbles: true,
+        });
+        const notEnterEvent = new KeyboardEvent('keydown', {
+            code: 'test',
+            key: 'test',
+            charCode: 13,
+            keyCode: 13,
+            view: window,
+            bubbles: true,
+        });
+        let numberSpyCalls = 0;
+
+        // Form is invalid
+        component.keyPressSubmit(notEnterEvent);
+        expect(spyInit).toHaveBeenCalledTimes(numberSpyCalls);
+
+        component.keyPressSubmit(enterEvent);
+        numberSpyCalls++;
+        expect(spyInit).toHaveBeenCalledTimes(numberSpyCalls);
+
+        // Form is valid
+        component.form.controls.playerName.setValue('validName');
+        component.form.controls.minuteInput.setValue('01');
+
+        component.keyPressSubmit(notEnterEvent);
+        expect(spyInit).toHaveBeenCalledTimes(numberSpyCalls);
+
+        component.keyPressSubmit(enterEvent);
+        numberSpyCalls++;
+        expect(spyInit).toHaveBeenCalledTimes(numberSpyCalls);
+    });
 });
