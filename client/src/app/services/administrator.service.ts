@@ -70,7 +70,6 @@ export class AdministratorService {
                 aiName: playerName,
                 isDefault: false,
             };
-
             if (isNewAi) {
                 this.addAiPlayer(aiPlayer, aiType);
             } else {
