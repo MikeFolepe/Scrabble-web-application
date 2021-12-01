@@ -11,9 +11,9 @@
             [ngClass]="{ failed: objectives[1][0].id === 3 && objectivesService.activeTimeRemaining[0] === 0 }"
         >
             {{
-                objectivesService.activeTimeRemaining[this.resolveByTurn()] > 9
-                    ? objectivesService.activeTimeRemaining[this.resolveByTurn()]
-                    : '0' + objectivesService.activeTimeRemaining[this.resolveByTurn()]
+                objectivesService.activeTimeRemaining[0] > 9
+                    ? objectivesService.activeTimeRemaining[0]
+                    : '0' + objectivesService.activeTimeRemaining[0]
             }}
         </div>
     </div>
@@ -32,12 +32,12 @@
         <div
             class="timer"
             *ngIf="objective.id === 3 && !objective.isCompleted"
-            [ngClass]="{ failed: objective.id === 3 && objectivesService.activeTimeRemaining[this.resolveByTurn()] === 0 }"
+            [ngClass]="{ failed: objective.id === 3 && objectivesService.activeTimeRemaining[0] === 0 }"
         >
             {{
-                objectivesService.activeTimeRemaining[this.resolveByTurn()] > 9
-                    ? objectivesService.activeTimeRemaining[this.resolveByTurn()]
-                    : '0' + objectivesService.activeTimeRemaining[this.resolveByTurn()]
+                objectivesService.activeTimeRemaining[0] > 9
+                    ? objectivesService.activeTimeRemaining[0]
+                    : '0' + objectivesService.activeTimeRemaining[0]
             }}
         </div>
     </div>

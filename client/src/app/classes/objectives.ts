@@ -84,7 +84,7 @@ export const OBJECTIVES: Objective[] = [
 
 export const NUMBER_OF_OBJECTIVES = 4;
 export const NUMBER_OF_PUBLIC_OBJECTIVES = 2;
-export const LETTERS_FOR_OBJ5: string[] = ['J', 'K', 'Q', 'W', 'X', 'Y', 'Z'];
+export const LETTERS_FOR_OBJ5: string[] = ['j', 'k', 'q', 'w', 'x', 'y', 'z'];
 export const CORNER_POSITIONS: string[] = ['A1', 'A15', 'O1', 'O15'];
 export const MIN_SIZE_FOR_OBJ7 = 8;
 export const MIN_SIZE_FOR_OBJ2 = 4;

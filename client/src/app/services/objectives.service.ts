@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { ONE_MINUTE } from '@app/classes/constants';
 import {
     CORNER_POSITIONS,
@@ -24,7 +24,7 @@ import { WordValidationService } from './word-validation.service';
 @Injectable({
     providedIn: 'root',
 })
-export class ObjectivesService {
+export class ObjectivesService implements OnDestroy {
     objectives: Objective[][];
     playerIndex: number;
     activeTimeRemaining: number[];
@@ -42,10 +42,12 @@ export class ObjectivesService {
         private endGameService: EndGameService,
     ) {
         this.objectives = [[], []];
+        this.playerIndex = 0;
         this.activeTimeRemaining = [ONE_MINUTE, ONE_MINUTE];
-        this.obj1LastAttempt = [0, 0];
+        this.extendedWords = [];
         this.obj1Counter = [0, 0];
         this.obj1ActionTracker = [[], []];
+        this.obj1LastAttempt = [0, 0];
         this.receiveObjectives();
     }
 
@@ -105,10 +107,6 @@ export class ObjectivesService {
 
         const obj1ActionTrackerSize = this.obj1ActionTracker[this.playerIndex].length - 1;
         this.obj1ActionTracker[this.playerIndex][obj1ActionTrackerSize] += currentWordLength >= minLengthToValidate ? 'Valide' : 'Invalide';
-        this.obj1ActionTracker[this.playerIndex] = this.obj1ActionTracker[this.playerIndex].slice(
-            Math.max(obj1ActionTrackerSize - 1 - numberOfOccurrencesToValidate, 0),
-            obj1ActionTrackerSize + 1,
-        );
 
         for (let index = obj1ActionTrackerSize; index >= this.obj1LastAttempt[this.playerIndex]; index--) {
             if (this.obj1ActionTracker[this.playerIndex][index] === 'placerSuccesValide') {
@@ -121,18 +119,16 @@ export class ObjectivesService {
 
         this.obj1LastAttempt[this.playerIndex] = actionLog.length;
 
-        if (this.obj1Counter[this.playerIndex] === numberOfOccurrencesToValidate) {
-            this.addObjectiveScore(id);
-            this.obj1Counter[this.playerIndex] = 0;
-        }
+        if (this.obj1Counter[this.playerIndex] === numberOfOccurrencesToValidate) this.addObjectiveScore(id);
     }
 
     validateObjectiveTwo(id: number) {
+        const lowerCasePlayedWords: string[] = [];
+        for (const word of this.wordValidationService.priorPlayedWords.keys()) {
+            lowerCasePlayedWords.push(word.toLowerCase());
+        }
         for (const word of this.wordValidationService.lastPlayedWords.keys()) {
-            const position = this.wordValidationService.playedWords.get(word) as string[];
-            const nbOfOccurrences = position.length / word.length;
-
-            if (word.length >= MIN_SIZE_FOR_OBJ2 && nbOfOccurrences > 1) this.addObjectiveScore(id);
+            if (word.length >= MIN_SIZE_FOR_OBJ2 && lowerCasePlayedWords.includes(word.toLowerCase())) this.addObjectiveScore(id);
         }
     }
 
@@ -140,10 +136,8 @@ export class ObjectivesService {
         for (const positions of this.wordValidationService.lastPlayedWords.values()) {
             const playedPositionsUsed: string[][] = [];
             for (const position of positions) {
-                this.isPositionInPlayedWords(position, playedPositionsUsed);
+                this.findPositionInPlayedWords(position, playedPositionsUsed);
             }
-            // TODO: supprimer cette ligne lorsque satisfait
-            // console.log('MOTS INTERSECTIONS : ', playedPositionsUsed);
             if (playedPositionsUsed.length > 1) {
                 this.addObjectiveScore(id);
                 return;
@@ -160,7 +154,7 @@ export class ObjectivesService {
         let specificLettersUsed = 0;
         for (const word of this.wordValidationService.lastPlayedWords.keys()) {
             for (const letter of word) {
-                if (LETTERS_FOR_OBJ5.includes(letter.toUpperCase())) specificLettersUsed++;
+                if (LETTERS_FOR_OBJ5.includes(letter) || letter.toLocaleUpperCase() === letter) specificLettersUsed++;
             }
             if (specificLettersUsed > 1) {
                 this.addObjectiveScore(id);
@@ -195,13 +189,30 @@ export class ObjectivesService {
         }
     }
 
-    // TODO: nom de fonction peut etre amelioré eventuellement
-    isPositionInPlayedWords(position: string, playedPositionsUsed: string[][]) {
-        for (const playedPositions of this.wordValidationService.priorPlayedWords.values()) {
-            if (playedPositions.includes(position) && !playedPositionsUsed.includes(playedPositions)) {
-                playedPositionsUsed.push(playedPositions);
+    findPositionInPlayedWords(position: string, playedPositionsUsed: string[][]) {
+        for (const word of this.wordValidationService.priorCurrentWords.keys()) {
+            const playedPositions = this.wordValidationService.priorCurrentWords.get(word) as string[];
+            for (let i = 0; i < playedPositions.length / word.length; i++) {
+                const wordPositions = playedPositions.slice(i * word.length, i + word.length);
+                if (wordPositions.includes(position) && !this.includesArray(playedPositionsUsed, wordPositions)) {
+                    playedPositionsUsed.push(wordPositions);
+                }
             }
         }
+    }
+
+    includesArray<T>(container: T[][], arrayToFind: T[]): boolean {
+        let included = false;
+        for (const array of container) {
+            if (array.length === arrayToFind.length) {
+                for (let i = 0; i < array.length; i++) {
+                    if (array[i] === arrayToFind[i]) included = true;
+                    else included = false;
+                }
+                if (included) return true;
+            }
+        }
+        return false;
     }
 
     addObjectiveScore(id: number): void {
@@ -218,5 +229,16 @@ export class ObjectivesService {
             }
         }
         return undefined;
+    }
+
+    ngOnDestroy(): void {
+        this.objectives = [[], []];
+        this.activeTimeRemaining = [ONE_MINUTE, ONE_MINUTE];
+        this.obj1LastAttempt = [0, 0];
+        this.obj1Counter = [0, 0];
+        this.obj1ActionTracker = [[], []];
+        for (const objective of OBJECTIVES) {
+            objective.isCompleted = false;
+        }
     }
 }

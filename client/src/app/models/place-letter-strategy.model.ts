@@ -10,7 +10,7 @@ export class PlaceLetterStrategy {
     pointingRange: CustomRange;
     private board: string[][][];
     constructor() {
-        this.pointingRange = { min: 1, max: 18 };
+        this.pointingRange = { min: 1, max: 18 }; // TODO constante ?
         this.board = [];
     }
 
@@ -254,7 +254,6 @@ export class PlaceLetterStrategy {
                 patternArray.push({ line, pattern });
             }
         }
-
         return patternArray;
     }
 }

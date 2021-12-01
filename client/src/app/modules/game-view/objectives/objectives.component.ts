@@ -1,32 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { Objective } from '@app/classes/objectives';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { ObjectivesService } from '@app/services/objectives.service';
-// import { SkipTurnService } from '@app/services/skip-turn.service';
-import { Objective } from '@app/classes/objectives';
 
 @Component({
     selector: 'app-objectives',
     templateUrl: './objectives.component.html',
     styleUrls: ['./objectives.component.scss'],
 })
-export class ObjectivesComponent implements OnInit {
+export class ObjectivesComponent {
     objectives: Objective[][];
-    activeTimeRemaining: number;
 
-    constructor(
-        public objectivesService: ObjectivesService,
-        public gameSettingsService: GameSettingsService, // private skipTurnService: SkipTurnService,
-    ) {
-        this.objectives = [[], []];
-    }
-
-    resolveByTurn(): number {
-        // if (this.gameSettingsService.isSoloMode) return this.skipTurnService.isTurn ? 0 : 1;
-
-        return 0;
-    }
-
-    ngOnInit() {
+    constructor(public objectivesService: ObjectivesService, public gameSettingsService: GameSettingsService) {
         this.objectives = this.objectivesService.objectives;
     }
 }

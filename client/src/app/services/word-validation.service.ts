@@ -12,6 +12,8 @@ export class WordValidationService {
     fileName: string;
     playedWords: Map<string, string[]>;
     lastPlayedWords: Map<string, string[]>;
+    priorCurrentWords: Map<string, string[]>;
+    currentWords: Map<string, string[]>;
     priorPlayedWords: Map<string, string[]>;
     private newWords: string[];
     private newPlayedWords: Map<string, string[]>;
@@ -29,6 +31,8 @@ export class WordValidationService {
         this.playedWords = new Map<string, string[]>();
         this.newPlayedWords = new Map<string, string[]>();
         this.lastPlayedWords = new Map<string, string[]>();
+        this.priorCurrentWords = new Map<string, string[]>();
+        this.currentWords = new Map<string, string[]>();
         this.priorPlayedWords = new Map<string, string[]>();
         this.newPositions = new Array<string>();
         this.bonusesPositions = new Map<string, string>(this.randomBonusService.bonusPositions);
@@ -220,9 +224,13 @@ export class WordValidationService {
 
         this.removeBonuses(this.newPlayedWords);
 
+        for (const word of this.currentWords.keys()) {
+            this.priorCurrentWords.set(word, this.currentWords.get(word) as string[]);
+        }
         this.lastPlayedWords.clear();
         for (const word of this.newPlayedWords.keys()) {
             this.lastPlayedWords.set(word, this.newPlayedWords.get(word) as string[]);
+            this.currentWords.set(word, this.newPlayedWords.get(word) as string[]);
         }
 
         this.priorPlayedWords.clear();
@@ -233,6 +241,7 @@ export class WordValidationService {
         for (const word of this.newPlayedWords.keys()) {
             this.addToPlayedWords(word, this.newPlayedWords.get(word) as string[], this.playedWords);
         }
+
         this.clientSocketService.socket.emit('updatePlayedWords', JSON.stringify(Array.from(this.playedWords)), this.clientSocketService.roomId);
 
         this.newPlayedWords.clear();
