@@ -59,6 +59,7 @@ export class AdministratorService {
             return;
         }
         const nameDialog = this.dialog.open(JoinDialogComponent, { disableClose: true });
+        // TODO nom actuel en valeur par défaut (Anthony)
         nameDialog.afterClosed().subscribe((playerName: string) => {
             if (playerName == null) return;
 

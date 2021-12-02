@@ -228,7 +228,31 @@ fdescribe('AdministratorService', () => {
         expect(service.expertNames).toEqual([player4, player5]);
     });
 
-    it('should call handleRequestError if players returned have an error', () => {
+    it('should call handleRequestError if returned players have an error', () => {
+        const errorResponse = new HttpErrorResponse({
+            error: { code: 'some code', message: 'some message.' },
+            status: 400,
+            statusText: 'Bad Request',
+        });
+        const getPlayers = spyOn(service['communicationService'], 'getAiPlayers').and.returnValue(throwError(errorResponse));
+        const handleError = spyOn<any>(service, 'handleRequestError');
+        service.initializeAiPlayers();
+        expect(getPlayers).toHaveBeenCalledTimes(2);
+        expect(handleError).toHaveBeenCalledTimes(2);
+    });
+
+    it('should initialize dictionaries', () => {
+        const dictionary1: Dictionary = { fileName: 'test 1 name', title: 'test 1', description: 'test 1 descr', isDefault: true };
+        const dictionary2: Dictionary = { fileName: 'test 2 name', title: 'test 2', description: 'test 2 descr', isDefault: false };
+        const dictionary3: Dictionary = { fileName: 'test 3 name', title: 'test 3', description: 'test 3 descr', isDefault: false };
+
+        const getPlayers = spyOn(service['communicationService'], 'getAiPlayers').and.returnValue(of([player4, player5]));
+        service.initializeAiPlayers();
+        expect(getPlayers).toHaveBeenCalledTimes(2);
+        expect(service.dictionaries).toEqual([dictionary1, dictionary2, dictionary3]);
+    });
+
+    it('should call handleRequestError if returned dictionaries have an error', () => {
         const errorResponse = new HttpErrorResponse({
             error: { code: 'some code', message: 'some message.' },
             status: 400,
