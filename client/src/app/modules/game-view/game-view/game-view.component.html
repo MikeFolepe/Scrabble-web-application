@@ -16,7 +16,7 @@
                     mat-raised-button
                     color="primary"
                     id="regular-button"
-                    [disabled]="!this.skipTurnService.isTurn"
+                    [disabled]="!this.skipTurnService.isTurn || this.skipTurnService.shouldNotBeDisplayed"
                     (click)="this.chatBoxService.sendPlayerMessage('!passer')"
                 >
                     Passer son tour
