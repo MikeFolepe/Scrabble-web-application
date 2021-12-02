@@ -24,6 +24,7 @@ export class SkipTurnService {
     // JUSTIFICATION : Next line is mandatory, NodeJS return an eslint issue
     // eslint-disable-next-line no-undef
     intervalID: NodeJS.Timeout;
+    shouldNotBeDisplayed: boolean;
 
     constructor(
         public gameSettingsService: GameSettingsService,
@@ -35,6 +36,7 @@ export class SkipTurnService {
         this.receiveNewTurn();
         this.receiveStartFromServer();
         this.receiveStopFromServer();
+        this.shouldNotBeDisplayed = false;
     }
 
     receiveNewTurn(): void {
@@ -60,6 +62,7 @@ export class SkipTurnService {
             return;
         }
         this.stopTimer();
+        if (this.isTurn) this.shouldNotBeDisplayed = true;
         setTimeout(() => {
             if (this.gameSettingsService.isSoloMode) {
                 if (this.isTurn) {
@@ -71,6 +74,7 @@ export class SkipTurnService {
                     }, DELAY_BEFORE_PLAYING);
                 } else {
                     this.isTurn = true;
+                    this.shouldNotBeDisplayed = false;
                     this.startTimer();
                 }
             } else {
