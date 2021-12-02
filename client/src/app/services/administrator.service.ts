@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ERROR_MESSAGE_DELAY } from '@app/classes/constants';
 import { JoinDialogComponent } from '@app/modules/initialize-game/join-dialog/join-dialog.component';
+import { EditDictionaryDialogComponent } from '@app/pages/admin-page/edit-dictionary-dialog/edit-dictionary-dialog.component';
 import { CommunicationService } from '@app/services/communication.service';
 import { AiPlayer, AiPlayerDB, AiType } from '@common/ai-name';
 import { Dictionary } from '@common/dictionary';
@@ -59,6 +60,7 @@ export class AdministratorService {
             return;
         }
         const nameDialog = this.dialog.open(JoinDialogComponent, { disableClose: true });
+        // TODO nom actuel en valeur par défaut (Anthony)
         nameDialog.afterClosed().subscribe((playerName: string) => {
             if (playerName == null) return;
 
@@ -70,7 +72,6 @@ export class AdministratorService {
                 aiName: playerName,
                 isDefault: false,
             };
-
             if (isNewAi) {
                 this.addAiPlayer(aiPlayer, aiType);
             } else {
@@ -128,6 +129,7 @@ export class AdministratorService {
             }
             reader.onloadend = () => {
                 // Validate the dictionary with a schema
+                // TODO: ligne suivante à tester (Étienne)
                 if (typeof reader.result === 'string') {
                     try {
                         this.currentDictionary = JSON.parse(reader.result);
@@ -150,7 +152,7 @@ export class AdministratorService {
             this.communicationService.uploadFile(this.file).subscribe(
                 (response: string) => {
                     this.dictionaries.push({
-                        fileName: this.file?.name as string,
+                        fileName: this.file?.name as string, // TODO: supprimer ? as string car forcément defined à la ligne 151 non ? (Étienne)
                         title: this.currentDictionary.title,
                         description: this.currentDictionary.description,
                         isDefault: false,
@@ -163,10 +165,32 @@ export class AdministratorService {
             );
         }
     }
+
+    editDictionary(dictionary: Dictionary): void {
+        if (dictionary.isDefault) {
+            this.displayMessage('Vous ne pouvez pas modifier le dictionnaire par défaut');
+            return;
+        }
+        this.dialog
+            .open(EditDictionaryDialogComponent, {
+                disableClose: true,
+                data: {
+                    title: dictionary.title,
+                    description: dictionary.description,
+                },
+            })
+            .afterClosed()
+            .subscribe((response) => {
+                if (!response) return;
+                if (!response.titleInput || !response.descriptionInput) return;
+                this.updateDictionary(dictionary, response);
+            });
+    }
+
     // JUSTIFICATION: Required as we don't know the explicit type of a dialog response
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     updateDictionary(dictionary: Dictionary, dialogResponse: any): void {
-        if (this.isDictionaryNameUsed(dialogResponse.title)) {
+        if (this.isDictionaryNameUsed(dialogResponse.titleInput)) {
             this.displayMessage('Ce titre de dictionnaire existe deja. Veuillez réessayer.');
             return;
         }
@@ -220,11 +244,6 @@ export class AdministratorService {
         this.displayMessage('La base de données à été réinitialisée');
     }
 
-    isDictionaryDeletable(dictionary: Dictionary): boolean {
-        if (dictionary.isDefault) this.displayMessage('Vous ne pouvez pas modifier le dictionnaire par défaut');
-        return !dictionary.isDefault;
-    }
-
     private addAiPlayer(aiPlayer: AiPlayer, aiType: AiType): void {
         this.communicationService.addAiPlayer(aiPlayer, aiType).subscribe(
             (aiFromDB: AiPlayerDB) => {
@@ -258,7 +277,7 @@ export class AdministratorService {
     }
 
     private displayMessage(message: string): void {
-        if (this.isResetting) return; // TODO check si fonctionnel
+        if (this.isResetting) return;
         this.snackBar.open(message, 'OK', {
             duration: ERROR_MESSAGE_DELAY,
             horizontalPosition: 'center',
@@ -267,13 +286,11 @@ export class AdministratorService {
     }
 
     private isDictionaryNameUsed(dictionaryTitle: string): boolean {
-        for (const dictionary of this.dictionaries) {
-            if (dictionaryTitle === dictionary.title) return true;
-        }
-        return false;
+        return this.dictionaries.some((dictionaryToFind: Dictionary) => dictionaryToFind.title === dictionaryTitle);
     }
 
     private checkIfAlreadyExists(aiPlayerName: string): boolean {
+        // Quasi impossible à tester tel quel, voir si on peut pas faire autrement (Mike)
         // TODO: if (this.beginnerNames.find()... || this.expertNames.find()...) return false;
         if (this.beginnerNames === undefined && this.expertNames === undefined) return false;
         const aiBeginner = this.beginnerNames.find((aiBeginnerPlayer) => aiBeginnerPlayer.aiName === aiPlayerName);
