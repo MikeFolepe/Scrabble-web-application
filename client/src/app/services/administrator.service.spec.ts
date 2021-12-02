@@ -12,6 +12,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AiPlayerDB, AiType } from '@common/ai-name';
 import { Dictionary } from '@common/dictionary';
+import FileSaver from 'file-saver';
 import { Observable, of, throwError } from 'rxjs';
 import { AdministratorService } from './administrator.service';
 
@@ -21,18 +22,19 @@ interface DictionaryTest {
     words: string[];
 }
 
-fdescribe('AdministratorService', () => {
+describe('AdministratorService', () => {
     let service: AdministratorService;
     let player1: AiPlayerDB;
     let player2: AiPlayerDB;
     let player3: AiPlayerDB;
+    let errorResponse: HttpErrorResponse;
+    let emptyDictionary: Dictionary;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [HttpClientTestingModule, RouterTestingModule, MatSnackBarModule, MatDialogModule, BrowserAnimationsModule],
         }).compileComponents();
         service = TestBed.inject(AdministratorService);
-        jasmine.clock().install();
         player1 = {
             _id: '1',
             aiName: 'Mister_Bucky',
@@ -50,10 +52,17 @@ fdescribe('AdministratorService', () => {
         };
         service.beginnerNames = [player1, player2, player3];
         service.expertNames = [player1, player2, player3];
-    });
-
-    afterEach(() => {
-        jasmine.clock().uninstall();
+        errorResponse = new HttpErrorResponse({
+            error: { code: 'some code', message: 'some message.' },
+            status: 400,
+            statusText: 'Bad Request',
+        });
+        emptyDictionary = {
+            fileName: 'empty.json',
+            title: 'empty',
+            description: 'empty dictionary',
+            isDefault: false,
+        };
     });
 
     it('should be created', () => {
@@ -106,6 +115,7 @@ fdescribe('AdministratorService', () => {
     });
 
     it('adding a dictionary while its name already exist should not be possible', () => {
+        jasmine.clock().install();
         spyOn<any>(service, 'displayUploadMessage').and.callThrough();
         const message: Observable<string> = of('Uploaded');
         spyOn(service['communicationService'], 'uploadFile').and.returnValue(message);
@@ -115,14 +125,10 @@ fdescribe('AdministratorService', () => {
         service.addDictionary();
         jasmine.clock().tick(3000);
         expect(service['displayUploadMessage']).toHaveBeenCalledWith('Il existe déjà un dictionnaire portant le même nom');
+        jasmine.clock().uninstall();
     });
 
     it('should display a message if upload dictionary encounters an error', () => {
-        const errorResponse: HttpErrorResponse = new HttpErrorResponse({
-            error: { code: 'some code', message: 'some message.' },
-            status: 400,
-            statusText: 'Bad Request',
-        });
         const displayMessage = spyOn<any>(service, 'displayMessage');
         spyOn(service['communicationService'], 'uploadFile').and.returnValue(throwError(errorResponse));
         spyOn<any>(service, 'isDictionaryNameUsed').and.returnValue(false);
@@ -132,6 +138,14 @@ fdescribe('AdministratorService', () => {
         expect(displayMessage).toHaveBeenCalledWith(
             "Le dictionnaire n'a pas été téléversé, erreur : Http failure response for (unknown url): 400 Bad Request",
         );
+    });
+
+    it('should not call uploadDictionary if file is undefined', () => {
+        const uploadDictionary = spyOn(service['communicationService'], 'uploadFile');
+        spyOn<any>(service, 'isDictionaryNameUsed').and.returnValue(false);
+        service.currentDictionary = { fileName: 'test', title: 'Un dictionnaire', description: 'Une description', isDefault: false };
+        service.addDictionary();
+        expect(uploadDictionary).not.toHaveBeenCalled();
     });
 
     it('submitting a valid dictionary should call addDictionary()', async () => {
@@ -229,16 +243,11 @@ fdescribe('AdministratorService', () => {
     });
 
     it('should call handleRequestError if returned players have an error', () => {
-        const errorResponse = new HttpErrorResponse({
-            error: { code: 'some code', message: 'some message.' },
-            status: 400,
-            statusText: 'Bad Request',
-        });
         const getPlayers = spyOn(service['communicationService'], 'getAiPlayers').and.returnValue(throwError(errorResponse));
-        const handleError = spyOn<any>(service, 'handleRequestError');
+        const displayMessage = spyOn<any>(service, 'displayMessage');
         service.initializeAiPlayers();
         expect(getPlayers).toHaveBeenCalledTimes(2);
-        expect(handleError).toHaveBeenCalledTimes(2);
+        expect(displayMessage).toHaveBeenCalledTimes(2);
     });
 
     it('should initialize dictionaries', () => {
@@ -246,26 +255,15 @@ fdescribe('AdministratorService', () => {
         const dictionary2: Dictionary = { fileName: 'test 2 name', title: 'test 2', description: 'test 2 descr', isDefault: false };
         const dictionary3: Dictionary = { fileName: 'test 3 name', title: 'test 3', description: 'test 3 descr', isDefault: false };
 
-        const getPlayers = spyOn(service['communicationService'], 'getAiPlayers').and.returnValue(of([player4, player5]));
-        service.initializeAiPlayers();
-        expect(getPlayers).toHaveBeenCalledTimes(2);
+        const getDictionaries = spyOn(service['communicationService'], 'getDictionaries').and.returnValue(
+            of([dictionary1, dictionary2, dictionary3]),
+        );
+        service.initializeDictionaries();
+        expect(getDictionaries).toHaveBeenCalledTimes(1);
         expect(service.dictionaries).toEqual([dictionary1, dictionary2, dictionary3]);
     });
 
-    it('should call handleRequestError if returned dictionaries have an error', () => {
-        const errorResponse = new HttpErrorResponse({
-            error: { code: 'some code', message: 'some message.' },
-            status: 400,
-            statusText: 'Bad Request',
-        });
-        const getPlayers = spyOn(service['communicationService'], 'getAiPlayers').and.returnValue(throwError(errorResponse));
-        const handleError = spyOn<any>(service, 'handleRequestError');
-        service.initializeAiPlayers();
-        expect(getPlayers).toHaveBeenCalledTimes(2);
-        expect(handleError).toHaveBeenCalledTimes(2);
-    });
-
-    it('should not add IA to database if player added is default', () => {
+    it('should not add AI to database if player added is default', () => {
         const addPlayer = spyOn<any>(service, 'addAiPlayer');
         const updatePlayer = spyOn<any>(service, 'updateAiPlayer');
         const displayMessage = spyOn<any>(service, 'displayMessage');
@@ -276,7 +274,39 @@ fdescribe('AdministratorService', () => {
         expect(displayMessage).toHaveBeenCalledOnceWith('Vous ne pouvez pas modifier un joueur par défaut!');
     });
 
-    it('should not add IA to database if name is null', () => {
+    it('should not add AI name to database if an error occurred in the request', () => {
+        const playerTest: AiPlayerDB = {
+            _id: '4',
+            aiName: 'Mister_Test',
+            isDefault: false,
+        };
+        const addPlayer = spyOn<any>(service['communicationService'], 'addAiPlayer').and.returnValue(throwError(errorResponse));
+        const displayMessage = spyOn<any>(service, 'displayMessage');
+
+        service['addAiPlayer'](playerTest, AiType.beginner);
+        expect(addPlayer).toHaveBeenCalledTimes(1);
+        expect(displayMessage).toHaveBeenCalledOnceWith(
+            "Le joueur n'a pas été ajouté, erreur : Http failure response for (unknown url): 400 Bad Request",
+        );
+    });
+
+    it('should not update AI name if an error occurred in the request', () => {
+        const playerTest: AiPlayerDB = {
+            _id: '4',
+            aiName: 'Mister_Test',
+            isDefault: false,
+        };
+        const updatePlayer = spyOn<any>(service['communicationService'], 'updateAiPlayer').and.returnValue(throwError(errorResponse));
+        const displayMessage = spyOn<any>(service, 'displayMessage');
+
+        service['updateAiPlayer']('4', playerTest, AiType.beginner);
+        expect(updatePlayer).toHaveBeenCalledTimes(1);
+        expect(displayMessage).toHaveBeenCalledOnceWith(
+            "Le joueur n'a pas été modifié, erreur : Http failure response for (unknown url): 400 Bad Request",
+        );
+    });
+
+    it('should not add AI name to database if name is null', () => {
         const addPlayer = spyOn<any>(service, 'addAiPlayer');
         const updatePlayer = spyOn<any>(service, 'updateAiPlayer');
         const displayMessage = spyOn<any>(service, 'displayMessage');
@@ -293,20 +323,7 @@ fdescribe('AdministratorService', () => {
         expect(displayMessage).not.toHaveBeenCalled();
     });
 
-    // it('should know if at least one of the arrays of players is undefined', () => {
-    //     service.beginnerNames = [
-    //         {
-    //             _id: '4',
-    //             aiName: 'Mister_Test',
-    //             isDefault: false,
-    //         },
-    //     ];
-    //     service.expertNames = undefined as unknown as AiPlayerDB[];
-
-    //     expect(service['checkIfAlreadyExists']('test')).toBeFalse();
-    // });
-
-    it('should not add IA to database if name is already given', () => {
+    it('should not add AI name to database if name is already given', () => {
         const addPlayer = spyOn<any>(service, 'addAiPlayer');
         const updatePlayer = spyOn<any>(service, 'updateAiPlayer');
         const displayMessage = spyOn<any>(service, 'displayMessage');
@@ -342,7 +359,7 @@ fdescribe('AdministratorService', () => {
         expect(displayMessage).toHaveBeenCalledTimes(2);
     });
 
-    it('should add player IA to database', () => {
+    it('should add player AI to database', () => {
         const addPlayer = spyOn<any>(service, 'addAiPlayer').and.callThrough();
         const updatePlayer = spyOn<any>(service, 'updateAiPlayer').and.callThrough();
         spyOn(service['communicationService'], 'addAiPlayer').and.returnValues(
@@ -379,5 +396,193 @@ fdescribe('AdministratorService', () => {
         expect(addPlayer).toHaveBeenCalledTimes(2);
         expect(updatePlayer).toHaveBeenCalledTimes(2);
         expect(service.expertNames).toContain({ _id: '5', aiName: 'test4', isDefault: false });
+    });
+
+    it('should not display upload message if there is already one being displayed', () => {
+        jasmine.clock().install();
+        const testMessage = 'test';
+        service['displayUploadMessage'](testMessage);
+        expect(service.uploadMessage).toEqual(testMessage);
+
+        const testMessage2 = 'notDisplayed';
+        service['displayUploadMessage'](testMessage2);
+        expect(service.uploadMessage).not.toEqual(testMessage2);
+        jasmine.clock().tick(4001);
+        expect(service.uploadMessage).toEqual('');
+        jasmine.clock().uninstall();
+    });
+
+    it('should call handleRequestError if an error occurred while deleting players', () => {
+        const testPlayer: AiPlayerDB = {
+            _id: '4',
+            aiName: 'Mister_Test',
+            isDefault: false,
+        };
+        const deletePlayers = spyOn(service['communicationService'], 'deleteAiPlayer').and.returnValue(throwError(errorResponse));
+        const displayMessage = spyOn<any>(service, 'displayMessage');
+        service.beginnerNames.push(testPlayer);
+        service.deleteAiPlayer(testPlayer, AiType.beginner);
+        expect(deletePlayers).toHaveBeenCalledTimes(1);
+        expect(displayMessage).toHaveBeenCalledOnceWith(
+            "Le joueur n'a pas été supprimé, erreur : Http failure response for (unknown url): 400 Bad Request",
+        );
+    });
+
+    it('should not add AI to database if player added is default', () => {
+        const deletePlayers = spyOn(service['communicationService'], 'deleteAiPlayer').and.returnValue(throwError(errorResponse));
+        const displayMessage = spyOn<any>(service, 'displayMessage');
+
+        service.deleteAiPlayer(player1, AiType.beginner);
+
+        expect(deletePlayers).not.toHaveBeenCalled();
+        expect(displayMessage).toHaveBeenCalledOnceWith('Vous ne pouvez pas supprimer un joueur par défaut!');
+    });
+
+    it('should delete AI from database', () => {
+        const testPlayer: AiPlayerDB = {
+            _id: '4',
+            aiName: 'Mister_Test',
+            isDefault: false,
+        };
+        const deletePlayers = spyOn(service['communicationService'], 'deleteAiPlayer').and.returnValue(of([player1, player2, player3]));
+        const displayMessage = spyOn<any>(service, 'displayMessage');
+        service.beginnerNames.push(testPlayer);
+
+        service.deleteAiPlayer(testPlayer, AiType.beginner);
+        expect(service.beginnerNames).toEqual([player1, player2, player3]);
+        expect(deletePlayers).toHaveBeenCalledTimes(1);
+        expect(displayMessage).toHaveBeenCalledOnceWith('Joueur supprimé');
+
+        service.expertNames.push(testPlayer);
+        service.deleteAiPlayer(testPlayer, AiType.expert);
+        expect(service.expertNames).toEqual([player1, player2, player3]);
+        expect(deletePlayers).toHaveBeenCalledTimes(2);
+        expect(displayMessage).toHaveBeenCalledTimes(2);
+    });
+
+    it('should not update dictionary if name chosen is already used', () => {
+        const dictionary1: Dictionary = { fileName: 'test 1 name', title: 'test 1', description: 'test 1 descr', isDefault: true };
+        const displayMessage = spyOn<any>(service, 'displayMessage');
+        spyOn<any>(service, 'isDictionaryNameUsed').and.returnValue(true);
+        service.dictionaries = [dictionary1];
+        service.updateDictionary(dictionary1, { title: 'test 1 name' });
+        expect(displayMessage).toHaveBeenCalledOnceWith('Ce titre de dictionnaire existe deja. Veuillez réessayer.');
+    });
+
+    it('should not update dictionary if name chosen is already used', () => {
+        const dictionary1: Dictionary = { fileName: 'test 1 name', title: 'test 1', description: 'test 1 descr', isDefault: true };
+        const displayMessage = spyOn<any>(service, 'displayMessage');
+        const updateDictionary = spyOn(service['communicationService'], 'updateDictionary').and.returnValue(of([dictionary1]));
+        spyOn<any>(service, 'isDictionaryNameUsed').and.returnValue(false);
+        service.dictionaries = [];
+
+        service.updateDictionary(dictionary1, { title: 'test 1 name' });
+
+        expect(updateDictionary).toHaveBeenCalledTimes(1);
+        expect(service.dictionaries).toEqual([dictionary1]);
+        expect(displayMessage).toHaveBeenCalledOnceWith('Dictionnaire modifié');
+    });
+
+    it('should not delete dictionary if dictionary is default', () => {
+        const dictionary1: Dictionary = { fileName: 'test 1 name', title: 'test 1', description: 'test 1 descr', isDefault: true };
+        const displayMessage = spyOn<any>(service, 'displayMessage');
+        service.dictionaries = [dictionary1];
+        service.deleteDictionary(dictionary1);
+        expect(displayMessage).toHaveBeenCalledOnceWith('Vous ne pouvez pas supprimer le dictionnaire par défaut');
+    });
+
+    it('should delete dictionary', () => {
+        const dictionary1: Dictionary = { fileName: 'test 1 name', title: 'test 1', description: 'test 1 descr', isDefault: false };
+        const displayMessage = spyOn<any>(service, 'displayMessage');
+        spyOn<any>(service['communicationService'], 'deleteDictionary').and.returnValue(of([]));
+        service.dictionaries = [dictionary1];
+        service.deleteDictionary(dictionary1);
+        expect(displayMessage).toHaveBeenCalledOnceWith('Dictionnaire supprimé');
+    });
+
+    it('should not update dictionary if data fields are null', () => {
+        const matDialogRefMock = jasmine.createSpyObj('MatDialogRef', ['afterClosed']);
+        matDialogRefMock.afterClosed.and.returnValue(of(null));
+        const matDialogMock = jasmine.createSpyObj('MatDialog', ['open']);
+        matDialogMock.open.and.returnValue(matDialogRefMock);
+        service.dialog = matDialogMock;
+        const updateDictionary = spyOn(service, 'updateDictionary');
+        service.editDictionary(emptyDictionary);
+        expect(updateDictionary).not.toHaveBeenCalled();
+    });
+
+    it('should not update dictionary if at least one of the data field is null', () => {
+        const matDialogRefMock = jasmine.createSpyObj('MatDialogRef', ['afterClosed']);
+        matDialogRefMock.afterClosed.and.returnValue(
+            of({
+                titleInput: 'dictionary.title',
+                descriptionInput: null,
+            }),
+        );
+        const matDialogMock = jasmine.createSpyObj('MatDialog', ['open']);
+        matDialogMock.open.and.returnValue(matDialogRefMock);
+        service.dialog = matDialogMock;
+        const updateDictionary = spyOn(service, 'updateDictionary');
+        service.editDictionary(emptyDictionary);
+        expect(updateDictionary).not.toHaveBeenCalled();
+    });
+
+    it('should not update dictionary if at least one of the data field not null', () => {
+        const matDialogRefMock = jasmine.createSpyObj('MatDialogRef', ['afterClosed']);
+        matDialogRefMock.afterClosed.and.returnValue(
+            of({
+                titleInput: 'dictionary.title',
+                descriptionInput: 'dictionary.description',
+            }),
+        );
+        const matDialogMock = jasmine.createSpyObj('MatDialog', ['open']);
+        matDialogMock.open.and.returnValue(matDialogRefMock);
+        service.dialog = matDialogMock;
+        const updateDictionary = spyOn(service, 'updateDictionary');
+        service.editDictionary(emptyDictionary);
+        expect(updateDictionary).toHaveBeenCalled();
+    });
+
+    it('should not update dictionary if dictionary is default', () => {
+        const matDialogRefMock = jasmine.createSpyObj('MatDialogRef', ['afterClosed']);
+        matDialogRefMock.afterClosed.and.returnValue(
+            of({
+                title: 'dictionary.title',
+                description: 'dictionary.description',
+            }),
+        );
+        const matDialogMock = jasmine.createSpyObj('MatDialog', ['open']);
+        matDialogMock.open.and.returnValue(matDialogRefMock);
+        service.dialog = matDialogMock;
+        const updateDictionary = spyOn(service, 'updateDictionary');
+        emptyDictionary.isDefault = true;
+        service.editDictionary(emptyDictionary);
+        expect(updateDictionary).not.toHaveBeenCalled();
+    });
+
+    it('should call saveAs() when downloading dictionary', () => {
+        // eslint-disable-next-line deprecation/deprecation
+        const saveAs = spyOn(FileSaver, 'saveAs');
+        spyOn(service['communicationService'], 'downloadDictionary').and.returnValue(of('test'));
+        service.downloadDictionary(emptyDictionary);
+        expect(saveAs).toHaveBeenCalled();
+    });
+
+    it('should not do anything in onFileInput if file is undefined', () => {
+        service.onFileInput(null);
+        expect(service.file).toEqual(null);
+    });
+
+    it('should not do anything in isDictionaryValid if file is undefined', () => {
+        service.currentDictionary = undefined as unknown as Dictionary;
+        service.isDictionaryValid();
+        expect(service.currentDictionary).toBeUndefined();
+    });
+
+    it('should not be able to display message while resetting', () => {
+        const matSnackBar = jasmine.createSpyObj('MatDialog', ['open']);
+        service.isResetting = true;
+        service['displayMessage']('test');
+        expect(matSnackBar).not.toHaveBeenCalled();
     });
 });
