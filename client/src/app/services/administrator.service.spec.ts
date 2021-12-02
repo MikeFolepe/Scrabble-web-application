@@ -580,7 +580,7 @@ describe('AdministratorService', () => {
     });
 
     it('should not be able to display message while resetting', () => {
-        const matSnackBar = jasmine.createSpyObj('MatDialog', ['open']);
+        const matSnackBar = spyOn(service.snackBar, 'open');
         service.isResetting = true;
         service['displayMessage']('test');
         expect(matSnackBar).not.toHaveBeenCalled();
