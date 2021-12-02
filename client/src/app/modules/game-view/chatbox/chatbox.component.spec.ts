@@ -8,6 +8,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { ONE_SECOND_DELAY } from '@app/classes/constants';
 import { MessageType } from '@app/classes/enum';
 import { ChatboxComponent } from '@app/modules/game-view//chatbox/chatbox.component';
+import { GameType } from '@common/game-type';
 
 describe('ChatBoxComponent', () => {
     let component: ChatboxComponent;
@@ -116,5 +117,20 @@ describe('ChatBoxComponent', () => {
         expect(component.listTypes.pop()).toEqual(component['sendMessageService'].messageType);
         expect(component.listMessages.pop()).toEqual(invalidCommand);
         expect(component.listTypes.pop()).toEqual(component['sendMessageService'].messageType);
+    });
+
+    it('tests initialize chat height in log2990 mode', () => {
+        const dummyElement = document.createElement('div');
+        document.getElementById = jasmine.createSpy('HTML Element').and.returnValue(dummyElement);
+        component['gameSettingsService'].gameType = GameType.Log2990;
+        component.initializeChatHeight();
+        expect(document.getElementById).toHaveBeenCalled();
+    });
+
+    it('should not initialize chat height in classic mode when not finding the element', () => {
+        document.getElementById = jasmine.createSpy('HTML Element').and.returnValue(undefined);
+        component['gameSettingsService'].gameType = GameType.Classic;
+        component.initializeChatHeight();
+        expect(document.getElementById).toHaveBeenCalled();
     });
 });

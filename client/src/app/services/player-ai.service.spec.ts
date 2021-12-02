@@ -4,11 +4,12 @@
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
-/*
+
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { BOARD_COLUMNS, BOARD_ROWS, DELAY_TO_PASS_TURN, RESERVE } from '@app/classes/constants';
+import { BOARD_COLUMNS, BOARD_ROWS, DELAY_TO_PASS_TURN, ONE_SECOND_DELAY, RESERVE } from '@app/classes/constants';
+import { MessageType } from '@app/classes/enum';
 import { Orientation, PossibleWords } from '@app/classes/scrabble-board-pattern';
 import { PlayerAI } from '@app/models/player-ai.model';
 import { Player } from '@app/models/player.model';
@@ -17,6 +18,7 @@ import { PlayerAIService } from '@app/services/player-ai.service';
 describe('PlayerAIService', () => {
     let service: PlayerAIService;
     const scrabbleBoard: string[][] = [];
+    let spyOnDisplayMessage: jasmine.Spy<(message: string, messageType: MessageType) => void>;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
@@ -41,32 +43,33 @@ describe('PlayerAIService', () => {
         const playerAi = new Player(2, 'Player 2', [letterA, letterB, letterC, letterD, letterA, letterB, letterC]);
         service.playerService.addPlayer(player);
         service.playerService.addPlayer(playerAi);
+
+        spyOnDisplayMessage = spyOn(service.sendMessageService, 'displayMessageByType');
+        jasmine.clock().install();
+    });
+
+    afterEach(() => {
+        jasmine.clock().uninstall();
     });
 
     it('should be created', () => {
         expect(service).toBeTruthy();
     });
 
-    it('skip should call switchTurn and display message', async () => {
-        jasmine.clock().install();
+    it('skip should call switchTurn and display message', () => {
         const spyOnSwitchTurn = spyOn(service.skipTurnService, 'switchTurn');
-        const spyOnDisplayMessage = spyOn(service.sendMessageService, 'displayMessageByType');
-        await service.skip();
+        service.skip();
         jasmine.clock().tick(DELAY_TO_PASS_TURN);
         expect(spyOnSwitchTurn).toHaveBeenCalled();
         expect(spyOnDisplayMessage).toHaveBeenCalled();
-        jasmine.clock().uninstall();
     });
 
-    it('skip should call switchTurn', async () => {
-        jasmine.clock().install();
+    it('skip should call switchTurn', () => {
         const spyOnSwitchTurn = spyOn(service.skipTurnService, 'switchTurn');
-        const spyOnDisplayMessage = spyOn(service.sendMessageService, 'displayMessageByType');
-        await service.skip(false);
+        service.skip(false);
         jasmine.clock().tick(DELAY_TO_PASS_TURN + 500);
         expect(spyOnSwitchTurn).toHaveBeenCalled();
         expect(spyOnDisplayMessage).toHaveBeenCalledTimes(0);
-        jasmine.clock().uninstall();
     });
 
     it('placeWordOnBoard should place word on board horizontally', () => {
@@ -158,7 +161,7 @@ describe('PlayerAIService', () => {
         expect(service.filterByRange(possibleWord, { min: 1, max: 5 })).toEqual(expected);
     });
 
-    it('generateRandomNumber should generate random numbers with between [0,max value[', () => {
+    it('generateRandomNumber should generate random numbers with between [0, max value[', () => {
         const max = 5;
         expect(service.generateRandomNumber(max)).toBeLessThan(max);
     });
@@ -167,6 +170,7 @@ describe('PlayerAIService', () => {
         const word = { word: 'MAJID', orientation: Orientation.Vertical, line: 5, startIndex: 0, point: 0 };
         const spyOnPlace = spyOn<any>(service.placeLetterService, 'placeCommand').and.returnValue(Promise.resolve(true));
         await service.place(word);
+        jasmine.clock().tick(ONE_SECOND_DELAY);
         expect(spyOnPlace).toHaveBeenCalledOnceWith({ x: word.line, y: word.startIndex }, word.orientation, word.word);
     });
 
@@ -174,6 +178,7 @@ describe('PlayerAIService', () => {
         const word = { word: 'MAJID', orientation: Orientation.Horizontal, line: 5, startIndex: 0, point: 0 };
         const spyOnPlace = spyOn<any>(service.placeLetterService, 'placeCommand').and.returnValue(Promise.resolve(true));
         await service.place(word);
+        jasmine.clock().tick(ONE_SECOND_DELAY);
         expect(spyOnPlace).toHaveBeenCalledOnceWith({ x: word.startIndex, y: word.line }, word.orientation, word.word);
     });
 
@@ -188,7 +193,7 @@ describe('PlayerAIService', () => {
         expect(spyOnSwap).toHaveBeenCalledTimes(2);
     });
 
-    it('swap should not perform a swap when reserve is empty', async () => {
+    it('swap should not perform a swap when reserve is empty', () => {
         const letterTable = [
             { value: 'A', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
             { value: 'B', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
@@ -204,12 +209,12 @@ describe('PlayerAIService', () => {
         // No matter
         const isDifficultMode = false;
 
-        await service.swap(isDifficultMode);
+        service.swap(isDifficultMode);
 
         expect(service.swap(isDifficultMode)).toBeFalsy();
     });
 
-    it('swap should perform a swap when easy && reserveSize>=7', async () => {
+    it('swap should perform a swap when easy && reserveSize>=7', () => {
         const letterTable = [
             { value: 'A', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
             { value: 'B', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
@@ -220,10 +225,6 @@ describe('PlayerAIService', () => {
             { value: 'G', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
         ];
 
-        const spyOnDisplayMessage = spyOn<any>(service.sendMessageService, 'displayMessageByType').and.callFake(() => {
-            return;
-        });
-
         const copy = JSON.parse(JSON.stringify(letterTable));
         const playerAi = new PlayerAI(0, 'name', letterTable, service);
         service.playerService.players[1] = playerAi;
@@ -232,7 +233,7 @@ describe('PlayerAIService', () => {
         const isDifficultMode = false;
 
         expect(service.swap(isDifficultMode)).toBeTrue();
-        expect(spyOnDisplayMessage).toHaveBeenCalledTimes(1);
+        expect(spyOnDisplayMessage).toHaveBeenCalled();
         expect(service.playerService.players[1].letterTable === copy).toEqual(false);
         expect(service.letterService.reserveSize === reserveLengthBeforeSwap).toEqual(true);
     });
@@ -248,10 +249,6 @@ describe('PlayerAIService', () => {
             { value: 'G', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
         ];
 
-        const spyOnDisplayMessage = spyOn<any>(service.sendMessageService, 'displayMessageByType').and.callFake(() => {
-            return;
-        });
-
         const copy = JSON.parse(JSON.stringify(letterTable));
         const playerAi = new PlayerAI(0, 'name', letterTable, service);
         service.playerService.players[1] = playerAi;
@@ -260,7 +257,7 @@ describe('PlayerAIService', () => {
         const isDifficultMode = false;
 
         expect(service.swap(isDifficultMode)).toBeFalse();
-        expect(spyOnDisplayMessage).toHaveBeenCalledTimes(0);
+        expect(spyOnDisplayMessage).not.toHaveBeenCalled();
         expect(service.playerService.players[1].letterTable).toEqual(copy);
         expect(service.letterService.reserveSize === reserveLengthBeforeSwap).toEqual(true);
     });
@@ -276,10 +273,6 @@ describe('PlayerAIService', () => {
             { value: 'G', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
         ];
 
-        const spyOnDisplayMessage = spyOn<any>(service.sendMessageService, 'displayMessageByType').and.callFake(() => {
-            return;
-        });
-
         const copy = JSON.parse(JSON.stringify(letterTable));
         const playerAi = new PlayerAI(0, 'name', letterTable, service);
         service.playerService.players[1] = playerAi;
@@ -288,7 +281,7 @@ describe('PlayerAIService', () => {
         const isDifficultMode = true;
 
         expect(service.swap(isDifficultMode)).toBeTrue();
-        expect(spyOnDisplayMessage).toHaveBeenCalledTimes(1);
+        expect(spyOnDisplayMessage).toHaveBeenCalled();
         expect(service.playerService.players[1].letterTable === copy).toEqual(false);
         expect(service.letterService.reserveSize === reserveLengthBeforeSwap).toEqual(true);
     });
@@ -304,10 +297,6 @@ describe('PlayerAIService', () => {
             { value: 'G', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
         ];
 
-        const spyOnDisplayMessage = spyOn<any>(service.sendMessageService, 'displayMessageByType').and.callFake(() => {
-            return;
-        });
-
         const copy = JSON.parse(JSON.stringify(letterTable));
         const playerAi = new PlayerAI(0, 'name', letterTable, service);
         service.playerService.players[1] = playerAi;
@@ -316,7 +305,7 @@ describe('PlayerAIService', () => {
         const isDifficultMode = true;
 
         expect(service.swap(isDifficultMode)).toBeTrue();
-        expect(spyOnDisplayMessage).toHaveBeenCalledTimes(1);
+        expect(spyOnDisplayMessage).toHaveBeenCalled();
         expect(service.playerService.players[1].letterTable === copy).toEqual(false);
         expect(service.letterService.reserveSize === reserveLengthBeforeSwap).toEqual(true);
     });
@@ -330,10 +319,6 @@ describe('PlayerAIService', () => {
             { value: 'E', quantity: 0, points: 0, isSelectedForSwap: false, isSelectedForManipulation: false },
         ];
 
-        const spyOnDisplayMessage = spyOn<any>(service.sendMessageService, 'displayMessageByType').and.callFake(() => {
-            return;
-        });
-
         const copy = JSON.parse(JSON.stringify(letterTable));
         const playerAi = new PlayerAI(0, 'name', letterTable, service);
         service.playerService.players[1] = playerAi;
@@ -342,7 +327,7 @@ describe('PlayerAIService', () => {
         const isDifficultMode = true;
 
         expect(service.swap(isDifficultMode)).toBeTrue();
-        expect(spyOnDisplayMessage).toHaveBeenCalledTimes(1);
+        expect(spyOnDisplayMessage).toHaveBeenCalled();
         expect(service.playerService.players[1].letterTable === copy).toEqual(false);
         expect(service.letterService.reserveSize === reserveLengthBeforeSwap).toEqual(true);
     });
@@ -358,22 +343,14 @@ describe('PlayerAIService', () => {
         const word7: PossibleWords = { word: 'martin', orientation: Orientation.Vertical, line: 0, startIndex: 0, point: 0 };
         const word8: PossibleWords = { word: 'mare', orientation: Orientation.Vertical, line: 0, startIndex: 0, point: 0 };
 
-        const possibleWord: PossibleWords[] = [];
-        possibleWord.push(word1);
-        possibleWord.push(word2);
-        possibleWord.push(word3);
-        possibleWord.push(word4);
-        possibleWord.push(word5);
-        possibleWord.push(word6);
-        possibleWord.push(word7);
-        possibleWord.push(word8);
+        const possibleWord: PossibleWords[] = [word1, word2, word3, word4, word5, word6, word7, word8];
 
         const expected: PossibleWords[] = [];
         expected.push(word1);
         expected.push(word2);
         expected.push(word5);
 
-        spyOn<any>(await service.wordValidation, 'validateAllWordsOnBoard').and.returnValues(
+        spyOn<any>(service.wordValidation, 'validateAllWordsOnBoard').and.returnValues(
             { validation: true, score: 1 },
             { validation: true, score: 2 },
             { validation: false, score: 0 },
@@ -389,4 +366,3 @@ describe('PlayerAIService', () => {
         expect(returned).toEqual(expected);
     });
 });
-*/
