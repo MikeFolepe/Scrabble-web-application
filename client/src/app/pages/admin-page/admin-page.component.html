@@ -30,13 +30,13 @@
                         <!-- TODO demander chargés quelle méthode est la meilleure pour UX -->
                         <!-- <mat-icon *ngIf="dictionary.isDefault">lock</mat-icon> -->
                     </mat-expansion-panel-header>
-                    <button (click)="adminService.deleteDictionary(dictionary)">
+                    <button mat-icon-button id="deleteIcon" (click)="adminService.deleteDictionary(dictionary)">
                         <mat-icon color="warn">delete_forever</mat-icon>
                     </button>
-                    <button (click)="adminService.editDictionary(dictionary)">
+                    <button mat-icon-button id="editIcon" (click)="adminService.editDictionary(dictionary)">
                         <mat-icon>create</mat-icon>
                     </button>
-                    <button (click)="adminService.downloadDictionary(dictionary)">
+                    <button mat-icon-button id="editIcon" (click)="adminService.downloadDictionary(dictionary)">
                         <mat-icon>get_app</mat-icon>
                     </button>
                 </mat-expansion-panel>
@@ -62,7 +62,7 @@
                     <mat-icon>cloud_upload</mat-icon>
                 </button>
             </div>
-            <div class="alert" *ngIf="adminService.uploadMessage.length" [ngClass]="{ success: adminService.uploadMessage === 'Uploaded' }">
+            <div class="alert" *ngIf="adminService.uploadMessage.length" [ngClass]="{ success: adminService.uploadMessage === 'Téléversé' }">
                 {{ adminService.uploadMessage }}
             </div>
         </div>
@@ -82,20 +82,25 @@
             <div class="window-content">
                 <div class="list">
                     <!-- TODO Afficher les noms par ordre d'ajout/alphabétique ? -->
-                    <!-- TODO CSS on hover stp -->
                     <div class="beginner">
                         <p class="name-title">Noms débutants</p>
                         <hr />
-                        <div class="item" *ngFor="let aiBeginner of adminService.beginnerNames">
-                            <p class="ai-name">{{ aiBeginner.aiName }}</p>
-                            <span class="icons">
-                                <button (click)="adminService.deleteAiPlayer(aiBeginner, 0)">
-                                    <mat-icon color="warn">delete_forever</mat-icon>
-                                </button>
-                                <button (click)="adminService.addAiToDatabase(0, false, aiBeginner._id, aiBeginner.isDefault)">
-                                    <mat-icon>create</mat-icon>
-                                </button>
-                            </span>
+                        <div class="name-container">
+                            <div class="item" *ngFor="let aiBeginner of adminService.beginnerNames">
+                                <p class="ai-name">{{ aiBeginner.aiName }}</p>
+                                <div class="icons">
+                                    <button mat-icon-button id="deleteIcon" (click)="adminService.deleteAiPlayer(aiBeginner, 0)">
+                                        <mat-icon color="warn">delete_forever</mat-icon>
+                                    </button>
+                                    <button
+                                        mat-icon-button
+                                        id="editIcon"
+                                        (click)="adminService.addAiToDatabase(0, false, aiBeginner._id, aiBeginner.isDefault)"
+                                    >
+                                        <mat-icon>create</mat-icon>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                         <div class="center">
                             <button mat-mini-fab id="add" color="" (click)="adminService.addAiToDatabase(0, true)">
@@ -107,16 +112,22 @@
                     <div class="expert">
                         <p class="name-title">Noms experts</p>
                         <hr />
-                        <div class="item" *ngFor="let aiExpert of adminService.expertNames">
-                            <p class="ai-name">{{ aiExpert.aiName }}</p>
-                            <span class="icons">
-                                <button (click)="adminService.deleteAiPlayer(aiExpert, 1)">
-                                    <mat-icon color="warn">delete_forever</mat-icon>
-                                </button>
-                                <button (click)="adminService.addAiToDatabase(1, false, aiExpert._id, aiExpert.isDefault)">
-                                    <mat-icon>create</mat-icon>
-                                </button>
-                            </span>
+                        <div class="name-container">
+                            <div class="item" *ngFor="let aiExpert of adminService.expertNames">
+                                <p class="ai-name">{{ aiExpert.aiName }}</p>
+                                <span class="icons">
+                                    <button mat-icon-button id="deleteIcon" (click)="adminService.deleteAiPlayer(aiExpert, 1)">
+                                        <mat-icon color="warn">delete_forever</mat-icon>
+                                    </button>
+                                    <button
+                                        mat-icon-button
+                                        id="editIcon"
+                                        (click)="adminService.addAiToDatabase(1, false, aiExpert._id, aiExpert.isDefault)"
+                                    >
+                                        <mat-icon>create</mat-icon>
+                                    </button>
+                                </span>
+                            </div>
                         </div>
                         <div class="center">
                             <button mat-mini-fab id="add" color="" (click)="adminService.addAiToDatabase(1, true)">

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { PageEvent } from '@angular/material/paginator';
+import { PageEvent, MatPaginatorIntl } from '@angular/material/paginator';
 import { ERROR_MESSAGE_DELAY } from '@app/classes/constants';
 import { JoinDialogComponent } from '@app/modules/initialize-game/join-dialog/join-dialog.component';
 import { ClientSocketService } from '@app/services/client-socket.service';
@@ -21,7 +21,9 @@ export class JoinRoomComponent implements OnInit {
     isRoomAvailable: boolean;
     isRandomButtonAvailable: boolean;
 
-    constructor(private clientSocketService: ClientSocketService, public dialog: MatDialog) {
+    // JUSTIFICATION : must name service as it is named in MatPaginatorIntl
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    constructor(private clientSocketService: ClientSocketService, public dialog: MatDialog, public _MatPaginatorIntl: MatPaginatorIntl) {
         this.rooms = [];
         this.roomItemIndex = 0;
         this.pageSize = 2; // 2 rooms per page
@@ -43,6 +45,28 @@ export class JoinRoomComponent implements OnInit {
         this.receiveRoomAvailable();
         this.handleRoomUnavailability();
         this.receiveRandomPlacement();
+        // eslint-disable-next-line no-underscore-dangle
+        this._MatPaginatorIntl.itemsPerPageLabel = 'Salons par page';
+        // eslint-disable-next-line no-underscore-dangle
+        this._MatPaginatorIntl.firstPageLabel = 'Première page';
+        // eslint-disable-next-line no-underscore-dangle
+        this._MatPaginatorIntl.lastPageLabel = 'Dernière page';
+        // eslint-disable-next-line no-underscore-dangle
+        this._MatPaginatorIntl.nextPageLabel = 'Page suivante';
+        // eslint-disable-next-line no-underscore-dangle
+        this._MatPaginatorIntl.previousPageLabel = 'Page précédente';
+
+        const frenchRangeLabel = (page: number, pageSize: number, length: number) => {
+            if (length === 0 || pageSize === 0) return `0 de ${length}`;
+            length = Math.max(length, 0);
+            const startIndex = page * pageSize;
+            // If the start index exceeds the list length, do not try and fix the end index to the end.
+            const endIndex = startIndex < length ? Math.min(startIndex + pageSize, length) : startIndex + pageSize;
+            return `${startIndex + 1} - ${endIndex} de ${length}`;
+        };
+
+        // eslint-disable-next-line no-underscore-dangle
+        this._MatPaginatorIntl.getRangeLabel = frenchRangeLabel;
     }
 
     onPageChange(event: PageEvent): void {

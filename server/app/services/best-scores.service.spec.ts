@@ -1,9 +1,8 @@
 /* eslint-disable no-underscore-dangle */
-/* eslint-disable no-underscore-dangle /
-/ eslint-disable @typescript-eslint/no-explicit-any /
-/ eslint-disable @typescript-eslint/ban-types /
-/ eslint-disable no-empty /
-/ eslint-disable dot-notation */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable no-empty */
+/* eslint-disable dot-notation */
 
 import { SCORES_MODEL } from '@app/classes/database.schema';
 import { DatabaseServiceMock } from '@app/classes/database.service.mock';

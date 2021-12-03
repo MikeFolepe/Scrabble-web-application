@@ -45,10 +45,12 @@
     flex-direction: column;
     align-items: center;
 }
+
 #logo-scrabble {
     margin-top: 10px;
     width: 400px;
     height: 80px;
+    pointer-events: none;
 }
 
 #main-form-box {
