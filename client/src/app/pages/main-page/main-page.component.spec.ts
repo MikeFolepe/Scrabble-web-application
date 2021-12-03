@@ -3,6 +3,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { RouterTestingModule } from '@angular/router/testing';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 
@@ -14,6 +15,12 @@ describe('MainPageComponent', () => {
         await TestBed.configureTestingModule({
             imports: [HttpClientModule, RouterTestingModule, MatDialogModule],
             declarations: [MainPageComponent],
+            providers: [
+                {
+                    provide: MatSnackBar,
+                    useValue: {},
+                },
+            ],
             schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
     });
