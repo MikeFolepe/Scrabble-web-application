@@ -19,6 +19,7 @@ export class PlaceLetterStrategy {
         const level = playerAiService.gameSettingsService.gameSettings.level;
         const isFirstRound = playerAiService.placeLetterService.isFirstRound;
         const scrabbleBoard = playerAiService.placeLetterService.scrabbleBoard;
+        // TODO Prendre une seule fois le dictionnaire, car si on le delete pendant une game, ça ne doit affecter la game en cours
         this.dictionary = await playerAiService.communicationService
             .getGameDictionary(playerAiService.gameSettingsService.gameSettings.dictionary)
             .toPromise();
