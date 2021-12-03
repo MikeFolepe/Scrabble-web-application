@@ -132,16 +132,12 @@ export class AdministratorController {
             if (Array.isArray(req['files'].file)) {
                 // It must be an array of UploadedFile objects
                 for (const fic of req['files'].file) {
-                    fic.mv('./dictionaries' + fic.name, (err: boolean) => {
-                        if (err) res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(JSON.stringify('Erreur de téléversement'));
-                    });
+                    fic.mv('./dictionaries' + fic.name);
                 }
             } else {
                 // It must be a single UploadedFile object
                 uploadedFile = req['files'].file;
-                uploadedFile.mv('./dictionaries/' + uploadedFile.name, (err: boolean) => {
-                    if (err) res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(JSON.stringify('Erreur de téléversement'));
-                });
+                uploadedFile.mv('./dictionaries/' + uploadedFile.name);
             }
             return res.status(StatusCodes.OK).send(JSON.stringify('Téléversé'));
         });

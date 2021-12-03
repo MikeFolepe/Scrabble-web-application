@@ -72,11 +72,19 @@ describe('ChatBoxComponent', () => {
     });
 
     it('should send message as System when sendSystemMessage() is called', () => {
-        component.sendSystemMessage('System message');
-        component.sendSystemMessage('Second system message');
         expect(component.listTypes).toHaveSize(2);
         expect(component.listMessages).toHaveSize(2);
         expect(component.listTypes[0]).toEqual(MessageType.System);
+    });
+
+    it('should know the type of the game', () => {
+        const sendSystemMessage = spyOn(component, 'sendSystemMessage');
+        component['gameSettingsService'].gameType = GameType.Log2990;
+        component.ngOnInit();
+        expect(sendSystemMessage).toHaveBeenCalledWith('Début de la partie, mode LOG2990.');
+        component['gameSettingsService'].gameType = GameType.Classic;
+        component.ngOnInit();
+        expect(sendSystemMessage).toHaveBeenCalledWith('Début de la partie, mode Classique.');
     });
 
     it('should use the message and the type from sendMessageService when we display a message', () => {

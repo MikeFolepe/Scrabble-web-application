@@ -4,15 +4,13 @@ import { Level } from '@common/level';
 import { Vec2 } from '@common/vec2';
 import { CustomRange } from './range';
 
-// TODO avant remise vérifier que toutes les constantes sont utilisées au moins une fois
-
 export const DEFAULT_WIDTH = 750;
 export const DEFAULT_HEIGHT = 750;
 export const BOARD_ROWS = 15;
 export const BOARD_COLUMNS = 15;
 export const CENTRAL_CASE_POSITION: Vec2 = { x: 7, y: 7 };
-export const BOARD_SIZE = 16;
-export const GRID_CASE_SIZE = DEFAULT_WIDTH / BOARD_SIZE;
+const boardSize = 16;
+export const GRID_CASE_SIZE = DEFAULT_WIDTH / boardSize;
 export const EASEL_SIZE = 7;
 export const ALL_EASEL_BONUS = 50;
 export const MAX_NUMBER_OF_POSSIBILITY = 3;

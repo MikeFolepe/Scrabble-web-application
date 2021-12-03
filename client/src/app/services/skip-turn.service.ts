@@ -80,6 +80,7 @@ export class SkipTurnService {
                     this.startTimer();
                 }
             } else {
+                this.shouldNotBeDisplayed = false;
                 this.clientSocket.socket.emit('switchTurn', this.isTurn, this.clientSocket.roomId);
                 this.isTurn = false;
             }
@@ -96,7 +97,7 @@ export class SkipTurnService {
                 this.seconds = 59;
                 this.updateActiveTime();
             } else if (this.seconds === 0 && this.minutes === 0) {
-                if (this.isTurn) {
+                if (this.isTurn || this.gameSettingsService.isSoloMode) {
                     this.endGameService.actionsLog.push('AucuneAction');
                     this.clientSocket.socket.emit('sendActions', this.endGameService.actionsLog, this.clientSocket.roomId);
                     this.switchTurn();

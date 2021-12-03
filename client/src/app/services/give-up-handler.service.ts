@@ -31,7 +31,13 @@ export class GiveUpHandlerService {
                 this.isGivenUp = isGiveUp;
                 const randomName = this.administratorService.getAiBeginnerName();
                 this.gameSettingsService.gameSettings.playersNames[PLAYER_TWO_INDEX] = randomName;
-                const playerAi = new PlayerAI(2, randomName, this.playerService.players[PLAYER_TWO_INDEX].letterTable, this.playerAIservice);
+                const playerAi = new PlayerAI(
+                    2,
+                    randomName,
+                    this.playerService.players[PLAYER_TWO_INDEX].letterTable,
+                    this.playerAIservice,
+                    this.playerService.players[PLAYER_TWO_INDEX].score,
+                );
                 this.playerService.players[PLAYER_TWO_INDEX] = playerAi;
                 if (!this.skipTurnService.isTurn) playerAi.play();
             }

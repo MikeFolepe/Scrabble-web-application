@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { BestScoresComponent } from '@app/pages/best-scores/best-scores.component';
 import { ClientSocketService } from '@app/services/client-socket.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
+import { GiveUpHandlerService } from '@app/services/give-up-handler.service';
 import { LetterService } from '@app/services/letter.service';
 import { PlaceLetterService } from '@app/services/place-letter.service';
 import { GameType } from '@common/game-type';
@@ -27,10 +28,13 @@ export class MainPageComponent {
         private clientSocketService: ClientSocketService,
         private letterService: LetterService,
         private placeLetterService: PlaceLetterService,
+        private giveUpHandlerService: GiveUpHandlerService,
     ) {
         this.selectedGameTypeIndex = 0;
         this.gameType = ['Scrabble classique', 'Scrabble LOG2990'];
         this.gameModes = ['Jouer une partie en solo', 'Créer une partie multijoueur', 'Joindre une partie multijoueur'];
+        // TODO: Penser a creer un ngOnDestroy
+        this.giveUpHandlerService.isGivenUp = false;
         this.letterService.ngOnDestroy();
         this.placeLetterService.ngOnDestroy();
         this.gameSettingsService.ngOnDestroy();

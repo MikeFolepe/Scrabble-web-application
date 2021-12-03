@@ -54,12 +54,12 @@ export class GameController {
 
         this.router.post('/best-scores-classic', async (req: Request, res: Response) => {
             await this.bestScoresService.addPlayers(req.body, GameType.Classic);
-            res.send(StatusCodes.OK);
+            res.sendStatus(StatusCodes.OK);
         });
 
         this.router.post('/best-scores-log2990', async (req: Request, res: Response) => {
             await this.bestScoresService.addPlayers(req.body, GameType.Log2990);
-            res.send(StatusCodes.OK);
+            res.sendStatus(StatusCodes.OK);
         });
 
         this.router.get('/best-scores-classic', async (req: Request, res: Response) => {
