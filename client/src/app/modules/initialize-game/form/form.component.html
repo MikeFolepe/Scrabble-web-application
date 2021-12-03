@@ -22,11 +22,11 @@
                 <app-timer-field [formGroup]="form" [parentForm]="form"></app-timer-field>
             </fieldset>
             <fieldset *ngIf="gameSettingsService.isSoloMode" class="form-section">
-                <legend>Difficulté de l'IA</legend>
+                <legend>Niveau du joueur virtuel</legend>
                 <app-level-field [formGroup]="form" [parentForm]="form"></app-level-field>
             </fieldset>
             <fieldset class="form-section">
-                <legend>Choix du dictionnaire</legend>
+                <legend>Dictionnaire</legend>
                 <mat-form-field [formGroup]="form" appearance="fill">
                     <mat-label>Dictionnaire</mat-label>
                     <mat-select [formControlName]="'dictionaryInput'">

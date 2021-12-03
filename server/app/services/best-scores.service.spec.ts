@@ -3,7 +3,6 @@
 / eslint-disable @typescript-eslint/no-explicit-any /
 / eslint-disable @typescript-eslint/ban-types /
 / eslint-disable no-empty /
-/ eslint-disable @typescript-eslint/no-require-imports /
 / eslint-disable dot-notation */
 
 import { SCORES_MODEL } from '@app/classes/database.schema';
@@ -15,7 +14,6 @@ import { expect } from 'chai';
 import * as spies from 'chai-spies';
 import * as mongoose from 'mongoose';
 import { BestScoresService } from './best-scores.service';
-// import Sinon = require('sinon');
 
 describe('BestScoresService', () => {
     let databaseService: DatabaseServiceMock;
