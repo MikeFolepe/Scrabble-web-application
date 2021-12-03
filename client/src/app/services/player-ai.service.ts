@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { DELAY_TO_PASS_TURN, EASEL_SIZE, INVALID_INDEX, MIN_RESERVE_SIZE_TO_SWAP, ONE_SECOND_DELAY, PLAYER_AI_INDEX } from '@app/classes/constants';
+import { DELAY_TO_PASS_TURN, EASEL_SIZE, INVALID_INDEX, MIN_RESERVE_SIZE_TO_SWAP, PLAYER_AI_INDEX } from '@app/classes/constants';
 import { MessageType } from '@app/classes/enum';
 import { CustomRange } from '@app/classes/range';
 import { Orientation, PossibleWords } from '@app/classes/scrabble-board-pattern';
@@ -41,7 +41,6 @@ export class PlayerAIService {
 
     skip(shouldDisplayMessage: boolean = true): void {
         setTimeout(() => {
-            this.skipTurnService.switchTurn();
             if (shouldDisplayMessage) {
                 this.sendMessageService.displayMessageByType(
                     this.playerService.players[PLAYER_AI_INDEX].name + ' : ' + '!passer ',
@@ -49,6 +48,7 @@ export class PlayerAIService {
                 );
                 this.endGameService.actionsLog.push('passer');
             }
+            this.skipTurnService.switchTurn();
         }, DELAY_TO_PASS_TURN);
     }
 
@@ -113,20 +113,7 @@ export class PlayerAIService {
 
     async place(word: PossibleWords): Promise<void> {
         const startPos = word.orientation ? { x: word.line, y: word.startIndex } : { x: word.startIndex, y: word.line };
-        const isValid = await this.placeLetterService.placeCommand(startPos, word.orientation, word.word);
-        if (isValid) {
-            const column = (startPos.x + 1).toString();
-            const row: string = String.fromCharCode(startPos.y + 'a'.charCodeAt(0));
-            const charOrientation = word.orientation === Orientation.Horizontal ? 'h' : 'v';
-            setTimeout(() => {
-                this.sendMessageService.displayMessageByType(
-                    this.playerService.players[PLAYER_AI_INDEX].name + ' : ' + '!placer ' + row + column + charOrientation + ' ' + word.word,
-                    MessageType.Opponent,
-                );
-            }, ONE_SECOND_DELAY);
-            return;
-        }
-
+        if (await this.placeLetterService.placeCommand(startPos, word.orientation, word.word)) return;
         this.skip(false);
     }
 
