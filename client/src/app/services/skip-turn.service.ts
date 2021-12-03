@@ -13,6 +13,7 @@ import { GameSettingsService } from '@app/services/game-settings.service';
 import { EndGameService } from './end-game.service';
 import { ObjectivesService } from './objectives.service';
 import { PlayerService } from './player.service';
+import { SendMessageService } from './send-message.service';
 
 @Injectable({
     providedIn: 'root',
@@ -32,6 +33,7 @@ export class SkipTurnService {
         private clientSocket: ClientSocketService,
         private playerService: PlayerService,
         private objectivesService: ObjectivesService,
+        private sendMessageService: SendMessageService,
     ) {
         this.receiveNewTurn();
         this.receiveStartFromServer();
@@ -58,9 +60,9 @@ export class SkipTurnService {
     }
 
     switchTurn(): void {
-        if (this.endGameService.isEndGame) {
-            return;
-        }
+        if (!this.endGameService.isEndGame) this.isEndGame();
+        if (this.endGameService.isEndGame) return;
+
         this.stopTimer();
         if (this.isTurn) this.shouldNotBeDisplayed = true;
         setTimeout(() => {
@@ -116,7 +118,20 @@ export class SkipTurnService {
         if (this.isTurn && this.objectivesService.activeTimeRemaining[PLAYER_ONE_INDEX] > 0)
             this.objectivesService.activeTimeRemaining[PLAYER_ONE_INDEX]--;
 
-        if (this.isTurn === false && this.objectivesService.activeTimeRemaining[PLAYER_TWO_INDEX] > 0)
+        if (!this.isTurn && this.objectivesService.activeTimeRemaining[PLAYER_TWO_INDEX] > 0)
             this.objectivesService.activeTimeRemaining[PLAYER_TWO_INDEX]--;
+    }
+
+    isEndGame(): boolean {
+        this.endGameService.checkEndGame();
+        if (this.endGameService.isEndGame) {
+            this.endGameService.getFinalScore(PLAYER_ONE_INDEX);
+            this.endGameService.getFinalScore(PLAYER_TWO_INDEX);
+            this.stopTimer();
+            this.sendMessageService.displayFinalMessage(PLAYER_ONE_INDEX);
+            this.sendMessageService.displayFinalMessage(PLAYER_TWO_INDEX);
+            this.shouldNotBeDisplayed = true;
+        }
+        return this.endGameService.isEndGame;
     }
 }

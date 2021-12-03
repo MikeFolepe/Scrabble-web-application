@@ -25,7 +25,6 @@ describe('ChatBoxComponent', () => {
         fixture = TestBed.createComponent(ChatboxComponent);
         jasmine.clock().install();
         component = fixture.componentInstance;
-        component.ngAfterViewInit();
         jasmine.clock().tick(ONE_SECOND_DELAY + 1);
         fixture.detectChanges();
     });
@@ -93,18 +92,6 @@ describe('ChatBoxComponent', () => {
         const event = new MouseEvent('mouseup');
         fixture.elementRef.nativeElement.dispatchEvent(event);
         expect(component['boardHandlerService'].cancelPlacement).toHaveBeenCalled();
-    });
-
-    it('should set interval for all required functions', () => {
-        const spy1 = spyOn(component['endGameService'], 'checkEndGame');
-        const spy2 = spyOn(component['chatBoxService'], 'displayFinalMessage');
-        const spy3 = spyOn(component['endGameService'], 'getFinalScore');
-        component['endGameService'].isEndGame = true;
-        component.ngAfterViewInit();
-        jasmine.clock().tick(ONE_SECOND_DELAY + 1000);
-        expect(spy1).toHaveBeenCalled();
-        expect(spy2).toHaveBeenCalled();
-        expect(spy3).toHaveBeenCalled();
     });
 
     it('should display the message and the error message if the command is invalid', () => {

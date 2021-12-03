@@ -3,6 +3,7 @@ import { PLAYER_ONE_INDEX } from '@app/classes/constants';
 import { MessageType } from '@app/classes/enum';
 import { ClientSocketService } from './client-socket.service';
 import { GameSettingsService } from './game-settings.service';
+import { PlayerService } from './player.service';
 
 @Injectable({
     providedIn: 'root',
@@ -12,7 +13,11 @@ export class SendMessageService {
     messageType: MessageType;
     private displayMessage: () => void;
 
-    constructor(private clientSocketService: ClientSocketService, private gameSettingsService: GameSettingsService) {
+    constructor(
+        private clientSocketService: ClientSocketService,
+        private gameSettingsService: GameSettingsService,
+        private playerService: PlayerService,
+    ) {
         this.receiveMessageFromOpponent();
         // To display message in real time in chat box
         this.receiveConversionMessage();
@@ -60,5 +65,14 @@ export class SendMessageService {
         this.clientSocketService.socket.on('receiveRoomMessage', (message: string) => {
             this.sendOpponentMessage(message);
         });
+    }
+
+    displayFinalMessage(indexPlayer: number): void {
+        let endGameEasel = '';
+        this.displayMessageByType('Fin de partie - lettres restantes', MessageType.System);
+        for (const letter of this.playerService.players[indexPlayer].letterTable) {
+            endGameEasel += letter.value;
+        }
+        this.displayMessageByType(this.playerService.players[indexPlayer].name + ' : ' + endGameEasel, MessageType.System);
     }
 }

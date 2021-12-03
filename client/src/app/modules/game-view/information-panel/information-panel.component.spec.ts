@@ -34,7 +34,7 @@ describe('InformationPanelComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(InformationPanelComponent);
         component = fixture.componentInstance;
-        component['gameSettings'] = new GameSettings(
+        component['gameSettingsService'].gameSettings = new GameSettings(
             ['Paul', 'Mike'],
             1,
             '00',

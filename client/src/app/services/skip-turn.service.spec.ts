@@ -23,7 +23,7 @@ describe('SkipTurnService', () => {
 
     beforeEach(() => {
         const settingsSpy = jasmine.createSpyObj('GameSettingsService', ['gameSettings']);
-        const endGameSpy = jasmine.createSpyObj('EndGameService', ['isEndGame']);
+        const endGameSpy = jasmine.createSpyObj('EndGameService', ['isEndGame', 'checkEndGame', 'getFinalScore']);
         TestBed.configureTestingModule({
             imports: [HttpClientTestingModule, RouterTestingModule],
             providers: [SkipTurnService, { provide: GameSettingsService, useValue: settingsSpy }, { provide: EndGameService, useValue: endGameSpy }],
@@ -131,6 +131,7 @@ describe('SkipTurnService', () => {
     });
 
     it('should stopTimer when switching turn', () => {
+        spyOn(service, 'isEndGame');
         endGameService.isEndGame = false;
         const spy = spyOn(service, 'stopTimer');
         service.switchTurn();
@@ -138,6 +139,7 @@ describe('SkipTurnService', () => {
     });
 
     it('should startTimer when switching turns', () => {
+        spyOn(service, 'isEndGame');
         gameSettingsService.isSoloMode = true;
         service.isTurn = false;
         const newTurn = true;
@@ -151,6 +153,7 @@ describe('SkipTurnService', () => {
     });
 
     it('should startTimer when switching when in multiplayer mode', () => {
+        spyOn(service, 'isEndGame');
         gameSettingsService.isSoloMode = false;
         service.isTurn = true;
         const newTurn = false;
@@ -161,6 +164,7 @@ describe('SkipTurnService', () => {
     });
 
     it('should startTimer when switching turns 2', () => {
+        spyOn(service, 'isEndGame');
         const player1 = new Player(1, 'mike', [letterA]);
         const player2 = new PlayerAI(2, 'agha', [letterA], playerService);
         service['playerService'].players.push(player1);
@@ -214,6 +218,7 @@ describe('SkipTurnService', () => {
     });
 
     it('should stop the timer and then switch turn when the countdown is done ', () => {
+        spyOn(service, 'isEndGame');
         spyOn(service, 'updateActiveTime');
         service['endGameService'].actionsLog = [];
         service.gameSettingsService.gameSettings.timeMinute = '00';
@@ -253,5 +258,13 @@ describe('SkipTurnService', () => {
         service.isTurn = true;
         service.updateActiveTime();
         expect(service['objectivesService'].activeTimeRemaining[0]).not.toEqual(60);
+    });
+
+    it('isEndGame while we are in end game should call stopTimer', () => {
+        spyOn(service, 'stopTimer');
+        spyOn(service['sendMessageService'], 'displayFinalMessage');
+        service['endGameService'].isEndGame = true;
+        service.isEndGame();
+        expect(service.stopTimer).toHaveBeenCalled();
     });
 });

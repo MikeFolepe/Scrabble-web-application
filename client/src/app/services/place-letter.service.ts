@@ -183,7 +183,10 @@ export class PlaceLetterService implements OnDestroy {
                 return await this.validatePlacement(position, orientation, word, indexPlayer);
             }
             this.handleInvalidPlacement(position, orientation, word, indexPlayer);
-            this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', MessageType.Error);
+            this.sendMessageService.displayMessageByType('ERREUR : Un ou des mots formés sont invalides', MessageType.Error);
+            setTimeout(() => {
+                this.skipTurnService.switchTurn();
+            }, THREE_SECONDS_DELAY);
             return false;
         } // Placing the following words
         if (this.isWordTouchingOthers(position, orientation, word)) {
@@ -209,6 +212,7 @@ export class PlaceLetterService implements OnDestroy {
     }
 
     handleValidPlacement(finalResult: ScoreValidation, indexPlayer: number): void {
+        this.displayValid(indexPlayer);
         this.playerService.addScore(finalResult.score, indexPlayer);
         this.playerService.updateScrabbleBoard(this.scrabbleBoard);
         this.playerService.refillEasel(indexPlayer); // Fill the easel with new letters from the reserve
@@ -331,6 +335,19 @@ export class PlaceLetterService implements OnDestroy {
             this.placementsService.goToNextPosition(currentPosition, orientation);
         }
         return isWordTouching;
+    }
+
+    displayValid(indexPlayer: number): void {
+        const column = (this.startPosition.x + 1).toString();
+        const row: string = String.fromCharCode(this.startPosition.y + 'a'.charCodeAt(0));
+        const charOrientation = this.orientation === Orientation.Horizontal ? 'h' : 'v';
+        if (indexPlayer === 0)
+            this.sendMessageService.displayMessageByType('!placer ' + row + column + charOrientation + ' ' + this.word, MessageType.Player);
+        else if (this.gameSettingsService.isSoloMode)
+            this.sendMessageService.displayMessageByType(
+                this.playerService.players[PLAYER_AI_INDEX].name + ' : ' + '!placer ' + row + column + charOrientation + ' ' + this.word,
+                MessageType.Opponent,
+            );
     }
 
     ngOnDestroy() {
