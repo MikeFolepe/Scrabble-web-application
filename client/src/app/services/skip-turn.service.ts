@@ -60,7 +60,7 @@ export class SkipTurnService {
     }
 
     switchTurn(): void {
-        if (!this.endGameService.isEndGame) this.isEndGame();
+        this.checkEndGame();
         if (this.endGameService.isEndGame) return;
 
         this.stopTimer();
@@ -123,7 +123,8 @@ export class SkipTurnService {
             this.objectivesService.activeTimeRemaining[PLAYER_TWO_INDEX]--;
     }
 
-    isEndGame(): boolean {
+    checkEndGame(): void {
+        if (this.endGameService.isEndGame) return;
         this.endGameService.checkEndGame();
         if (this.endGameService.isEndGame) {
             this.endGameService.getFinalScore(PLAYER_ONE_INDEX);
@@ -133,6 +134,5 @@ export class SkipTurnService {
             this.sendMessageService.displayFinalMessage(PLAYER_TWO_INDEX);
             this.shouldNotBeDisplayed = true;
         }
-        return this.endGameService.isEndGame;
     }
 }

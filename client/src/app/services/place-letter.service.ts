@@ -1,16 +1,5 @@
-/* eslint-disable max-lines */
-// TODO JUSTIFICATION : À confirmer  avec Étienne
 import { Injectable, OnDestroy } from '@angular/core';
-import {
-    BOARD_COLUMNS,
-    BOARD_ROWS,
-    CENTRAL_CASE_POSITION,
-    EASEL_SIZE,
-    INVALID_INDEX,
-    PLAYER_AI_INDEX,
-    PLAYER_ONE_INDEX,
-    THREE_SECONDS_DELAY,
-} from '@app/classes/constants';
+import { BOARD_COLUMNS, BOARD_ROWS, EASEL_SIZE, INVALID_INDEX, PLAYER_AI_INDEX, PLAYER_ONE_INDEX, THREE_SECONDS_DELAY } from '@app/classes/constants';
 import { MessageType } from '@app/classes/enum';
 import { Orientation } from '@app/classes/scrabble-board-pattern';
 import { ScoreValidation } from '@app/classes/validation-score';
@@ -179,7 +168,7 @@ export class PlaceLetterService implements OnDestroy {
         this.word = word;
         // Placing the first word
         if (this.isFirstRound) {
-            if (this.isFirstWordValid(position, orientation, word)) {
+            if (this.placementsService.isFirstWordValid(position, orientation, word)) {
                 return await this.validatePlacement(position, orientation, word, indexPlayer);
             }
             this.handleInvalidPlacement(position, orientation, word, indexPlayer);
@@ -241,7 +230,7 @@ export class PlaceLetterService implements OnDestroy {
         if (this.isFirstRound) {
             if (this.isWordFitting(position, orientation, word)) {
                 isPossible =
-                    this.isFirstWordValid(position, orientation, word) && // If the 1st word is placed onto the central position
+                    this.placementsService.isFirstWordValid(position, orientation, word) && // If the 1st word is placed onto the central position
                     this.isWordValid(position, orientation, word, indexPlayer); // If the letters of the word are in the easel or the scrabble board
             }
         } else {
@@ -274,40 +263,12 @@ export class PlaceLetterService implements OnDestroy {
 
             // If the letter isn't on the board, we look into the easel
             if (!isLetterExisting) {
-                isLetterExisting = this.isLetterInEasel(letter, indexPlayer, indexLetters);
+                isLetterExisting = this.placementsService.isLetterInEasel(letter, indexPlayer, indexLetters);
                 // If the letter isn't on the board or present in the easel, we can't place the word
                 if (!isLetterExisting) return false;
             }
         }
         return true;
-    }
-
-    isLetterInEasel(letter: string, indexPlayer: number, indexLetters: number[]): boolean {
-        let isLetterExisting = false;
-        let currentLetterIndex = this.playerService.indexLetterInEasel(letter, 0, indexPlayer);
-
-        if (currentLetterIndex !== INVALID_INDEX) isLetterExisting = true;
-        for (const index of indexLetters) {
-            while (currentLetterIndex === index) {
-                currentLetterIndex = this.playerService.indexLetterInEasel(letter, currentLetterIndex + 1, indexPlayer);
-                if (currentLetterIndex === INVALID_INDEX) isLetterExisting = false;
-            }
-        }
-        if (isLetterExisting) {
-            indexLetters.push(currentLetterIndex); // We push the index so we know it is used
-        }
-        return isLetterExisting;
-    }
-
-    isFirstWordValid(position: Vec2, orientation: Orientation, word: string): boolean {
-        const currentPosition = { x: position.x, y: position.y };
-        // JUSTIFICATION : Neither the variable 'word' nor 'i' are used inside the loop
-        // eslint-disable-next-line @typescript-eslint/prefer-for-of
-        for (let i = 0; i < word.length; i++) {
-            if (currentPosition.x === CENTRAL_CASE_POSITION.x && currentPosition.y === CENTRAL_CASE_POSITION.y) return true;
-            this.placementsService.goToNextPosition(currentPosition, orientation);
-        }
-        return false;
     }
 
     isWordTouchingOthers(position: Vec2, orientation: Orientation, word: string): boolean {

@@ -60,7 +60,7 @@ export class WaitingRoomComponent implements OnInit {
         }, waitingTime);
     }
 
-    delete(): void {
+    deleteGame(): void {
         this.clientSocket.socket.emit('deleteGame', this.clientSocket.roomId, this.clientSocket.gameType);
     }
 
@@ -68,7 +68,7 @@ export class WaitingRoomComponent implements OnInit {
         // TODO: A revoir pourquoi delete avec majid pourquoi on a fait ça???
         this.gameSettingsService.isSoloMode = true;
         this.gameSettingsService.isRedirectedFromMultiplayerGame = true;
-        this.delete();
+        this.deleteGame();
         this.router.navigate(['solo-game-ai']);
     }
 }

@@ -10,6 +10,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
+import { ONE_SECOND_DELAY } from '@app/classes/constants';
 import { AiPlayerDB, AiType } from '@common/ai-name';
 import { Dictionary } from '@common/dictionary';
 import FileSaver from 'file-saver';
@@ -217,17 +218,20 @@ describe('AdministratorService', () => {
     });
 
     it('should call the right functions when calling resetData', async () => {
+        jasmine.clock().install();
         const resetPlayers = spyOn<any>(service, 'resetAiPlayers');
         const resetDictionaries = spyOn<any>(service, 'resetDictionaries');
         const resetScores = spyOn<any>(service, 'resetScores');
         const displayMessage = spyOn<any>(service, 'displayMessage');
 
         await service.resetData();
+        jasmine.clock().tick(ONE_SECOND_DELAY);
 
         expect(resetPlayers).toHaveBeenCalledTimes(1);
         expect(resetDictionaries).toHaveBeenCalledTimes(1);
         expect(resetScores).toHaveBeenCalledTimes(1);
         expect(displayMessage).toHaveBeenCalledOnceWith('La base de données à été réinitialisée');
+        jasmine.clock().uninstall();
     });
 
     it('should initialize AI players', () => {

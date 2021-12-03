@@ -16,7 +16,6 @@ export class ManipulateService {
         this.usedLetters.fill(false, 0, EASEL_SIZE);
     }
 
-    // TODO changer le nom de la fonction
     onKeyPress(event: KeyboardEvent): void {
         switch (event.key) {
             case 'ArrowUp': {
@@ -30,21 +29,7 @@ export class ManipulateService {
                 break;
             }
             default: {
-                // TODO mettre le code de default dans une fonction privée
-                if (event.key === 'Shift') return; // Pressing Shift doesn't unselect all so we can press Shift + 8 to select a '*'
-                if (/([a-zA-Z]|[*])+/g.test(event.key) && event.key.length === 1) {
-                    // TODO letterPressed n'est pas le nom adéquat pour exprimer un index. Peut-être mieux letterPressedIndex
-                    const letterPressed = this.indexToSelect(event.key, PLAYER_ONE_INDEX);
-                    if (letterPressed === INVALID_INDEX) {
-                        this.usedLetters.fill(false, 0, this.usedLetters.length);
-                        this.unselectAll();
-                        break;
-                    }
-                    this.handleManipulationSelection(letterPressed);
-                    break;
-                }
-                this.usedLetters.fill(false, 0, this.usedLetters.length);
-                this.unselectAll();
+                this.selectToManipulate(event);
                 break;
             }
         }
@@ -53,6 +38,23 @@ export class ManipulateService {
     onMouseWheelTick(event: WheelEvent): void {
         if (event.deltaY < 0) this.shiftUp();
         else if (event.deltaY > 0) this.shiftDown();
+    }
+
+    selectToManipulate(event: KeyboardEvent): void {
+        // Pressing Shift doesn't unselect all so we can press Shift + 8 to select a '*'
+        if (event.key === 'Shift') return;
+        if (/([a-zA-Z]|[*])+/g.test(event.key) && event.key.length === 1) {
+            const letterPressedIndex = this.indexToSelect(event.key, PLAYER_ONE_INDEX);
+            if (letterPressedIndex === INVALID_INDEX) {
+                this.usedLetters.fill(false, 0, this.usedLetters.length);
+                this.unselectAll();
+                return;
+            }
+            this.handleManipulationSelection(letterPressedIndex);
+            return;
+        }
+        this.usedLetters.fill(false, 0, this.usedLetters.length);
+        this.unselectAll();
     }
 
     selectWithClick(indexClicked: number): void {

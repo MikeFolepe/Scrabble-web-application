@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BONUS_POSITIONS, DEFAULT_DICTIONARY_INDEX, INVALID_INDEX, PLAYER_ONE_INDEX } from '@app/classes/constants';
-import { NUMBER_OF_OBJECTIVES, OBJECTIVES } from '@app/classes/objectives';
+import { NUMBER_OF_OBJECTIVES, NUMBER_OF_PUBLIC_OBJECTIVES, OBJECTIVES } from '@app/classes/objectives';
 import { AdministratorService } from '@app/services/administrator.service';
 import { CommunicationService } from '@app/services/communication.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
@@ -43,7 +43,7 @@ export class FormComponent implements OnInit, OnDestroy {
             secondInput: new FormControl(this.gameSettingsService.gameSettings.timeSecond),
             levelInput: new FormControl(this.gameSettingsService.gameSettings.level),
             dictionaryInput: new FormControl(this.selectedDictionary.title, [Validators.required]),
-            randomBonus: new FormControl(this.gameSettingsService.gameSettings.randomBonus), // TODO boolean pour randomBonus ?
+            randomBonus: new FormControl(this.gameSettingsService.gameSettings.randomBonus),
         });
         this.adminService.initializeAiPlayers();
     }
@@ -52,9 +52,7 @@ export class FormComponent implements OnInit, OnDestroy {
         await this.selectGameDictionary(this.selectedDictionary);
         if (this.isDictionaryDeleted) return;
         this.snapshotSettings();
-        // TODO juste waiting-room suffit comme URL ?
-        // TODO: ça suffira
-        const nextUrl = this.gameSettingsService.isSoloMode ? 'game' : 'multiplayer-mode-waiting-room';
+        const nextUrl = this.gameSettingsService.isSoloMode ? 'game' : 'waiting-room';
         this.router.navigate([nextUrl]);
     }
 
@@ -131,7 +129,7 @@ export class FormComponent implements OnInit, OnDestroy {
 
         const objectiveByType: number[][] = [[], []];
 
-        objectiveByType[ObjectiveTypes.Public] = objectiveIds.slice(0, 2); // TODO const NUMBER_OF_PUBLIC_OBJ
+        objectiveByType[ObjectiveTypes.Public] = objectiveIds.slice(0, NUMBER_OF_PUBLIC_OBJECTIVES);
         objectiveByType[ObjectiveTypes.Private] = objectiveIds.slice(2, objectiveIds.length);
 
         return objectiveByType;

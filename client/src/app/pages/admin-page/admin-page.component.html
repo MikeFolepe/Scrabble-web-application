@@ -27,8 +27,6 @@
                         <mat-panel-description>
                             {{ dictionary.description }}
                         </mat-panel-description>
-                        <!-- TODO demander chargés quelle méthode est la meilleure pour UX -->
-                        <!-- <mat-icon *ngIf="dictionary.isDefault">lock</mat-icon> -->
                     </mat-expansion-panel-header>
                     <button (click)="adminService.deleteDictionary(dictionary)">
                         <mat-icon color="warn">delete_forever</mat-icon>
@@ -81,8 +79,6 @@
             </h2>
             <div class="window-content">
                 <div class="list">
-                    <!-- TODO Afficher les noms par ordre d'ajout/alphabétique ? -->
-                    <!-- TODO CSS on hover stp -->
                     <div class="beginner">
                         <p class="name-title">Noms débutants</p>
                         <hr />

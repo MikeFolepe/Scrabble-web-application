@@ -185,9 +185,6 @@ export class PlaceLetterStrategy {
         return filteredWords;
     }
 
-    // TODO : creating console errors
-    // Unhandled Promise rejection: dictionaryToLookAt is not iterable ; Zone: ProxyZone ; Task: jasmine.onComplete ;
-    // Value: TypeError: dictionaryToLookAt is not iterable
     private generateAllWords(dictionaryToLookAt: string[], patterns: BoardPattern): PossibleWords[] {
         // Generate all words satisfying the patterns found
         const allWords: PossibleWords[] = [];

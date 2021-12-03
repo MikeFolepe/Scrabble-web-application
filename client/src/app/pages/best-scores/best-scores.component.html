@@ -1,5 +1,3 @@
-<!-- TODO Bonus : changer couleur fond d'écran dialog -->
-<!-- TODO ajuster la taille du dialog -->
 <h1 class="title">Meilleurs scores</h1>
 <div id="wrapper">
     <div id="dictionaries" class="window">
@@ -18,11 +16,8 @@
                     <p>Nom</p>
                     <p>Résultat</p>
                 </div>
-                <!-- TODO ngClass pour les noms et score en fonction de la position -->
                 <div class="item" *ngFor="let player of this.bestPlayersInClassicMode; let i = index; let last = last">
                     <p class="playerName">
-                        <!-- TODO à insérer quelque part pour utilisation gratuite
-                        <a href="https://icons8.com/icon/6050/médaille-première-place">Médaille Première Place icon by Icons8</a> -->
                         <svg
                             *ngIf="i === 0"
                             xmlns="http://www.w3.org/2000/svg"
@@ -185,8 +180,6 @@
                 </div>
                 <div class="item" *ngFor="let player of this.bestPlayersInLog2990Mode; let i = index; let last = last">
                     <p class="playerName">
-                        <!-- TODO à insérer quelque part pour utilisation gratuite
-                        <a href="https://icons8.com/icon/6050/médaille-première-place">Médaille Première Place icon by Icons8</a> -->
                         <svg
                             *ngIf="i === 0"
                             xmlns="http://www.w3.org/2000/svg"
@@ -336,3 +329,4 @@
 <div mat-dialog-actions>
     <button mat-raised-button mat-dialog-close (click)="this.bestScoresDialogRef.close(true)" color="warn">Fermer</button>
 </div>
+<a href="https://icons8.com/icon/6050/médaille-première-place">Icônes de médailles par Icons8</a>

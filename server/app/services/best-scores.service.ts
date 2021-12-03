@@ -8,7 +8,6 @@ import { Service } from 'typedi';
 
 @Service()
 export class BestScoresService {
-    // TODO: revoir si nécessaire de mettre ceci dans une constante globale.
     private readonly numberOfBestPlayers;
 
     constructor() {

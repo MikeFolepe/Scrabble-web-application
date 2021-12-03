@@ -50,7 +50,6 @@ describe('JoinRoomComponent', () => {
     it('should save rooms given in argument with their configurations', () => {
         const settings: GameSettings = new GameSettings(['mi', 'ma'], 1, '01', '00', Level.Beginner, 'Activer', 'francais', '');
         const expectedRooms = [new Room('room', 'socket', settings, State.Waiting)];
-        // TODO not correctly mocked => generates console errors...
         component['clientSocketService'].socket = {
             on: (eventName: string, callback: (room: Room[]) => void) => {
                 if (eventName === 'roomConfiguration') {
