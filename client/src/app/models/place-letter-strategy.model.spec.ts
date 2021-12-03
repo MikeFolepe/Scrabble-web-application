@@ -198,6 +198,7 @@ describe('Place Letter strategy', () => {
     it('should execute place letter by calling the right functions if it is not first round', async () => {
         const myDictionary: string[] = ['thon', 'maths', 'rond', 'math', 'art', 'lundi', 'mardi'];
         const spyAi = spyOn(playerAiService.communicationService, 'getGameDictionary').and.returnValue(of(myDictionary));
+        placeStrategy['isFirstRoundAi'] = false;
 
         scrabbleBoard[3][1] = 'm';
         scrabbleBoard[3][2] = 'a';
@@ -231,6 +232,10 @@ describe('Place Letter strategy', () => {
         const spyReceivePossibilities = spyOn(playerAiService.debugService, 'receiveAIDebugPossibilities');
         const spyRemove = spyOn<any>(placeStrategy, 'removeIfNotDisposable');
 
+        placeStrategy.dictionary = await playerAiService.communicationService
+            .getGameDictionary(playerAiService.gameSettingsService.gameSettings.dictionary)
+            .toPromise();
+
         await placeStrategy.execute(playerAiService);
 
         expect(spyAi).toHaveBeenCalled();
@@ -244,6 +249,7 @@ describe('Place Letter strategy', () => {
     it('should execute place letter by calling the right functions if it is first round', async () => {
         const myDictionary: string[] = ['thon', 'maths', 'rond', 'math', 'art', 'lundi', 'mardi'];
         const spyAi = spyOn(playerAiService.communicationService, 'getGameDictionary').and.returnValue(of(myDictionary));
+        placeStrategy['isFirstRoundAi'] = true;
 
         scrabbleBoard[3][1] = 'm';
         scrabbleBoard[3][2] = 'a';

@@ -9,9 +9,11 @@ export class PlaceLetterStrategy {
     dictionary: string[];
     pointingRange: CustomRange;
     private board: string[][][];
+    private isFirstRoundAi;
     constructor() {
         this.pointingRange = { min: 1, max: 18 }; // TODO constante ?
         this.board = [];
+        this.isFirstRoundAi = true;
     }
 
     async execute(playerAiService: PlayerAIService): Promise<void> {
@@ -19,9 +21,12 @@ export class PlaceLetterStrategy {
         const level = playerAiService.gameSettingsService.gameSettings.level;
         const isFirstRound = playerAiService.placeLetterService.isFirstRound;
         const scrabbleBoard = playerAiService.placeLetterService.scrabbleBoard;
-        this.dictionary = await playerAiService.communicationService
-            .getGameDictionary(playerAiService.gameSettingsService.gameSettings.dictionary)
-            .toPromise();
+        if (this.isFirstRoundAi) {
+            this.dictionary = await playerAiService.communicationService
+                .getGameDictionary(playerAiService.gameSettingsService.gameSettings.dictionary)
+                .toPromise();
+            this.isFirstRoundAi = false;
+        }
         let allPossibleWords: PossibleWords[];
         let matchingPointingRangeWords: PossibleWords[] = [];
 
