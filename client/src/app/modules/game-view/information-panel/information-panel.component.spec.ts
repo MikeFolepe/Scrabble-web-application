@@ -85,7 +85,7 @@ describe('InformationPanelComponent', () => {
         component.receivePlayerTwo();
         expect(component['playerService'].players[PLAYER_TWO_INDEX].letterTable).toEqual(lettersReceived);
         expect(component['playerService'].addPlayer).not.toHaveBeenCalled();
-        expect(component['letterService'].removeLettersFromReserve).toHaveBeenCalled();
+        expect(component['letterService'].removeLettersFromReserve).toHaveBeenCalledTimes(0);
     });
 
     it('the emit receiveRoomMessage should call sendOpponentMessage and no add Player', () => {
@@ -111,7 +111,7 @@ describe('InformationPanelComponent', () => {
         component.receivePlayerTwo();
         expect(component['playerService'].players[PLAYER_TWO_INDEX].letterTable).toEqual(lettersReceived);
         expect(component['playerService'].addPlayer).not.toHaveBeenCalled();
-        expect(component['letterService'].removeLettersFromReserve).toHaveBeenCalled();
+        expect(component['letterService'].removeLettersFromReserve).toHaveBeenCalledTimes(0);
     });
     it('the emit receiveRoomMessage should call sendOpponentMessage and add Player if the size is under 2', () => {
         const lettersReceived = [RESERVE[0], RESERVE[1], RESERVE[2]];

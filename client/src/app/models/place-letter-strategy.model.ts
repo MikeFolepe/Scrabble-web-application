@@ -11,6 +11,7 @@ export class PlaceLetterStrategy {
     private board: string[][][];
     private isFirstRoundAi;
     constructor() {
+        this.dictionary = [];
         this.pointingRange = { min: 1, max: 18 }; // TODO constante ?
         this.board = [];
         this.isFirstRoundAi = true;

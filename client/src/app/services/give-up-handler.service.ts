@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { PLAYER_TWO_INDEX } from '@app/classes/constants';
+import { MINIMUM_TIME_PLAYING_AI, PLAYER_TWO_INDEX } from '@app/classes/constants';
 import { PlayerAI } from '@app/models/player-ai.model';
 import { ClientSocketService } from '@app/services/client-socket.service';
 import { AdministratorService } from './administrator.service';
@@ -39,7 +39,8 @@ export class GiveUpHandlerService {
                     this.playerService.players[PLAYER_TWO_INDEX].score,
                 );
                 this.playerService.players[PLAYER_TWO_INDEX] = playerAi;
-                if (!this.skipTurnService.isTurn) playerAi.play();
+                // TODO: 4 secondes en constantes
+                if (!this.skipTurnService.isTurn && this.skipTurnService.seconds > MINIMUM_TIME_PLAYING_AI) playerAi.play();
             }
         });
     }

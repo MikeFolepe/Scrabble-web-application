@@ -183,4 +183,48 @@ describe('GiveUpHandlerService', () => {
         expect(spyGetAiName).not.toHaveBeenCalled();
         expect(service['gameSettingsService'].gameSettings.playersNames[1]).not.toEqual('');
     });
+
+    it('should on at the event receiveEndGame from Server and the Winner is the truth  winner and should call play method is the turn is false && time < 6', () => {
+        service['gameSettingsService'].isSoloMode = false;
+        service.skipTurnService.isTurn = false;
+        service.skipTurnService.seconds = 8;
+        service['gameSettingsService'].gameSettings = new GameSettings(
+            ['Paul', 'Mike'],
+            1,
+            '00',
+            '30',
+            Level.Beginner,
+            'Désactiver',
+            "[['A1', 'doubleLetter'], ['A4', 'tripleLetter']]",
+            '',
+        );
+        const fakeGiveUp = true;
+        const fakeWinner = 'Paul';
+        service['clientSocket'].socket = {
+            // eslint-disable-next-line no-unused-vars
+            on: (eventName: string, callback: (isGiveUp: boolean, winnerName: string) => void) => {
+                if (eventName === 'receiveEndGameByGiveUp') {
+                    callback(fakeGiveUp, fakeWinner);
+                }
+            },
+        } as unknown as Socket;
+
+        const letterA = RESERVE[0];
+        const letterB = RESERVE[1];
+        const player1 = new Player(1, 'Player1', [letterA]);
+        const player2 = new Player(2, 'Player2', [letterB]);
+        service['playerService'].players.push(player1);
+        service['playerService'].players.push(player2);
+        // Function Call
+        service.receiveEndGameByGiveUp();
+        const spyPlay = spyOn<any>(service['playerService'].players[1], 'play');
+        const spyGetAiName = spyOn<any>(service['administratorService'], 'getAiBeginnerName');
+        // Expectation
+        expect(service.isGivenUp).toEqual(true);
+        expect(service['gameSettingsService'].isSoloMode).toEqual(true);
+        expect(service['playerService'].players[1]).toBeInstanceOf(PlayerAI);
+        expect(spyPlay).not.toHaveBeenCalled();
+        expect(spyGetAiName).not.toHaveBeenCalled();
+        expect(service['gameSettingsService'].gameSettings.playersNames[1]).not.toEqual('');
+    });
 });

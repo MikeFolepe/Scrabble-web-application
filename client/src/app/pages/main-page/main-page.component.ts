@@ -7,6 +7,7 @@ import { GameSettingsService } from '@app/services/game-settings.service';
 import { GiveUpHandlerService } from '@app/services/give-up-handler.service';
 import { LetterService } from '@app/services/letter.service';
 import { PlaceLetterService } from '@app/services/place-letter.service';
+import { WordValidationService } from '@app/services/word-validation.service';
 import { GameType } from '@common/game-type';
 
 @Component({
@@ -29,12 +30,15 @@ export class MainPageComponent {
         private letterService: LetterService,
         private placeLetterService: PlaceLetterService,
         private giveUpHandlerService: GiveUpHandlerService,
+        private wordValidationService: WordValidationService,
     ) {
         this.selectedGameTypeIndex = 0;
         this.gameType = ['Scrabble classique', 'Scrabble LOG2990'];
         this.gameModes = ['Jouer une partie en solo', 'Créer une partie multijoueur', 'Joindre une partie multijoueur'];
         // TODO: Penser a creer un ngOnDestroy
+        // TODO: ngOnDestroy ou simple fonction de reset -> mene a une duplication
         this.giveUpHandlerService.isGivenUp = false;
+        this.wordValidationService.ngOnDestroy();
         this.letterService.ngOnDestroy();
         this.placeLetterService.ngOnDestroy();
         this.gameSettingsService.ngOnDestroy();
@@ -58,6 +62,7 @@ export class MainPageComponent {
                 break;
             }
             case this.gameModes[2]: {
+                this.gameSettingsService.isSoloMode = false;
                 this.router.navigate(['join-room']);
                 break;
             }
