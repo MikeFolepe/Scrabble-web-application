@@ -129,13 +129,10 @@ export class AdministratorService {
             }
             reader.onloadend = () => {
                 // Validate the dictionary with a schema
-                // TODO: ligne suivante à tester (Étienne)
-                if (typeof reader.result === 'string') {
-                    try {
-                        this.currentDictionary = JSON.parse(reader.result);
-                    } catch (e) {
-                        resolve(false);
-                    }
+                try {
+                    this.currentDictionary = JSON.parse(reader.result as string);
+                } catch (e) {
+                    resolve(false);
                 }
                 resolve(this.ajv.validate(dictionarySchema, this.currentDictionary));
             };
@@ -152,7 +149,7 @@ export class AdministratorService {
             this.communicationService.uploadFile(this.file).subscribe(
                 (response: string) => {
                     this.dictionaries.push({
-                        fileName: this.file?.name as string, // TODO: supprimer ? as string car forcément defined à la ligne 151 non ? (Étienne)
+                        fileName: this.file?.name as string,
                         title: this.currentDictionary.title,
                         description: this.currentDictionary.description,
                         isDefault: false,
