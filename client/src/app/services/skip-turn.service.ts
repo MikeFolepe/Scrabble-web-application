@@ -116,7 +116,7 @@ export class SkipTurnService {
         if (this.isTurn && this.objectivesService.activeTimeRemaining[PLAYER_ONE_INDEX] > 0)
             this.objectivesService.activeTimeRemaining[PLAYER_ONE_INDEX]--;
 
-        if (this.isTurn === false && this.objectivesService.activeTimeRemaining[PLAYER_TWO_INDEX] > 0)
+        if (!this.isTurn && this.objectivesService.activeTimeRemaining[PLAYER_TWO_INDEX] > 0)
             this.objectivesService.activeTimeRemaining[PLAYER_TWO_INDEX]--;
     }
 }
