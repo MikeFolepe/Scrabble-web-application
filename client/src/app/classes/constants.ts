@@ -15,6 +15,7 @@ export const EASEL_SIZE = 7;
 export const ALL_EASEL_BONUS = 50;
 export const MAX_NUMBER_OF_POSSIBILITY = 3;
 export const NUMBER_OF_SKIP = 6;
+export const MINIMUM_TIME_PLAYING_AI = 6;
 export const ONE_SECOND_DELAY = 1000;
 export const TWO_SECOND_DELAY = 2000;
 export const THREE_SECONDS_DELAY = 3000;

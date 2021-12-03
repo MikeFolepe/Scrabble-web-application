@@ -32,6 +32,7 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
+        // TODO: enlever
         // this.endGameService.clearAllData();
         this.wordValidation.fileName = this.gameSettingsService.gameSettings.dictionary;
         this.initializePlayers();
@@ -43,8 +44,10 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
     receivePlayerTwo(): void {
         this.clientSocketService.socket.on('receivePlayerTwo', (letterTable: Letter[]) => {
             const player = new Player(2, this.gameSettingsService.gameSettings.playersNames[PLAYER_TWO_INDEX], letterTable);
-            if (this.playerService.players.length < 2) this.playerService.addPlayer(player);
-            this.letterService.removeLettersFromReserve(this.playerService.players[PLAYER_ONE_INDEX].letterTable);
+            if (this.playerService.players.length < 2) {
+                this.playerService.addPlayer(player);
+                this.letterService.removeLettersFromReserve(this.playerService.players[PLAYER_ONE_INDEX].letterTable);
+            }
         });
     }
 

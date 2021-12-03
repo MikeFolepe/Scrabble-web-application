@@ -61,7 +61,7 @@ export class WaitingRoomComponent implements OnInit {
     }
 
     delete(): void {
-        this.clientSocket.socket.emit('deleteGame', this.clientSocket.roomId, this.clientSocket.gameType);
+        this.clientSocket.socket.emit('deleteGame', this.clientSocket.roomId);
     }
 
     routeToGameView(): void {

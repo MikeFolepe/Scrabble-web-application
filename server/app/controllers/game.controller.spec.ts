@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 import { Application } from '@app/app';
+import { BestScoresService } from '@app/services/best-scores.service';
 import { WordValidationService } from '@app/services/word-validation.service';
+import { PlayerScore } from '@common/player';
 import * as chai from 'chai';
 import { expect } from 'chai';
-import { StatusCodes } from 'http-status-codes';
-import { Container } from 'typedi';
 import * as fileSystem from 'fs';
+import { StatusCodes } from 'http-status-codes';
+import * as sinon from 'sinon';
+import { Container } from 'typedi';
 import chaiHttp = require('chai-http');
-import Sinon = require('sinon');
-import { BestScoresService } from '@app/services/best-scores.service';
-import { PlayerScore } from '@common/player';
 
 describe('GameController', () => {
     let expressApp: Express.Application;
@@ -38,7 +38,7 @@ describe('GameController', () => {
     });
 
     it('should return the result of a validation from an invalid post request from the client', (done) => {
-        const stubValidate = Sinon.stub(wordValidationService, 'isValidInDictionary').returns(false);
+        const stubValidate = sinon.stub(wordValidationService, 'isValidInDictionary').returns(false);
         chai.request(expressApp)
             .post('/api/game/validateWords/dictionary.json')
             .send(['mdmd', 'booo'])
@@ -52,7 +52,7 @@ describe('GameController', () => {
     });
 
     it('should return the result of a validation from a valid post request from the client', (done) => {
-        const stubValidate = Sinon.stub(wordValidationService, 'isValidInDictionary').returns(true);
+        const stubValidate = sinon.stub(wordValidationService, 'isValidInDictionary').returns(true);
         chai.request(expressApp)
             .post('/api/game/validateWords/dictionary.json')
             .send(['sud', 'maman'])
@@ -78,7 +78,7 @@ describe('GameController', () => {
             ]
         }`;
         const dictionary = JSON.parse(jsonDictionary);
-        const stubOnParse = Sinon.stub(fileSystem, 'readFileSync').returns(jsonDictionary);
+        const stubOnParse = sinon.stub(fileSystem, 'readFileSync').returns(jsonDictionary);
 
         chai.request(expressApp)
             .get('/api/game/dictionary/dictionary.json')
@@ -92,7 +92,7 @@ describe('GameController', () => {
     });
 
     it('should return the bests players of classic mode', (done) => {
-        const getBestPlayersStub = Sinon.stub(bestScoresService, 'getBestPlayers').returns(Promise.resolve(playersScores));
+        const getBestPlayersStub = sinon.stub(bestScoresService, 'getBestPlayers').returns(Promise.resolve(playersScores));
         chai.request(expressApp)
             .get('/api/game/best-scores-classic')
             .end((err, response) => {
@@ -105,7 +105,7 @@ describe('GameController', () => {
     });
 
     it('should handle the error while getting bests players of classic mode', (done) => {
-        const getBestPlayersStub = Sinon.stub(bestScoresService, 'getBestPlayers').returns(Promise.reject(new Error('fail')));
+        const getBestPlayersStub = sinon.stub(bestScoresService, 'getBestPlayers').returns(Promise.reject(new Error('fail')));
         chai.request(expressApp)
             .get('/api/game/best-scores-classic')
             .end((err, response) => {
@@ -117,7 +117,7 @@ describe('GameController', () => {
     });
 
     it('should return the bests scores of log2990 mode', (done) => {
-        const getBestPlayersStub = Sinon.stub(bestScoresService, 'getBestPlayers').returns(Promise.resolve(playersScores));
+        const getBestPlayersStub = sinon.stub(bestScoresService, 'getBestPlayers').returns(Promise.resolve(playersScores));
         chai.request(expressApp)
             .get('/api/game/best-scores-log2990')
             .end((err, response) => {
@@ -130,7 +130,7 @@ describe('GameController', () => {
     });
 
     it('should handle the error while getting bests players of log2990 mode ', (done) => {
-        const getBestPlayersStub = Sinon.stub(bestScoresService, 'getBestPlayers').returns(Promise.reject(new Error('fail')));
+        const getBestPlayersStub = sinon.stub(bestScoresService, 'getBestPlayers').returns(Promise.reject(new Error('fail')));
         chai.request(expressApp)
             .get('/api/game/best-scores-log2990')
             .end((err, response) => {
@@ -142,7 +142,7 @@ describe('GameController', () => {
     });
 
     it('should add players scores of classic mode by calling add addPlayers of bestScoresService', (done) => {
-        const addPlayersStub = Sinon.stub(bestScoresService, 'addPlayers').returns(Promise.resolve());
+        const addPlayersStub = sinon.stub(bestScoresService, 'addPlayers').returns(Promise.resolve());
         chai.request(expressApp)
             .post('/api/game/best-scores-classic')
             .send(playersScores)
@@ -155,7 +155,7 @@ describe('GameController', () => {
     });
 
     it('should add players scores of log2990 mode by calling add addPlayers of bestScoresService', (done) => {
-        const addPlayersStub = Sinon.stub(bestScoresService, 'addPlayers').returns(Promise.resolve());
+        const addPlayersStub = sinon.stub(bestScoresService, 'addPlayers').returns(Promise.resolve());
         chai.request(expressApp)
             .post('/api/game/best-scores-log2990')
             .send(playersScores)

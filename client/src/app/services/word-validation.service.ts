@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { ALL_EASEL_BONUS, BOARD_COLUMNS, BOARD_ROWS, RESERVE } from '@app/classes/constants';
 import { ScoreValidation } from '@app/classes/validation-score';
 import { CommunicationService } from '@app/services/communication.service';
@@ -8,7 +8,7 @@ import { ClientSocketService } from './client-socket.service';
 @Injectable({
     providedIn: 'root',
 })
-export class WordValidationService {
+export class WordValidationService implements OnDestroy {
     fileName: string;
     playedWords: Map<string, string[]>;
     lastPlayedWords: Map<string, string[]>;
@@ -247,5 +247,19 @@ export class WordValidationService {
 
         this.newPlayedWords.clear();
         return { validation: this.validationState, score: scoreTotal };
+    }
+
+    ngOnDestroy() {
+        this.newWords = new Array<string>();
+        this.playedWords = new Map<string, string[]>();
+        this.newPlayedWords = new Map<string, string[]>();
+        this.lastPlayedWords = new Map<string, string[]>();
+        this.priorCurrentWords = new Map<string, string[]>();
+        this.currentWords = new Map<string, string[]>();
+        this.priorPlayedWords = new Map<string, string[]>();
+        this.newPositions = new Array<string>();
+        this.bonusesPositions = new Map<string, string>(this.randomBonusService.bonusPositions);
+        this.validationState = false;
+        this.foundWords = new Array<string>();
     }
 }
