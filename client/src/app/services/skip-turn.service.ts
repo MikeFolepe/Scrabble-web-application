@@ -78,6 +78,7 @@ export class SkipTurnService {
                     this.startTimer();
                 }
             } else {
+                this.shouldNotBeDisplayed = false;
                 this.clientSocket.socket.emit('switchTurn', this.isTurn, this.clientSocket.roomId);
                 this.isTurn = false;
             }
