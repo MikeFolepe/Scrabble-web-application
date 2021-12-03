@@ -134,6 +134,7 @@ export class LetterEaselComponent implements OnInit {
     }
 
     private handleSwapSelection(indexLetter: number): void {
+        this.manipulateService.unselectManipulation();
         // Unselect swap
         if (this.letterEaselTab[indexLetter].isSelectedForSwap) {
             this.letterEaselTab[indexLetter].isSelectedForSwap = false;

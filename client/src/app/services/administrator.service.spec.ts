@@ -30,6 +30,8 @@ describe('AdministratorService', () => {
     let errorResponse: HttpErrorResponse;
     let emptyDictionary: Dictionary;
 
+    let spyMatSnackBar: any;
+
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [HttpClientTestingModule, RouterTestingModule, MatSnackBarModule, MatDialogModule, BrowserAnimationsModule],
@@ -63,6 +65,8 @@ describe('AdministratorService', () => {
             description: 'empty dictionary',
             isDefault: false,
         };
+
+        spyMatSnackBar = spyOn<any>(service.snackBar, 'open');
     });
 
     it('should be created', () => {
@@ -106,6 +110,7 @@ describe('AdministratorService', () => {
     });
 
     it('adding a dictionary with a new name should be added to the dictionaries', () => {
+        spyOn<any>(service, 'displayMessage');
         const message: Observable<string> = of('Uploaded');
         spyOn(service['communicationService'], 'uploadFile').and.returnValue(message);
         service.currentDictionary = { fileName: 'test', title: 'Un dictionnaire', description: 'Une description', isDefault: false };
@@ -115,6 +120,7 @@ describe('AdministratorService', () => {
     });
 
     it('adding a dictionary while its name already exist should not be possible', () => {
+        spyOn<any>(service, 'displayMessage');
         jasmine.clock().install();
         spyOn<any>(service, 'displayUploadMessage').and.callThrough();
         const message: Observable<string> = of('Uploaded');
@@ -501,6 +507,7 @@ describe('AdministratorService', () => {
     });
 
     it('should not update dictionary if data fields are null', () => {
+        spyOn<any>(service, 'displayMessage');
         const matDialogRefMock = jasmine.createSpyObj('MatDialogRef', ['afterClosed']);
         matDialogRefMock.afterClosed.and.returnValue(of(null));
         const matDialogMock = jasmine.createSpyObj('MatDialog', ['open']);
@@ -512,6 +519,7 @@ describe('AdministratorService', () => {
     });
 
     it('should not update dictionary if at least one of the data field is null', () => {
+        spyOn<any>(service, 'displayMessage');
         const matDialogRefMock = jasmine.createSpyObj('MatDialogRef', ['afterClosed']);
         matDialogRefMock.afterClosed.and.returnValue(
             of({
@@ -528,6 +536,7 @@ describe('AdministratorService', () => {
     });
 
     it('should not update dictionary if at least one of the data field not null', () => {
+        spyOn<any>(service, 'displayMessage');
         const matDialogRefMock = jasmine.createSpyObj('MatDialogRef', ['afterClosed']);
         matDialogRefMock.afterClosed.and.returnValue(
             of({
@@ -544,6 +553,7 @@ describe('AdministratorService', () => {
     });
 
     it('should not update dictionary if dictionary is default', () => {
+        spyOn<any>(service, 'displayMessage');
         const matDialogRefMock = jasmine.createSpyObj('MatDialogRef', ['afterClosed']);
         matDialogRefMock.afterClosed.and.returnValue(
             of({
@@ -561,6 +571,7 @@ describe('AdministratorService', () => {
     });
 
     it('should call saveAs() when downloading dictionary', () => {
+        spyOn<any>(service, 'displayMessage');
         // eslint-disable-next-line deprecation/deprecation
         const saveAs = spyOn(FileSaver, 'saveAs');
         spyOn(service['communicationService'], 'downloadDictionary').and.returnValue(of('test'));
@@ -580,9 +591,8 @@ describe('AdministratorService', () => {
     });
 
     it('should not be able to display message while resetting', () => {
-        const matSnackBar = spyOn(service.snackBar, 'open');
         service.isResetting = true;
         service['displayMessage']('test');
-        expect(matSnackBar).not.toHaveBeenCalled();
+        expect(spyMatSnackBar).not.toHaveBeenCalled();
     });
 });

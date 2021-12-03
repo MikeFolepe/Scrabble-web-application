@@ -50,13 +50,12 @@ export class LetterService implements OnDestroy {
 
         // Update reserve
         const reserveIndex = this.reserve.indexOf(randomLetter);
-        if (reserveIndex !== INVALID_INDEX) {
-            this.reserve[reserveIndex].quantity--;
-            this.reserveSize--;
-            this.clientSocketService.socket.emit('sendReserve', this.reserve, this.reserveSize, this.clientSocketService.roomId);
-            return randomLetter;
-        }
-        return emptyLetter;
+
+        if (reserveIndex === INVALID_INDEX) return emptyLetter;
+        this.reserve[reserveIndex].quantity--;
+        this.reserveSize--;
+        this.clientSocketService.socket.emit('sendReserve', this.reserve, this.reserveSize, this.clientSocketService.roomId);
+        return randomLetter;
     }
 
     addLetterToReserve(letter: string): void {

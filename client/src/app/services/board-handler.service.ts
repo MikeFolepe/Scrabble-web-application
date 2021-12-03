@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
 import { BOARD_COLUMNS, BOARD_ROWS, GRID_CASE_SIZE, INVALID_INDEX, LAST_INDEX, PLAYER_ONE_INDEX } from '@app/classes/constants';
-import { MessageType, MouseButton } from '@app/classes/enum';
+import { MouseButton } from '@app/classes/enum';
 import { Orientation } from '@app/classes/scrabble-board-pattern';
 import { Vec2 } from '@common/vec2';
 import { GridService } from './grid.service';
 import { PlaceLetterService } from './place-letter.service';
-import { SendMessageService } from './send-message.service';
 import { SkipTurnService } from './skip-turn.service';
 import { PlacementsHandlerService } from './placements-handler.service';
 
@@ -24,7 +23,6 @@ export class BoardHandlerService {
     constructor(
         private gridService: GridService,
         private placeLetterService: PlaceLetterService,
-        private sendMessageService: SendMessageService,
         private skipTurnService: SkipTurnService,
         private placementsService: PlacementsHandlerService,
     ) {
@@ -87,23 +85,12 @@ export class BoardHandlerService {
 
     async confirmPlacement(): Promise<void> {
         // Validation of the placement
-        if (await this.placeLetterService.validateKeyboardPlacement(this.firstCase, this.orientation, this.word, PLAYER_ONE_INDEX)) {
-            const column = (this.firstCase.x + 1).toString();
-            const row: string = String.fromCharCode(this.firstCase.y + 'a'.charCodeAt(0));
-            const charOrientation = this.orientation === Orientation.Horizontal ? 'h' : 'v';
-            this.sendMessageService.displayMessageByType('!placer ' + row + column + charOrientation + ' ' + this.word, MessageType.Player);
-            this.word = '';
-            this.placedLetters = [];
-            this.isFirstCasePicked = false;
-            this.isFirstCaseLocked = false;
-            this.gridService.eraseLayer(this.gridService.gridContextPlacementLayer);
-        } else {
-            this.word = '';
-            this.placedLetters = [];
-            this.isFirstCasePicked = false;
-            this.isFirstCaseLocked = false;
-            this.gridService.eraseLayer(this.gridService.gridContextPlacementLayer);
-        }
+        await this.placeLetterService.validateKeyboardPlacement(this.firstCase, this.orientation, this.word, PLAYER_ONE_INDEX);
+        this.word = '';
+        this.placedLetters = [];
+        this.isFirstCasePicked = false;
+        this.isFirstCaseLocked = false;
+        this.gridService.eraseLayer(this.gridService.gridContextPlacementLayer);
     }
 
     cancelPlacement(): void {

@@ -62,7 +62,6 @@ export class EndGameService {
 
     checkEndGame(): void {
         this.isEndGame = this.isEndGameByActions() || this.isEndGameByEasel() || this.isEndGameByGiveUp;
-
         if (this.isEndGame) {
             this.clientSocketService.socket.emit('sendEndGame', this.isEndGame, this.clientSocketService.roomId);
         }

@@ -19,12 +19,12 @@ export class ManipulateService {
     // TODO changer le nom de la fonction
     onKeyPress(event: KeyboardEvent): void {
         switch (event.key) {
-            case 'ArrowLeft': {
+            case 'ArrowUp': {
                 event.preventDefault();
                 this.shiftUp();
                 break;
             }
-            case 'ArrowRight': {
+            case 'ArrowDown': {
                 event.preventDefault();
                 this.shiftDown();
                 break;
@@ -175,6 +175,12 @@ export class ManipulateService {
             letter.isSelectedForSwap = false;
         }
         this.enableScrolling();
+    }
+
+    unselectManipulation(): void {
+        for (const letter of this.letterEaselTab) {
+            letter.isSelectedForManipulation = false;
+        }
     }
 
     disableScrolling(): void {
