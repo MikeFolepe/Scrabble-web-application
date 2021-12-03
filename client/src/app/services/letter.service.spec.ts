@@ -85,4 +85,15 @@ describe('LetterService', () => {
         expect(service.reserve).toEqual(RESERVE);
         expect(service.reserveSize).toEqual(100);
     });
+
+    it('should return an empty letter if an error occurres in getRandomLetter()', () => {
+        spyOn(service.reserve, 'indexOf').and.returnValue(-1);
+        expect(service.getRandomLetter()).toEqual({
+            value: '',
+            quantity: 0,
+            points: 0,
+            isSelectedForSwap: false,
+            isSelectedForManipulation: false,
+        });
+    });
 });

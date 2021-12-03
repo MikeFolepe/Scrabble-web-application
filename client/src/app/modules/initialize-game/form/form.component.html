@@ -2,7 +2,14 @@
 <!-- TODO rendre non-sélectionnable -->
 <div class="centered" (keydown)="keyPressSubmit($event)">
     <div id="logo-scrabble"><img src="https://bit.ly/3m206ss" width="400" height="80" class="img-title" alt="Logo Scrabble" /></div>
-    <div *ngIf="!this.form" class="loading">Chargement...</div>
+    <div *ngIf="!this.form" class="loading">
+        <div class="container">
+            <p>Chargement...</p>
+            <div class="progress">
+                <div class="progress-value"></div>
+            </div>
+        </div>
+    </div>
     <form id="main-form-box" *ngIf="this.form">
         <fieldset>
             <legend id="main-form-name">Paramètres de la partie</legend>
