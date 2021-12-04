@@ -1,9 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable no-empty */
-/* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-disable dot-notation */
-// import { AI_MODELS } from '@app/classes/database.schema';
 import { AI_MODELS, DbModel, SCORES_MODEL } from '@app/classes/database.schema';
 import { AiType } from '@common/ai-name';
 import { GameType } from '@common/game-type';

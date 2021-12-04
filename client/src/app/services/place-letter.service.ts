@@ -18,7 +18,7 @@ import { SkipTurnService } from './skip-turn.service';
     providedIn: 'root',
 })
 export class PlaceLetterService implements OnDestroy {
-    isFirstRound: boolean = true;
+    isFirstRound: boolean;
     lastPlacedWord: string;
     scrabbleBoard: string[][]; // 15x15 array
 
@@ -42,6 +42,7 @@ export class PlaceLetterService implements OnDestroy {
         private objectivesService: ObjectivesService,
         private placementsService: PlacementsHandlerService,
     ) {
+        this.isFirstRound = true;
         this.scrabbleBoard = []; // Initializes the array with empty letters
         this.validLetters = [];
         this.isEaselSize = false;
@@ -117,7 +118,7 @@ export class PlaceLetterService implements OnDestroy {
         }
         // If the position is empty, we use a letter from the reserve
         this.scrabbleBoard[position.y][position.x] = letter;
-        this.validLetters[indexLetterInWord] = false; // The letter is not yet validated
+        this.validLetters[indexLetterInWord] = false; // Here the letter is placed but not validated
         this.numLettersUsedFromEasel++;
 
         if (letter === letter.toUpperCase()) {
@@ -133,7 +134,6 @@ export class PlaceLetterService implements OnDestroy {
     }
 
     async validatePlacement(position: Vec2, orientation: Orientation, word: string, indexPlayer: number): Promise<boolean> {
-        // Validation of the placement
         const finalResult: ScoreValidation = await this.wordValidationService.validateAllWordsOnBoard(
             this.scrabbleBoard,
             this.isEaselSize,

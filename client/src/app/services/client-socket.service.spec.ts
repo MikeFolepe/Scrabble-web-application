@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable dot-notation */
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';

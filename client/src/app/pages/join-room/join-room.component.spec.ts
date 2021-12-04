@@ -9,6 +9,7 @@ import { PageEvent } from '@angular/material/paginator';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ERROR_MESSAGE_DELAY } from '@app/classes/constants';
 import { GameSettings } from '@common/game-settings';
+import { GameType } from '@common/game-type';
 import { Level } from '@common/level';
 import { Room, State } from '@common/room';
 import { of } from 'rxjs';
@@ -48,17 +49,18 @@ describe('JoinRoomComponent', () => {
     });
 
     it('should save rooms given in argument with their configurations', () => {
+        component['clientSocketService'].gameType = GameType.Classic;
         const settings: GameSettings = new GameSettings(['mi', 'ma'], 1, '01', '00', Level.Beginner, 'Activer', 'francais', '');
-        const expectedRooms = [new Room('room', 'socket', settings, State.Waiting)];
+        const expectedRooms = [[new Room('room', 'socket', settings, State.Waiting)], []];
         component['clientSocketService'].socket = {
-            on: (eventName: string, callback: (room: Room[]) => void) => {
+            on: (eventName: string, callback: (room: Room[][]) => void) => {
                 if (eventName === 'roomConfiguration') {
                     callback(expectedRooms);
                 }
             },
         } as unknown as Socket;
         component['configureRooms']();
-        expect(component.rooms).toEqual(expectedRooms);
+        expect(component.rooms).toEqual(expectedRooms[0]);
     });
 
     it('should correctly handle room unavailability', () => {
@@ -186,9 +188,10 @@ describe('JoinRoomComponent', () => {
     });
 
     it('should on at the event ReceiveRoomAvailable form the server and set the isRoomAvailable at false', () => {
-        const numberOfMyRoom = 0;
+        component['clientSocketService'].gameType = GameType.Classic;
+        const numberOfMyRoom = [0, 0];
         component['clientSocketService'].socket = {
-            on: (eventName: string, callback: (numberOfRooms: number) => void) => {
+            on: (eventName: string, callback: (numberOfRooms: number[]) => void) => {
                 if (eventName === 'roomAvailable') {
                     callback(numberOfMyRoom);
                 }
@@ -200,9 +203,10 @@ describe('JoinRoomComponent', () => {
     });
 
     it('should on at the event ReceiveRoomAvailable form the server and set the isRoomAvailable at true and buttonAvailability at false', () => {
-        const numberOfMyRoom = 1;
+        const numberOfMyRoom = [1, 0];
+        component['clientSocketService'].gameType = GameType.Classic;
         component['clientSocketService'].socket = {
-            on: (eventName: string, callback: (numberOfRooms: number) => void) => {
+            on: (eventName: string, callback: (numberOfRooms: number[]) => void) => {
                 if (eventName === 'roomAvailable') {
                     callback(numberOfMyRoom);
                 }
@@ -213,9 +217,10 @@ describe('JoinRoomComponent', () => {
         expect(component.isRandomButtonAvailable).toEqual(false);
     });
     it('should on at the event ReceiveRoomAvailable form the server and set the isRoomAvailable at true and buttonAvailability at true', () => {
-        const numberOfMyRoom = 2;
+        component['clientSocketService'].gameType = GameType.Classic;
+        const numberOfMyRoom = [2, 0];
         component['clientSocketService'].socket = {
-            on: (eventName: string, callback: (numberOfRooms: number) => void) => {
+            on: (eventName: string, callback: (numberOfRooms: number[]) => void) => {
                 if (eventName === 'roomAvailable') {
                     callback(numberOfMyRoom);
                 }

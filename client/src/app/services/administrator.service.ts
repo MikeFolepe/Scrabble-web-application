@@ -139,7 +139,7 @@ export class AdministratorService {
         });
     }
 
-    addDictionary() {
+    addDictionary(): void {
         if (this.isDictionaryNameUsed(this.currentDictionary.title)) {
             this.displayUploadMessage('Il existe déjà un dictionnaire portant le même nom');
             return;

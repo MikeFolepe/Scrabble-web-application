@@ -63,14 +63,6 @@ h2 {
     font-size: larger;
 }
 
-.window {
-    font: 1.3rem Inconsolata, monospace;
-    color: white;
-    text-shadow: 0 0 5px #c8c8c8;
-    background-color: rgba(0, 0, 0, 0.6);
-    border-radius: 6px;
-}
-
 #dictionaries {
     width: 48%;
 }
@@ -145,7 +137,11 @@ h2 {
 }
 
 #virtual-names .scrollable {
-    height: 30vh;
+    width: 100%;
+}
+
+.name-container {
+    max-height: 35vh;
     width: 100%;
     overflow-y: auto;
 }
@@ -177,33 +173,24 @@ h2 {
     border: 3px solid transparent;
     border-radius: 6px;
     width: 100%;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    box-sizing: border-box;
+    align-items: center;
 }
 
 .icons {
     visibility: hidden;
-    margin: 0.5em 0.5em 0.5em 0;
+    margin-right: 0.1em;
 }
 
-.icons button {
-    border: 0;
-    width: 1em;
-    padding: 0;
-}
-
-.icons button {
-    border: 1px solid transparent;
-}
-
-.item:hover button {
-    color: white;
-}
-
-.item:hover button:hover #deleteIcon {
+#deleteIcon {
     color: #f44336;
 }
 
-.item:hover button:hover #editIcon {
-    color: lightseagreen;
+#editIcon {
+    color: green;
 }
 
 .item:hover {
@@ -293,7 +280,6 @@ h2 {
 
 button {
     color: green;
-    transition: 0.25s;
 }
 
 .content {
