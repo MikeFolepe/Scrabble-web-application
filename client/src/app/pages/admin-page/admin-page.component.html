@@ -85,7 +85,7 @@
                         <p class="name-title">Noms débutants</p>
                         <hr />
                         <div class="name-container">
-                            <div class="item" *ngFor="let aiBeginner of adminService.beginnerNames">
+                            <div class="item" *ngFor="let aiBeginner of adminService.aiBeginner">
                                 <p class="ai-name">{{ aiBeginner.aiName }}</p>
                                 <div class="icons">
                                     <button mat-icon-button id="deleteIcon" (click)="adminService.deleteAiPlayer(aiBeginner, 0)">
@@ -112,7 +112,7 @@
                         <p class="name-title">Noms experts</p>
                         <hr />
                         <div class="name-container">
-                            <div class="item" *ngFor="let aiExpert of adminService.expertNames">
+                            <div class="item" *ngFor="let aiExpert of adminService.aiExpert">
                                 <p class="ai-name">{{ aiExpert.aiName }}</p>
                                 <span class="icons">
                                     <button mat-icon-button id="deleteIcon" (click)="adminService.deleteAiPlayer(aiExpert, 1)">

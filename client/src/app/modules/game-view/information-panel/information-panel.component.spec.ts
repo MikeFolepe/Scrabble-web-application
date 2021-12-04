@@ -8,9 +8,9 @@ import { PLAYER_AI_INDEX, PLAYER_TWO_INDEX, RESERVE } from '@app/classes/constan
 import { PlayerAI } from '@app/models/player-ai.model';
 import { Player } from '@app/models/player.model';
 import { SkipTurnService } from '@app/services/skip-turn.service';
+import { AiType } from '@common/ai-name';
 import { GameSettings } from '@common/game-settings';
 import { Letter } from '@common/letter';
-import { Level } from '@common/level';
 import { Socket } from 'socket.io-client';
 import { InformationPanelComponent } from './information-panel.component';
 describe('InformationPanelComponent', () => {
@@ -39,7 +39,7 @@ describe('InformationPanelComponent', () => {
             1,
             '00',
             '30',
-            Level.Beginner,
+            AiType.beginner,
             'Désactiver',
             "[['A1', 'doubleLetter'], ['A4', 'tripleLetter']]",
             '',
