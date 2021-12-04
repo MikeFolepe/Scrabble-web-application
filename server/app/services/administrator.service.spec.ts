@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
 import { AI_BEGINNERS } from '@app/classes/constants';
-import { AI_MODELS, DbModel, SCORES_MODEL } from '@app/classes/database.schema';
+import { AI_MODELS, SCORES_MODEL } from '@app/classes/database.schema';
 import { DatabaseServiceMock } from '@app/classes/database.service.mock';
 import { AiPlayer, AiPlayerDB, AiType } from '@common/ai-name';
 import { Dictionary } from '@common/dictionary';
@@ -32,7 +32,7 @@ describe('Admin service', () => {
 
     it('should return the aiPlayers asked', (done) => {
         databaseService.start();
-        const aiModel = AI_MODELS.get(AiType.beginner) as DbModel;
+        const aiModel = AI_MODELS.get(AiType.beginner) as mongoose.Model<AiPlayer>;
 
         const spy = chai.spy.on(aiModel, 'find', () => {
             const player = new aiModel({
@@ -64,7 +64,7 @@ describe('Admin service', () => {
 
     it('should update the aiPlayer from the database', async () => {
         await databaseService.start();
-        const aiModel = AI_MODELS.get(AiType.beginner) as DbModel;
+        const aiModel = AI_MODELS.get(AiType.beginner) as mongoose.Model<AiPlayer>;
         const players: AiPlayerDB[] = [];
 
         for (const aiPlayer of AI_BEGINNERS) {
@@ -93,7 +93,7 @@ describe('Admin service', () => {
 
     it('should delete the aiPlayer from the database', async () => {
         await databaseService.start();
-        const aiModel = AI_MODELS.get(AiType.beginner) as DbModel;
+        const aiModel = AI_MODELS.get(AiType.beginner) as mongoose.Model<AiPlayer>;
         const players: AiPlayerDB[] = [];
 
         for (const aiPlayer of AI_BEGINNERS) {

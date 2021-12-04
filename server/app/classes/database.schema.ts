@@ -3,8 +3,6 @@ import { GameType } from '@common/game-type';
 import { PlayerScore } from '@common/player';
 import * as mongoose from 'mongoose';
 
-export type DbModel = mongoose.Model<AiPlayer>;
-
 const scoreSchema = new mongoose.Schema({
     score: { type: Number, required: true },
     playerName: { type: String, required: true },
@@ -22,7 +20,7 @@ const expertNameModel = mongoose.model('AiExpertName', aiNameSchema);
 const scoreModelClassic = mongoose.model('ScoresClassic', scoreSchema);
 const scoreModelLog2990 = mongoose.model('ScoresLog2990', scoreSchema);
 
-export const AI_MODELS: Map<AiType, DbModel> = new Map<AiType, DbModel>([
+export const AI_MODELS: Map<AiType, mongoose.Model<AiPlayer>> = new Map<AiType, mongoose.Model<AiPlayer>>([
     [AiType.beginner, beginnerNameModel],
     [AiType.expert, expertNameModel],
 ]);

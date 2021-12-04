@@ -19,8 +19,8 @@ export class GameController {
     private configureRouter(): void {
         this.router = Router();
         this.router.post('/validateWords/:fileName', (req: Request, res: Response) => {
-            const validation = this.wordValidator.isValidInDictionary(req.body, req.params.fileName);
-            res.status(StatusCodes.OK).send(validation);
+            const isValid = this.wordValidator.isValidInDictionary(req.body, req.params.fileName);
+            res.status(StatusCodes.OK).send(isValid);
         });
 
         this.router.get('/dictionary/:fileName', (req: Request, res: Response) => {

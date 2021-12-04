@@ -20,14 +20,17 @@ import { SkipTurnService } from './skip-turn.service';
 export class PlaceLetterService implements OnDestroy {
     isFirstRound: boolean;
     lastPlacedWord: string;
-    scrabbleBoard: string[][]; // 15x15 array
+    scrabbleBoard: string[][];
 
     private startPosition: Vec2;
     private orientation: Orientation;
     private word: string;
-    private validLetters: boolean[]; // Array of the size of the word to place that tells which letter is valid
-    private isEaselSize: boolean; // If the bonus to form a word with all the letters from the easel applies
-    private numLettersUsedFromEasel: number; // Number of letters used from the easel to form the word
+    // Array of the size of the word to place that tells which letter is valid
+    private validLetters: boolean[];
+    // If the bonus to form a word with all the letters from the easel applies
+    private isEaselSize: boolean;
+    // Number of letters used from the easel to form the word
+    private numLettersUsedFromEasel: number;
     private isRow: boolean;
 
     constructor(
@@ -43,7 +46,7 @@ export class PlaceLetterService implements OnDestroy {
         private placementsService: PlacementsHandlerService,
     ) {
         this.isFirstRound = true;
-        this.scrabbleBoard = []; // Initializes the array with empty letters
+        this.scrabbleBoard = [];
         this.validLetters = [];
         this.isEaselSize = false;
         this.numLettersUsedFromEasel = 0;
@@ -70,7 +73,8 @@ export class PlaceLetterService implements OnDestroy {
         const wordNoAccents = word.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
         // Reset the array containing the valid letters by making them all valid
         for (let i = 0; i < word.length; i++) this.validLetters[i] = true;
-        this.numLettersUsedFromEasel = 0; // Reset the number of letters used from the easel for next placement
+        // Reset the number of letters used from the easel for next placement
+        this.numLettersUsedFromEasel = 0;
 
         if (!this.isPossible(position, orientation, wordNoAccents, indexPlayer)) {
             this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', MessageType.Error);
@@ -175,7 +179,8 @@ export class PlaceLetterService implements OnDestroy {
                 this.skipTurnService.switchTurn();
             }, THREE_SECONDS_DELAY);
             return false;
-        } // Placing the following words
+        }
+        // Placing the following words
         if (this.isWordTouchingOthers(position, orientation, word)) return await this.validatePlacement(position, orientation, word, indexPlayer);
 
         this.handleInvalidPlacement(position, orientation, word, indexPlayer);
@@ -200,9 +205,8 @@ export class PlaceLetterService implements OnDestroy {
         this.displayValid(indexPlayer);
         this.playerService.addScore(finalResult.score, indexPlayer);
         this.playerService.updateScrabbleBoard(this.scrabbleBoard);
-        this.playerService.refillEasel(indexPlayer); // Fill the easel with new letters from the reserve
+        this.playerService.refillEasel(indexPlayer);
         this.isFirstRound = false;
-        // Emit to server on multiplayer mode
         if (!this.gameSettingsService.isSoloMode) {
             this.clientSocketService.socket.emit(
                 'sendPlacement',
@@ -250,17 +254,17 @@ export class PlaceLetterService implements OnDestroy {
 
     isWordValid(position: Vec2, orientation: Orientation, word: string, indexPlayer: number): boolean {
         let isLetterExisting = false;
-        const indexLetters: number[] = []; // Array containing indexes of the easel that are used by the word we want to place.
+        // Array containing indexes of the easel that are used by the word we want to place.
+        const indexLetters: number[] = [];
         const currentPosition = { x: position.x, y: position.y };
 
         for (const letter of word) {
             isLetterExisting = this.isLetterOnBoard(currentPosition, letter);
             this.placementsService.goToNextPosition(currentPosition, orientation);
 
-            // If the letter isn't on the board, we look into the easel
+            // If the letter isn't on the board, we look into the easel, else we cannot place the word
             if (!isLetterExisting) {
                 isLetterExisting = this.placementsService.isLetterInEasel(letter, indexPlayer, indexLetters);
-                // If the letter isn't on the board or present in the easel, we can't place the word
                 if (!isLetterExisting) return false;
             }
         }
@@ -309,7 +313,7 @@ export class PlaceLetterService implements OnDestroy {
 
     ngOnDestroy() {
         this.isFirstRound = true;
-        this.scrabbleBoard = []; // Initializes the array with empty letters
+        this.scrabbleBoard = [];
         this.validLetters = [];
         this.isEaselSize = false;
         this.numLettersUsedFromEasel = 0;

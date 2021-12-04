@@ -71,7 +71,8 @@ export class ChatboxService {
                 break;
             }
         }
-        this.command = ''; // reset value for next message
+        // reset value for next message
+        this.command = '';
     }
 
     private executeDebug(): void {
@@ -169,7 +170,8 @@ export class ChatboxService {
     private isValid(): boolean {
         if (this.message[0] !== '!') {
             this.sendMessageService.displayMessageByType(this.message, this.messageType);
-            return true; // If it's a normal message, it's always valid
+            // If it's a normal message, it's always valid
+            return true;
         }
         // If it's a command, we call the validation
         return this.isCommandValid() && this.isSyntaxValid();

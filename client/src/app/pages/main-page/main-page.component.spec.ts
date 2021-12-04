@@ -66,14 +66,12 @@ describe('MainPageComponent', () => {
     });
 
     it('should set the game type as scrabble classique', () => {
-        // Mode classique
         component.selectedGameType = component.gameType[0];
         component.routeToGameMode();
         expect(component.gameSettingsService.gameType).toEqual(0);
     });
 
     it('should set the game type as scrabble Log2990', () => {
-        // Mode Log2990
         component.selectedGameType = component.gameType[1];
         component.selectedGameTypeIndex = 1;
         component.routeToGameMode();

@@ -69,7 +69,8 @@ export class ChatboxComponent implements OnInit {
         }
         this.listTypes.push(this.sendMessageService.messageType);
         this.listMessages.push(this.sendMessageService.message);
-        this.message = ''; // Clear input
+        // Clear input
+        this.message = '';
         this.scrollToBottom();
     }
 

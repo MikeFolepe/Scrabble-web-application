@@ -58,7 +58,7 @@ export class BoardHandlerService {
             default: {
                 if (!this.skipTurnService.isTurn) break;
                 if (/([a-zA-Z\u00C0-\u00FF])+/g.test(event.key) && event.key.length === 1) {
-                    // Remove accents from the letter to place
+                    // Removes accents from the letter to place
                     const letterNoAccents = event.key.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
                     this.placeLetter(letterNoAccents);
                 }

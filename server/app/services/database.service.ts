@@ -1,6 +1,6 @@
 import { AI_BEGINNERS, AI_EXPERTS, DATABASE_URL, DEFAULT_SCORES } from '@app/classes/constants';
-import { AI_MODELS, DbModel, SCORES_MODEL } from '@app/classes/database.schema';
-import { AiType } from '@common/ai-name';
+import { AI_MODELS, SCORES_MODEL } from '@app/classes/database.schema';
+import { AiPlayer, AiType } from '@common/ai-name';
 import { GameType } from '@common/game-type';
 import { PlayerScore } from '@common/player';
 import * as mongoose from 'mongoose';
@@ -54,7 +54,7 @@ export class DatabaseService {
     }
 
     async setDefaultData(aiType: AiType): Promise<void> {
-        const aiModel = AI_MODELS.get(aiType) as DbModel;
+        const aiModel = AI_MODELS.get(aiType) as mongoose.Model<AiPlayer>;
         await aiModel.deleteMany({ isDefault: true }).exec();
 
         const players = aiType ? AI_EXPERTS : AI_BEGINNERS;
