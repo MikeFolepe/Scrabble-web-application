@@ -18,29 +18,6 @@ export class GameController {
     }
     private configureRouter(): void {
         this.router = Router();
-        /**
-         * @swagger
-         *
-         * /api/game/validateWords:
-         *   post:
-         *     description: return the validation result of a placed word
-         *     tags:
-         *       - Multiplayer
-         *     produces:
-         *       - a boolean that describe the result
-         *     responses:
-         *       200
-         *
-         * /api/game/uploadDictionary:
-         *   post:
-         *     description: upload a dictionary (json file) to server
-         *     tags:
-         *       - Multiplayer
-         *     produces:
-         *       - nothing for now
-         *     responses:
-         *       200
-         */
         this.router.post('/validateWords/:fileName', (req: Request, res: Response) => {
             const validation = this.wordValidator.isValidInDictionary(req.body, req.params.fileName);
             res.status(StatusCodes.OK).send(validation);

@@ -60,7 +60,6 @@ export class PlaceLetterStrategy {
         playerAiService.debugService.receiveAIDebugPossibilities(allPossibleWords);
     }
 
-    // TODO: utiliser l'enum expert, beginner à la place de isDifficultMode
     private async computeResults(possibilities: PossibleWords[], playerAiService: PlayerAIService, isDifficultMode = true): Promise<void> {
         if (possibilities.length === 0) {
             playerAiService.swap(isDifficultMode);
