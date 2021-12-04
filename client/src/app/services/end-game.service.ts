@@ -73,15 +73,11 @@ export class EndGameService {
         for (const letter of this.playerService.players[indexPlayer].letterTable) {
             this.playerService.players[indexPlayer].score -= letter.points;
             // Check if score decrease under 0 after substraction
-
             if (this.playerService.players[indexPlayer].score < 0) {
                 this.playerService.players[indexPlayer].score = 0;
                 break;
             }
         }
-        // TODO: décommenter la ligne suivante si jamais le JV apparaît dans les classements
-        // if (this.playerService.players[indexPlayer].name in AI_NAME_DATABASE) return;
-
         const players: PlayerScore[] = [];
         players[indexPlayer] = {
             score: this.playerService.players[indexPlayer].score,

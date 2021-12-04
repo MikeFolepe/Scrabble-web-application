@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { BestScoresComponent } from '@app/pages/best-scores/best-scores.component';
 import { ClientSocketService } from '@app/services/client-socket.service';
+import { EndGameService } from '@app/services/end-game.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { GiveUpHandlerService } from '@app/services/give-up-handler.service';
 import { LetterService } from '@app/services/letter.service';
@@ -30,18 +31,13 @@ export class MainPageComponent {
         private letterService: LetterService,
         private placeLetterService: PlaceLetterService,
         private giveUpHandlerService: GiveUpHandlerService,
+        private endGameService: EndGameService,
         private wordValidationService: WordValidationService,
     ) {
         this.selectedGameTypeIndex = 0;
         this.gameType = ['Scrabble classique', 'Scrabble LOG2990'];
         this.gameModes = ['Jouer une partie en solo', 'Créer une partie multijoueur', 'Joindre une partie multijoueur'];
-        // TODO: Penser a creer un ngOnDestroy
-        // TODO: ngOnDestroy ou simple fonction de reset -> mene a une duplication
-        this.giveUpHandlerService.isGivenUp = false;
-        this.wordValidationService.ngOnDestroy();
-        this.letterService.ngOnDestroy();
-        this.placeLetterService.ngOnDestroy();
-        this.gameSettingsService.ngOnDestroy();
+        this.resetServices();
     }
 
     routeToGameMode(): void {
@@ -71,5 +67,14 @@ export class MainPageComponent {
 
     openBestScoresDialog() {
         this.bestScoresDialog.open(BestScoresComponent, { disableClose: true });
+    }
+
+    resetServices() {
+        this.giveUpHandlerService.isGivenUp = false;
+        this.endGameService.actionsLog = [];
+        this.wordValidationService.ngOnDestroy();
+        this.letterService.ngOnDestroy();
+        this.placeLetterService.ngOnDestroy();
+        this.gameSettingsService.ngOnDestroy();
     }
 }

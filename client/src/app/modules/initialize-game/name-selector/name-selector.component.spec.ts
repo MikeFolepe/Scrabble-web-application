@@ -4,15 +4,15 @@ import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { JoinDialogComponent } from './join-dialog.component';
+import { NameSelectorComponent } from './name-selector.component';
 
 describe('DialogComponent', () => {
-    let component: JoinDialogComponent;
-    let fixture: ComponentFixture<JoinDialogComponent>;
+    let component: NameSelectorComponent;
+    let fixture: ComponentFixture<NameSelectorComponent>;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [JoinDialogComponent],
+            declarations: [NameSelectorComponent],
             providers: [
                 {
                     provide: MatDialogRef,
@@ -24,7 +24,7 @@ describe('DialogComponent', () => {
     });
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(JoinDialogComponent);
+        fixture = TestBed.createComponent(NameSelectorComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });

@@ -152,13 +152,13 @@ describe('FormComponent', () => {
         expect(router.navigate).toHaveBeenCalledWith(['game']);
     });
 
-    it('should route to multiplayer-mode-waiting-room if it is not soloGame', async () => {
+    it('should route to waiting-room if it is not soloGame', async () => {
         spyOn(component, 'selectGameDictionary');
         component.isDictionaryDeleted = false;
         spyOn<any>(component, 'snapshotSettings');
         component.gameSettingsService.isSoloMode = false;
         await component.initializeGame();
-        expect(router.navigate).toHaveBeenCalledWith(['multiplayer-mode-waiting-room']);
+        expect(router.navigate).toHaveBeenCalledWith(['waiting-room']);
     });
 
     it('should call shuffleBonusPositons of randomBonusService if randomBonus are activated in the form', () => {

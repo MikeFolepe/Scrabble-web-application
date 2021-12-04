@@ -65,7 +65,6 @@ export class SwapLetterService {
         return true;
     }
 
-    // TODO checker le ternaire sur la condition
     // Reserve needs to have at least 7 letters to perform a swap
     private reserveHasEnoughLetters(): boolean {
         return this.letterService.reserveSize >= MIN_RESERVE_SIZE_TO_SWAP;

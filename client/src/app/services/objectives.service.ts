@@ -94,13 +94,11 @@ export class ObjectivesService implements OnDestroy {
         for (let index = actionLogSize; index >= 0; index = index - 2) {
             actionLog.push(this.endGameService.actionsLog[index]);
         }
-
         actionLog = actionLog.reverse();
 
         for (const word of this.wordValidationService.lastPlayedWords.keys()) {
-            currentWordLength = word.length;
+            if (word.length > currentWordLength) currentWordLength = word.length;
         }
-
         for (let index = this.obj1LastAttempt[this.playerIndex]; index < actionLog.length; index++) {
             this.obj1ActionTracker[this.playerIndex].push(actionLog[index]);
         }
@@ -116,7 +114,6 @@ export class ObjectivesService implements OnDestroy {
                 break;
             }
         }
-
         this.obj1LastAttempt[this.playerIndex] = actionLog.length;
 
         if (this.obj1Counter[this.playerIndex] === numberOfOccurrencesToValidate) this.addObjectiveScore(id);
