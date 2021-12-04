@@ -2,7 +2,7 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { PLAYER_ONE_INDEX, RESERVE } from '@app/classes/constants';
+import { PLAYER_ONE_INDEX, RESERVE, TWO_SECOND_DELAY } from '@app/classes/constants';
 import { MessageType } from '@app/classes/enum';
 import { Player } from '@app/models/player.model';
 import { SendMessageService } from '@app/services/send-message.service';
@@ -117,8 +117,11 @@ describe('SendMessageService', () => {
     });
 
     it('calling displayFinalMessage should send the respective message to the chatbox', () => {
+        jasmine.clock().install();
         spyOn(service, 'displayMessageByType');
         service.displayFinalMessage(PLAYER_ONE_INDEX);
+        jasmine.clock().tick(TWO_SECOND_DELAY);
         expect(service.displayMessageByType).toHaveBeenCalledWith('Player 1 : AABBCCA', MessageType.System);
+        jasmine.clock().uninstall();
     });
 });

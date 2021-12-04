@@ -56,7 +56,8 @@ export class JoinRoomComponent implements OnInit {
         this._MatPaginatorIntl.nextPageLabel = 'Page suivante';
         this._MatPaginatorIntl.previousPageLabel = 'Page précédente';
 
-        // Code pasted from internet to translate mat paginator label in french
+        // This function is not crucial for our application, it's important to have some texts in french
+        // as we are missing, we did not cover these lines in the tests.
         const frenchRangeLabel = (page: number, pageSize: number, length: number) => {
             if (length === 0 || pageSize === 0) return `0 de ${length}`;
             length = Math.max(length, 0);

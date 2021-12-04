@@ -35,7 +35,7 @@ export class SkipTurnService {
         private playerService: PlayerService,
         private objectivesService: ObjectivesService,
         private sendMessageService: SendMessageService,
-        private commuciationService: CommunicationService,
+        private communicationService: CommunicationService,
     ) {
         this.receiveNewTurn();
         this.receiveStartFromServer();
@@ -132,10 +132,11 @@ export class SkipTurnService {
             this.endGameService.getFinalScore(PLAYER_ONE_INDEX);
             this.endGameService.getFinalScore(PLAYER_TWO_INDEX);
             this.stopTimer();
+            this.clientSocket.socket.emit('sendEasel', this.playerService.players[PLAYER_ONE_INDEX].letterTable, this.clientSocket.roomId);
             this.sendMessageService.displayFinalMessage(PLAYER_ONE_INDEX);
             this.sendMessageService.displayFinalMessage(PLAYER_TWO_INDEX);
             this.shouldNotBeDisplayed = true;
-            this.commuciationService.addPlayersScores(this.endGameService.playersScores, this.gameSettingsService.gameType).subscribe();
+            this.communicationService.addPlayersScores(this.endGameService.playersScores, this.gameSettingsService.gameType).subscribe();
         }
     }
 }

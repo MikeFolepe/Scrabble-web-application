@@ -22,14 +22,14 @@ export class AdministratorService {
     currentDictionary: Dictionary;
     fileInput: ElementRef;
     file: File | null;
-    uploadMessage: string;
+    serverError: string;
     isResetting: boolean;
     ajv: Ajv;
 
     constructor(private communicationService: CommunicationService, public snackBar: MatSnackBar, public dialog: MatDialog) {
         this.ajv = new Ajv();
         this.file = null;
-        this.uploadMessage = '';
+        this.serverError = '';
         this.isResetting = false;
     }
 
@@ -301,16 +301,15 @@ export class AdministratorService {
     }
 
     private handleRequestError(error: HttpErrorResponse): void {
-        this.displayUploadMessage(`Nous n'avons pas pu accéder au serveur, erreur : ${error.message}`);
+        this.displayServerError(`Nous n'avons pas pu accéder au serveur, erreur : ${error.message}`);
     }
 
-    private displayUploadMessage(uploadMessage: string): void {
-        // case if there is already a message occurring
-        if (this.uploadMessage.length) return;
-        this.uploadMessage = uploadMessage;
+    private displayServerError(uploadMessage: string): void {
+        if (this.serverError.length) return; // There is already a message occurring
+        this.serverError = uploadMessage;
         this.file = null;
         setTimeout(() => {
-            this.uploadMessage = '';
+            this.serverError = '';
         }, ERROR_MESSAGE_DELAY);
     }
 

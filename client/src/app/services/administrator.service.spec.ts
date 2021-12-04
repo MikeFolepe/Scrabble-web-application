@@ -10,7 +10,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
-import { ONE_SECOND_DELAY } from '@app/classes/constants';
+import { ERROR_MESSAGE_DELAY, ONE_SECOND_DELAY } from '@app/classes/constants';
 import { AiPlayerDB, AiType } from '@common/ai-name';
 import { Dictionary } from '@common/dictionary';
 import FileSaver from 'file-saver';
@@ -30,6 +30,8 @@ describe('AdministratorService', () => {
     let player3: AiPlayerDB;
     let errorResponse: HttpErrorResponse;
     let emptyDictionary: Dictionary;
+
+    let spyMatSnackBar: any;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
@@ -64,6 +66,7 @@ describe('AdministratorService', () => {
             description: 'empty dictionary',
             isDefault: false,
         };
+        spyMatSnackBar = spyOn(service.snackBar, 'open');
     });
 
     it('should be created', () => {
@@ -233,6 +236,7 @@ describe('AdministratorService', () => {
     });
 
     it('should initialize AI players', () => {
+        jasmine.clock().install();
         const player4: AiPlayerDB = {
             _id: '4',
             aiName: 'Mister_Test',
@@ -246,9 +250,11 @@ describe('AdministratorService', () => {
         const getPlayers = spyOn(service['communicationService'], 'getAiPlayers').and.returnValue(of([player4, player5]));
         spyOn<any>(service, 'handleRequestError');
         service.initializeAiPlayers();
+        jasmine.clock().tick(ERROR_MESSAGE_DELAY);
         expect(getPlayers).toHaveBeenCalledTimes(2);
         expect(service.aiBeginner).toEqual([player4, player5]);
         expect(service.aiExpert).toEqual([player4, player5]);
+        jasmine.clock().uninstall();
     });
 
     it('should call handleRequestError if returned players have an error', () => {
@@ -576,5 +582,21 @@ describe('AdministratorService', () => {
         service.currentDictionary = undefined as unknown as Dictionary;
         service.isDictionaryValid();
         expect(service.currentDictionary).toBeUndefined();
+    });
+
+    it('should not be able to display message while resetting', () => {
+        service.isResetting = true;
+        service['displayMessage']('test');
+        expect(spyMatSnackBar).not.toHaveBeenCalled();
+    });
+
+    it('displayServerError should display the error during the correct delay', () => {
+        jasmine.clock().install();
+        service.serverError = '';
+        service['displayServerError']('ERROR');
+        expect(service.serverError).toEqual('ERROR');
+        jasmine.clock().tick(ERROR_MESSAGE_DELAY);
+        expect(service.serverError).toEqual('');
+        jasmine.clock().uninstall();
     });
 });

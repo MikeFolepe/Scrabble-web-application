@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { NUMBER_OF_SKIP, PLAYER_AI_INDEX, PLAYER_ONE_INDEX, PLAYER_TWO_INDEX } from '@app/classes/constants';
 import { PlayerAI } from '@app/models/player-ai.model';
-import { Player } from '@app/models/player.model';
 import { DebugService } from '@app/services/debug.service';
+import { Letter } from '@common/letter';
 import { PlayerScore } from '@common/player';
 import { ClientSocketService } from './client-socket.service';
 import { GameSettingsService } from './game-settings.service';
 import { LetterService } from './letter.service';
 import { PlayerService } from './player.service';
+import { SendMessageService } from './send-message.service';
 
 @Injectable({
     providedIn: 'root',
@@ -25,6 +26,7 @@ export class EndGameService {
         public playerService: PlayerService,
         public debugService: DebugService,
         public gameSettingsService: GameSettingsService,
+        private sendMessageService: SendMessageService,
     ) {
         this.clearAllData();
         this.actionsLog = [];
@@ -34,8 +36,16 @@ export class EndGameService {
     }
 
     receiveEndGameFromServer(): void {
-        this.clientSocketService.socket.on('receiveEndGame', (isEndGame: boolean) => {
+        this.clientSocketService.socket.on('receiveEndGame', (isEndGame: boolean, letterTable: Letter[]) => {
             this.isEndGame = isEndGame;
+            this.playerService.players[PLAYER_TWO_INDEX].letterTable = letterTable;
+            this.clientSocketService.socket.emit(
+                'sendEasel',
+                this.playerService.players[PLAYER_ONE_INDEX].letterTable,
+                this.clientSocketService.roomId,
+            );
+            this.sendMessageService.displayFinalMessage(PLAYER_ONE_INDEX);
+            this.sendMessageService.displayFinalMessage(PLAYER_TWO_INDEX);
         });
     }
 
@@ -63,7 +73,12 @@ export class EndGameService {
     checkEndGame(): void {
         this.isEndGame = this.isEndGameByActions() || this.isEndGameByEasel() || this.isEndGameByGiveUp;
         if (this.isEndGame) {
-            this.clientSocketService.socket.emit('sendEndGame', this.isEndGame, this.clientSocketService.roomId);
+            this.clientSocketService.socket.emit(
+                'sendEndGame',
+                this.isEndGame,
+                this.playerService.players[PLAYER_ONE_INDEX].letterTable,
+                this.clientSocketService.roomId,
+            );
         }
     }
 
@@ -86,7 +101,6 @@ export class EndGameService {
     }
 
     clearAllData(): void {
-        this.playerService.players[1] = {} as Player;
         this.playerService.players = [];
         this.isEndGameByGiveUp = false;
         this.winnerNameByGiveUp = '';
