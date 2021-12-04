@@ -33,10 +33,10 @@ describe('AdministratorService', () => {
 
     let spyMatSnackBar: any;
 
-    beforeEach(async () => {
-        await TestBed.configureTestingModule({
+    beforeEach(() => {
+        TestBed.configureTestingModule({
             imports: [HttpClientTestingModule, RouterTestingModule, MatSnackBarModule, MatDialogModule, BrowserAnimationsModule],
-        }).compileComponents();
+        });
         service = TestBed.inject(AdministratorService);
         player1 = {
             _id: '1',
