@@ -154,14 +154,14 @@ describe('InformationPanelComponent', () => {
     it('should not call the AI player if the turn is true', () => {
         component.skipTurnService.isTurn = true;
         component.gameSettingsService.isSoloMode = true;
-        // Création de joueurs
+
         const letterA = RESERVE[0];
         const letterB = RESERVE[1];
         const player = new Player(1, 'Player 1', [letterA]);
         const playerAI = new PlayerAI(2, 'Player AI', [letterB], component.playerAiService);
         component['playerService'].players.push(player);
         component['playerService'].players.push(playerAI);
-        // Debut du test
+
         const spyPlay = spyOn(playerAI, 'play');
         component.callThePlayerAiOnItsTurn();
         jasmine.clock().tick(4000);
@@ -170,7 +170,7 @@ describe('InformationPanelComponent', () => {
     it('should  call the AI player if the turn is false', () => {
         component.skipTurnService.isTurn = false;
         component.gameSettingsService.isSoloMode = true;
-        // Création de joueurs
+
         const letterA = RESERVE[0];
         const letterB = RESERVE[1];
         const player = new Player(1, 'Player 1', [letterA]);
@@ -178,7 +178,7 @@ describe('InformationPanelComponent', () => {
         const spyPlay = spyOn(playerAI, 'play');
         component['playerService'].players.push(player);
         component['playerService'].players.push(playerAI);
-        // Debut du test
+
         component.callThePlayerAiOnItsTurn();
         jasmine.clock().tick(4000);
         expect(spyPlay).toHaveBeenCalled();

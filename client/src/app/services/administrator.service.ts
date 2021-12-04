@@ -304,7 +304,8 @@ export class AdministratorService {
     }
 
     private displayUploadMessage(uploadMessage: string): void {
-        if (this.uploadMessage.length) return; // There is already a message occurring
+        // case if there is already a message occurring
+        if (this.uploadMessage.length) return;
         this.uploadMessage = uploadMessage;
         this.file = null;
         setTimeout(() => {

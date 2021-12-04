@@ -577,10 +577,4 @@ describe('AdministratorService', () => {
         service.isDictionaryValid();
         expect(service.currentDictionary).toBeUndefined();
     });
-
-    // it('should not be able to display message while resetting', () => {
-    //     service.isResetting = true;
-    //     service['displayMessage']('test');
-    //     expect(spyMatSnackBar.open).not.toHaveBeenCalled();
-    // });
 });

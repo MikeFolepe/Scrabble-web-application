@@ -120,7 +120,7 @@ export class GridService implements OnDestroy {
         this.eraseLayer(this.gridContextLettersLayer);
     }
 
-    // Transpose the positions from 15x15 array to 750x750 grid
+    // Convert the positions from 15x15 array to 750x750 grid
     private positionTabToPositionGrid(positionTabX: number, positionTabY: number): Vec2 {
         return {
             x: positionTabX * GRID_CASE_SIZE + GRID_CASE_SIZE,

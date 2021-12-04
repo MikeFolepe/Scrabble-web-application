@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable dot-notation */
-import { TestBed } from '@angular/core/testing';
-import { PlacementsHandlerService } from './placements-handler.service';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { Orientation } from '@app/classes/scrabble-board-pattern';
 import { BOARD_COLUMNS, BOARD_ROWS, RESERVE } from '@app/classes/constants';
+import { Orientation } from '@app/classes/scrabble-board-pattern';
+import { Player } from '@app/models/player.model';
+import { Letter } from '@common/letter';
 import { Vec2 } from '@common/vec2';
 import { Socket } from 'socket.io-client';
-import { Letter } from '@common/letter';
-import { Player } from '@app/models/player.model';
+import { PlacementsHandlerService } from './placements-handler.service';
 
 describe('PlacementsHandlerService', () => {
     let service: PlacementsHandlerService;
@@ -125,7 +125,8 @@ describe('PlacementsHandlerService', () => {
     });
 
     it('first word placed on central case should be valid', () => {
-        const position: Vec2 = { x: 7, y: 7 }; // central case H8
+        // central case H8
+        const position: Vec2 = { x: 7, y: 7 };
         let orientation = Orientation.Horizontal;
         const word = 'office';
         expect(service.isFirstWordValid(position, orientation, word)).toBeTrue();

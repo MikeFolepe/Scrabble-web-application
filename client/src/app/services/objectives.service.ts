@@ -73,7 +73,7 @@ export class ObjectivesService implements OnDestroy {
     }
 
     checkObjectivesCompletion(): void {
-        // Classic Mode -> No check for objectives completion
+        // do not check for objectives completion if game is on classic mode
         if (this.gameSettingsService.gameType === GameType.Classic) return;
         if (!this.objectives[ObjectiveTypes.Private][this.playerIndex].isCompleted) {
             this.objectives[ObjectiveTypes.Private][this.playerIndex].validate(this);

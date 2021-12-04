@@ -240,10 +240,4 @@ describe('CommunicationService', () => {
         });
         expect(httpClientSpy.get).toHaveBeenCalled();
     });
-
-    // it('should', () => {
-    //     httpClientSpy.get.and.callThrough();
-    //     spyOn<any>(Observable, 'pipe').and.callFake(() => service['handleError']('get', Error));
-    //     service.getBestPlayers(GameType.Classic).subscribe((data) => {}, fail);
-    // });
 });

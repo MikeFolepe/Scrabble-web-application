@@ -1,3 +1,6 @@
+// JUSTIFICATION: The '_' are native to _MatPaginatorIntl attributes
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable prettier/prettier */
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginatorIntl, PageEvent } from '@angular/material/paginator';
@@ -26,7 +29,8 @@ export class JoinRoomComponent implements OnInit {
     constructor(private clientSocketService: ClientSocketService, public dialog: MatDialog, public _MatPaginatorIntl: MatPaginatorIntl) {
         this.rooms = [];
         this.roomItemIndex = 0;
-        this.pageSize = 2; // 2 rooms per page
+        // 2 rooms per page
+        this.pageSize = 2;
         this.shouldDisplayNameError = false;
         this.shouldDisplayJoinError = false;
         this.isRoomAvailable = false;
@@ -46,20 +50,13 @@ export class JoinRoomComponent implements OnInit {
         this.handleRoomUnavailability();
         this.receiveRandomPlacement();
 
-        // JUSTIFICATION: The '_' are native to the following attributes
-
-        // eslint-disable-next-line no-underscore-dangle
         this._MatPaginatorIntl.itemsPerPageLabel = 'Salons par page';
-        // eslint-disable-next-line no-underscore-dangle
         this._MatPaginatorIntl.firstPageLabel = 'Première page';
-        // eslint-disable-next-line no-underscore-dangle
         this._MatPaginatorIntl.lastPageLabel = 'Dernière page';
-        // eslint-disable-next-line no-underscore-dangle
         this._MatPaginatorIntl.nextPageLabel = 'Page suivante';
-        // eslint-disable-next-line no-underscore-dangle
         this._MatPaginatorIntl.previousPageLabel = 'Page précédente';
 
-        // Code pasting from internet to translate matpaginator label in french
+        // Code pasted from internet to translate matpaginator label in french
         const frenchRangeLabel = (page: number, pageSize: number, length: number) => {
             if (length === 0 || pageSize === 0) return `0 de ${length}`;
             length = Math.max(length, 0);
@@ -69,7 +66,6 @@ export class JoinRoomComponent implements OnInit {
             return `${startIndex + 1} - ${endIndex} de ${length}`;
         };
 
-        // eslint-disable-next-line no-underscore-dangle
         this._MatPaginatorIntl.getRangeLabel = frenchRangeLabel;
     }
 
