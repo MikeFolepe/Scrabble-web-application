@@ -22,22 +22,19 @@
                     Passer son tour
                 </button>
                 <div *ngIf="gameSettingsService.isSoloMode">
-                    <button mat-raised-button color="primary" id="regular-button-2" (click)="leaveGame()" routerLink="/home">
+                    <button mat-raised-button color="warn" id="regular-button-2" (click)="leaveGame()" routerLink="/home">
                         {{ endGameService.isEndGame ? 'Quitter' : 'Abandonner' }}
                     </button>
                 </div>
                 <div *ngIf="!endGameService.isEndGame && !gameSettingsService.isSoloMode && !giveUpHandlerService.isGivenUp">
-                    <button mat-raised-button color="primary" id="regular-button-3" (click)="confirmGiveUpGame()">Abandonner</button>
+                    <button mat-raised-button color="warn" id="regular-button-3" (click)="confirmGiveUpGame()">Abandonner</button>
                 </div>
                 <div *ngIf="endGameService.isEndGame && !gameSettingsService.isSoloMode && !giveUpHandlerService.isGivenUp">
                     <button
                         mat-raised-button
-                        color="primary"
+                        color="warn"
                         id="regular-button-4"
-                        (click)="
-                            this.clientSocketService.socket.emit('deleteGame', this.clientSocketService.roomId);
-                            leaveGame()
-                        "
+                        (click)="this.clientSocketService.socket.emit('deleteGame', this.clientSocketService.roomId); leaveGame()"
                         routerLink="/home"
                     >
                         Quitter

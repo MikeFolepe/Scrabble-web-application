@@ -23,11 +23,11 @@ describe('GiveUpHandlerService', () => {
             imports: [HttpClientTestingModule, RouterTestingModule],
             providers: [
                 {
-                    provide: MatSnackBar,
+                    provide: MatDialog,
                     useValue: {},
                 },
                 {
-                    provide: MatDialog,
+                    provide: MatSnackBar,
                     useValue: {},
                 },
             ],
@@ -51,6 +51,10 @@ describe('GiveUpHandlerService', () => {
                 isDefault: true,
             },
         ];
+    });
+
+    beforeEach(() => {
+        spyOn(service['administratorService'], 'initializeAiPlayers');
     });
 
     it('should be created', () => {

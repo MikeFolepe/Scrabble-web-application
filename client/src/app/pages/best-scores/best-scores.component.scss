@@ -16,6 +16,14 @@ mat-icon {
     text-shadow: 0 0 0;
 }
 
+.fill {
+    fill: #000000;
+}
+
+.mix {
+    mix-blend-mode: normal;
+}
+
 ::selection {
     color: black;
     background-color: white;

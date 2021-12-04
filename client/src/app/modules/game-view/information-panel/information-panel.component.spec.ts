@@ -150,7 +150,6 @@ describe('InformationPanelComponent', () => {
         spyOn(component['playerService'], 'addPlayer');
         component.initializePlayers();
         expect(component['playerService'].addPlayer).toHaveBeenCalledTimes(2);
-        // expect(component['playerService'].players[PLAYER_AI_INDEX].name).toEqual('Mike');
     });
     it('should not call the AI player if the turn is true', () => {
         component.skipTurnService.isTurn = true;

@@ -12,6 +12,8 @@ import { GameSettings, StartingPlayer } from '@common/game-settings';
 import { Level } from '@common/level';
 import { ObjectiveTypes } from '@common/objectives-type';
 
+// TODO bug : bug refresh form set isSoloMode a undefined => conséquence : field level du IA n'est pas affiché
+
 @Component({
     selector: 'app-form',
     templateUrl: './form.component.html',

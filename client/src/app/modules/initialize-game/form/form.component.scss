@@ -39,6 +39,7 @@
         width: 100%;
     }
 }
+
 .centered {
     display: flex;
     justify-content: center;
@@ -46,11 +47,31 @@
     align-items: center;
 }
 
-#logo-scrabble {
-    margin-top: 10px;
-    width: 400px;
-    height: 80px;
-    pointer-events: none;
+.form {
+    display: flex;
+    flex-direction: row;
+}
+
+#right-column {
+    height: 100%;
+    width: 100%;
+}
+
+#left-column {
+    height: 100%;
+    width: 100%;
+}
+
+.buttons {
+    width: 100%;
+    display: flex;
+    flex-flow: row wrap;
+    grid-gap: 1em;
+    gap: 1em;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: center;
 }
 
 #main-form-box {
