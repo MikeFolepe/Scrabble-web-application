@@ -1,6 +1,6 @@
+import { AiType } from '@common/ai-name';
 import { StartingPlayer } from '@common/game-settings';
 import { Letter } from '@common/letter';
-import { Level } from '@common/level';
 import { Vec2 } from '@common/vec2';
 import { CustomRange } from './range';
 
@@ -119,7 +119,7 @@ export const DEFAULT_GAME_SETTINGS = {
     startingPlayer: StartingPlayer.Player1,
     timeMinute: '01',
     timeSecond: '00',
-    level: Level.Beginner,
+    level: AiType.beginner,
     randomBonus: 'Désactiver',
     bonusPositions: JSON.stringify(Array.from(BONUS_POSITIONS)),
     dictionary: '',

@@ -2,7 +2,7 @@ import { BEGINNER_POINTING_RANGE, BOARD_COLUMNS, BOARD_ROWS, CENTRAL_CASE_POSITI
 import { CustomRange } from '@app/classes/range';
 import { BoardPattern, Orientation, PatternInfo, PossibleWords } from '@app/classes/scrabble-board-pattern';
 import { PlayerAIService } from '@app/services/player-ai.service';
-import { Level } from '@common/level';
+import { AiType } from '@common/ai-name';
 import { PlayerAI } from './player-ai.model';
 
 export class PlaceLetterStrategy {
@@ -53,8 +53,8 @@ export class PlaceLetterStrategy {
         playerAiService.sortDecreasingPoints(allPossibleWords);
         matchingPointingRangeWords = playerAiService.filterByRange(allPossibleWords, this.pointingRange);
         // Step7: Place one word between all the words that have passed the steps
-        if (level === Level.Expert) await this.computeResults(allPossibleWords, playerAiService);
-        if (level === Level.Beginner) await this.computeResults(matchingPointingRangeWords, playerAiService, false);
+        if (level === AiType.expert) await this.computeResults(allPossibleWords, playerAiService);
+        if (level === AiType.beginner) await this.computeResults(matchingPointingRangeWords, playerAiService, false);
 
         // Step8: Alert the debug about the alternatives
         playerAiService.debugService.receiveAIDebugPossibilities(allPossibleWords);

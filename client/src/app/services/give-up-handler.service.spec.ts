@@ -10,8 +10,8 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { RESERVE } from '@app/classes/constants';
 import { PlayerAI } from '@app/models/player-ai.model';
 import { Player } from '@app/models/player.model';
+import { AiType } from '@common/ai-name';
 import { GameSettings } from '@common/game-settings';
-import { Level } from '@common/level';
 import { Socket } from 'socket.io-client';
 import { GiveUpHandlerService } from './give-up-handler.service';
 
@@ -34,7 +34,7 @@ describe('GiveUpHandlerService', () => {
         });
         service = TestBed.inject(GiveUpHandlerService);
 
-        service['administratorService'].beginnerNames = [
+        service['administratorService'].aiBeginner = [
             {
                 _id: '1',
                 aiName: 'Mister_Bucky',
@@ -68,7 +68,7 @@ describe('GiveUpHandlerService', () => {
             1,
             '00',
             '30',
-            Level.Beginner,
+            AiType.beginner,
             'Désactiver',
             "[['A1', 'doubleLetter'], ['A4', 'tripleLetter']]",
             '',
@@ -109,7 +109,7 @@ describe('GiveUpHandlerService', () => {
             1,
             '00',
             '30',
-            Level.Beginner,
+            AiType.beginner,
             'Désactiver',
             "[['A1', 'doubleLetter'], ['A4', 'tripleLetter']]",
             '',
@@ -152,7 +152,7 @@ describe('GiveUpHandlerService', () => {
             1,
             '00',
             '30',
-            Level.Beginner,
+            AiType.beginner,
             'Désactiver',
             "[['A1', 'doubleLetter'], ['A4', 'tripleLetter']]",
             '',
@@ -197,7 +197,7 @@ describe('GiveUpHandlerService', () => {
             1,
             '00',
             '30',
-            Level.Beginner,
+            AiType.beginner,
             'Désactiver',
             "[['A1', 'doubleLetter'], ['A4', 'tripleLetter']]",
             '',

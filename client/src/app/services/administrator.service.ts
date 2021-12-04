@@ -16,8 +16,8 @@ import { saveAs } from 'file-saver';
     providedIn: 'root',
 })
 export class AdministratorService {
-    beginnerNames: AiPlayerDB[];
-    expertNames: AiPlayerDB[];
+    aiBeginner: AiPlayerDB[];
+    aiExpert: AiPlayerDB[];
     dictionaries: Dictionary[] = [];
     currentDictionary: Dictionary;
     fileInput: ElementRef;
@@ -36,14 +36,14 @@ export class AdministratorService {
     initializeAiPlayers(): void {
         this.communicationService.getAiPlayers(AiType.beginner).subscribe(
             (aiBeginners: AiPlayerDB[]) => {
-                this.beginnerNames = aiBeginners;
+                this.aiBeginner = aiBeginners;
             },
             (error: HttpErrorResponse) => this.handleRequestError(error),
         );
 
         this.communicationService.getAiPlayers(AiType.expert).subscribe(
             (aiExperts: AiPlayerDB[]) => {
-                this.expertNames = aiExperts;
+                this.aiExpert = aiExperts;
             },
             (error: HttpErrorResponse) => this.handleRequestError(error),
         );
@@ -92,9 +92,9 @@ export class AdministratorService {
         this.communicationService.deleteAiPlayer(aiPlayer._id, aiType).subscribe(
             (aiPlayers: AiPlayerDB[]) => {
                 if (aiType === AiType.expert) {
-                    this.expertNames = aiPlayers;
+                    this.aiExpert = aiPlayers;
                 } else {
-                    this.beginnerNames = aiPlayers;
+                    this.aiBeginner = aiPlayers;
                 }
                 this.displayMessage('Joueur supprimé');
             },
@@ -228,8 +228,8 @@ export class AdministratorService {
     }
 
     getAiBeginnerName(): string {
-        const randomAiBeginnerIndex = Math.floor(Math.random() * this.beginnerNames.length);
-        return this.beginnerNames[randomAiBeginnerIndex].aiName;
+        const randomAiBeginnerIndex = Math.floor(Math.random() * this.aiBeginner.length);
+        return this.aiBeginner[randomAiBeginnerIndex].aiName;
     }
 
     async resetData(): Promise<void> {
@@ -248,9 +248,9 @@ export class AdministratorService {
         this.communicationService.addAiPlayer(aiPlayer, aiType).subscribe(
             (aiFromDB: AiPlayerDB) => {
                 if (aiType === AiType.expert) {
-                    this.expertNames.push(aiFromDB);
+                    this.aiExpert.push(aiFromDB);
                 } else {
-                    this.beginnerNames.push(aiFromDB);
+                    this.aiBeginner.push(aiFromDB);
                 }
                 this.displayMessage('Joueur ajouté');
             },
@@ -264,9 +264,9 @@ export class AdministratorService {
         this.communicationService.updateAiPlayer(id, aiPlayer, aiType).subscribe(
             (aiPlayers) => {
                 if (aiType === AiType.expert) {
-                    this.expertNames = aiPlayers;
+                    this.aiExpert = aiPlayers;
                 } else {
-                    this.beginnerNames = aiPlayers;
+                    this.aiBeginner = aiPlayers;
                 }
                 this.displayMessage('Joueur modifié');
             },
@@ -282,6 +282,7 @@ export class AdministratorService {
             duration: ERROR_MESSAGE_DELAY,
             horizontalPosition: 'center',
             verticalPosition: 'bottom',
+            panelClass: ['snackBarStyle'],
         });
     }
 
@@ -290,10 +291,10 @@ export class AdministratorService {
     }
 
     private checkIfAlreadyExists(aiPlayerName: string): boolean {
-        if (this.beginnerNames === undefined && this.expertNames === undefined) return false;
+        if (this.aiBeginner === undefined && this.aiExpert === undefined) return false;
         if (
-            this.beginnerNames.find((aiBeginnerPlayer) => aiBeginnerPlayer.aiName === aiPlayerName) ||
-            this.expertNames.find((aiExpertPlayer) => aiExpertPlayer.aiName === aiPlayerName)
+            this.aiBeginner.find((aiBeginnerPlayer) => aiBeginnerPlayer.aiName === aiPlayerName) ||
+            this.aiExpert.find((aiExpertPlayer) => aiExpertPlayer.aiName === aiPlayerName)
         )
             return true;
         return false;
@@ -313,13 +314,13 @@ export class AdministratorService {
     }
 
     private resetAiPlayers(): void {
-        const createdAiExpertNames = this.expertNames.filter((aiExpertPlayer) => !aiExpertPlayer.isDefault);
-        const createdAiBeginnerNames = this.beginnerNames.filter((aiBeginnerPlayer) => !aiBeginnerPlayer.isDefault);
+        const createdAiaiExpert = this.aiExpert.filter((aiExpertPlayer) => !aiExpertPlayer.isDefault);
+        const createdAiaiBeginner = this.aiBeginner.filter((aiBeginnerPlayer) => !aiBeginnerPlayer.isDefault);
 
-        for (const expertName of createdAiExpertNames) {
+        for (const expertName of createdAiaiExpert) {
             this.deleteAiPlayer(expertName, AiType.expert);
         }
-        for (const beginnerName of createdAiBeginnerNames) {
+        for (const beginnerName of createdAiaiBeginner) {
             this.deleteAiPlayer(beginnerName, AiType.beginner);
         }
     }

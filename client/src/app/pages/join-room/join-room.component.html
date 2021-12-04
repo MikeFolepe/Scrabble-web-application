@@ -1,7 +1,5 @@
 <app-background></app-background>
-
 <mat-paginator id="paginator" [length]="rooms.length" [pageSize]="pageSize" (page)="onPageChange($event)"> </mat-paginator>
-
 <div *ngIf="!shouldDisplayNameError && !shouldDisplayJoinError">
     <div *ngFor="let room of rooms ? rooms.slice(roomItemIndex, roomItemIndex + pageSize) : []">
         <mat-card class="card">
@@ -38,8 +36,15 @@
     <mat-card class="error-message"><span class="warning">Erreur</span> : Cette partie n'existe plus ou vient d'être rejointe </mat-card>
 </div>
 
-<div *ngIf="this.isRoomAvailable && !shouldDisplayNameError && !shouldDisplayJoinError">
-    <button mat-raised-button color="warn" id="random-button" (click)="placeRandomly()" [disabled]="!this.isRandomButtonAvailable">
+<div id="buttons">
+    <button mat-raised-button routerLink="/home" color="warn">Retour</button>
+    <button
+        mat-raised-button
+        *ngIf="this.isRoomAvailable && !shouldDisplayNameError && !shouldDisplayJoinError"
+        color="primary"
+        (click)="placeRandomly()"
+        [disabled]="!this.isRandomButtonAvailable"
+    >
         Placement aléatoire
     </button>
 </div>
