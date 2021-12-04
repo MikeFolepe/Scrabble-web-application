@@ -298,7 +298,7 @@ export class AdministratorService {
     }
 
     private handleRequestError(error: HttpErrorResponse): void {
-        this.displayMessage(`Nous n'avons pas pu accéder au serveur, erreur : ${error.message}`);
+        this.displayUploadMessage(`Nous n'avons pas pu accéder au serveur, erreur : ${error.message}`);
     }
 
     private displayUploadMessage(uploadMessage: string): void {

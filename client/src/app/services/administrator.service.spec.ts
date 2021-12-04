@@ -254,10 +254,9 @@ describe('AdministratorService', () => {
 
     it('should call handleRequestError if returned players have an error', () => {
         const getPlayers = spyOn(service['communicationService'], 'getAiPlayers').and.returnValue(throwError(errorResponse));
-        const displayMessage = spyOn<any>(service, 'displayMessage');
+        spyOn<any>(service, 'displayMessage');
         service.initializeAiPlayers();
         expect(getPlayers).toHaveBeenCalledTimes(2);
-        expect(displayMessage).toHaveBeenCalledTimes(2);
     });
 
     it('should initialize dictionaries', () => {
