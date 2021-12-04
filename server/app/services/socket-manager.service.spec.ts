@@ -149,7 +149,6 @@ describe('SocketManagerService', () => {
             on: (eventName: string, callback: (gameType: GameType) => void) => {
                 if (eventName === 'getRoomsConfiguration') {
                     callback(typeOfGame);
-                    // return;
                 }
             },
             emit: (eventName: string, args: any[] | any) => {
@@ -180,7 +179,6 @@ describe('SocketManagerService', () => {
             on: (eventName: string, callback: (customerName: string, gameType: GameType) => void) => {
                 if (eventName === 'newRoomCustomerOfRandomPlacement') {
                     callback('Paul', typeOfGame);
-                    // return;
                 }
             },
             emit: (eventName: string, args: any[] | any) => {
@@ -210,7 +208,6 @@ describe('SocketManagerService', () => {
             on: (eventName: string, callback: (customerName: string, gameType: GameType) => void) => {
                 if (eventName === 'newRoomCustomerOfRandomPlacement') {
                     callback('Paul', typeOfGame);
-                    // return;
                 }
             },
             emit: (eventName: string, args: any[] | any) => {
@@ -239,7 +236,6 @@ describe('SocketManagerService', () => {
             on: (eventName: string, callback: () => void) => {
                 if (eventName === 'getRoomAvailable') {
                     callback();
-                    // return;
                 }
             },
             emit: (eventName: string, args: any[] | any) => {
@@ -295,7 +291,6 @@ describe('SocketManagerService', () => {
             on: (eventName: string, callback: (playedWords: string, roomId: string) => void) => {
                 if (eventName === 'updatePlayedWords') {
                     callback('a', '1');
-                    // return;
                 }
             },
             emit: (eventName: string, args: any[] | any) => {

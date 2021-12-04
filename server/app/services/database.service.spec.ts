@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-empty */
 /* eslint-disable dot-notation */
-import { AI_MODELS, DbModel, SCORES_MODEL } from '@app/classes/database.schema';
-import { AiType } from '@common/ai-name';
+import { AI_MODELS, SCORES_MODEL } from '@app/classes/database.schema';
+import { AiPlayer, AiType } from '@common/ai-name';
 import { GameType } from '@common/game-type';
+import { PlayerScore } from '@common/player';
 import * as chai from 'chai';
 import { expect } from 'chai';
 import * as spies from 'chai-spies';
 import { MongoMemoryServer } from 'mongodb-memory-server';
+import * as mongoose from 'mongoose';
 import * as sinon from 'sinon';
 import { DatabaseService } from './database.service';
-import * as mongoose from 'mongoose';
-import { PlayerScore } from '@common/player';
 
 describe('Database service', () => {
     let databaseService: DatabaseService;
@@ -48,7 +48,7 @@ describe('Database service', () => {
     });
 
     it('should set default data when starting', async () => {
-        const aiModel = AI_MODELS.get(AiType.beginner) as DbModel;
+        const aiModel = AI_MODELS.get(AiType.beginner) as mongoose.Model<AiPlayer>;
         const player = new aiModel({
             aiName: 'Mike',
             isDefault: true,
@@ -62,7 +62,7 @@ describe('Database service', () => {
     });
 
     it('should set default data when starting', async () => {
-        const aiModel = AI_MODELS.get(AiType.beginner) as DbModel;
+        const aiModel = AI_MODELS.get(AiType.beginner) as mongoose.Model<AiPlayer>;
         const player = new aiModel({
             aiName: 'Mike',
             isDefault: true,
