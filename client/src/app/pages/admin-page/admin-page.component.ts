@@ -17,7 +17,7 @@ export class AdminPageComponent implements OnInit {
         this.isResetConfirmation = false;
     }
 
-    ngOnInit() {
+    ngOnInit(): void {
         this.adminService.initializeAiPlayers();
         this.adminService.initializeDictionaries();
     }

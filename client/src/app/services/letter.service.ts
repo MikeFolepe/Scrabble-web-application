@@ -97,7 +97,7 @@ export class LetterService implements OnDestroy {
         return tab;
     }
 
-    ngOnDestroy() {
+    ngOnDestroy(): void {
         this.reserve = JSON.parse(JSON.stringify(RESERVE));
         let size = 0;
         for (const letter of this.reserve) {

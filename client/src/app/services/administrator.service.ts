@@ -69,10 +69,12 @@ export class AdministratorService {
                 this.displayMessage('Ce nom de joueur virtuel est déjà dans la base de données. Veuillez réessayer.');
                 return;
             }
+
             const aiPlayer: AiPlayer = {
                 aiName: playerName,
                 isDefault: false,
             };
+
             if (isNewAi) {
                 this.addAiPlayer(aiPlayer, aiType);
             } else {
@@ -109,7 +111,7 @@ export class AdministratorService {
         }
     }
 
-    async onSubmit() {
+    async onSubmit(): Promise<void> {
         if (await this.isDictionaryValid()) {
             this.addDictionary();
         } else {

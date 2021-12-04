@@ -134,9 +134,8 @@ export class PlayerService {
         let letterToAdd: Letter;
         for (let i = this.players[indexPlayer].letterTable.length; i < EASEL_SIZE; i++) {
             letterToAdd = this.letterService.getRandomLetter();
-            if (letterToAdd.value === '') {
-                break;
-            }
+            if (letterToAdd.value === '') break;
+
             // Add a copy of the letter found
             this.players[indexPlayer].letterTable[i] = {
                 value: letterToAdd.value,
@@ -155,9 +154,7 @@ export class PlayerService {
                 return i;
             } else if (letter === letter.toUpperCase()) {
                 // White letter
-                if (this.players[indexPlayer].letterTable[i].value === '*') {
-                    return i;
-                }
+                if (this.players[indexPlayer].letterTable[i].value === '*') return i;
             }
         }
         return INVALID_INDEX;

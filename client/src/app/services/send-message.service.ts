@@ -31,9 +31,9 @@ export class SendMessageService {
     displayMessageByType(message: string, messageType: MessageType): void {
         this.message = message;
         this.messageType = messageType;
-        if (this.messageType === MessageType.Player) {
+        if (this.messageType === MessageType.Player)
             this.sendMessageToOpponent(this.message, this.gameSettingsService.gameSettings.playersNames[PLAYER_ONE_INDEX]);
-        }
+
         this.displayMessage();
     }
 

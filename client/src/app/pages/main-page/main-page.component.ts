@@ -65,7 +65,7 @@ export class MainPageComponent {
         }
     }
 
-    openBestScoresDialog() {
+    openBestScoresDialog(): void {
         this.bestScoresDialog.open(BestScoresComponent, { disableClose: true });
     }
 

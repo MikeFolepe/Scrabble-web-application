@@ -7,10 +7,12 @@ import { DatabaseServiceMock } from '@app/classes/database.service.mock';
 import { AiPlayer, AiPlayerDB, AiType } from '@common/ai-name';
 import { Dictionary } from '@common/dictionary';
 import { GameType } from '@common/game-type';
+import { PlayerScore } from '@common/player';
 import * as chai from 'chai';
 import { expect } from 'chai';
 import * as spies from 'chai-spies';
 import * as fileSystem from 'fs';
+import * as mongoose from 'mongoose';
 import * as sinon from 'sinon';
 import { AdministratorService } from './administrator.service';
 
@@ -185,7 +187,7 @@ describe('Admin service', () => {
 
     it('should reset the scores', async () => {
         await databaseService.start();
-        const scoresModel = SCORES_MODEL.get(GameType.Classic) as DbModel;
+        const scoresModel = SCORES_MODEL.get(GameType.Classic) as mongoose.Model<PlayerScore>;
         const spyOn = sinon.spy(scoresModel, 'deleteMany');
         await adminService.resetScores(GameType.Classic);
         expect(spyOn.called).to.equal(true);
