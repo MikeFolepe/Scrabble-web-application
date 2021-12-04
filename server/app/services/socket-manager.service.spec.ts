@@ -1,14 +1,13 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable max-lines */
 /* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable max-lines */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable dot-notation */
+import { AiType } from '@common/ai-name';
 import { GameSettings } from '@common/game-settings';
 import { GameType } from '@common/game-type';
 import { Letter } from '@common/letter';
-import { Level } from '@common/level';
 import { Room, State } from '@common/room';
 import { expect } from 'chai';
 import * as http from 'http';
@@ -24,7 +23,7 @@ describe('SocketManagerService', () => {
     let service: SocketManagerService;
     let sio: SinonStubbedInstance<io.Server>;
     const socketId = 'socket1';
-    const settings: GameSettings = new GameSettings(['mi', 'ma'], 1, '01', '00', Level.Beginner, 'Activer', 'francais', '00');
+    const settings: GameSettings = new GameSettings(['mi', 'ma'], 1, '01', '00', AiType.beginner, 'Activer', 'francais', '00');
     const scrabbleBoard: string[][] = [[]];
 
     const fakeIn = {

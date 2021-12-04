@@ -57,7 +57,7 @@ export class PlayerAIService {
         return Math.floor(Number(Math.random()) * maxValue);
     }
 
-    swap(isDifficultMode: boolean): boolean {
+    swap(isExpertLevel: boolean): boolean {
         const playerAi = this.playerService.players[PLAYER_AI_INDEX] as PlayerAI;
         const lettersToSwap: string[] = [];
 
@@ -67,7 +67,7 @@ export class PlayerAIService {
             return false;
         }
         // According to game mode some cases might not be possible according to rules
-        if (!isDifficultMode && this.letterService.reserveSize < MIN_RESERVE_SIZE_TO_SWAP) {
+        if (!isExpertLevel && this.letterService.reserveSize < MIN_RESERVE_SIZE_TO_SWAP) {
             this.skip(true);
             return false;
         }
@@ -78,7 +78,7 @@ export class PlayerAIService {
             numberOfLetterToChange = this.generateRandomNumber(Math.min(playerAi.letterTable.length + 1, this.letterService.reserveSize + 1));
         } while (numberOfLetterToChange === 0);
 
-        if (isDifficultMode) numberOfLetterToChange = Math.min(playerAi.letterTable.length, this.letterService.reserveSize);
+        if (isExpertLevel) numberOfLetterToChange = Math.min(playerAi.letterTable.length, this.letterService.reserveSize);
 
         // Choose the index of letters to be changed
         const indexOfLetterToBeChanged: number[] = [];

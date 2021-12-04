@@ -9,10 +9,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { BONUS_POSITIONS } from '@app/classes/constants';
-import { AiPlayerDB } from '@common/ai-name';
+import { AiPlayerDB, AiType } from '@common/ai-name';
 import { Dictionary } from '@common/dictionary';
 import { StartingPlayer } from '@common/game-settings';
-import { Level } from '@common/level';
 import { of } from 'rxjs';
 import { FormComponent } from './form.component';
 
@@ -56,7 +55,7 @@ describe('FormComponent', () => {
             playerName: new FormControl(''),
             minuteInput: new FormControl('70'),
             secondInput: new FormControl('00'),
-            levelInput: new FormControl(Level.Beginner),
+            levelInput: new FormControl(AiType.beginner),
             dictionaryInput: new FormControl(emptyDictionary),
             randomBonus: new FormControl('Désactiver'),
         });
@@ -64,7 +63,7 @@ describe('FormComponent', () => {
         component.gameSettingsService.gameSettings.playersNames[0] = 'player 1';
         component.gameSettingsService.isSoloMode = true;
         component.gameSettingsService.gameSettings.randomBonus = 'Désactiver';
-        component.adminService.expertNames = [
+        component.adminService.aiExpert = [
             {
                 _id: '1',
                 aiName: 'Mister_Felix',
@@ -82,7 +81,7 @@ describe('FormComponent', () => {
             },
         ];
 
-        component.adminService.beginnerNames = [
+        component.adminService.aiBeginner = [
             {
                 _id: '1',
                 aiName: 'Mister_Bucky',
@@ -112,18 +111,18 @@ describe('FormComponent', () => {
     });
 
     it('should have a predefined name for AI', () => {
-        let result = component['chooseRandomAIName'](Level.Beginner);
-        expect(component.adminService.beginnerNames.find((aiPlayer: AiPlayerDB) => aiPlayer.aiName === result)).toBeDefined();
-        result = component['chooseRandomAIName'](Level.Expert);
-        expect(component.adminService.expertNames.find((aiPlayer: AiPlayerDB) => aiPlayer.aiName === result)).toBeDefined();
+        let result = component['chooseRandomAIName'](AiType.beginner);
+        expect(component.adminService.aiBeginner.find((aiPlayer: AiPlayerDB) => aiPlayer.aiName === result)).toBeDefined();
+        result = component['chooseRandomAIName'](AiType.expert);
+        expect(component.adminService.aiExpert.find((aiPlayer: AiPlayerDB) => aiPlayer.aiName === result)).toBeDefined();
     });
 
     it('should have a different name from the player', () => {
-        component.form.controls.playerName.setValue(component['chooseRandomAIName'](Level.Beginner));
+        component.form.controls.playerName.setValue(component['chooseRandomAIName'](AiType.beginner));
         // To consider randomness, we simulate three times the AI name
-        const firstAiName = component['chooseRandomAIName'](Level.Beginner);
-        const secondAiName = component['chooseRandomAIName'](Level.Beginner);
-        const thirdAiName = component['chooseRandomAIName'](Level.Beginner);
+        const firstAiName = component['chooseRandomAIName'](AiType.beginner);
+        const secondAiName = component['chooseRandomAIName'](AiType.beginner);
+        const thirdAiName = component['chooseRandomAIName'](AiType.beginner);
         expect(firstAiName).not.toEqual(component.form.controls.playerName.value);
         expect(secondAiName).not.toEqual(component.form.controls.playerName.value);
         expect(thirdAiName).not.toEqual(component.form.controls.playerName.value);
@@ -197,7 +196,7 @@ describe('FormComponent', () => {
         spyOn<any>(component, 'chooseStartingPlayer').and.returnValue(startingPlayerTest);
         const minuteTest = '02';
         const secondTest = '30';
-        const levelTest = Level.Expert;
+        const levelTest = AiType.expert;
         const bonusTest = 'Désactiver';
         const fileName = 'test.json';
         component.fileName = fileName;

@@ -1,13 +1,10 @@
 /* eslint-disable max-len */
-// RAISON : Too much lines for test files
 /* eslint-disable @typescript-eslint/no-magic-numbers */
-// RAISON : use magic numbers insides testbench
-// import { OUT_BOUND_INDEX_OF_SOCKET } from '@app/classes/constants';
 import { OUT_BOUND_INDEX_OF_SOCKET } from '@app/classes/constants';
 import { RoomManagerService } from '@app/services/room-manager.service';
+import { AiType } from '@common/ai-name';
 import { GameSettings, StartingPlayer } from '@common/game-settings';
 import { GameType } from '@common/game-type';
-import { Level } from '@common/level';
 import { State } from '@common/room';
 import { expect } from 'chai';
 
@@ -20,7 +17,7 @@ describe('RoomManagerService', () => {
         StartingPlayer.Player1,
         '00',
         '30',
-        Level.Beginner,
+        AiType.beginner,
         'Désactiver',
         'français',
         '00',
@@ -33,7 +30,7 @@ describe('RoomManagerService', () => {
         StartingPlayer.Player1,
         '00',
         '30',
-        Level.Beginner,
+        AiType.beginner,
         'Désactiver',
         'français',
         '00',
@@ -46,7 +43,7 @@ describe('RoomManagerService', () => {
         StartingPlayer.Player1,
         '00',
         '30',
-        Level.Beginner,
+        AiType.beginner,
         'Désactiver',
         'français',
         '00',
