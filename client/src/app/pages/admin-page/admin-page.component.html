@@ -1,4 +1,4 @@
-<app-background [isDark]="true"></app-background>
+<app-background [isDark]="false"></app-background>
 <div id="title">
     <div id="typing">Page admin</div>
 </div>
@@ -60,9 +60,9 @@
                     <mat-icon>cloud_upload</mat-icon>
                 </button>
             </div>
-            <div class="alert" *ngIf="adminService.uploadMessage.length" [ngClass]="{ success: adminService.uploadMessage === 'Téléversé' }">
-                {{ adminService.uploadMessage }}
-            </div>
+        </div>
+        <div class="alert" *ngIf="adminService.uploadMessage.length">
+            {{ adminService.uploadMessage }}
         </div>
     </div>
 

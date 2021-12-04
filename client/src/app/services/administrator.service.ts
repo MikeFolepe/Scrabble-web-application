@@ -305,7 +305,6 @@ export class AdministratorService {
         if (this.uploadMessage.length) return; // There is already a message occurring
         this.uploadMessage = uploadMessage;
         this.file = null;
-
         setTimeout(() => {
             this.uploadMessage = '';
         }, ERROR_MESSAGE_DELAY);
