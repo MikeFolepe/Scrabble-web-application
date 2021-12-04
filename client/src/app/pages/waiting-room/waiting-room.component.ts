@@ -39,7 +39,7 @@ export class WaitingRoomComponent implements OnInit {
                 this.waitBeforeChangeStatus(TWO_SECOND_DELAY, waitingMessage);
                 this.clientSocket.socket.emit('createRoom', this.gameSettingsService.gameSettings, this.clientSocket.gameType);
             } else {
-                this.status = 'Erreur de connexion...veuillez réessayer';
+                this.status = 'Erreur de connexion... Veuillez réessayer';
                 this.isWaiting = false;
             }
         }, TWO_SECOND_DELAY);

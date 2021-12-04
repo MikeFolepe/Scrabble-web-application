@@ -51,8 +51,8 @@ describe('AdministratorService', () => {
             aiName: 'Mister_Samy',
             isDefault: true,
         };
-        service.beginnerNames = [player1, player2, player3];
-        service.expertNames = [player1, player2, player3];
+        service.aiBeginner = [player1, player2, player3];
+        service.aiExpert = [player1, player2, player3];
         errorResponse = new HttpErrorResponse({
             error: { code: 'some code', message: 'some message.' },
             status: 400,
@@ -197,8 +197,8 @@ describe('AdministratorService', () => {
             isDefault: false,
         };
 
-        service.beginnerNames.push(player4, player5);
-        service.expertNames.push(player4, player5);
+        service.aiBeginner.push(player4, player5);
+        service.aiExpert.push(player4, player5);
 
         service['resetAiPlayers']();
 
@@ -247,8 +247,8 @@ describe('AdministratorService', () => {
         spyOn<any>(service, 'handleRequestError');
         service.initializeAiPlayers();
         expect(getPlayers).toHaveBeenCalledTimes(2);
-        expect(service.beginnerNames).toEqual([player4, player5]);
-        expect(service.expertNames).toEqual([player4, player5]);
+        expect(service.aiBeginner).toEqual([player4, player5]);
+        expect(service.aiExpert).toEqual([player4, player5]);
     });
 
     it('should call handleRequestError if returned players have an error', () => {
@@ -347,8 +347,8 @@ describe('AdministratorService', () => {
             isDefault: false,
         };
 
-        service.beginnerNames.push(playerBeginner);
-        service.expertNames.push(playerExpert);
+        service.aiBeginner.push(playerBeginner);
+        service.aiExpert.push(playerExpert);
 
         const matDialogRefMock = jasmine.createSpyObj('MatDialogRef', ['afterClosed']);
         matDialogRefMock.afterClosed.and.returnValues(of(playerBeginner.aiName), of(playerExpert.aiName));
@@ -388,22 +388,22 @@ describe('AdministratorService', () => {
         service.addAiToDatabase(AiType.beginner, true);
         expect(addPlayer).toHaveBeenCalledTimes(1);
         expect(updatePlayer).toHaveBeenCalledTimes(0);
-        expect(service.beginnerNames).toContain({ _id: '4', aiName: 'test1', isDefault: false });
+        expect(service.aiBeginner).toContain({ _id: '4', aiName: 'test1', isDefault: false });
 
         service.addAiToDatabase(AiType.expert, true);
         expect(addPlayer).toHaveBeenCalledTimes(2);
         expect(updatePlayer).toHaveBeenCalledTimes(0);
-        expect(service.expertNames).toContain({ _id: '5', aiName: 'test2', isDefault: false });
+        expect(service.aiExpert).toContain({ _id: '5', aiName: 'test2', isDefault: false });
 
         service.addAiToDatabase(AiType.beginner, false, '4');
         expect(addPlayer).toHaveBeenCalledTimes(2);
         expect(updatePlayer).toHaveBeenCalledTimes(1);
-        expect(service.beginnerNames).toContain({ _id: '4', aiName: 'test3', isDefault: false });
+        expect(service.aiBeginner).toContain({ _id: '4', aiName: 'test3', isDefault: false });
 
         service.addAiToDatabase(AiType.expert, false, '5');
         expect(addPlayer).toHaveBeenCalledTimes(2);
         expect(updatePlayer).toHaveBeenCalledTimes(2);
-        expect(service.expertNames).toContain({ _id: '5', aiName: 'test4', isDefault: false });
+        expect(service.aiExpert).toContain({ _id: '5', aiName: 'test4', isDefault: false });
     });
 
     it('should call handleRequestError if an error occurred while deleting players', () => {
@@ -414,7 +414,7 @@ describe('AdministratorService', () => {
         };
         const deletePlayers = spyOn(service['communicationService'], 'deleteAiPlayer').and.returnValue(throwError(errorResponse));
         const displayMessage = spyOn<any>(service, 'displayMessage');
-        service.beginnerNames.push(testPlayer);
+        service.aiBeginner.push(testPlayer);
         service.deleteAiPlayer(testPlayer, AiType.beginner);
         expect(deletePlayers).toHaveBeenCalledTimes(1);
         expect(displayMessage).toHaveBeenCalledOnceWith(
@@ -440,16 +440,16 @@ describe('AdministratorService', () => {
         };
         const deletePlayers = spyOn(service['communicationService'], 'deleteAiPlayer').and.returnValue(of([player1, player2, player3]));
         const displayMessage = spyOn<any>(service, 'displayMessage');
-        service.beginnerNames.push(testPlayer);
+        service.aiBeginner.push(testPlayer);
 
         service.deleteAiPlayer(testPlayer, AiType.beginner);
-        expect(service.beginnerNames).toEqual([player1, player2, player3]);
+        expect(service.aiBeginner).toEqual([player1, player2, player3]);
         expect(deletePlayers).toHaveBeenCalledTimes(1);
         expect(displayMessage).toHaveBeenCalledOnceWith('Joueur supprimé');
 
-        service.expertNames.push(testPlayer);
+        service.aiExpert.push(testPlayer);
         service.deleteAiPlayer(testPlayer, AiType.expert);
-        expect(service.expertNames).toEqual([player1, player2, player3]);
+        expect(service.aiExpert).toEqual([player1, player2, player3]);
         expect(deletePlayers).toHaveBeenCalledTimes(2);
         expect(displayMessage).toHaveBeenCalledTimes(2);
     });

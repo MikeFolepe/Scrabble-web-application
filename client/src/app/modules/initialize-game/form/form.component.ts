@@ -7,9 +7,9 @@ import { AdministratorService } from '@app/services/administrator.service';
 import { CommunicationService } from '@app/services/communication.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
 import { RandomBonusesService } from '@app/services/random-bonuses.service';
+import { AiType } from '@common/ai-name';
 import { Dictionary } from '@common/dictionary';
 import { GameSettings, StartingPlayer } from '@common/game-settings';
-import { Level } from '@common/level';
 import { ObjectiveTypes } from '@common/objectives-type';
 
 @Component({
@@ -91,15 +91,13 @@ export class FormComponent implements OnInit, OnDestroy {
         return Math.floor((Math.random() * Object.keys(StartingPlayer).length) / 2);
     }
 
-    private chooseRandomAIName(levelInput: Level): string {
+    private chooseRandomAIName(levelInput: AiType): string {
         let randomName = '';
         do {
             // Random value [0, AI_NAME_DATABASE.length[
-            const randomNumber = Math.floor(Math.random() * this.adminService.beginnerNames.length);
+            const randomNumber = Math.floor(Math.random() * this.adminService.aiBeginner.length);
             randomName =
-                levelInput === Level.Beginner
-                    ? this.adminService.beginnerNames[randomNumber].aiName
-                    : this.adminService.expertNames[randomNumber].aiName;
+                levelInput === AiType.beginner ? this.adminService.aiBeginner[randomNumber].aiName : this.adminService.aiExpert[randomNumber].aiName;
         } while (randomName === this.form.controls.playerName.value);
         return randomName;
     }
