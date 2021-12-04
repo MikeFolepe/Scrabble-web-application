@@ -40,9 +40,8 @@ export class ChatboxService {
     sendPlayerMessage(message: string): void {
         this.messageType = MessageType.Player;
         this.message = message;
-        if (!this.isValid()) {
-            this.sendMessageService.displayMessageByType(this.message, MessageType.Error);
-        }
+        if (!this.isValid()) this.sendMessageService.displayMessageByType(this.message, MessageType.Error);
+
         switch (this.command) {
             case 'debug': {
                 this.executeDebug();
@@ -122,9 +121,9 @@ export class ChatboxService {
             const orientation = positionSplitted[2] === 'h' ? Orientation.Horizontal : Orientation.Vertical;
 
             await this.placeLetterService.placeCommand(position, orientation, messageSplitted[2], PLAYER_ONE_INDEX);
-        } else {
-            this.sendMessageService.displayMessageByType(this.notTurnErrorMessage, MessageType.Error);
+            return;
         }
+        this.sendMessageService.displayMessageByType(this.notTurnErrorMessage, MessageType.Error);
     }
 
     private executeReserve(): void {

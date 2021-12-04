@@ -72,7 +72,7 @@ export class FormComponent implements OnInit, OnDestroy {
         this.fileName = this.selectedDictionary.fileName;
     }
 
-    keyPressSubmit(event: KeyboardEvent) {
+    keyPressSubmit(event: KeyboardEvent): void {
         if (event.key === 'Enter' && this.form.valid) this.initializeGame();
     }
 
@@ -132,7 +132,7 @@ export class FormComponent implements OnInit, OnDestroy {
         const objectiveByType: number[][] = [[], []];
 
         objectiveByType[ObjectiveTypes.Public] = objectiveIds.slice(0, NUMBER_OF_PUBLIC_OBJECTIVES);
-        objectiveByType[ObjectiveTypes.Private] = objectiveIds.slice(2, objectiveIds.length);
+        objectiveByType[ObjectiveTypes.Private] = objectiveIds.slice(NUMBER_OF_PUBLIC_OBJECTIVES, objectiveIds.length);
 
         return objectiveByType;
     }

@@ -87,9 +87,8 @@ export class PlacementsHandlerService {
         const lastLettersPlaced = new Map<string, Vec2>();
         const lastLetterPosition: Vec2 = { x: startPosition.x, y: startPosition.y };
         for (let i = 0; i < word.length; i++) {
-            if (!validLetters[i]) {
-                lastLettersPlaced.set(word[i], { x: lastLetterPosition.x, y: lastLetterPosition.y });
-            }
+            if (!validLetters[i]) lastLettersPlaced.set(word[i], { x: lastLetterPosition.x, y: lastLetterPosition.y });
+
             this.goToNextPosition(lastLetterPosition, orientation);
         }
         return lastLettersPlaced;

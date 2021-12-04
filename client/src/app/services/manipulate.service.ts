@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { EASEL_SIZE, INVALID_INDEX, PLAYER_ONE_INDEX } from '@app/classes/constants';
-import { Letter } from '@common/letter';
 import { PlayerService } from '@app/services/player.service';
+import { Letter } from '@common/letter';
 
 @Injectable({
     providedIn: 'root',
@@ -83,11 +83,13 @@ export class ManipulateService {
             if (this.letterEaselTab[this.usedLetters.indexOf(true)].value !== letterToSelect.toUpperCase())
                 this.usedLetters.fill(false, 0, this.usedLetters.length);
         }
+
         indexCurrentLetter = this.playerService.indexLetterInEasel(letterToSelect, 0, indexPlayer);
         // If we select the same letter 2 times, we verify that we're not using the same index in the easel
         while (this.usedLetters[indexCurrentLetter] && indexCurrentLetter !== INVALID_INDEX) {
             indexCurrentLetter = this.playerService.indexLetterInEasel(letterToSelect, indexCurrentLetter + 1, indexPlayer);
         }
+
         if (indexCurrentLetter === INVALID_INDEX) {
             this.usedLetters.fill(false, 0, this.usedLetters.length);
             // We find the first occurrence of the respective letter
@@ -95,6 +97,7 @@ export class ManipulateService {
         }
 
         if (indexCurrentLetter !== INVALID_INDEX) this.usedLetters[indexCurrentLetter] = true;
+
         return indexCurrentLetter;
     }
 
@@ -103,16 +106,14 @@ export class ManipulateService {
         if (indexSelected === INVALID_INDEX) return;
         if (indexSelected === 0) {
             // Manipulate 1st index
-            if (this.letterEaselTab[indexSelected].value !== this.letterEaselTab[this.letterEaselTab.length - 1].value) {
+            if (this.letterEaselTab[indexSelected].value !== this.letterEaselTab[this.letterEaselTab.length - 1].value)
                 this.usedLetters[indexSelected] = false;
-            }
+
             this.usedLetters[this.letterEaselTab.length - 1] = true;
             this.swapPositions(indexSelected, this.letterEaselTab.length - 1);
             // Set all letters before swap used
             for (let i = 0; i < this.letterEaselTab.length - 1; i++) {
-                if (this.letterEaselTab[i].value === this.letterEaselTab[this.letterEaselTab.length - 1].value) {
-                    this.usedLetters[i] = true;
-                }
+                if (this.letterEaselTab[i].value === this.letterEaselTab[this.letterEaselTab.length - 1].value) this.usedLetters[i] = true;
             }
             return;
         }
@@ -136,9 +137,8 @@ export class ManipulateService {
             }
             return;
         }
-        if (this.letterEaselTab[indexSelected].value !== this.letterEaselTab[indexSelected + 1].value) {
-            this.usedLetters[indexSelected] = false;
-        }
+        if (this.letterEaselTab[indexSelected].value !== this.letterEaselTab[indexSelected + 1].value) this.usedLetters[indexSelected] = false;
+
         // The letter we shift down is now used
         this.usedLetters[indexSelected + 1] = true;
         this.swapPositions(indexSelected, indexSelected + 1);

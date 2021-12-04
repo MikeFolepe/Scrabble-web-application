@@ -231,4 +231,9 @@ describe('GiveUpHandlerService', () => {
         expect(spyGetAiName).not.toHaveBeenCalled();
         expect(service['gameSettingsService'].gameSettings.playersNames[1]).not.toEqual('');
     });
+    it('should reset the value of isGivenUp', () => {
+        service.isGivenUp = true;
+        service.ngOnDestroy();
+        expect(service.isGivenUp).toEqual(false);
+    });
 });

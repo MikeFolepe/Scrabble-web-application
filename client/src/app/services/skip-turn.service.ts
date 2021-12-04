@@ -10,6 +10,7 @@ import {
 import { PlayerAI } from '@app/models/player-ai.model';
 import { ClientSocketService } from '@app/services/client-socket.service';
 import { GameSettingsService } from '@app/services/game-settings.service';
+import { CommunicationService } from './communication.service';
 import { EndGameService } from './end-game.service';
 import { ObjectivesService } from './objectives.service';
 import { PlayerService } from './player.service';
@@ -34,6 +35,7 @@ export class SkipTurnService {
         private playerService: PlayerService,
         private objectivesService: ObjectivesService,
         private sendMessageService: SendMessageService,
+        private commuciationService: CommunicationService,
     ) {
         this.receiveNewTurn();
         this.receiveStartFromServer();
@@ -133,6 +135,7 @@ export class SkipTurnService {
             this.sendMessageService.displayFinalMessage(PLAYER_ONE_INDEX);
             this.sendMessageService.displayFinalMessage(PLAYER_TWO_INDEX);
             this.shouldNotBeDisplayed = true;
+            this.commuciationService.addPlayersScores(this.endGameService.playersScores, this.gameSettingsService.gameType).subscribe();
         }
     }
 }
