@@ -174,11 +174,11 @@ describe('GiveUpHandlerService', () => {
         const player2 = new Player(2, 'Player2', [letterB]);
         service['playerService'].players.push(player1);
         service['playerService'].players.push(player2);
-        
+
         service.receiveEndGameByGiveUp();
         const spyPlay = spyOn<any>(service['playerService'].players[1], 'play');
         const spyGetAiName = spyOn<any>(service['administratorService'], 'getAiBeginnerName');
-        
+
         expect(service.isGivenUp).toEqual(true);
         expect(service['gameSettingsService'].isSoloMode).toEqual(true);
         expect(service['playerService'].players[1].name).not.toEqual('');
@@ -219,11 +219,11 @@ describe('GiveUpHandlerService', () => {
         const player2 = new Player(2, 'Player2', [letterB]);
         service['playerService'].players.push(player1);
         service['playerService'].players.push(player2);
-       
+
         service.receiveEndGameByGiveUp();
         const spyPlay = spyOn<any>(service['playerService'].players[1], 'play');
         const spyGetAiName = spyOn<any>(service['administratorService'], 'getAiBeginnerName');
-        
+
         expect(service.isGivenUp).toEqual(true);
         expect(service['gameSettingsService'].isSoloMode).toEqual(true);
         expect(service['playerService'].players[1]).toBeInstanceOf(PlayerAI);
