@@ -19,7 +19,6 @@ export class PlaceLetterStrategy {
 
     async execute(playerAiService: PlayerAIService): Promise<void> {
         const playerAi = playerAiService.playerService.players[PLAYER_AI_INDEX] as PlayerAI;
-        console.log(playerAiService.gameSettingsService.gameSettings.level, AiType.expert);
         const level = playerAiService.gameSettingsService.gameSettings.level;
         const isFirstRound = playerAiService.placeLetterService.isFirstRound;
         const scrabbleBoard = playerAiService.placeLetterService.scrabbleBoard;
