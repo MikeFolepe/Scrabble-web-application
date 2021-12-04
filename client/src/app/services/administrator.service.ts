@@ -61,7 +61,6 @@ export class AdministratorService {
             return;
         }
         const nameDialog = this.dialog.open(NameSelectorComponent, { disableClose: true });
-        // TODO nom actuel en valeur par défaut (Anthony)
         nameDialog.afterClosed().subscribe((playerName: string) => {
             if (playerName === null) return;
 
@@ -277,10 +276,8 @@ export class AdministratorService {
         );
     }
 
-    // TODO UX team changer couleur snack bar selon type de message
-    private displayMessage(message: string /* , isError: boolean = true*/): void {
+    private displayMessage(message: string): void {
         if (this.isResetting) return;
-        // if (isError)
         this.snackBar.open(message, 'OK', {
             duration: ERROR_MESSAGE_DELAY,
             horizontalPosition: 'center',

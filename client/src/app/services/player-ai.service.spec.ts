@@ -206,11 +206,11 @@ describe('PlayerAIService', () => {
         service.playerService.players[1] = playerAi;
         service.letterService.reserveSize = 0;
         // No matter
-        const isDifficultMode = false;
+        const isExpertLevel = false;
 
-        service.swap(isDifficultMode);
+        service.swap(isExpertLevel);
 
-        expect(service.swap(isDifficultMode)).toBeFalsy();
+        expect(service.swap(isExpertLevel)).toBeFalsy();
     });
 
     it('swap should perform a swap when easy && reserveSize>=7', () => {
@@ -229,9 +229,9 @@ describe('PlayerAIService', () => {
         service.playerService.players[1] = playerAi;
         service.letterService.reserveSize = 7;
         const reserveLengthBeforeSwap = service.letterService.reserveSize;
-        const isDifficultMode = false;
+        const isExpertLevel = false;
 
-        expect(service.swap(isDifficultMode)).toBeTrue();
+        expect(service.swap(isExpertLevel)).toBeTrue();
         expect(spyOnDisplayMessage).toHaveBeenCalled();
         expect(service.playerService.players[1].letterTable === copy).toEqual(false);
         expect(service.letterService.reserveSize === reserveLengthBeforeSwap).toEqual(true);
@@ -253,9 +253,9 @@ describe('PlayerAIService', () => {
         service.playerService.players[1] = playerAi;
         service.letterService.reserveSize = 4;
         const reserveLengthBeforeSwap = service.letterService.reserveSize;
-        const isDifficultMode = false;
+        const isExpertLevel = false;
 
-        expect(service.swap(isDifficultMode)).toBeFalse();
+        expect(service.swap(isExpertLevel)).toBeFalse();
         expect(spyOnDisplayMessage).not.toHaveBeenCalled();
         expect(service.playerService.players[1].letterTable).toEqual(copy);
         expect(service.letterService.reserveSize === reserveLengthBeforeSwap).toEqual(true);
@@ -277,9 +277,9 @@ describe('PlayerAIService', () => {
         service.playerService.players[1] = playerAi;
         service.letterService.reserveSize = 4;
         const reserveLengthBeforeSwap = service.letterService.reserveSize;
-        const isDifficultMode = true;
+        const isExpertLevel = true;
 
-        expect(service.swap(isDifficultMode)).toBeTrue();
+        expect(service.swap(isExpertLevel)).toBeTrue();
         expect(spyOnDisplayMessage).toHaveBeenCalled();
         expect(service.playerService.players[1].letterTable === copy).toEqual(false);
         expect(service.letterService.reserveSize === reserveLengthBeforeSwap).toEqual(true);
@@ -301,9 +301,9 @@ describe('PlayerAIService', () => {
         service.playerService.players[1] = playerAi;
         service.letterService.reserveSize = 1;
         const reserveLengthBeforeSwap = service.letterService.reserveSize;
-        const isDifficultMode = true;
+        const isExpertLevel = true;
 
-        expect(service.swap(isDifficultMode)).toBeTrue();
+        expect(service.swap(isExpertLevel)).toBeTrue();
         expect(spyOnDisplayMessage).toHaveBeenCalled();
         expect(service.playerService.players[1].letterTable === copy).toEqual(false);
         expect(service.letterService.reserveSize === reserveLengthBeforeSwap).toEqual(true);
@@ -323,9 +323,9 @@ describe('PlayerAIService', () => {
         service.playerService.players[1] = playerAi;
         service.letterService.reserveSize = 4;
         const reserveLengthBeforeSwap = service.letterService.reserveSize;
-        const isDifficultMode = true;
+        const isExpertLevel = true;
 
-        expect(service.swap(isDifficultMode)).toBeTrue();
+        expect(service.swap(isExpertLevel)).toBeTrue();
         expect(spyOnDisplayMessage).toHaveBeenCalled();
         expect(service.playerService.players[1].letterTable === copy).toEqual(false);
         expect(service.letterService.reserveSize === reserveLengthBeforeSwap).toEqual(true);
