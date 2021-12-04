@@ -109,12 +109,16 @@ export class FormComponent implements OnInit, OnDestroy {
             this.chooseStartingPlayer(),
             this.form.controls.minuteInput.value,
             this.form.controls.secondInput.value,
-            this.form.controls.levelInput.value,
+            this.getLevel(),
             this.form.controls.randomBonus.value,
             this.getRightBonusPositions(),
             this.fileName,
             this.initializeObjective(),
         );
+    }
+
+    private getLevel(): AiType {
+        return this.form.controls.levelInput.value === AiType.beginner ? AiType.beginner : AiType.expert;
     }
 
     private initializeObjective(): number[][] {

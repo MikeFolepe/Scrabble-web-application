@@ -27,7 +27,6 @@ describe('SkipTurnService', () => {
         playerService = TestBed.inject(PlayerAIService);
         service = TestBed.inject(SkipTurnService);
         gameSettingsService = TestBed.inject(GameSettingsService) as jasmine.SpyObj<GameSettingsService>;
-        spyOn(service['endGameService'], 'getFinalScore');
     });
 
     beforeEach(() => {
@@ -266,7 +265,7 @@ describe('SkipTurnService', () => {
         expect(service['objectivesService'].activeTimeRemaining[0]).toEqual(60);
     });
 
-    it('should  update the active time if the turn is true', () => {
+    it('should update the active time if the turn is true', () => {
         spyOn(service['endGameService'], 'checkEndGame');
         service['objectivesService'].activeTimeRemaining[0] = 60;
         service.isTurn = true;
@@ -275,6 +274,9 @@ describe('SkipTurnService', () => {
     });
 
     it('isEndGame while we are in end game should call stopTimer', () => {
+        const player1 = new Player(1, 'mike', [letterA]);
+        service['playerService'].players.push(player1);
+        spyOn(service['endGameService'], 'getFinalScore');
         spyOn(service, 'stopTimer');
         spyOn(service['sendMessageService'], 'displayFinalMessage');
         service['endGameService'].isEndGameByGiveUp = true;

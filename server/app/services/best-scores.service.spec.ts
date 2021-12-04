@@ -1,4 +1,6 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable no-empty */
 /* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-disable dot-notation */

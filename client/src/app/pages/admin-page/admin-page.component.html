@@ -63,8 +63,8 @@
                 </button>
             </div>
         </div>
-        <div class="alert" *ngIf="adminService.uploadMessage.length">
-            {{ adminService.uploadMessage }}
+        <div class="alert" *ngIf="adminService.serverError.length">
+            {{ adminService.serverError }}
         </div>
     </div>
 
