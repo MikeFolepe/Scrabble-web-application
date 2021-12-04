@@ -67,12 +67,6 @@ h2 {
     width: 48%;
 }
 
-#dictionaries .scrollable {
-    height: 40vh;
-    width: 100%;
-    overflow-y: auto;
-}
-
 #right-bar {
     width: 48%;
     display: flex;
@@ -144,6 +138,14 @@ h2 {
     max-height: 35vh;
     width: 100%;
     overflow-y: auto;
+    padding: 0.25em 0;
+}
+
+.dictionaries-container {
+    max-height: 50vh;
+    width: 100%;
+    overflow-y: auto;
+    padding: 0.5em 0;
 }
 
 .center {

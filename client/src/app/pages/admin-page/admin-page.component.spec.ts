@@ -35,6 +35,10 @@ describe('AdminPageComponent', () => {
         fixture.detectChanges();
     });
 
+    beforeEach(() => {
+        spyOn(component.adminService, 'initializeAiPlayers');
+    });
+
     it('should create', () => {
         expect(component).toBeTruthy();
     });
