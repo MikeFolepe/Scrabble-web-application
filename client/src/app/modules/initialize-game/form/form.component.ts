@@ -41,7 +41,7 @@ export class FormComponent implements OnInit, OnDestroy {
             playerName: new FormControl(this.gameSettingsService.gameSettings.playersNames[PLAYER_ONE_INDEX]),
             minuteInput: new FormControl(this.gameSettingsService.gameSettings.timeMinute),
             secondInput: new FormControl(this.gameSettingsService.gameSettings.timeSecond),
-            levelInput: new FormControl(this.gameSettingsService.gameSettings.level),
+            levelInput: new FormControl('Débutant'),
             dictionaryInput: new FormControl(this.selectedDictionary.title, [Validators.required]),
             randomBonus: new FormControl(this.gameSettingsService.gameSettings.randomBonus),
         });
