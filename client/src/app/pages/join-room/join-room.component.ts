@@ -45,6 +45,9 @@ export class JoinRoomComponent implements OnInit {
         this.receiveRoomAvailable();
         this.handleRoomUnavailability();
         this.receiveRandomPlacement();
+
+        // JUSTIFICATION: The '_' are native to the following attributes
+
         // eslint-disable-next-line no-underscore-dangle
         this._MatPaginatorIntl.itemsPerPageLabel = 'Salons par page';
         // eslint-disable-next-line no-underscore-dangle

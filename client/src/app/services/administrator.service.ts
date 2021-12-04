@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ElementRef, Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ERROR_MESSAGE_DELAY, ONE_SECOND_DELAY } from '@app/classes/constants';
+import { ERROR_MESSAGE_DELAY, TWO_SECOND_DELAY } from '@app/classes/constants';
 import { NameSelectorComponent } from '@app/modules/initialize-game/name-selector/name-selector.component';
 import { EditDictionaryDialogComponent } from '@app/pages/admin-page/edit-dictionary-dialog/edit-dictionary-dialog.component';
 import { CommunicationService } from '@app/services/communication.service';
@@ -22,14 +22,15 @@ export class AdministratorService {
     currentDictionary: Dictionary;
     fileInput: ElementRef;
     file: File | null;
-    uploadMessage: string;
+    serverError: string;
     isResetting: boolean;
     ajv: Ajv;
 
     constructor(private communicationService: CommunicationService, public snackBar: MatSnackBar, public dialog: MatDialog) {
         this.ajv = new Ajv();
         this.file = null;
-        this.uploadMessage = '';
+        this.serverError = '';
+        this.isResetting = false;
     }
 
     initializeAiPlayers(): void {
@@ -68,10 +69,12 @@ export class AdministratorService {
                 this.displayMessage('Ce nom de joueur virtuel est déjà dans la base de données. Veuillez réessayer.');
                 return;
             }
+
             const aiPlayer: AiPlayer = {
                 aiName: playerName,
                 isDefault: false,
             };
+
             if (isNewAi) {
                 this.addAiPlayer(aiPlayer, aiType);
             } else {
@@ -108,11 +111,11 @@ export class AdministratorService {
         }
     }
 
-    async onSubmit() {
+    async onSubmit(): Promise<void> {
         if (await this.isDictionaryValid()) {
             this.addDictionary();
         } else {
-            this.displayUploadMessage("Le fichier n'est pas un dictionnaire");
+            this.displayMessage("Le fichier n'est pas un dictionnaire");
         }
     }
 
@@ -141,7 +144,7 @@ export class AdministratorService {
 
     addDictionary(): void {
         if (this.isDictionaryNameUsed(this.currentDictionary.title)) {
-            this.displayUploadMessage('Il existe déjà un dictionnaire portant le même nom');
+            this.displayMessage('Il existe déjà un dictionnaire portant le même nom');
             return;
         }
 
@@ -154,7 +157,8 @@ export class AdministratorService {
                         description: this.currentDictionary.description,
                         isDefault: false,
                     });
-                    this.displayUploadMessage(response);
+                    this.displayMessage(response);
+                    this.file = null;
                 },
                 (error: HttpErrorResponse) => {
                     this.displayMessage(`Le dictionnaire n'a pas été téléversé, erreur : ${error.message}`);
@@ -231,7 +235,6 @@ export class AdministratorService {
 
     async resetData(): Promise<void> {
         this.isResetting = true;
-
         this.resetAiPlayers();
         this.resetDictionaries();
         this.resetScores();
@@ -239,7 +242,7 @@ export class AdministratorService {
         setTimeout(() => {
             this.isResetting = false;
             this.displayMessage('La base de données à été réinitialisée');
-        }, ONE_SECOND_DELAY);
+        }, TWO_SECOND_DELAY);
     }
 
     private addAiPlayer(aiPlayer: AiPlayer, aiType: AiType): void {
@@ -274,12 +277,14 @@ export class AdministratorService {
         );
     }
 
-    private displayMessage(message: string): void {
+    // TODO UX team changer couleur snack bar selon type de message
+    private displayMessage(message: string /* , isError: boolean = true*/): void {
         if (this.isResetting) return;
+        // if (isError)
         this.snackBar.open(message, 'OK', {
             duration: ERROR_MESSAGE_DELAY,
             horizontalPosition: 'center',
-            verticalPosition: 'top',
+            verticalPosition: 'bottom',
         });
     }
 
@@ -298,15 +303,15 @@ export class AdministratorService {
     }
 
     private handleRequestError(error: HttpErrorResponse): void {
-        this.displayUploadMessage(`Nous n'avons pas pu accéder au serveur, erreur : ${error.message}`);
+        this.displayServerError(`Nous n'avons pas pu accéder au serveur, erreur : ${error.message}`);
     }
 
-    private displayUploadMessage(uploadMessage: string): void {
-        if (this.uploadMessage.length) return; // There is already a message occurring
-        this.uploadMessage = uploadMessage;
+    private displayServerError(uploadMessage: string): void {
+        if (this.serverError.length) return; // There is already a message occurring
+        this.serverError = uploadMessage;
         this.file = null;
         setTimeout(() => {
-            this.uploadMessage = '';
+            this.serverError = '';
         }, ERROR_MESSAGE_DELAY);
     }
 

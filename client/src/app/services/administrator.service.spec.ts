@@ -10,7 +10,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
-import { ONE_SECOND_DELAY } from '@app/classes/constants';
+import { ERROR_MESSAGE_DELAY, ONE_SECOND_DELAY } from '@app/classes/constants';
 import { AiPlayerDB, AiType } from '@common/ai-name';
 import { Dictionary } from '@common/dictionary';
 import FileSaver from 'file-saver';
@@ -66,8 +66,7 @@ describe('AdministratorService', () => {
             description: 'empty dictionary',
             isDefault: false,
         };
-
-        spyMatSnackBar = spyOn<any>(service.snackBar, 'open');
+        spyMatSnackBar = spyOn(service.snackBar, 'open');
     });
 
     it('should be created', () => {
@@ -123,7 +122,6 @@ describe('AdministratorService', () => {
     it('adding a dictionary while its name already exist should not be possible', () => {
         spyOn<any>(service, 'displayMessage');
         jasmine.clock().install();
-        spyOn<any>(service, 'displayUploadMessage').and.callThrough();
         const message: Observable<string> = of('Uploaded');
         spyOn(service['communicationService'], 'uploadFile').and.returnValue(message);
         service.currentDictionary = { fileName: 'test', title: 'Un dictionnaire', description: 'Une description', isDefault: false };
@@ -131,7 +129,7 @@ describe('AdministratorService', () => {
         service.dictionaries = [service.currentDictionary];
         service.addDictionary();
         jasmine.clock().tick(3000);
-        expect(service['displayUploadMessage']).toHaveBeenCalledWith('Il existe déjà un dictionnaire portant le même nom');
+        expect(service['displayMessage']).toHaveBeenCalledWith('Il existe déjà un dictionnaire portant le même nom');
         jasmine.clock().uninstall();
     });
 
@@ -164,9 +162,9 @@ describe('AdministratorService', () => {
 
     it('submitting a invalid dictionary should display the respective message', async () => {
         spyOn(service, 'isDictionaryValid').and.returnValue(Promise.resolve(false));
-        spyOn<any>(service, 'displayUploadMessage');
+        spyOn<any>(service, 'displayMessage');
         await service.onSubmit();
-        expect(service['displayUploadMessage']).toHaveBeenCalledWith("Le fichier n'est pas un dictionnaire");
+        expect(service['displayMessage']).toHaveBeenCalledWith("Le fichier n'est pas un dictionnaire");
     });
 
     it('should return a random name of beginner Ai name', () => {
@@ -230,11 +228,15 @@ describe('AdministratorService', () => {
         expect(resetPlayers).toHaveBeenCalledTimes(1);
         expect(resetDictionaries).toHaveBeenCalledTimes(1);
         expect(resetScores).toHaveBeenCalledTimes(1);
+        expect(service.isResetting).toBeTrue();
+        jasmine.clock().tick(2001);
+        expect(service.isResetting).toBeFalse();
         expect(displayMessage).toHaveBeenCalledOnceWith('La base de données à été réinitialisée');
         jasmine.clock().uninstall();
     });
 
     it('should initialize AI players', () => {
+        jasmine.clock().install();
         const player4: AiPlayerDB = {
             _id: '4',
             aiName: 'Mister_Test',
@@ -246,10 +248,13 @@ describe('AdministratorService', () => {
             isDefault: false,
         };
         const getPlayers = spyOn(service['communicationService'], 'getAiPlayers').and.returnValue(of([player4, player5]));
+        spyOn<any>(service, 'handleRequestError');
         service.initializeAiPlayers();
+        jasmine.clock().tick(ERROR_MESSAGE_DELAY);
         expect(getPlayers).toHaveBeenCalledTimes(2);
         expect(service.beginnerNames).toEqual([player4, player5]);
         expect(service.expertNames).toEqual([player4, player5]);
+        jasmine.clock().uninstall();
     });
 
     it('should call handleRequestError if returned players have an error', () => {
@@ -407,20 +412,6 @@ describe('AdministratorService', () => {
         expect(service.expertNames).toContain({ _id: '5', aiName: 'test4', isDefault: false });
     });
 
-    it('should not display upload message if there is already one being displayed', () => {
-        jasmine.clock().install();
-        const testMessage = 'test';
-        service['displayUploadMessage'](testMessage);
-        expect(service.uploadMessage).toEqual(testMessage);
-
-        const testMessage2 = 'notDisplayed';
-        service['displayUploadMessage'](testMessage2);
-        expect(service.uploadMessage).not.toEqual(testMessage2);
-        jasmine.clock().tick(4001);
-        expect(service.uploadMessage).toEqual('');
-        jasmine.clock().uninstall();
-    });
-
     it('should call handleRequestError if an error occurred while deleting players', () => {
         const testPlayer: AiPlayerDB = {
             _id: '4',
@@ -478,7 +469,7 @@ describe('AdministratorService', () => {
         expect(displayMessage).toHaveBeenCalledOnceWith('Ce titre de dictionnaire existe deja. Veuillez réessayer.');
     });
 
-    it('should not update dictionary if name chosen is already used', () => {
+    it('should update dictionary if name chosen is not used', () => {
         const dictionary1: Dictionary = { fileName: 'test 1 name', title: 'test 1', description: 'test 1 descr', isDefault: true };
         const displayMessage = spyOn<any>(service, 'displayMessage');
         const updateDictionary = spyOn(service['communicationService'], 'updateDictionary').and.returnValue(of([dictionary1]));
@@ -597,5 +588,15 @@ describe('AdministratorService', () => {
         service.isResetting = true;
         service['displayMessage']('test');
         expect(spyMatSnackBar).not.toHaveBeenCalled();
+    });
+
+    it('displayServerError should display the error during the correct delay', () => {
+        jasmine.clock().install();
+        service.serverError = '';
+        service['displayServerError']('ERROR');
+        expect(service.serverError).toEqual('ERROR');
+        jasmine.clock().tick(ERROR_MESSAGE_DELAY);
+        expect(service.serverError).toEqual('');
+        jasmine.clock().uninstall();
     });
 });

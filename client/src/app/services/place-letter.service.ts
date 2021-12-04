@@ -101,21 +101,19 @@ export class PlaceLetterService implements OnDestroy {
         indexPlayer: number,
     ): Promise<boolean> {
         // If we are placing the first letter of the word
-        if (indexLetterInWord === 0) {
-            this.validLetters = [];
-        }
+        if (indexLetterInWord === 0) this.validLetters = [];
+
         // If the letter isn't fitting or isn't in the easel, the placement is invalid
-        if (this.playerService.indexLetterInEasel(letter, 0, indexPlayer) === INVALID_INDEX || !this.isWordFitting(position, orientation, letter)) {
+        if (this.playerService.indexLetterInEasel(letter, 0, indexPlayer) === INVALID_INDEX || !this.isWordFitting(position, orientation, letter))
             return false;
-        }
+
         return this.placeLetter(position, letter, orientation, indexLetterInWord, indexPlayer);
     }
 
     placeLetter(position: Vec2, letter: string, orientation: Orientation, indexLetterInWord: number, indexPlayer: number): boolean {
         // If there's already a letter at this position, we verify that it's the same as the one we want to place
-        if (this.scrabbleBoard[position.y][position.x] !== '') {
-            return this.scrabbleBoard[position.y][position.x].toLowerCase() === letter;
-        }
+        if (this.scrabbleBoard[position.y][position.x] !== '') return this.scrabbleBoard[position.y][position.x].toLowerCase() === letter;
+
         // If the position is empty, we use a letter from the reserve
         this.scrabbleBoard[position.y][position.x] = letter;
         this.validLetters[indexLetterInWord] = false; // Here the letter is placed but not validated
@@ -178,9 +176,8 @@ export class PlaceLetterService implements OnDestroy {
             }, THREE_SECONDS_DELAY);
             return false;
         } // Placing the following words
-        if (this.isWordTouchingOthers(position, orientation, word)) {
-            return await this.validatePlacement(position, orientation, word, indexPlayer);
-        }
+        if (this.isWordTouchingOthers(position, orientation, word)) return await this.validatePlacement(position, orientation, word, indexPlayer);
+
         this.handleInvalidPlacement(position, orientation, word, indexPlayer);
         this.sendMessageService.displayMessageByType('ERREUR : Le placement est invalide', MessageType.Error);
         return false;
@@ -192,9 +189,8 @@ export class PlaceLetterService implements OnDestroy {
             for (let i = 0; i < this.validLetters.length; i++) {
                 if (this.validLetters[i] === undefined) this.validLetters[i] = true;
                 // If the word is invalid, we remove only the letters that we just placed on the grid and add them back to the easel.
-                if (!this.validLetters[i]) {
-                    this.removePlacedLetter(currentPosition, word[i], indexPlayer);
-                }
+                if (!this.validLetters[i]) this.removePlacedLetter(currentPosition, word[i], indexPlayer);
+
                 this.placementsService.goToNextPosition(currentPosition, orientation);
             }
         }, THREE_SECONDS_DELAY); // Waiting 3 seconds to erase the letters on the grid

@@ -84,9 +84,7 @@ export class PlayerAIService {
         const indexOfLetterToBeChanged: number[] = [];
         while (indexOfLetterToBeChanged.length < numberOfLetterToChange) {
             const candidate = this.generateRandomNumber(playerAi.letterTable.length);
-            if (indexOfLetterToBeChanged.indexOf(candidate) === INVALID_INDEX) {
-                indexOfLetterToBeChanged.push(candidate);
-            }
+            if (indexOfLetterToBeChanged.indexOf(candidate) === INVALID_INDEX) indexOfLetterToBeChanged.push(candidate);
         }
 
         for (const index of indexOfLetterToBeChanged) {

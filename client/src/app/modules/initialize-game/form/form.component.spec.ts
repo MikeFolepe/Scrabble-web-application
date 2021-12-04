@@ -21,13 +21,13 @@ describe('FormComponent', () => {
     let fixture: ComponentFixture<FormComponent>;
     let router: jasmine.SpyObj<Router>;
     let emptyDictionary: Dictionary;
+    let initializeAiPlayers: any;
 
     beforeEach(async () => {
         router = jasmine.createSpyObj('Router', ['navigate']);
         await TestBed.configureTestingModule({
             declarations: [FormComponent],
             providers: [
-                { provide: Router, useValue: router },
                 {
                     provide: MatDialog,
                     useValue: {},
@@ -100,6 +100,8 @@ describe('FormComponent', () => {
             },
         ];
 
+        initializeAiPlayers = spyOn(component.adminService, 'initializeAiPlayers');
+
         spyOn(component['communicationService'], 'getDictionaries').and.returnValue(of([emptyDictionary]));
         fixture.detectChanges();
         tick();
@@ -117,7 +119,6 @@ describe('FormComponent', () => {
     });
 
     it('should have a different name from the player', () => {
-        spyOn<any>(component.adminService, 'initializeAiPlayers');
         component.form.controls.playerName.setValue(component['chooseRandomAIName'](Level.Beginner));
         // To consider randomness, we simulate three times the AI name
         const firstAiName = component['chooseRandomAIName'](Level.Beginner);
@@ -135,7 +136,6 @@ describe('FormComponent', () => {
     });
 
     it('should initialize all attributes in ngOnInit()', async () => {
-        const initializeAiPlayers = spyOn(component.adminService, 'initializeAiPlayers');
         await component.ngOnInit();
         expect(component.dictionaries).toEqual([emptyDictionary]);
         expect(component.selectedDictionary).toEqual(emptyDictionary);
@@ -148,17 +148,19 @@ describe('FormComponent', () => {
         component.isDictionaryDeleted = false;
         spyOn<any>(component, 'snapshotSettings');
         component.gameSettingsService.isSoloMode = true;
+        const navigate = spyOn(router, 'navigate');
         await component.initializeGame();
-        expect(router.navigate).toHaveBeenCalledWith(['game']);
+        expect(navigate).toHaveBeenCalledWith(['game']);
     });
 
     it('should route to waiting-room if it is not soloGame', async () => {
         spyOn(component, 'selectGameDictionary');
         component.isDictionaryDeleted = false;
         spyOn<any>(component, 'snapshotSettings');
+        const navigate = spyOn(router, 'navigate');
         component.gameSettingsService.isSoloMode = false;
         await component.initializeGame();
-        expect(router.navigate).toHaveBeenCalledWith(['waiting-room']);
+        expect(navigate).toHaveBeenCalledWith(['waiting-room']);
     });
 
     it('should call shuffleBonusPositons of randomBonusService if randomBonus are activated in the form', () => {
@@ -233,8 +235,9 @@ describe('FormComponent', () => {
     it('should not initialize game if the selected dictionary has been deleted', () => {
         spyOn(component, 'selectGameDictionary');
         component.isDictionaryDeleted = true;
+        const navigate = spyOn(router, 'navigate');
         component.initializeGame();
-        expect(router.navigate).not.toHaveBeenCalled();
+        expect(navigate).not.toHaveBeenCalled();
     });
 
     it('should not set an error to the form if the form is not defined', async () => {

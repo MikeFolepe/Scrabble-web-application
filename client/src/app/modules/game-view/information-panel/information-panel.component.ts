@@ -32,8 +32,6 @@ export class InformationPanelComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        // TODO: enlever
-        // this.endGameService.clearAllData();
         this.wordValidation.fileName = this.gameSettingsService.gameSettings.dictionary;
         this.initializePlayers();
         this.initializeFirstTurn();

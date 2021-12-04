@@ -329,7 +329,6 @@ describe('SocketManagerService', () => {
             on: (eventName: string, callback: (currentWords: string, priorCurrentWords: string, roomId: string) => void) => {
                 if (eventName === 'updateCurrentWords') {
                     callback(fakeCurrentWord, fakePriorCurrentWords, fakeRoomId);
-                    // return;
                 }
             },
             emit: (eventName: string, args: any[] | any) => {
@@ -538,7 +537,6 @@ describe('SocketManagerService', () => {
         } as unknown as io.Server;
         const spyOnTo = sinon.spy(fakeSocket, 'to');
         const spyOnLeave = sinon.spy(fakeSocket, 'leave');
-        // const spyOnIn = sinon.spy(service['sio'], 'in');
         const room = new Room('mike1234', socketId, settings, State.Playing);
         roomManagerService.rooms = [[room], []];
         roomManagerService.find.returns(room);
@@ -591,7 +589,6 @@ describe('SocketManagerService', () => {
             on: (eventName: string, callback: (message: string, roomId: string) => void) => {
                 if (eventName === 'sendRoomMessage') {
                     callback('Mike', 'mike1234');
-                    // return;
                 }
             },
 
@@ -620,7 +617,6 @@ describe('SocketManagerService', () => {
             on: (eventName: string, callback: (message: string, roomId: string) => void) => {
                 if (eventName === 'sendGameConversionMessage') {
                     callback('Mike', 'mike1234');
-                    // return;
                 }
             },
 

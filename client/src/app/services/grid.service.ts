@@ -115,9 +115,11 @@ export class GridService implements OnDestroy {
         context.stroke();
         context.fill();
     }
+
     ngOnDestroy(): void {
         this.eraseLayer(this.gridContextLettersLayer);
     }
+
     // Transpose the positions from 15x15 array to 750x750 grid
     private positionTabToPositionGrid(positionTabX: number, positionTabY: number): Vec2 {
         return {

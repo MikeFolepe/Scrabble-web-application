@@ -23,11 +23,11 @@ describe('GiveUpHandlerService', () => {
             imports: [HttpClientTestingModule, RouterTestingModule],
             providers: [
                 {
-                    provide: MatSnackBar,
+                    provide: MatDialog,
                     useValue: {},
                 },
                 {
-                    provide: MatDialog,
+                    provide: MatSnackBar,
                     useValue: {},
                 },
             ],
@@ -51,6 +51,10 @@ describe('GiveUpHandlerService', () => {
                 isDefault: true,
             },
         ];
+    });
+
+    beforeEach(() => {
+        spyOn(service['administratorService'], 'initializeAiPlayers');
     });
 
     it('should be created', () => {
@@ -226,5 +230,10 @@ describe('GiveUpHandlerService', () => {
         expect(spyPlay).not.toHaveBeenCalled();
         expect(spyGetAiName).not.toHaveBeenCalled();
         expect(service['gameSettingsService'].gameSettings.playersNames[1]).not.toEqual('');
+    });
+    it('should reset the value of isGivenUp', () => {
+        service.isGivenUp = true;
+        service.ngOnDestroy();
+        expect(service.isGivenUp).toEqual(false);
     });
 });

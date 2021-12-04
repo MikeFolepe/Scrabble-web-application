@@ -10,6 +10,8 @@ import * as spies from 'chai-spies';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import * as sinon from 'sinon';
 import { DatabaseService } from './database.service';
+import * as mongoose from 'mongoose';
+import { PlayerScore } from '@common/player';
 
 describe('Database service', () => {
     let databaseService: DatabaseService;
@@ -74,7 +76,7 @@ describe('Database service', () => {
     });
 
     it('should set default data when starting', async () => {
-        const scoresModel = SCORES_MODEL.get(GameType.Classic) as DbModel;
+        const scoresModel = SCORES_MODEL.get(GameType.Classic) as mongoose.Model<PlayerScore>;
         const scoreToAdd = new scoresModel({
             score: 10,
             playerName: 'mike',

@@ -22,12 +22,9 @@ describe('Place Letter strategy', () => {
     let letterTable: Letter[] = [];
 
     beforeEach(async () => {
-        // Faire jasmine create spy object
-        // Mock bien tout les appels du .ts
         await TestBed.configureTestingModule({
             imports: [HttpClientTestingModule, RouterTestingModule],
         }).compileComponents();
-        // placeStrategy = TestBed.inject(PlaceLetterStrategy);
     });
 
     beforeEach(() => {

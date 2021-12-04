@@ -139,7 +139,7 @@ export class AdministratorController {
                 uploadedFile = req['files'].file;
                 uploadedFile.mv('./dictionaries/' + uploadedFile.name);
             }
-            return res.status(StatusCodes.OK).send(JSON.stringify('Téléversé'));
+            return res.status(StatusCodes.OK).send(JSON.stringify('Le dictionnaire a été téléversé.'));
         });
     }
 }
