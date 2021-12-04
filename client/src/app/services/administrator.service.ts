@@ -2,8 +2,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ElementRef, Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ERROR_MESSAGE_DELAY } from '@app/classes/constants';
-import { JoinDialogComponent } from '@app/modules/initialize-game/join-dialog/join-dialog.component';
+import { ERROR_MESSAGE_DELAY, ONE_SECOND_DELAY } from '@app/classes/constants';
+import { NameSelectorComponent } from '@app/modules/initialize-game/name-selector/name-selector.component';
 import { EditDictionaryDialogComponent } from '@app/pages/admin-page/edit-dictionary-dialog/edit-dictionary-dialog.component';
 import { CommunicationService } from '@app/services/communication.service';
 import { AiPlayer, AiPlayerDB, AiType } from '@common/ai-name';
@@ -59,10 +59,10 @@ export class AdministratorService {
             this.displayMessage('Vous ne pouvez pas modifier un joueur par défaut!');
             return;
         }
-        const nameDialog = this.dialog.open(JoinDialogComponent, { disableClose: true });
+        const nameDialog = this.dialog.open(NameSelectorComponent, { disableClose: true });
         // TODO nom actuel en valeur par défaut (Anthony)
         nameDialog.afterClosed().subscribe((playerName: string) => {
-            if (playerName == null) return;
+            if (playerName === null) return;
 
             if (this.checkIfAlreadyExists(playerName)) {
                 this.displayMessage('Ce nom de joueur virtuel est déjà dans la base de données. Veuillez réessayer.');
@@ -236,9 +236,10 @@ export class AdministratorService {
         this.resetDictionaries();
         this.resetScores();
 
-        this.isResetting = false;
-        // TODO fix envoie message reset
-        this.displayMessage('La base de données à été réinitialisée');
+        setTimeout(() => {
+            this.isResetting = false;
+            this.displayMessage('La base de données à été réinitialisée');
+        }, ONE_SECOND_DELAY);
     }
 
     private addAiPlayer(aiPlayer: AiPlayer, aiType: AiType): void {
@@ -287,24 +288,23 @@ export class AdministratorService {
     }
 
     private checkIfAlreadyExists(aiPlayerName: string): boolean {
-        // Quasi impossible à tester tel quel, voir si on peut pas faire autrement (Mike)
-        // TODO: if (this.beginnerNames.find()... || this.expertNames.find()...) return false;
         if (this.beginnerNames === undefined && this.expertNames === undefined) return false;
-        const aiBeginner = this.beginnerNames.find((aiBeginnerPlayer) => aiBeginnerPlayer.aiName === aiPlayerName);
-        const aiExpert = this.expertNames.find((aiExpertPlayer) => aiExpertPlayer.aiName === aiPlayerName);
-
-        return aiBeginner !== undefined || aiExpert !== undefined;
+        if (
+            this.beginnerNames.find((aiBeginnerPlayer) => aiBeginnerPlayer.aiName === aiPlayerName) ||
+            this.expertNames.find((aiExpertPlayer) => aiExpertPlayer.aiName === aiPlayerName)
+        )
+            return true;
+        return false;
     }
 
     private handleRequestError(error: HttpErrorResponse): void {
-        this.displayMessage(`Nous n'avons pas pu accéder au serveur, erreur : ${error.message}`);
+        this.displayUploadMessage(`Nous n'avons pas pu accéder au serveur, erreur : ${error.message}`);
     }
 
     private displayUploadMessage(uploadMessage: string): void {
         if (this.uploadMessage.length) return; // There is already a message occurring
         this.uploadMessage = uploadMessage;
         this.file = null;
-
         setTimeout(() => {
             this.uploadMessage = '';
         }, ERROR_MESSAGE_DELAY);

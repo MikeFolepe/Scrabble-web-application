@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginatorIntl, PageEvent } from '@angular/material/paginator';
 import { ERROR_MESSAGE_DELAY } from '@app/classes/constants';
-import { JoinDialogComponent } from '@app/modules/initialize-game/join-dialog/join-dialog.component';
+import { NameSelectorComponent } from '@app/modules/initialize-game/name-selector/name-selector.component';
 import { ClientSocketService } from '@app/services/client-socket.service';
 import { PlayerIndex } from '@common/player-index';
 import { Room, State } from '@common/room';
@@ -81,7 +81,7 @@ export class JoinRoomComponent implements OnInit {
 
     join(room: Room): void {
         this.dialog
-            .open(JoinDialogComponent, { disableClose: true })
+            .open(NameSelectorComponent, { disableClose: true })
             .afterClosed()
             .subscribe((playerName: string) => {
                 // if user closes the dialog box without input nothing
@@ -100,7 +100,7 @@ export class JoinRoomComponent implements OnInit {
 
     placeRandomly(): void {
         this.dialog
-            .open(JoinDialogComponent, { disableClose: true })
+            .open(NameSelectorComponent, { disableClose: true })
             .afterClosed()
             .subscribe((playerName: string) => {
                 // if user closes the dialog box without input nothing

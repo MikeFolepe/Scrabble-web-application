@@ -1,4 +1,4 @@
-<app-background [isDark]="true"></app-background>
+<app-background [isDark]="false"></app-background>
 <div id="title">
     <div id="typing">Page admin</div>
 </div>
@@ -27,8 +27,6 @@
                         <mat-panel-description>
                             {{ dictionary.description }}
                         </mat-panel-description>
-                        <!-- TODO demander chargés quelle méthode est la meilleure pour UX -->
-                        <!-- <mat-icon *ngIf="dictionary.isDefault">lock</mat-icon> -->
                     </mat-expansion-panel-header>
                     <button mat-icon-button id="deleteIcon" (click)="adminService.deleteDictionary(dictionary)">
                         <mat-icon color="warn">delete_forever</mat-icon>
@@ -62,9 +60,9 @@
                     <mat-icon>cloud_upload</mat-icon>
                 </button>
             </div>
-            <div class="alert" *ngIf="adminService.uploadMessage.length" [ngClass]="{ success: adminService.uploadMessage === 'Téléversé' }">
-                {{ adminService.uploadMessage }}
-            </div>
+        </div>
+        <div class="alert" *ngIf="adminService.uploadMessage.length">
+            {{ adminService.uploadMessage }}
         </div>
     </div>
 
@@ -81,7 +79,6 @@
             </h2>
             <div class="window-content">
                 <div class="list">
-                    <!-- TODO Afficher les noms par ordre d'ajout/alphabétique ? -->
                     <div class="beginner">
                         <p class="name-title">Noms débutants</p>
                         <hr />

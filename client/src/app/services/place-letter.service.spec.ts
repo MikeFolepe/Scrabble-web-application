@@ -84,22 +84,6 @@ describe('PlaceLetterService', () => {
         expect(service.isWordFitting(position, orientation, word)).toBeTrue();
     });
 
-    it('first word placed on central case should be valid', () => {
-        const position: Vec2 = { x: 7, y: 7 }; // central case H8
-        let orientation = Orientation.Horizontal;
-        const word = 'office';
-        expect(service.isFirstWordValid(position, orientation, word)).toBeTrue();
-        orientation = Orientation.Vertical;
-        expect(service.isFirstWordValid(position, orientation, word)).toBeTrue();
-    });
-
-    it('first word not placed on central case should be invalid', () => {
-        const position: Vec2 = { x: 2, y: 9 };
-        const orientation = Orientation.Vertical;
-        const word = 'stage';
-        expect(service.isFirstWordValid(position, orientation, word)).toBeFalse();
-    });
-
     it('word placed on the following rounds should be valid if he touches other words', async () => {
         // Place first word
         let position: Vec2 = { x: 7, y: 7 };
