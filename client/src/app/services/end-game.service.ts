@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { NUMBER_OF_SKIP, PLAYER_AI_INDEX, PLAYER_ONE_INDEX, PLAYER_TWO_INDEX } from '@app/classes/constants';
 import { PlayerAI } from '@app/models/player-ai.model';
-import { Player } from '@app/models/player.model';
 import { DebugService } from '@app/services/debug.service';
 import { Letter } from '@common/letter';
 import { PlayerScore } from '@common/player';
@@ -102,7 +101,6 @@ export class EndGameService {
     }
 
     clearAllData(): void {
-        this.playerService.players[1] = {} as Player;
         this.playerService.players = [];
         this.isEndGameByGiveUp = false;
         this.winnerNameByGiveUp = '';
