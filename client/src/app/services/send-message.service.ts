@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { PLAYER_ONE_INDEX } from '@app/classes/constants';
+import { PLAYER_ONE_INDEX, TWO_SECOND_DELAY } from '@app/classes/constants';
 import { MessageType } from '@app/classes/enum';
 import { ClientSocketService } from './client-socket.service';
 import { GameSettingsService } from './game-settings.service';
@@ -68,11 +68,13 @@ export class SendMessageService {
     }
 
     displayFinalMessage(indexPlayer: number): void {
-        let endGameEasel = '';
-        this.displayMessageByType('Fin de partie - lettres restantes', MessageType.System);
-        for (const letter of this.playerService.players[indexPlayer].letterTable) {
-            endGameEasel += letter.value;
-        }
-        this.displayMessageByType(this.playerService.players[indexPlayer].name + ' : ' + endGameEasel, MessageType.System);
+        setTimeout(() => {
+            let endGameEasel = '';
+            this.displayMessageByType('Fin de partie - lettres restantes', MessageType.System);
+            for (const letter of this.playerService.players[indexPlayer].letterTable) {
+                endGameEasel += letter.value;
+            }
+            this.displayMessageByType(this.playerService.players[indexPlayer].name + ' : ' + endGameEasel, MessageType.System);
+        }, TWO_SECOND_DELAY);
     }
 }

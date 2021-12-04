@@ -53,6 +53,10 @@ export class SocketManagerService {
                 }
             });
 
+            socket.on('sendEasel', (letterTable: Letter[], roomId: string) => {
+                socket.to(roomId).emit('receiveOpponentEasel', letterTable);
+            });
+
             socket.on('updatePlayedWords', (playedWords: string, roomId: string) => {
                 socket.to(roomId).emit('receivePlayedWords', playedWords);
             });
@@ -84,8 +88,8 @@ export class SocketManagerService {
             // Receive the Endgame from the give up game or the natural EndGame by easel or by actions
             this.onEndGameByGiveUp(socket);
 
-            socket.on('sendEndGame', (isEndGame: boolean, roomId: string) => {
-                this.sio.in(roomId).emit('receiveEndGame', isEndGame);
+            socket.on('sendEndGame', (isEndGame: boolean, letterTable: Letter[], roomId: string) => {
+                socket.to(roomId).emit('receiveEndGame', isEndGame, letterTable);
                 this.sio.in(roomId).emit('stopTimer');
             });
 
